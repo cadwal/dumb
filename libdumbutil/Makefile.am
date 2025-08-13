@@ -1,5 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
+# These sources aren't currently used at all.
+EXTRA_DIST = intset.c intset.h .cvsignore
+
 noinst_LIBRARIES = libdumbutil.a
 
 common_sources = align.h bugaddr.c bugaddr.h confargs.c confargs.h	\
@@ -18,9 +21,6 @@ endif
 # here.  Automake 1.3 is not smart enough to combine the different
 # versions of libdumbutil_a_SOURCES automatically.
 EXTRA_libdumbutil_a_SOURCES = dos_timer.c timer.c
-
-# These sources aren't currently used at all.
-EXTRA_DIST = intset.c intset.h
 
 CC = $(CXX_HACK_CC)
 

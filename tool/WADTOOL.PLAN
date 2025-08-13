@@ -1,0 +1,11 @@
+What is wadtool used for?
+
+- building WADs from lumps
+- building WADs from WADs
+- extracting lumps from WADs
+
+No attempt to avoid duplicates!
+
+wadtool --create-pwad=E1M1.wad --empty-lump=E1M1 [--lumps] *.lump
+wadtool --create-iwad=game.wad [--wads] E1M1/E1M1.wad
+wadtool --extract=game.wad manager

@@ -70,8 +70,11 @@ DUMB_CONFIG_SOUND = @DUMB_CONFIG_SOUND@
 DUMB_CONFIG_SOUND_LDADD = @DUMB_CONFIG_SOUND_LDADD@
 DUMB_DGA_LDADD = @DUMB_DGA_LDADD@
 DUMB_FBREREND_SOURCES = @DUMB_FBREREND_SOURCES@
+DUMB_GGI_LDADD = @DUMB_GGI_LDADD@
+DUMB_GGI_SOURCES = @DUMB_GGI_SOURCES@
 DUMB_NETWORK_LDADD = @DUMB_NETWORK_LDADD@
 DUMB_NETWORK_SOURCES = @DUMB_NETWORK_SOURCES@
+DUMB_PPM_LDADD = @DUMB_PPM_LDADD@
 DUMB_RENDER_SOURCES = @DUMB_RENDER_SOURCES@
 DUMB_XKB_LDADD = @DUMB_XKB_LDADD@
 DUMB_XSHM_LDADD = @DUMB_XSHM_LDADD@
@@ -98,28 +101,31 @@ USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 l = @l@
 
-@DUMB_CONFIG_LDWB_TRUE@LDWB_SUBDIR = libdumbworldb
-@DUMB_CONFIG_LDWB_FALSE@LDWB_SUBDIR = 
+EXTRA_DIST = $(rpmstem).spec .cvsignore
+MAINTAINERCLEANFILES = $(rpmspec)
 
-SUBDIRS = libmissing libdumbutil libdumbwad $(LDWB_SUBDIR)		\
+@DUMB_CONFIG_LDWB_TRUE@ldwb_subdir = libdumbworldb
+@DUMB_CONFIG_LDWB_FALSE@ldwb_subdir = 
+
+SUBDIRS = libmissing libdumbutil libdumbwad $(ldwb_subdir)		\
 libdumbrender libdumb intl dumb xwad ptcomp tool doom htic test po	\
-docs
+docs aux
 
 # stuff for making Red Hat style rpms
-RPMRELEASE = 1
-RPMSTEM	= $(PACKAGE)-$(VERSION)-$(RPMRELEASE)
-RPMSPEC = $(srcdir)/$(RPMSTEM).spec
-RPMIN	= rpmspec.m4 
-EXTRA_DIST = $(RPMSTEM).spec $(RPMIN)
-MAINTAINERCLEANFILES = $(RPMSPEC)
+rpmrelease = 1
+rpmstem	= $(PACKAGE)-$(VERSION)-$(rpmrelease)
+rpmspec = $(srcdir)/$(rpmstem).spec
+rpmin	= aux/rpmspec.m4
+
+# automated Linux Software Map entry generation
+lsmin	= aux/dumb-lsm.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/aux/mkinstalldirs
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = 
 DIST_COMMON =  README ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL \
 Makefile.am Makefile.in NEWS TODO acconfig.h acinclude.m4 aclocal.m4 \
-config.h.in configure configure.in install-sh missing mkinstalldirs \
-stamp-h.in
+config.h.in configure configure.in stamp-h.in
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
@@ -127,7 +133,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 TAR = tar
 GZIP = --best
 DIST_SUBDIRS =  libmissing libdumbutil libdumbwad libdumbworldb \
-libdumbrender libdumb intl dumb xwad ptcomp tool doom htic test po docs
+libdumbrender libdumb intl dumb xwad ptcomp tool doom htic test po docs \
+aux
 all: all-recursive-am all-am
 
 .SUFFIXES:
@@ -356,13 +363,20 @@ clean-generic maintainer-clean-generic clean mostlyclean distclean \
 maintainer-clean
 
 
-rpmspec: $(RPMSPEC)
+rpmspec: $(rpmspec)
 
-$(RPMSPEC): $(RPMIN)
-	m4 -DRPMSTEM=$(RPMSTEM) -DRPMPACKAGE=$(PACKAGE) -DRPMVERSION=$(VERSION) -DRPMRELEASE=$(RPMRELEASE) $^ >$@
+$(rpmspec): $(rpmin)
+	m4 -DRPMSTEM=$(rpmstem) -DRPMPACKAGE=$(PACKAGE) \
+	   -DRPMVERSION=$(VERSION) -DRPMRELEASE=$(rpmrelease) \
+	   $^ >$@
 
 # This is only meant to be run by a maintainer, so it's safe to use
 # utilities that people may not have.
+# 
+# To avoid unnecessary rebuilds, the list of names is kept in
+# alphabetical order.  For efficiency, sorting is done at the end of
+# the pipeline, where unnecessary items have already been filtered
+# out.
 update-po:
 	rm -f POTFILES.in.tmp
 	( cd $(srcdir) \
@@ -372,8 +386,9 @@ update-po:
 	  && find . -name "*.[ch]" \
 		| xargs -r grep -l '_("' \
 		| sed -e 's,^\./,,' \
+		| sort \
 	) > POTFILES.in.tmp
-	@if cmp -s POTFILES.in.tmp $(srcdir)/po/POTFILES.in; then \
+	if cmp -s POTFILES.in.tmp $(srcdir)/po/POTFILES.in; then \
 	  echo "$(srcdir)/po/POTFILES.in unchanged"; \
 	  rm POTFILES.in.tmp; \
 	else \
@@ -383,24 +398,34 @@ update-po:
 	fi
 	cd po && $(MAKE) update-po
 
-# Automake sets $(distdir) to something like dumb-0.13.2
-$(distdir).lsm: $(distdir).tar.gz $(srcdir)/docs/maint/lsm-template 	
-	( LC_ALL=POSIX;	export LC_ALL;			\
-	  targz=$(distdir).tar.gz;			\
-	  bytes=`wc -c <$$targz`;			\
-	  kilos=`expr \( $$bytes + 500 \) / 1000`;	\
-	  date=`date +%d%b%y | tr "a-z" "A-Z"`;		\
-	  sed -e "s/@LSM-VERSION@/$(VERSION)/"		\
-	      -e "s/@LSM-DATE@/$$date/"			\
-	      -e "s/@LSM-KILOS@/$$kilos/"		\
-	      -e "s/@LSM-TARGZ@/$$targz/"		\
-	      < $(srcdir)/docs/maint/lsm-template	\
-	      > $@					\
+$(PACKAGE)-$(VERSION).lsm: $(lsmin) $(PACKAGE)-$(VERSION).tar.gz
+	( LC_ALL=POSIX;	export LC_ALL; \
+	  targz=$(PACKAGE)-$(VERSION).tar.gz; \
+	  bytes=`wc -c <$$targz`; \
+	  kilos=`expr \( $$bytes + 500 \) / 1000`; \
+	  date=`date +%d%b%y | tr "a-z" "A-Z"`; \
+	  sed -e "s/@LSM-VERSION@/$(VERSION)/" \
+	      -e "s/@LSM-DATE@/$$date/" \
+	      -e "s/@LSM-KILOS@/$$kilos/" \
+	      -e "s/@LSM-TARGZ@/$$targz/" \
+	      < $< \
+	      > $@ \
 	)
 
-kn-dist: rpmspec dist $(distdir).lsm
+# To avoid problems with parallel make, the lsm is made separately.
+kn-dist: dist
+	$(MAKE) $(PACKAGE)-$(VERSION).lsm
 
-.PHONY: update-po kn-dist
+# This rule lets you do "make foo/Makefile" after adding a subdirectory.
+#
+# TODO: Check that SunOS make doesn't choke on this.  It needn't
+# understand the rule, only accept it.
+%/Makefile: $(srcdir)/%/Makefile.am
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --no-force --verbose $@
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+.PHONY: rpmspec update-po kn-dist
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -70,8 +70,11 @@ DUMB_CONFIG_SOUND = @DUMB_CONFIG_SOUND@
 DUMB_CONFIG_SOUND_LDADD = @DUMB_CONFIG_SOUND_LDADD@
 DUMB_DGA_LDADD = @DUMB_DGA_LDADD@
 DUMB_FBREREND_SOURCES = @DUMB_FBREREND_SOURCES@
+DUMB_GGI_LDADD = @DUMB_GGI_LDADD@
+DUMB_GGI_SOURCES = @DUMB_GGI_SOURCES@
 DUMB_NETWORK_LDADD = @DUMB_NETWORK_LDADD@
 DUMB_NETWORK_SOURCES = @DUMB_NETWORK_SOURCES@
+DUMB_PPM_LDADD = @DUMB_PPM_LDADD@
 DUMB_RENDER_SOURCES = @DUMB_RENDER_SOURCES@
 DUMB_XKB_LDADD = @DUMB_XKB_LDADD@
 DUMB_XSHM_LDADD = @DUMB_XSHM_LDADD@
@@ -98,14 +101,12 @@ USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 l = @l@
 
-EXTRA_DIST = FAQ Install-FAQ README.fixbm README.netplay README.ptcomp	\
-configure.txt discord.txt dumblogo.ppm keymap.txt linux-libc5.txt	\
-log-classes params.txt xrosella.xpm
-
-# GNU Emacs 20.2.2 automatically aligned the backslashes above!  Yow!
+EXTRA_DIST = FAQ Install-FAQ MMX.txt README.fixbm README.netplay	\
+README.ptcomp discord.txt dumblogo.ppm keymap.txt linux-libc5.txt	\
+log-classes params.txt xrosella.xpm .cvsignore
 
 SUBDIRS = dos maint patches
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/aux/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
 DIST_COMMON =  Makefile.am Makefile.in

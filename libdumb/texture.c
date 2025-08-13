@@ -715,11 +715,24 @@ load_wtex(Texture *t, int bpp)
 	 }
       }
    }
+
+   /* Kludge for heretic, where `SKY1' in the TEXTURE1 lump has the
+    * wrong size (256x128) but the actual size of the patch `SKY1' is
+    * 256x200.
+    */
+   if (! strncasecmp(t->name, "SKY", 3) && td->npatches > 0) {
+      const PictData *p = get_patch_data(td->patch[0].pnum);
+      if (! IS_JPATCH(p) && p->UMEMB(hdr).height > t->height) {
+         t->height = p->UMEMB(hdr).height;
+         t->log2height = mylog2(t->height);
+      }
+   }
+   
 #ifdef TXDEBUG
    logprintf(LOG_DEBUG, 'T', _("load_walltex %s at %d bpp"),
 	     t->name, bpp);
-   logprintf(LOG_DEBUG, 'T', "l2w=%d l2h=%d",
-	     t->log2width, t->log2height);
+   logprintf(LOG_DEBUG, 'T', "w=%d h=%d l2w=%d l2h=%d",
+	     t->width, t->height, t->log2width, t->log2height);
 #endif
    t->texels = safe_malloc(i = (bpp << (t->log2width + t->log2height)));
    t->alloced_texels = 1;

@@ -126,6 +126,7 @@ draw_sky_segment(fixed pstart, fixed pend,
    fixed tex_dy, tex_y;
    int tex_column, fb_column;
    fixed angle;
+   int use_height;
 
 #ifdef USE_RENDERER_DEBUG_FLAGS
    if (renderer_debug_flags & RENDERER_DEBUG_DONT_DRAW_SKY)
@@ -149,10 +150,9 @@ draw_sky_segment(fixed pstart, fixed pend,
    tex_column = (FIXED_TO_INT(fixmul(angle, INT_TO_FIXED(1024)))
 		 & ((1 << tex->log2width) - 1));
 
-   /* sky always takes up 3/4 of the viewport
-      TODO: make this configurable? */
-   tex_dy = fixdiv(4 * INT_TO_FIXED(tex->height),
-		   3 * INT_TO_FIXED(view_height));
+   use_height = MIN(128, tex->height);
+   tex_dy = fixdiv(INT_TO_FIXED(use_height),
+		   INT_TO_FIXED(view_height));
    tex_base = TEXTURE_COLUMN(tex, tex_column);
 
    /* Clip the wall slice. */
@@ -181,8 +181,9 @@ draw_sky_segment(fixed pstart, fixed pend,
    fb_byte = fb + fb_column + fb_rows[fb_start];
    last_byte = fb + fb_column + fb_rows[fb_end];
 
-   tex_y = (INT_TO_FIXED(tex->height - 1)
-	    - fixmul(tex_dy, INT_TO_FIXED(fb_start)));
+   tex_y = INT_TO_FIXED(use_height - 1)
+	    - fixmul(tex_dy, INT_TO_FIXED(fb_start)) 
+	    - FIXED_SCALE(view->horizon, use_height);
    /*tex_y=INT_TO_FIXED(tex->height-1)-
       fixmul(tex_dy,FIXED_SCALE(pstart, view_height)); */
 

@@ -70,8 +70,11 @@ DUMB_CONFIG_SOUND = @DUMB_CONFIG_SOUND@
 DUMB_CONFIG_SOUND_LDADD = @DUMB_CONFIG_SOUND_LDADD@
 DUMB_DGA_LDADD = @DUMB_DGA_LDADD@
 DUMB_FBREREND_SOURCES = @DUMB_FBREREND_SOURCES@
+DUMB_GGI_LDADD = @DUMB_GGI_LDADD@
+DUMB_GGI_SOURCES = @DUMB_GGI_SOURCES@
 DUMB_NETWORK_LDADD = @DUMB_NETWORK_LDADD@
 DUMB_NETWORK_SOURCES = @DUMB_NETWORK_SOURCES@
+DUMB_PPM_LDADD = @DUMB_PPM_LDADD@
 DUMB_RENDER_SOURCES = @DUMB_RENDER_SOURCES@
 DUMB_XKB_LDADD = @DUMB_XKB_LDADD@
 DUMB_XSHM_LDADD = @DUMB_XSHM_LDADD@
@@ -98,17 +101,22 @@ USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 l = @l@
 
-@DUMB_CONFIG_DOOM_TRUE@pkgdata_DATA = doom4dum.wad
-@DUMB_CONFIG_DOOM_FALSE@pkgdata_DATA = 
+EXTRA_DIST = WAFFLE $(d4d_sources) .cvsignore
 
 CLEANFILES = $(d4d_lumps) PLAYPAL.lump doom4dum.wad
 
-d4d_pt_lumps = ANIMTEX.lump GETTABLE.lump LEVINFO.lump LINETYPE.lump \
- PHASES.lump PROTOS.lump SECTTYPE.lump SOUNDS.lump
+@DUMB_CONFIG_DOOM_TRUE@pkgdata_DATA = doom4dum.wad
+@DUMB_CONFIG_DOOM_FALSE@pkgdata_DATA = 
+
+d4d_pt_lumps = ANIMTEX.lump GETTABLE.lump LEVINFO.lump LINETYPE.lump	\
+PHASES.lump PROTOS.lump SECTTYPE.lump SOUNDS.lump
+
 d4d_lumps = $(d4d_pt_lumps) COLORM16.lump COLORM32.lump DUMBLOGO.lump
 # Keep doom.pt first in this list so $< works right.
-d4d_sources = doom.pt animtex.pt furnishings.pt generic.pt gettables.pt \
- levels.pt linetypes.pt missiles.pt monsters.pt sectortypes.pt weapons.pt
+
+d4d_sources = doom.pt animtex.pt camera.pt furnishings.pt generic.pt	\
+gettables.pt levels.pt linetypes.pt missiles.pt monsters.pt		\
+sectortypes.pt weapons.pt
 
 # Always use the latest versions.  Use full filenames so targets can
 # depend on them and be rebuilt if the executables change.
@@ -117,9 +125,7 @@ ppmtodumb = ../tool/ppmtodumb
 ptcomp = ../ptcomp/ptcomp
 
 pt_preprocess = $(CXXCPP) -x c-header -I$(srcdir)
-
-EXTRA_DIST = WAFFLE $(d4d_sources)
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/aux/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
 DATA =  $(pkgdata_DATA)

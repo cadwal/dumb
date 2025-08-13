@@ -15,7 +15,7 @@ divert(-1)
 # Comments following this one are for the .spec, ignore them.
 
 divert(0)dnl
-# NB: this file was automatically generated from rpmspec.m4
+# NB: this file was automatically generated from aux/rpmspec.m4
 # If you need to change it, please edit that file (see also 
 # Makefile.am, which contains the m4 invocation to build it).
 

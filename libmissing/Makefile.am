@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
+EXTRA_DIST = .cvsignore
+
 noinst_LIBRARIES = libmissing.a
 
 # getopt.c and getopt1.c contain logic to elide code if using the

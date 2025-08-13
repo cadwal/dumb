@@ -134,6 +134,98 @@ thing_to_view(const LevData *ld, int th, View *v, const ViewTrans *vx)
       v->horizon = -fixsin(td->elev);
 }
 
+void
+camera_to_view(const LevData *ld, int cam, View *v, const ViewTrans *vx)
+{
+   ThingDyn *camd = ldthingd(ld) + cam;
+   SectorDyn *sd = NULL;
+
+   if (camd->sector >= 0)
+      sd = ldsectord(ld) + camd->sector;
+
+   v->height = camd->z;
+   v->angle = camd->angle + vx->angle;
+   v->x = camd->x;
+   v->y = camd->y;
+   v->sector = camd->sector;
+
+   NORMALIZE_ANGLE(v->angle);
+   if (vx->offset)
+      v->x += fixmul(vx->offset, fixcos(v->angle));
+   if (vx->offset)
+      v->y += fixmul(vx->offset, fixsin(v->angle));
+
+   if (camd->elev < -FIXED_PI/3) {
+      camd->elev = -FIXED_PI/3;
+   } else if (camd->elev > +FIXED_PI/3) {
+      camd->elev = +FIXED_PI/3;
+   }
+
+   if (sd && v->height < sd->floor + FIXED_ONE/4) {
+      v->height = sd->floor + (2 << 12);
+   }
+   if (sd && v->height > sd->ceiling - FIXED_ONE/4) {
+      v->height = sd->ceiling - (2 << 12);
+   }
+
+   v->horizon = -fixsin(camd->elev);
+}
+
+void
+update_camera(const LevData *ld, int cam, int follow)
+{
+   ThingDyn *td = ldthingd(ld) + follow;
+   ThingDyn *camd = ldthingd(ld) + cam;
+   SectorDyn *ts = NULL;
+   SectorDyn *cams = NULL;
+
+   fixed target_x, target_y, target_z; 
+   fixed target_angle, target_elev;
+   fixed aim_x, aim_y, aim_z;
+   fixed dx, dy, dz;
+
+   if (td->sector >= 0)
+      ts = ldsectord(ld) + td->sector;
+   if (camd->sector >= 0)
+      cams = ldsectord(ld) + camd->sector;
+
+   dx = fixcos(td->angle);
+   dy = fixsin(td->angle);
+
+   target_x = td->x - fixmul(dx, 5<<16);
+   target_y = td->y - fixmul(dy, 5<<16);
+   target_z = td->z + SHOOT_HEIGHT(td);
+
+   if (ts && cams) {
+      target_z = MIN(FIXED_HALF(MAX(ts->floor, cams->floor)) +
+                     FIXED_HALF(MIN(ts->ceiling, cams->ceiling)),
+		     target_z + (3<<16));
+   }
+
+   aim_x = td->x + fixmul(dx, 5<<16);
+   aim_y = td->y + fixmul(dy, 5<<16);
+   aim_z = td->z + SHOOT_HEIGHT(td);
+
+   dx = aim_x - camd->x;
+   dy = aim_y - camd->y;
+   dz = aim_z - camd->z;
+
+   target_angle = fix_vec2angle(dx, dy);
+   target_elev  = fix_vec2angle(fix_pythagoras(dx, dy), dz);
+
+   camd->dx = fixmul(target_x - camd->x, (65536/5));
+   camd->dy = fixmul(target_y - camd->y, (65536/5));
+   camd->dz = fixmul(target_z - camd->z, (65536/10));
+
+   camd->dangle = target_angle - camd->angle;
+   while (camd->dangle < -FIXED_PI) camd->dangle += FIXED_2PI;
+   while (camd->dangle > +FIXED_PI) camd->dangle -= FIXED_2PI;
+   camd->dangle = fixmul(camd->dangle, (65536/5));
+
+   camd->delev = target_elev - camd->elev;
+   camd->delev = fixmul(camd->delev, (65536/5));
+}
+
 /* These are now inlined */
 /*
 int

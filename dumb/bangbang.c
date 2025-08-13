@@ -46,8 +46,8 @@ thing_hurl(LevData *ld, int thnum, int mtype, fixed a, fixed elev,
    int missile = -1, i;
    fixed ofs = -arc / 2, step = 0;
    /* check that we aren't overspawning */
-   if (td->spawncount>=MAX_SPAWNCOUNT) {
-      logprintf(LOG_DEBUG,'O',"spawncount exceeded for %d",thnum);
+   if (td->spawncount >= MAX_SPAWNCOUNT) {
+      logprintf(LOG_DEBUG, 'O', "spawncount exceeded for %d", thnum);
       return -1;
    };
    if (num < 1)
@@ -104,28 +104,69 @@ static fixed
 wall_ray_intersection(const LevData *ld, fixed Vx, fixed Vy,
 		      fixed Ox, fixed Oy, int wall, int *side)
 {
-   fixed denominator;
+   fixed denominator, numerator;
+
+#ifndef HAVE_MMX
 
    const fixed Nx = -Vy;
    const fixed Ny = Vx;
    const fixed Wx = WALL_VER2(wall).x - WALL_VER1(wall).x;
    const fixed Wy = WALL_VER2(wall).y - WALL_VER1(wall).y;
-
    denominator = fixmul(Nx, Wx) + fixmul(Ny, Wy);	/* N dot W */
+   numerator = (fixmul(Nx, WALL_VER1(wall).x - Ox) +
+		fixmul(Ny, WALL_VER1(wall).y - Oy));
+  
+#else  /* HAVE_MMX */
+   
+   __asm__(
+	   /* load (Nx,Ny) into mm0 */
+	   "movd %3, %%mm0\n\t"
+	   "movd %2, %%mm2\n\t"
+	   "psllq $32, %%mm0\n\t"
+	   "por %%mm2, %%mm0\n\t"
+	   
+	   /* load (Wx,Wy) and (W1x,W1y) into mm2 and mm3 */
+	   "movq %4, %%mm2\n\t"
+	   "movq %5, %%mm3\n\t"
+	   "psubd %%mm3, %%mm2\n\t"
+	   "psubd %6, %%mm3\n\t"
+
+	   /* shift everything right by 8 bits to adjust for fixed point mul */
+	   "psrad $8, %%mm0\n\t"
+	   "psrad $8, %%mm2\n\t"
+	   "psrad $8, %%mm3\n\t"
+
+	   /* pack the regs up right ready for pmaddwd */
+	   "packssdw %%mm0, %%mm0\n\t"
+	   "packssdw %%mm3, %%mm2\n\t"
+	   
+	   /* two dot products in one insn: who says CISC is dead? */
+	   "pmaddwd %%mm2, %%mm0\n\t"
+	   
+	   /* now unpack the results */
+	   "movd %%mm0, %0\n\t"
+	   "psrlq $32, %%mm0\n\t"
+	   "movd %%mm0, %1\n\t"
+	   "emms\n\t"
+
+	   : "=mr"(denominator), "=mr"(numerator)
+	   : "mr"(-Vy), "mr"(Vx),
+	   "m"(WALL_VER2(wall).x), "m"(WALL_VER1(wall).x),
+	   "m"(Ox)
+	   );
+
+#endif /* HAVE_MMX */
+
    if (denominator > FIXED_ONE) {
-      const fixed t = fixmul(Nx, WALL_VER1(wall).x - Ox) +
-      fixmul(Ny, WALL_VER1(wall).y - Oy);
-      if (t > 0 || t < -denominator)
+      if (numerator > 0 || numerator < -denominator)
 	 return FIXED_ZERO;
       *side = 0;
-      return -fixdiv(t, denominator);
+      return -fixdiv(numerator, denominator);
    } else if (denominator < -FIXED_ONE) {
-      const fixed t = fixmul(Nx, WALL_VER1(wall).x - Ox) +
-      fixmul(Ny, WALL_VER1(wall).y - Oy);
-      if (t > 0 || t < -denominator)
+      if (numerator > 0 || numerator < -denominator)
 	 return FIXED_ZERO;
       *side = 1;
-      return FIXED_ONE + fixdiv(t, denominator);
+      return FIXED_ONE + fixdiv(numerator, denominator);
    } else
       return FIXED_ZERO;
 }
@@ -146,8 +187,8 @@ thing_can_shoot_at(const LevData *ld, int looker, int target)
    const ThingDyn *std = ldthingd(ld) + looker;
    const ThingDyn *ttd = ldthingd(ld) + target;
 
-   double pdist2,dist2 = pyth_sq(ttd->x - std->x, ttd->y - std->y);
-   fixed pdist,dist = FLOAT_TO_FIXED(sqrt(dist2));
+   double pdist2, dist2 = pyth_sq(ttd->x - std->x, ttd->y - std->y);
+   fixed pdist, dist = FLOAT_TO_FIXED(sqrt(dist2));
    fixed vx, vy, vz;
 
    if (dist < FIXED_EPSILON)

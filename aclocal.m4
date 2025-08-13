@@ -54,7 +54,7 @@ dnl DUMB_SYS_SHMAT_RMID
 dnl
 dnl Cache variable: dumb_cv_sys_shmat_rmid
 dnl
-dnl I copied this test from the gtk+-0.99.4/configure.in and made it a macro.
+dnl I copied this test from gtk+-0.99.4/configure.in and made it a macro.
 
 AC_DEFUN(DUMB_SYS_SHMAT_RMID,
 [AC_CACHE_CHECK(whether shmctl IPC_RMID allows subsequent attaches,
@@ -197,15 +197,38 @@ int func(int a, int b, int c, int d)
 {
   return a+b+c+d;
 }],
-      dumb_cv_c_attr_regparm="__attribute__((regparm(3)))",
-      dumb_cv_c_attr_regparm="",
-      dumb_cv_c_attr_regparm="")])
+      [dumb_cv_c_attr_regparm="__attribute__((regparm(3)))"],
+      [dumb_cv_c_attr_regparm=""],
+      [dumb_cv_c_attr_regparm=""])])
   if test -z "$dumb_cv_c_attr_regparm"; then
     AC_MSG_RESULT(no)
   else
     AC_MSG_RESULT($dumb_cv_c_attr_regparm)
   fi
   AC_DEFINE_UNQUOTED(ATTR_REGPARM, $dumb_cv_c_attr_regparm)])
+
+dnl Usage:
+dnl DUMB_CHECK_IFDEF(headerfile, symbol, yesaction, noaction)
+dnl HEADERFILE and SYMBOL must be literals.
+AC_DEFUN(DUMB_CHECK_IFDEF,
+  [pushdef([DUMB_IFDEF_VAR],
+    [dumb_cv_ifdef_]translit([$1_$2], [./+-], [__p_]))
+  AC_CACHE_CHECK([for $2 in <$1>],
+    DUMB_IFDEF_VAR,
+    [AC_TRY_CPP(
+[#include <$1>
+#ifndef $2
+#error $2 was not defined in <$1>
+#endif
+],
+    [DUMB_IFDEF_VAR=yes],
+    [DUMB_IFDEF_VAR=no])])
+  if test $DUMB_IFDEF_VAR = yes; then
+    ifelse([$3], [], [:], [$3])
+  ifelse([$4], [], [], [else
+    $4])
+  fi
+  popdef([DUMB_IFDEF_VAR])])
 
 # Do all the work for Automake.  This macro actually does too much --
 # some checks are only needed if your package does certain things.
@@ -631,11 +654,19 @@ strcasecmp strdup __argz_count __argz_stringify __argz_next])
    AC_SUBST(GT_YES)
 
    dnl If the AC_CONFIG_AUX_DIR macro for autoconf is used we possibly
-   dnl find the mkinstalldirs script in another subdir but ($top_srcdir).
-   dnl Try to locate is.
+   dnl find the mkinstalldirs script in another subdir but $(top_srcdir).
+   dnl Try to locate it.
+   dnl Format @MKINSTALLDIRS@ so that it can be used in Makefiles of all
+   dnl directories.  This may involve referring to make variables.
    MKINSTALLDIRS=
    if test -n "$ac_aux_dir"; then
-     MKINSTALLDIRS="$ac_aux_dir/mkinstalldirs"
+     dnl In Autoconf 2.12, $ac_aux_dir can be either absolute
+     dnl (if $srcdir was absolute) or relative to the top build directory.
+     if echo "$ac_aux_dir" | grep "^/" >/dev/null; then
+       MKINSTALLDIRS="$ac_aux_dir/mkinstalldirs"
+     else
+       MKINSTALLDIRS="\$(top_builddir)/$ac_aux_dir/mkinstalldirs"
+     fi
    fi
    if test -z "$MKINSTALLDIRS"; then
      MKINSTALLDIRS="\$(top_srcdir)/mkinstalldirs"

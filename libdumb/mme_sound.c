@@ -56,22 +56,23 @@ ConfItem sound_conf[] =
 /* size of window in hundredths of seconds */
 #define WINDOW_IN_HSEC 20
 
-/* fragment size in bytes */
-#define FRAGSIZE 4096
-#define NUMBUF 4
+/* number of buffers */
+#define NUMBUF 2
 
 /* a buffer */
 static void *fragbuf = NULL;
 
 /* some control data */
-static int speed;
 static fixed volume = FIXED_ONE_HALF;
 
 /* if driver has more than this many frags free, it's time to send more data */
-static int slush_fragments;
+static int slush_fragments=0;
 
 /* how big a fragment is in samples (not bytes) */
 static size_t fragment_size;
+
+/* how big a fragment is in bytes */
+static size_t bytes_per_frag;
 
 /* how big a sample is in bytes, taking in account the number of channels */
 static size_t sample_size;
@@ -104,13 +105,13 @@ my_callback(HANDLE hWaveOut,
 }
 
 void
-init_sound(int s)
+init_sound(int speed)
 {
    MMRESULT status;
    LPPCMWAVEFORMAT lpWaveFormat;
 
-   int bitness = cnf_bits, channels = cnf_stereo + 1;
-   int window, outdevs;
+   int bitness = cnf_bits, channels = (cnf_stereo ? 2 : 1);
+   int outdevs;
    enum sndmix_fmt sm_format;
 
    /* check, are we already inited? */
@@ -130,7 +131,7 @@ init_sound(int s)
 		_("Failed to allocate PCMWAVEFORMAT struct"));
       return;
    }
-   lpWaveFormat->wf.nSamplesPerSec = s;
+   lpWaveFormat->wf.nSamplesPerSec = speed;
    lpWaveFormat->wf.nChannels = channels;
    lpWaveFormat->wBitsPerSample = bitness;
    lpWaveFormat->wf.wFormatTag = WAVE_FORMAT_PCM;
@@ -160,20 +161,19 @@ init_sound(int s)
       logprintf(LOG_ERROR, 'S', _("Failed to allocate WAVEHDR struct"));
       return;
    }
-   /* figure out window size */
-   fragment_size = FRAGSIZE / sample_size;
-   window = (WINDOW_IN_HSEC * speed) / (100 * fragment_size);
-   if (window < 2)
-      window = 2;
 
    /* initialize sound mixer */
    sm_format = (bitness == 8) ? SNDMIX_FMT_U8 : SNDMIX_FMT_S16;
-   sndmix_init(s, sm_format, channels);
+   sndmix_init(speed, sm_format, channels);
    sample_size = sndmix_sample_size(sm_format) * channels;
 
+   /* figure out fragment size */
+   fragment_size = ((speed / (NUMBUF*100/WINDOW_IN_HSEC) ) & ~8);
+   bytes_per_frag = fragment_size * sample_size;
+
    /* allocate buffer */
-   if ((fragbuf = (Sample *) mms_audio_buffer
-	= mmeAllocBuffer(FRAGSIZE * NUMBUF))
+   if ((fragbuf = (void *) mms_audio_buffer
+	= mmeAllocBuffer(bytes_per_frag * NUMBUF))
        == NULL) {
       logprintf(LOG_ERROR, 'S', _("Failed to allocate shared audio buffer"));
       mmeFreeMem(WaveHeader);
@@ -184,10 +184,10 @@ init_sound(int s)
    logprintf(LOG_INFO, 'S',
 	     _("init_sound: mme_handle=%d fragsize=%d (%ld bytes)"),
 	     mms_device_handle, fragment_size,
-	     fragment_size * sample_size);
+	     bytes_per_frag);
    logprintf(LOG_INFO, 'S',
-	     _("init_sound: speed=%d window=%d slush=%d"),
-	     s, window, slush_fragments);
+	     _("init_sound: speed=%d slush=%d"),
+	     speed, slush_fragments);
 }
 
 /* stop playing now, and throw away anything you were about to play */
@@ -224,7 +224,6 @@ void
 play_sound(const unsigned char *buf, int count,
 	   SoundBalance bal, int myspeed)
 {
-   int i;
    /*logprintf(LOG_DEBUG, 'S', _("play_sound: %d bytes: %f seconds"),
       count, ((float) count) / ((float) myspeed)); */
    if (mms_device_handle == 0)
@@ -238,7 +237,6 @@ poll_sound()
    if (mms_device_handle == 0)
       return;
    while (1) {
-      int i;
       if (mmeCheckForCallbacks())
 	 mmeProcessCallbacks();
       /* if there is <=slush space free, don't stuff in any more */
@@ -252,8 +250,8 @@ poll_sound()
       mms_nextbuf++;
       if (mms_nextbuf == NUMBUF)
 	 mms_nextbuf = 0;
-      fragbuf = (Sample *) (mms_audio_buffer + mms_nextbuf * FRAGSIZE);
-      WaveHeader->dwBufferLength = FRAGSIZE;
+      fragbuf = (void *) ((char*)mms_audio_buffer + mms_nextbuf * bytes_per_frag);
+      WaveHeader->dwBufferLength = bytes_per_frag;
       if (waveOutWrite(mms_device_handle, WaveHeader,
 		       sizeof(WAVEHDR)) != MMSYSERR_NOERROR) {
 	 logprintf(LOG_INFO, 'S', _("waveOutWrite failed"));

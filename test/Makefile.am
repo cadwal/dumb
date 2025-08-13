@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
+EXTRA_DIST = .cvsignore
+
 if DUMB_CONFIG_LDWB
 ldwb_programs = ldltest
 else

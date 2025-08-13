@@ -1,8 +1,184 @@
+Installation of DUMB 0.13.4
+===========================
+
+The first part of this file describes DUMB-specific configuration
+options.  The second part, beginning with Basic Installation, contains
+generic installation instructions for GNU software.
+
+Compilation options
+-------------------
+
+`--disable-c'
+  Force C++ compilation.
+
+  DUMB is always compiled as C++ on big-endian machines; this option
+  forces C++ compilation on little-endian machines too.
+
+  I use this for hunting down language dependencies that could cause
+  compilation to fail on big-endian systems.
+
+  In the future, C compilation is likely to be dropped altogether.
+
+Optional parts
+--------------
+
+`--enable-libdumbworldb'
+  Enable compilation of the dumbworldb library.
+
+  This library should be the next-generation way of managing levels
+  and objects in memory.  It is not yet complete and the game
+  executables don't use it, so it is disabled by default.
+
+  If you enable libdumbworldb, you also get `test/ldltest' which can be
+  used to test some of its features.
+
+Graphics options
+----------------
+
+For each graphics system found, a separate DUMB executable will be built:
+
+	aadumb       AA-lib
+	dummydumb    dummy video
+	ggidumb      GGI
+	ldumb        SVGAlib
+	xdumb        X11 (including DGA)
+
+Each of these executables is only linked with the (possibly dynamic)
+libraries it requires, so you can copy some of them to machines that
+don't have all the libraries your build machine had.
+
+`--with-x'
+`--without-x'
+  Force or disable use of the X Window System.  If X is used, you'll
+  also get binaries for the programs XProtoThing and XWad.  To force
+  `--with-x', you may have to specify the X include and library
+  directories with `--x-includes=DIR' and `--x-libraries=DIR', unless
+  `configure' can autodetect them.  (In which case you wouldn't need to
+  give `--with-x' either.)
+
+`--enable-dummy-video'
+  Build the dummydumb dummy-video executable in addition to any
+  others.  Dummy video means that the program won't open any window or
+  such to show you what's going on; it'll just sit and calculate.  It
+  also means that you can't control the game.  And it's rather boring
+  to play.
+
+  Dummy video could be useful for a dedicated DUMB server that didn't
+  waste CPU time drawing the world.  In the current implementation
+  however, DUMB still renders the image as a bitmap even though it
+  doesn't draw it on the screen, and that slows things down.
+
+  Dummy video might also be useful if you really don't have any real
+  video library and still want to see that DUMB compiles and runs.
+  But in that case, you'd better get AA-lib.
+
+  In DUMB 0.11, dummy video was automatically enabled if no video
+  libraries were found.  Not any more.
+
+Sound options
+-------------
+
+The sound drivers differ from the video drivers in that you can only
+have one of them enabled.  If you force one of them to be used, all
+others will be disabled.  As soon as `configure' finds a driver that
+it can use, it'll stop looking.
+
+These options are usually not necessary, as `configure' detects your
+sound system automatically.
+
+`--without-sound'
+  Disable sound.  Overrides the options below.
+
+`--with-oss'
+`--without-oss'
+  Use or disable the Open Sound System that was created by Hannu
+  Savolainen for Linux and has been ported to BSD at least.  There are
+  free and commercial versions of OSS; DUMB doesn't care which one you
+  have.
+
+`--with-mme'
+`--without-mme'
+  Use or disable the MME library included in Digital Unix.  The
+  interface seems to stem from Microsoft Windows, so perhaps this driver
+  could be used in a Windows version of DUMB too.
+
+`--with-allegro'
+`--without-allegro'
+  Use or disable the Allegro library.  It is generally used with the
+  DJGPP compiler suite under MS-DOS.  Even if you disable Allegro sound
+  with `--without-allegro', Allegro is still needed for graphics.
+
+DOOM and Heretic options
+------------------------
+
+DUMB supports playing DOOM and Heretic levels if you tell `configure'
+where the WADs are.
+
+The GNU Coding Standards say that --with options shouldn't be used for
+file names.  I'll fix this in a future version of DUMB.
+
+`--with-doom-wad=FILE'
+  Use doom*.wad from FILE.  It is an error if the file doesn't exist
+  or is unreadable or a directory.
+
+  FILE must be an absolute filename.  Relative ones will cause an
+  error when compiling the patch WADs.
+
+  If this option isn't given, `configure' will look for doom*.wad in
+  some obvious places.  See `configure.in' for the list.
+
+`--without-doom-wad'
+  Don't look for doom*.wad.
+
+`--with-heretic-wad=FILE'
+`--without-heretic-wad'
+  As above but for heretic.wad.
+
+Framebuffer options
+-------------------
+
+DUMB supports framebuffers that have 8, 16 or 32 bits per pixel.  The
+renderer is compiled for each BPP value separately, the versions are
+all linked together, and DUMB will choose the right one when run.  If
+you don't need support for some BPP value, you can leave it out to
+speed up compilation:
+
+`--disable-8bpp'
+  Disable support of framebuffers with 8 bits per pixel.
+
+`--disable-16bpp'
+  Disable support of framebuffers with 16 bits per pixel.
+
+`--disable-32bpp'
+  Disable support of framebuffers with 32 bits per pixel.
+
+If you disable all BPPs, `configure' will warn you but continue.  The
+game can't then be played.  Tools like `ptcomp' will work, though.
+
+Since these options disable features from the program without making
+compilation much faster after all, they may be removed in some later
+version of DUMB.
+
+Networking
+----------
+
+This is like sound; you can only choose one of these options.
+Currently, only Unix networking (Berkeley sockets) is supported.
+
+`--without-net'
+  Disable networking.  Actually, this uses a dummy network driver, but
+  you don't have to care of that.
+
+`--with-unix-net'
+`--without-unix-net'
+  Force or disable master-slave Unix networking.  This uses UDP
+  datagrams and system calls gethostbyname(), htons(), socket(),
+  bind(), fcntl(), close(), recvfrom(), select() and sendto().
+
 Basic Installation
 ==================
 
-   These are generic installation instructions.  DUMB-specific things
-are documented in docs/configure.txt.
+   These are generic installation instructions.
 
    The `configure' shell script attempts to guess correct values for
 various system-dependent variables used during compilation.  It uses
@@ -41,7 +217,9 @@ The simplest way to compile this package is:
      the package.
 
   4. Type `make install' to install the programs and any data files and
-     documentation.
+     documentation.  Or type `make install-strip' to remove debug
+     information from the programs in the process.  This makes them
+     smaller.
 
   5. You can remove the program binaries and object files from the
      source code directory by typing `make clean'.  To also remove the

@@ -1,30 +1,41 @@
 ## Process this file with automake to produce Makefile.in
 
+EXTRA_DIST = $(rpmstem).spec .cvsignore
+MAINTAINERCLEANFILES = $(rpmspec)
+
 if DUMB_CONFIG_LDWB
-LDWB_SUBDIR = libdumbworldb
+ldwb_subdir = libdumbworldb
 else
-LDWB_SUBDIR = 
+ldwb_subdir = 
 endif
 
-SUBDIRS = libmissing libdumbutil libdumbwad $(LDWB_SUBDIR)		\
+SUBDIRS = libmissing libdumbutil libdumbwad $(ldwb_subdir)		\
 libdumbrender libdumb intl dumb xwad ptcomp tool doom htic test po	\
-docs
+docs aux
 
 # stuff for making Red Hat style rpms
-RPMRELEASE = 1
-RPMSTEM	= $(PACKAGE)-$(VERSION)-$(RPMRELEASE)
-RPMSPEC = $(srcdir)/$(RPMSTEM).spec
-RPMIN	= rpmspec.m4 
-EXTRA_DIST = $(RPMSTEM).spec $(RPMIN)
-MAINTAINERCLEANFILES = $(RPMSPEC)
+rpmrelease = 1
+rpmstem	= $(PACKAGE)-$(VERSION)-$(rpmrelease)
+rpmspec = $(srcdir)/$(rpmstem).spec
+rpmin	= aux/rpmspec.m4
 
-rpmspec: $(RPMSPEC)
+# automated Linux Software Map entry generation
+lsmin	= aux/dumb-lsm.in
 
-$(RPMSPEC): $(RPMIN)
-	m4 -DRPMSTEM=$(RPMSTEM) -DRPMPACKAGE=$(PACKAGE) -DRPMVERSION=$(VERSION) -DRPMRELEASE=$(RPMRELEASE) $^ >$@
+rpmspec: $(rpmspec)
+
+$(rpmspec): $(rpmin)
+	m4 -DRPMSTEM=$(rpmstem) -DRPMPACKAGE=$(PACKAGE) \
+	   -DRPMVERSION=$(VERSION) -DRPMRELEASE=$(rpmrelease) \
+	   $^ >$@
 
 # This is only meant to be run by a maintainer, so it's safe to use
 # utilities that people may not have.
+# 
+# To avoid unnecessary rebuilds, the list of names is kept in
+# alphabetical order.  For efficiency, sorting is done at the end of
+# the pipeline, where unnecessary items have already been filtered
+# out.
 update-po:
 	rm -f POTFILES.in.tmp
 	( cd $(srcdir) \
@@ -34,8 +45,9 @@ update-po:
 	  && find . -name "*.[ch]" \
 		| xargs -r grep -l '_("' \
 		| sed -e 's,^\./,,' \
+		| sort \
 	) > POTFILES.in.tmp
-	@if cmp -s POTFILES.in.tmp $(srcdir)/po/POTFILES.in; then \
+	if cmp -s POTFILES.in.tmp $(srcdir)/po/POTFILES.in; then \
 	  echo "$(srcdir)/po/POTFILES.in unchanged"; \
 	  rm POTFILES.in.tmp; \
 	else \
@@ -45,21 +57,31 @@ update-po:
 	fi
 	cd po && $(MAKE) update-po
 
-# Automake sets $(distdir) to something like dumb-0.13.2
-$(distdir).lsm: $(distdir).tar.gz $(srcdir)/docs/maint/lsm-template 	
-	( LC_ALL=POSIX;	export LC_ALL;			\
-	  targz=$(distdir).tar.gz;			\
-	  bytes=`wc -c <$$targz`;			\
-	  kilos=`expr \( $$bytes + 500 \) / 1000`;	\
-	  date=`date +%d%b%y | tr "a-z" "A-Z"`;		\
-	  sed -e "s/@LSM-VERSION@/$(VERSION)/"		\
-	      -e "s/@LSM-DATE@/$$date/"			\
-	      -e "s/@LSM-KILOS@/$$kilos/"		\
-	      -e "s/@LSM-TARGZ@/$$targz/"		\
-	      < $(srcdir)/docs/maint/lsm-template	\
-	      > $@					\
+$(PACKAGE)-$(VERSION).lsm: $(lsmin) $(PACKAGE)-$(VERSION).tar.gz
+	( LC_ALL=POSIX;	export LC_ALL; \
+	  targz=$(PACKAGE)-$(VERSION).tar.gz; \
+	  bytes=`wc -c <$$targz`; \
+	  kilos=`expr \( $$bytes + 500 \) / 1000`; \
+	  date=`date +%d%b%y | tr "a-z" "A-Z"`; \
+	  sed -e "s/@LSM-VERSION@/$(VERSION)/" \
+	      -e "s/@LSM-DATE@/$$date/" \
+	      -e "s/@LSM-KILOS@/$$kilos/" \
+	      -e "s/@LSM-TARGZ@/$$targz/" \
+	      < $< \
+	      > $@ \
 	)
 
-kn-dist: rpmspec dist $(distdir).lsm
+# To avoid problems with parallel make, the lsm is made separately.
+kn-dist: dist
+	$(MAKE) $(PACKAGE)-$(VERSION).lsm
 
-.PHONY: update-po kn-dist
+# This rule lets you do "make foo/Makefile" after adding a subdirectory.
+#
+# TODO: Check that SunOS make doesn't choke on this.  It needn't
+# understand the rule, only accept it.
+%/Makefile: $(srcdir)/%/Makefile.am
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --no-force --verbose $@
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+.PHONY: rpmspec update-po kn-dist

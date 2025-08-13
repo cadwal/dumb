@@ -1,0 +1,14 @@
+/**
+ **  Camera
+ **/
+
+
+PhaseTable Camera
+  Phase IDLE A Goto IDLE
+
+Proto Camera 8888
+  Size 1 1
+  Mass 0
+/* Phantom */  /* Note: what we really want is collision with
+                * _walls_ but not _things_.
+		*/

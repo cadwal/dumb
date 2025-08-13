@@ -1,6 +1,6 @@
 * Highest-priority queue:
 fix all configure/compile/install bugs
-finish libdumbworldb
+rewrite libdumbworldb in C++
 separate renderer from rest of code again
 speed up rendering by checking recursively which sectors can be seen
 fix wall collision checks

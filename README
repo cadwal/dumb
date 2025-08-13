@@ -134,7 +134,7 @@ If you edit the source, you may need the following packages:
 
 Supported but not required:
 - AA-lib 1.2                    <aalib.h>
-- GGI 0.0.9 (Dali)              <ggi/libggi.h>
+- GGI 0.1.0 (Degas)             <ggi/ggi.h>
 - grx20 for DOS                 <grx20.h>
 - MIT-SHM extension             <X11/extensions/XShm.h>
 - MME sound for Digital Unix    <mme/mme_api.h>
@@ -187,7 +187,7 @@ them if you do not have a copy of Doom or Heretic to play with.  They
 are in dumb-game-<version>.tar.gz.  To install them, you must first
 install the engine and utilities.
 
-You should get a directory called something like "dumb-0.13.0", with a
+You should get a directory called something like "dumb-0.13.4", with a
 configure script, some other files and several subdirectories in it.
 Change to the directory and run the script.  (See the files INSTALL
 and docs/configure.txt for the options you can give to it.)  It'll

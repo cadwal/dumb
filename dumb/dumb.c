@@ -118,6 +118,7 @@ ConfItem mainconf[] =
    CONFB("single", NULL, 0, N_("force single player mode")),
    CONFI("view-rotate", NULL, 0, N_("angle to rotate view by"), 0),
    CONFI("max-frames", NULL, 0, N_("maximum frames to render"), 0),
+   CONFB("third-person", NULL, 0, N_("enable 3rd person perspective")),
    CONFITEM_END
 };
 #define cnf_auto_save (mainconf[0].intval)
@@ -153,6 +154,7 @@ ConfItem mainconf[] =
 #define cnf_single (mainconf[29].intval)
 #define cnf_vt_rotate (mainconf[30].intval)
 #define cnf_maxframes (mainconf[31].intval)
+#define cnf_third_person (mainconf[32].intval)
 
 ConfModule dumbconf[] =
 {
@@ -267,6 +269,17 @@ do_preload(LevData *ld, int bpp)
    }
 }
 
+#ifdef HAVE_MMX
+void
+sigill_handler_mmx(int i)
+{
+   fputs(_("This program was compiled to use MMX, but your processor\n"
+	   "does not appear to support it.\n"),
+	 stderr);
+   exit(EXIT_FAILURE);
+}
+#endif
+
 /* control how much we're allowed to speed up the action */
 #define MAXTICKS (500/MSEC_PER_TICK)
 
@@ -278,10 +291,11 @@ main(int argc, char **argv)
    View view;
    ViewTrans viewtrans;
    ThingDyn *td;
+   ThingDyn *camd;
    const SectorDyn *sd;
    int tt, frames = 0;
    int i;
-   int follow;
+   int follow, camera = -1;
    FILE *frec = NULL, *fplay = NULL;
    int want_sound = 1;
    int seen_too_fast_msg = 0;
@@ -297,7 +311,11 @@ main(int argc, char **argv)
 
    /* some default places to look for wads
       this will help make rpm installation easier */
-   static const char *builtin_wadpath[]={
+   static const char *const builtin_wadpath[] = {
+      ".",
+#ifdef DUMB_CONFIG_DUMBDATADIR
+      DUMB_CONFIG_DUMBDATADIR,
+#endif
       "/usr/share/dumb",
       "/usr/local/share/dumb",
 #ifdef DUMB_CONFIG_DOOM_PATH
@@ -306,7 +324,8 @@ main(int argc, char **argv)
 #ifdef DUMB_CONFIG_HERETIC_PATH
       DUMB_CONFIG_HERETIC_PATH,
 #endif
-      NULL}; 
+      NULL
+   };
    const char *const *wadpath;
 
    INIT_RENDERER_FN *init_renderer = NULL;
@@ -319,6 +338,20 @@ main(int argc, char **argv)
    bindtextdomain(PACKAGE, LOCALEDIR);
    textdomain(PACKAGE);
 #endif /* ENABLE_NLS */
+
+#ifdef HAVE_MMX
+   /* Before we do anything else, check that architecture matches our
+    * arch-specific hacks.  This is however done after gettext
+    * initialisation in order to get the error message translated.
+    * And we know gettext doesn't use MMX anyway.
+    *
+    * In some systems, logprintf() might use MMX to write to a
+    * framebuffer, so sigill_handler_mmx() displays the error message
+    * with fputs() instead. */
+   signal(SIGILL, sigill_handler_mmx);
+   __asm__("emms\n\t");
+   signal(SIGILL, SIG_DFL);
+#endif /* HAVE_MMX */
 
    /* Always log to stdout until the configuration has been parsed.  */
    log_stdout();
@@ -487,14 +520,21 @@ main(int argc, char **argv)
 
    td = ldthingd(ld) + (follow = ld->player[ld->localplayer]);
 
+   if (cnf_third_person && find_protothing(8888) != NULL) {
+      camera = new_thing(ld, 8888, td->x, td->y, td->z);
+      camd = ldthingd(ld) + camera;
+   } else {
+      camd = td;
+   }
+
    init_view(&view);
    view.angle = 0;
-   view.x = td->x;
-   view.y = td->y;
-   if (td->sector == -1)
+   view.x = camd->x;
+   view.y = camd->y;
+   if (camd->sector == -1)
       logprintf(LOG_ERROR, 'D', _("Can't find sector for player"));
-   view.sector = td->sector;
-   sd = ldsectord(ld) + td->sector;
+   view.sector = camd->sector;
+   sd = ldsectord(ld) + camd->sector;
    init_renderer(width, height, real_width / xmul, height);
    init_draw(width, height, bpp, real_width / xmul);
 
@@ -555,12 +595,20 @@ main(int argc, char **argv)
    if (!setjmp(alarm_jb)) {
       signal(SIGALRM, alarm_handler);
 #endif
+
       while (1) {
 	 PlayerInput in;
 	 int player_alive = td->hits > 0;
 	 if (ldthingd(ld)[follow].proto == NULL)
 	    follow = ld->player[ld->localplayer];
-	 thing_to_view(ld, follow, &view, &viewtrans);
+
+	 if (camera < 0) {
+	    thing_to_view(ld, follow, &view, &viewtrans);
+	 } else {
+	    update_camera(ld, camera, follow);
+	    camera_to_view(ld, camera, &view, &viewtrans);
+	 }
+	    
 	 dsound_setview(&view);
 	 fb = video_newframe();
 	 if (rend2fb)
@@ -619,6 +667,12 @@ main(int argc, char **argv)
 	    levinfo_next(ld, want_new_lvl > 1);
 	    reset_local_gettables(ld);
 	    td = ldthingd(ld) + (follow = ld->player[ld->localplayer]);
+	    if (camera < 0) {
+		camd = td;
+	    } else {
+		camera = new_thing(ld, 8888, td->x, td->y, td->z);
+		camd = ldthingd(ld) + camera;
+	    }
 	    video_winstuff(ld->name, vwidth, vheight);
 	    want_new_lvl = 0;
 	    continue;

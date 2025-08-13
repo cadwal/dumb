@@ -3,6 +3,7 @@ Josh Parsons
 http://schlick.anu.edu.au/~josh
 	Developed DUMB from wt.
 	Most of the code is his.
+	MMX support
 
 Chris Laurel
 	The wt (What's That?) 3D engine, on which DUMB is based.
@@ -15,6 +16,7 @@ http://www.e.kth.se/~e94_msu/
 	timer.c patch
 	fbrerender
 	GGI timer use fix
+	patch to use dirname instead of ${a%b} in configure.in
 
 Andrew Apted
 <ajapted@ggi-project.org>
@@ -27,6 +29,9 @@ Andrew Apted
 	heretic .pt tweaks
 	heretic ambient sounds
 	monster wakefulness patch
+	third-person perspective
+	bug fix to make LT_IMPASSIBLE lines stop beasties only ("missile fix")
+	scrolling the sky vertically & Heretic sky support ("sky fix")
 
 Steffen Moeller
 	bugfixes
@@ -70,3 +75,8 @@ Ulf Axelsson
 <cadwal@hem2.passagen.se>
 http://hem2.passagen.se/cadwal
 	DJGPP support (dosdumb)
+
+Markus F.X.J. Oberhumer
+<k3040e4@c210.edvz.uni-linz.ac.at>
+	Patched configure.in and tool/Makefile to use -lnetpbm instead
+	of -lppm -lpgm -lpbm if necessary.

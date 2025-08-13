@@ -432,7 +432,9 @@ update_things(LevData *ld, int tickspassed)
 	       continue;
 
 	    /* find useful values for this wall */
-	    if (back < 0 || (ldline(ld)[wall].flags & LINE_IMPASSIBLE)) {
+	    if (back < 0 || 
+	        ((ldline(ld)[wall].flags & LINE_IMPASSIBLE) &&
+		 (td->proto->flags & PT_BEASTIE))) {
 	       headroom = FIXED_MIN;
 	       step_height = FIXED_MAX;
 	    } else {

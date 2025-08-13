@@ -42,7 +42,7 @@ dnl DUMB_SYS_SHMAT_RMID
 dnl
 dnl Cache variable: dumb_cv_sys_shmat_rmid
 dnl
-dnl I copied this test from the gtk+-0.99.4/configure.in and made it a macro.
+dnl I copied this test from gtk+-0.99.4/configure.in and made it a macro.
 
 AC_DEFUN(DUMB_SYS_SHMAT_RMID,
 [AC_CACHE_CHECK(whether shmctl IPC_RMID allows subsequent attaches,
@@ -185,12 +185,35 @@ int func(int a, int b, int c, int d)
 {
   return a+b+c+d;
 }],
-      dumb_cv_c_attr_regparm="__attribute__((regparm(3)))",
-      dumb_cv_c_attr_regparm="",
-      dumb_cv_c_attr_regparm="")])
+      [dumb_cv_c_attr_regparm="__attribute__((regparm(3)))"],
+      [dumb_cv_c_attr_regparm=""],
+      [dumb_cv_c_attr_regparm=""])])
   if test -z "$dumb_cv_c_attr_regparm"; then
     AC_MSG_RESULT(no)
   else
     AC_MSG_RESULT($dumb_cv_c_attr_regparm)
   fi
   AC_DEFINE_UNQUOTED(ATTR_REGPARM, $dumb_cv_c_attr_regparm)])
+
+dnl Usage:
+dnl DUMB_CHECK_IFDEF(headerfile, symbol, yesaction, noaction)
+dnl HEADERFILE and SYMBOL must be literals.
+AC_DEFUN(DUMB_CHECK_IFDEF,
+  [pushdef([DUMB_IFDEF_VAR],
+    [dumb_cv_ifdef_]translit([$1_$2], [./+-], [__p_]))
+  AC_CACHE_CHECK([for $2 in <$1>],
+    DUMB_IFDEF_VAR,
+    [AC_TRY_CPP(
+[#include <$1>
+#ifndef $2
+#error $2 was not defined in <$1>
+#endif
+],
+    [DUMB_IFDEF_VAR=yes],
+    [DUMB_IFDEF_VAR=no])])
+  if test $DUMB_IFDEF_VAR = yes; then
+    ifelse([$3], [], [:], [$3])
+  ifelse([$4], [], [], [else
+    $4])
+  fi
+  popdef([DUMB_IFDEF_VAR])])

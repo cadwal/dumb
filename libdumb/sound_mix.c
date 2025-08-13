@@ -1,8 +1,8 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumb/sound_mix.c: Mixing sounds to one stream.
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -238,17 +238,102 @@ calc_mono_16(MONO_16 *buf, size_t len, const SQEnt *ent)
    return nb >> 8;
 }
 
+/* 
+   I have MMX-ified just this version of calc_*_* because 
+   1) MMX is less useful for calc_*_8, as it has no packed byte mul
+   2) the combination of MMX and mono 16bit sound must be VERY unusual
+*/
+
 static size_t
 calc_stereo_16(STEREO_16 *buf, size_t len, const SQEnt *ent)
 {
    unsigned ns = 0, nb = 0;
+
+#ifdef HAVE_MMX
+
+   /* fill in some constants */
+   __asm__("movd %0, %%mm2\n\t"::"r"(0x00800080)); /* (128,128,0,0) -> mm2 */
+   __asm__("pxor %%mm1, %%mm1\n\t"::""(0)); /* 0 -> mm1 */
+
+   /* load (lvol,rvol,lvol,rvol) -> mm3 */
+   __asm__(
+	   "movq %0, %%mm3\n\t"
+	   "psrad $10, %%mm3\n\t"
+	   "packssdw %%mm3, %%mm3\n\t"
+	   ::"m"(ent->lvol)
+	   );
+
+   while (ns < (len&~1) && ((nb+ent->step) >> 8) < ent->count) {
+
+#ifdef SOUND_MIX_CORE_NO_MMX /* for testing purposes */
+
+      int scaled0 = (ent->data[nb >> 8] - 0x80) * (256 / VOLUME_DIVISOR);
+      int scaled1 = (ent->data[(nb+ent->step) >> 8] - 0x80) * (256 / VOLUME_DIVISOR);
+      buf[ns].left += fixmul(scaled0, ent->lvol);
+      buf[ns].right += fixmul(scaled0, ent->rvol);
+      buf[ns+1].left += fixmul(scaled1, ent->lvol);
+      buf[ns+1].right += fixmul(scaled1, ent->rvol);
+
+#else  /* !SOUND_MIX_CORE_NO_MMX */
+
+      __asm__(
+	      /* (s0,s1,0,0,0,0,0,0) -> mm0
+		 we do this seperately as it trashes eax */
+	      "xorl %%eax, %%eax\n\t"
+	      "movb %0, %%al\n\t"
+	      "movb %1, %%ah\n\t"
+	      "movd %%eax, %%mm0\n\t"
+	      :: "m"(ent->data[nb >> 8]), "m"(ent->data[(nb+ent->step) >> 8])
+	      : "eax"
+	      );
+
+      __asm__(
+	      /* (s0,s1,0,0) -> mm0 */
+	      /* mm1 is assumed to be all zeros */
+	      "punpcklbw %%mm1, %%mm0\n\t"
+	      
+	      /* subtract 128 from both */
+	      /* mm2 is assumed to be (128,128,0,0) */
+	      "psubw %%mm2, %%mm0\n\t"
+
+	      /* and word-double mm0 to be (s0,s0,s1,s1) */
+	      "punpcklwd %%mm0, %%mm0\n\t"
+
+	      /* multiply by (lvol,rvol,lvol,rvol) in mm3 */
+	      "pmullw %%mm3, %%mm0\n\t"
+	      
+	      /* and add to nb */
+	      "paddsw %0, %%mm0\n\t"
+	      "movq %%mm0, %0\n\t"
+	      : "m="(buf[ns])
+	      );
+
+#endif /* !SOUND_MIX_CORE_NO_MMX */
+
+      ns++;
+      ns++;
+      nb += ent->step;
+      nb += ent->step;
+   }
+
+   /* clean up MMX/FP state */
+   __asm__("emms\n\t");
+
+   /* ignore any single bytes left over */
+   if( (nb >> 8) < 1 && ent->count == 1) nb+=1<<8;
+
+#else /* !HAVE_MMX */
+
    while (ns < len && (nb >> 8) < ent->count) {
       int scaled = (ent->data[nb >> 8] - 0x80) * (256 / VOLUME_DIVISOR);
       buf[ns].left += fixmul(scaled, ent->lvol);
       buf[ns].right += fixmul(scaled, ent->rvol);
       ns++;
       nb += ent->step;
-   }
+      }
+
+#endif /* !HAVE_MMX */
+
    return nb >> 8;
 }
 

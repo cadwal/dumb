@@ -1,14 +1,14 @@
-# NB: this file was automatically generated from rpmspec.m4
+# NB: this file was automatically generated from aux/rpmspec.m4
 # If you need to change it, please edit that file (see also 
 # Makefile.am, which contains the m4 invocation to build it).
 
 Summary: Doom-compatible 3D game engine
 Name: dumb
-Version: 0.13.3
+Version: 0.13.4
 Release: 1
 Copyright: GPL
 Group: Games
-Source: samba.anu.edu.au:/pub/dumb/source/dumb-0.13.3.tar.gz
+Source: samba.anu.edu.au:/pub/dumb/source/dumb-0.13.4.tar.gz
 
 %description
 This program allows you to build and play 3D games rather after the

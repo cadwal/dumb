@@ -12,6 +12,8 @@ Q4. Where are the netpbm sources?
 Q5. Why does it use -I. -I. -I.. -I.. -I../libmissing -I../intl
 when compiling?
 
+Q6. The linker says dcgettext__ is undefined.
+
 * Q1. random() is declared in both stdlib.h and pbmplus.h.
 
 If you have an ANSI C system, define SYSV in pbmplus.h.  This should
@@ -71,3 +73,12 @@ lack.
 
 -I../intl is for libintl.h in GNU gettext.
 
+* Q6. The linker says dcgettext__ is undefined.
+
+This happened to me a couple of times when hacking the source.  It
+means DUMB was compiled with the libintl.h of the included gettext
+library which defines dcgettext__, but linked with your system gettext
+library which defines __dcgettext.
+
+The solution is to remove intl/libintl.h (which is a copy of
+$top_srcdir/intl/libgettext.h) and recompile all files (make clean).

@@ -1,19 +1,24 @@
 ## Process this file with automake to produce Makefile.in
 
+EXTRA_DIST = WAFFLE $(d4d_sources) .cvsignore
+
+CLEANFILES = $(d4d_lumps) PLAYPAL.lump doom4dum.wad
+
 if DUMB_CONFIG_DOOM
 pkgdata_DATA = doom4dum.wad
 else
 pkgdata_DATA = 
 endif
 
-CLEANFILES = $(d4d_lumps) PLAYPAL.lump doom4dum.wad
+d4d_pt_lumps = ANIMTEX.lump GETTABLE.lump LEVINFO.lump LINETYPE.lump	\
+PHASES.lump PROTOS.lump SECTTYPE.lump SOUNDS.lump
 
-d4d_pt_lumps = ANIMTEX.lump GETTABLE.lump LEVINFO.lump LINETYPE.lump \
- PHASES.lump PROTOS.lump SECTTYPE.lump SOUNDS.lump
 d4d_lumps = $(d4d_pt_lumps) COLORM16.lump COLORM32.lump DUMBLOGO.lump
 # Keep doom.pt first in this list so $< works right.
-d4d_sources = doom.pt animtex.pt furnishings.pt generic.pt gettables.pt \
- levels.pt linetypes.pt missiles.pt monsters.pt sectortypes.pt weapons.pt
+
+d4d_sources = doom.pt animtex.pt camera.pt furnishings.pt generic.pt	\
+gettables.pt levels.pt linetypes.pt missiles.pt monsters.pt		\
+sectortypes.pt weapons.pt
 
 # Always use the latest versions.  Use full filenames so targets can
 # depend on them and be rebuilt if the executables change.
@@ -53,5 +58,3 @@ COLORM32.lump: PLAYPAL.lump $(ppmtodumb)
 
 doom4dum.wad: $(wadtool) $(d4d_lumps)
 	$(wadtool) -w $@ -f $(srcdir)/WAFFLE $(d4d_lumps)
-
-EXTRA_DIST = WAFFLE $(d4d_sources)

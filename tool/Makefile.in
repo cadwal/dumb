@@ -69,8 +69,11 @@ DUMB_CONFIG_SOUND = @DUMB_CONFIG_SOUND@
 DUMB_CONFIG_SOUND_LDADD = @DUMB_CONFIG_SOUND_LDADD@
 DUMB_DGA_LDADD = @DUMB_DGA_LDADD@
 DUMB_FBREREND_SOURCES = @DUMB_FBREREND_SOURCES@
+DUMB_GGI_LDADD = @DUMB_GGI_LDADD@
+DUMB_GGI_SOURCES = @DUMB_GGI_SOURCES@
 DUMB_NETWORK_LDADD = @DUMB_NETWORK_LDADD@
 DUMB_NETWORK_SOURCES = @DUMB_NETWORK_SOURCES@
+DUMB_PPM_LDADD = @DUMB_PPM_LDADD@
 DUMB_RENDER_SOURCES = @DUMB_RENDER_SOURCES@
 DUMB_XKB_LDADD = @DUMB_XKB_LDADD@
 DUMB_XSHM_LDADD = @DUMB_XSHM_LDADD@
@@ -97,6 +100,8 @@ USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 l = @l@
 
+EXTRA_DIST = WADTOOL.PLAN .cvsignore
+
 @DUMB_CONFIG_X_TRUE@x_noinst_programs = mkdfnt
 @DUMB_CONFIG_X_FALSE@x_noinst_programs = 
 
@@ -108,7 +113,7 @@ noinst_PROGRAMS = $(x_noinst_programs)
 
 x_ldadd = $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS)
 
-ppm_ldadd = -lppm -lpgm -lpbm
+ppm_ldadd = @DUMB_PPM_LDADD@
 
 # DUMB libraries are in the build tree, so don't use $(srcdir).
 LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a			\
@@ -123,7 +128,7 @@ dark2trans_LDADD = $(LDADD) $(ppm_ldadd)
 CC = $(CXX_HACK_CC)
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/libmissing -I../intl
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/aux/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
 PROGRAMS =  $(bin_PROGRAMS) $(noinst_PROGRAMS)

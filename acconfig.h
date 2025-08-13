@@ -1,3 +1,7 @@
+/* acconfig.h
+ * Process this file with autoheader to produce config.h.in,
+ * which config.status then translates to config.h.  */
+
 /* Define to the name of the distribution.  */
 #undef PACKAGE
 
@@ -18,9 +22,6 @@
 
 /* Define as 1 if you have the stpcpy function.  */
 #undef HAVE_STPCPY
-
-/* Define as the directory to load locale data from.  */
-#undef LOCALEDIR
 
 /* Define as a function attribute to pass parameters in registers.
  * Define as empty if register parameters aren't supported.
@@ -57,14 +58,26 @@
  * marked for deletion with shmctl(id, IPC_RMID, NULL).  */
 #undef DUMB_CONFIG_SYS_SHMAT_RMID
 
-/* A standard place to look for Doom .WADs */
-#undef DUMB_CONFIG_DOOM_PATH
-
-/* A standard place to look for HERETIC .WADs */
-#undef DUMB_CONFIG_HERETIC_PATH
-
 /* Define to enable libdumbworldb */
 #undef DUMB_CONFIG_LDWB
+
+
+/* These four should be moved to dircfg.h but I don't know how to do
+ * that with Autoconf.  */
+
+/* Define as the directory to load locale data from.  */
+#undef LOCALEDIR
+
+/* A standard place to look for Doom .WADs.
+ * In GNUspeak, "path" means a search path; since this variable can
+ * name only one directory, it's _DIR.  */
+#undef DUMB_CONFIG_DOOM_DIR
+
+/* A standard place to look for HERETIC .WADs */
+#undef DUMB_CONFIG_HERETIC_DIR
+
+/* ${datadir}/dumb; used in default wadpath */
+#undef DUMB_CONFIG_DUMBDATADIR
 
 @BOTTOM@
 

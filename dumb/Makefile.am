@@ -1,12 +1,13 @@
 ## Process this file with automake to produce Makefile.in
 
+# These sources aren't currently used at all but I think it's better to
+# keep them in the distribution.
+EXTRA_DIST = vgagl_video.c linuxfb_video.c .cvsignore
+
 render_objs = $(DUMB_RENDER_SOURCES:.c=.o)
 fbrerend_objs = $(DUMB_FBREREND_SOURCES:.c=.o)
 network_objs = $(DUMB_NETWORK_SOURCES:.c=.o)
-
-# These sources aren't currently used at all but I think it's better to
-# keep them in the distribution.
-EXTRA_DIST = vgagl_video.c
+ggi_objs = $(DUMB_GGI_SOURCES:.c=.o)
 
 if DUMB_CONFIG_AALIB
 aalib_bin_programs = aadumb
@@ -65,7 +66,7 @@ extra_sources = render8.c render16.c render32.c generic_fbrerend.c	\
 le32_fbrerend.c le64_fbrerend.c dummy_net.c unix_net.c
 
 dummy_ldadd = 
-ggi_ldadd = -lggi
+ggi_ldadd = $(DUMB_GGI_LDADD)
 svgalib_ldadd = -lvga
 x_ldadd = $(X_PRE_LIBS) $(DUMB_DGA_LDADD) $(DUMB_XSHM_LDADD)	\
 $(DUMB_XKB_LDADD) -lX11 $(X_EXTRA_LIBS)
@@ -80,8 +81,10 @@ dummydumb_SOURCES = dummy_video.c dummy_input.c keymapdummy.c	\
 $(core_sources)
 EXTRA_dummydumb_SOURCES = $(extra_sources)
 
-ggidumb_SOURCES = ggi_video.c $(keyname_sources) $(core_sources)
-EXTRA_ggidumb_SOURCES = $(extra_sources)
+ggidumb_SOURCES = $(DUMB_GGI_SOURCES) $(keyname_sources)	\
+$(core_sources)
+EXTRA_ggidumb_SOURCES = ggi_olddegas_video.c ggi_degas_video.c	\
+$(extra_sources)
 
 ldumb_SOURCES = linux_video.c linux_input.c keymapdummy.c	\
 $(core_sources)
@@ -110,8 +113,8 @@ aadumb_DEPENDENCIES = $(dependencies)
 dummydumb_LDADD = $(LDADD) $(dummy_ldadd)
 dummydumb_DEPENDENCIES = $(dependencies)
 
-ggidumb_LDADD = $(LDADD) $(ggi_ldadd)
-ggidumb_DEPENDENCIES = $(dependencies)
+ggidumb_LDADD = $(ggi_objs) $(LDADD) $(ggi_ldadd)
+ggidumb_DEPENDENCIES = $(ggi_objs) $(dependencies)
 
 ldumb_LDADD = $(LDADD) $(svgalib_ldadd)
 ldumb_DEPENDENCIES = $(dependencies)

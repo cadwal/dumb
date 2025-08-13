@@ -12,7 +12,11 @@ To apply this in the gettext sources:
 # cd /usr/local/src/gettext-0.10.35
 (or wherever you have extracted the source tree)
 # patch -p1 </PATH/TO/gettext-0.10.35-4-comments.diff
+# aclocal
+# autoconf
 
+After installing the patched gettext, rerun `aclocal' and `autoconf'
+in your favorite packages to let them use the changes.
 
 diff -Nurp gettext-0.10.35.kn.3/m4/ChangeLog gettext-0.10.35.kn.4/m4/ChangeLog
 --- gettext-0.10.35.kn.3/m4/ChangeLog	Wed Sep 23 18:20:10 1998

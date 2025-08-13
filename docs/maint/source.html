@@ -9,7 +9,7 @@
 
     <h1>DUMB source HOWTO</h1>
 
-    <p>This corresponds to DUMB 0.13.3.
+    <p>This corresponds to DUMB 0.13.4.
 
     <ul>
       <li><a href="#dirs" name="TOCdirs">Directory structure</a>
@@ -150,6 +150,9 @@
 
 	</dl>
 
+      <dt>aux/
+      <dd>Various files needed by the configure script and Makefiles.
+
     </dl>
 
 
@@ -170,9 +173,10 @@
 
     <ul>
       <li>README: "You should get a directory called something like
-	dumb-0.13.0"
+	dumb-0.13.4"
       <li>docs/configure.txt: "In the following, I'll call that
-	directory /cdrom/sources/dumb-0.12."
+	directory /cdrom/sources/dumb-0.13.4.",
+	"/cdrom/sources/dumb-0.13.4/configure"
       <li>docs/maint/contrib.html: "(it probably is, as
 	dumb-0.12.tar.gz was just 340k :)"
     </ul>
@@ -202,36 +206,19 @@
 
       <li>Add foo/Makefile in the AC_OUTPUT statement in configure.in.
 
-      <li>Run automake.  This generates foo/Makefile.in.
-
-      <li>Run autoconf.  This updates the configure script.
-
     </ol>
 
     <p>Then in the build directory:
 
-    <ol start=7>
+    <ol start=5>
 
-      <li>Run <var>$srcdir</var>/configure with any options you need.  This
-	generates foo/Makefile.
-
-	<p>Alternatively, you can run ./config.status --recheck.  This
-	  gives <var>$srcdir</var>/configure the same options you last
-	  gave it.  Then you must run ./config.status again, this time
-	  without options, because ./config.status --recheck gave
-	  <var>$srcdir</var>/configure the --no-create option which
-	  caused it to skip the Makefiles and only update
-	  config.status.
-
-      <li>Run make.  This will repeat some of these steps.  Don't
-	worry about that.
+      <li>Run <kbd>make foo/Makefile</kbd>.  This causes
+	<tt>aclocal</tt>, <tt>automake</tt>, <tt>autoconf</tt>,
+	<tt>configure</tt> and <tt>config.status</tt> to be run, and
+	then proceeds to generate <tt>foo/Makefile.in</tt> in the
+	source tree and	<tt>foo/Makefile</tt> in the build tree.
 
     </ol>
-
-    <p>For experts only: If you feel particularly smart today, you can
-      analyze the Makefiles and find out which files to touch to avoid
-      the unnecessary and superfluous operations.  Then you could even
-      add a new target in Makefile.am to do all this.
 
 
     <h2><a href="#TOCmkfile" name="mkfile">Adding a new source file</a></h2>

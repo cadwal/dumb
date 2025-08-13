@@ -59,7 +59,7 @@ void free ();
 # include <string.h>
 #else
 # include <strings.h>
-# ifndef memcpy
+# ifndef HAVE_MEMCPY
 #  define memcpy(Dst, Src, Num) bcopy (Src, Dst, Num)
 # endif
 #endif

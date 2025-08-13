@@ -1,3 +1,336 @@
+1998-12-22  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Released DUMB 0.13.4.
+
+	* aux/dumb-lsm.in: GGI is Degas.  Changed x2ftp directory.
+
+	* Makefile.am:
+	($(distdir).lsm): Use $(PACKAGE)-$(VERSION) rather than $(distdir).
+	(kn-dist): Made lsm dependency a separate command.
+
+	* dumb/ggi_dali_video.c: Renamed to ggi_olddegas_video.c, since it
+	didn't really work with Dali.
+	* dumb/Makefile.am (EXTRA_ggidumb_SOURCES): Adapted.
+	* configure.in: Adapted.  Warn if GGI is old.
+
+	* Makefile.am (update-po): Sort the list of filenames.
+	* po/POTFILES.in: Regenerated.  Now in alphabetical order.
+	* po/fi.po: Synchronized with source.
+
+	* .cvsignore: Don't ignore aclocal.m4 because building it from
+	scratch may require installing many packages, including patched
+	versions of gettext.
+	* aclocal.m4: Once again in CVS.
+
+1998-12-20  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* po/POTFILES.in: Regenerated to scan new GGI files.
+	* po/fi.po: Refreshed.  No change in actual messages.
+
+	* dumb/Makefile.am, dumb/ggi_dali_video.c, dumb/ggi_degas_video.c,
+	dumb/ggi_video.c: Renamed ggi_degas_video.c to ggi_dali_video.c
+	and ggi_video.c to ggi_degas_video.c.  I had misunderstood the
+	versions.
+	* configure.in: Assume the GGI libraries are there if the headers
+	exist.  Define DUMB_GGI_SOURCES and DUMB_GGI_LDADD rather than
+	DUMB_GGI_VERSION.  Eliminated $dumb_have_ggi.
+	* dumb/Makefile.am (ggi_objs): New variable.
+	(ggi_ldadd): Use $(DUMB_GGI_LDADD).
+	(ggidumb_SOURCES): Use $(DUMB_GGI_SOURCES) rather than
+	ggi_$(DUMB_GGI_VERSION)_video.c.
+	(ggidumb_LDADD, ggidumb_DEPENDENCIES): Added $(ggi_objs).
+	* NEWS: Document GGI Degas support.
+
+1998-12-19  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* dumb/ggi_video.c: New version from Andrew Apted.  Uses GII.
+	* dumb/ggi_degas_video.c: Copy of previous version of ggi_video.c.
+	* configure.in: Moved framebuffer bits near the beginning.
+	Support two GGI versions.
+	* dumb/Makefile.am (ggidumb_SOURCES, EXTRA_ggidumb_SOURCES):
+	Choose between ggi_video.c and ggi_degas_video.c.
+
+1998-12-18  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* docs/patches/gettext-0.10.35-6-mkinstalldirs.diff,
+	docs/patches/gettext-0.10.35-5-destdir.diff: New files.
+	* docs/patches/Makefile.am (EXTRA_DIST): Added them.
+	* docs/patches/gettext-0.10.35-2-intllibs.diff,
+	docs/patches/gettext-0.10.35-3-memcpy.diff,
+	docs/patches/gettext-0.10.35-4-comments.diff: Explained what one
+	must do after patching to get the changes propagated to other
+	files.
+	* intl/ChangeLog, intl/localealias.c, po/Makefile.in.in: Updated
+	from gettext-0.10.35.kn.6.
+
+	* po/POTFILES.in: Regenerated.
+	* po/fi.po: Synchronised with source.  Using "valitsin" instead of
+	"tarkenne".
+
+	* xwad/Makefile.am, tool/Makefile.am, test/Makefile.am,
+	ptcomp/Makefile.am, libmissing/Makefile.am,
+	libdumbworldb/Makefile.am, libdumbwad/Makefile.am,
+	libdumbutil/Makefile.am, libdumbrender/Makefile.am,
+	libdumb/Makefile.am, htic/Makefile.am, dumb/Makefile.am,
+	doom/Makefile.am, docs/patches/Makefile.am,
+	docs/maint/Makefile.am, docs/dos/Makefile.am, docs/Makefile.am,
+	aux/Makefile.am, Makefile.am (EXTRA_DIST): Added .cvsignore.
+
+	* docs/maint/Makefile.am (EXTRA_DIST): Removed lsm-template, which
+	is now aux/dumb-lsm.in.
+
+	* NEWS: Documented some more changes from ChangeLog.
+	* TODO: Libdumbworldb should be rewritten in C++.
+	* docs/Install-FAQ: Added Q6: The linker says dcgettext__ is
+	undefined.
+
+	* configure.in, acconfig.h (DUMB_CONFIG_DUMBDATADIR): Renamed from
+	DUMB_CONFIG_DATADIR and appended "/dumb" to value.
+	* dumb/dumb.c (main): Use DUMB_CONFIG_DUMBDATADIR rather than
+	DUMB_CONFIG_DATADIR, in builtin_wadpath.
+
+	* dumb/linuxfb_video.c: First version from Josh Parsons.
+	* dumb/Makefile.am (EXTRA_DIST): Added linuxfb_video.c.
+
+	* debian/: Removed entire directory.
+	* docs/maint/source.html, configure.in, Makefile.am:
+	Removed all references to the now removed debian directory.
+
+1998-12-15  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* libdumbworldb/dumbworldb.hh: First version
+	* libdumbworldb/Makefile.am (libdumbworldb_a_SOURCES):
+	Added dumbworldb.hh.
+
+	* acinclude.m4 (DUMB_C_ATTR_REGPARM): Added some quoting.
+	(DUMB_CHECK_IFDEF): New macro.
+	* configure.in: Moved --enable-libdumbworldb to the beginning.
+	(DUMB_CONFIG_GGI): Test whether <ggi/ggi.h> defines GGI_KEY_ENTER.
+
+1998-12-13  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* dumb/dumb.c (main): Added "." and DUMB_CONFIG_DATADIR in
+	builtin_wadpath.
+
+	* configure.in (DUMB_CONFIG_DATADIR): Define.
+	(DUMB_CONFIG_DOOM_DIR): Renamed from DUMB_CONFIG_DOOM_PATH.
+	(DUMB_CONFIG_HERETIC_DIR): Renamed from DUMB_CONFIG_HERETIC_PATH.
+
+	* acconfig.h, configure.in (DUMB_CONFIG_DOOM_DIR): Renamed from
+	DUMB_CONFIG_DOOM_PATH.
+	(DUMB_CONFIG_HERETIC_DIR): Renamed from DUMB_CONFIG_HERETIC_PATH.
+	(DUMB_CONFIG_DATADIR): Added.
+
+1998-11-20  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* INSTALL: Incorporated docs/configure.txt.
+	* docs/configure.txt: Removed.
+	* docs/Makefile.am (EXTRA_DIST): Removed configure.txt.
+
+1998-11-15  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* acconfig.h: Lumped LOCALEDIR, DUMB_CONFIG_DOOM_PATH and
+	DUMB_CONFIG_HERETIC_PATH together.
+
+	* configure.in: Made the script print warnings if it decides
+	something won't be built.
+	* NEWS: Added Local Variables section.  Noted that the configure
+	script now warns you if something is missing.
+
+	* Applied sky fix v2 by Andrew Apted.
+	* dumb/rendcore.h (draw_sky_segment): Scroll the sky vertically
+	and allow different sizes.
+	* libdumb/texture.c (load_wtex): Hack around a bug in Heretic wad.
+	* NEWS, AUTHORS: Noted "sky fix" by Andrew Apted.
+
+	* libdumb/mme_sound.c: New version from Marcus Sundberg.
+	(FRAGSIZE): Replaced by new variable `bytes_per_frag'.
+	(NUMBUF): Dropped from 4 to 2.
+	(speed): Global variable removed.
+	(slush_fragments): Initialised as 0.
+	(init_sound): Renamed parameter `s' to `speed'.
+	Local variable `window' removed.
+	(play_sound): Moved `int i' inside loop.
+
+	* configure.in: Use "`dirname ${DUMB_CONFIG_DOOM_WAD}`" rather
+	than "${DUMB_CONFIG_DOOM_WAD%doom*.wad}".  Similarly for Heretic.
+	Patch by Marcus Sundberg.
+	* AUTHORS: Credits to Marcus Sundberg for the dirname patch.
+
+	* Applied missile fix by Andrew Apted.
+	* dumb/updthing.c (update_things): If the wall is marked with
+	LINE_IMPASSIBLE but the protothing doesn't have PT_BEASTIE set,
+	let it through.
+	* NEWS: Documented Andrew Apted's missile fix.
+	* AUTHORS: More credits to Andrew Apted.
+
+	* tool/WADTOOL.PLAN: First version.
+	* tool/Makefile.am (EXTRA_DIST): Distribute WADTOOL.PLAN.
+
+	* Applied third-person perspective patch by Andrew Apted.
+	* doom/camera.pt: Initial version.
+	* doom/Makefile.am (d4d_sources): Added camera.pt.
+	* doom/doom.pt: Added #include <camera.pt>.
+	* dumb/dumb.c (mainconf): Added --dumb-third-person option.
+	(cnf_third_person): New macro.
+	(main): Locate, use and move the camera.
+	* dumb/things.c (camera_to_view, update_camera): New functions.
+	* htic/htic.pt: Added #include "../doom/camera.pt".
+	* AUTHORS: Andrew Apted wrote the third-person perspective code.
+	* NEWS: Mention --dumb-third-person.
+
+	* configure.in: Look for ppm_readppm() in -lnetpbm if it isn't
+	found in -lppm -lpgm -lpbm.  Patch from Markus F.X.J. Oberhumer.
+	* tool/Makefile.am (ppm_ldadd): Use @DUMB_PPM_LDADD@.
+	* AUTHORS: Added Markus F.X.J. Oberhumer.
+
+1998-11-05  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* debian/rules (package_dumb): chmod documents to 644, not 755!
+
+	* debian/copyright: New file.
+	* debian/Makefile.am (EXTRA_DIST): Added copyright.
+	* debian/rules (package_dumb): Install more documents.
+
+	* debian/README.Debian: New file.
+	* debian/Makefile.am (EXTRA_DIST): Added README.Debian.
+	* debian/rules (instdirs): Removed $(tmpdir)/etc.
+	(package_dumb): Install documents.
+
+	* aux/rpmspec.m4:
+	Changed comment in spec to match current location of this file.
+
+	* debian/rules (binary-arch, binary-indep):
+	Depend on Makefile, not build.
+	(package_dumb): Pass -ips switch to dpkg-gencontrol.
+	* debian/control:
+	Changed priority from extra to optional, as all other games seem to
+	have that too.
+
+	* Makefile.am (%/Makefile): New rule.
+	* docs/maint/source.html: Documented aux and debian directories,
+	and "make foo/Makefile"
+
+	* dumb/dumb.c (main): Made builtin_wadpath doubly const.
+
+	* configure.in (AC_OUTPUT): Added debian/Makefile.
+	* Makefile.am (SUBDIRS): Added debian.
+	* debian/Makefile.am: New file.
+	* debian/.cvsignore: Ignore Makefile and Makefile.in.
+
+	* tool/wadtool.c (print_help): A little #if shuffling.  The
+	parameter syntax will probably have to be rethought completely.
+
+	* po/Makefile.in.in (DESTDIR): New variable.  It's empty unless
+	overridden in command line.  If specified, it's the root directory
+	for installation.  This makes it easier to create Debian packages.
+
+	* debian/: New directory.
+	* debian/changelog, debian/rules, debian/control: New files.
+	
+	* xwad/.cvsignore, tool/.cvsignore, test/.cvsignore,
+	ptcomp/.cvsignore, po/.cvsignore, libmissing/.cvsignore,
+	libdumbworldb/.cvsignore, libdumbwad/.cvsignore,
+	libdumbutil/.cvsignore, libdumbrender/.cvsignore,
+	libdumb/.cvsignore, intl/.cvsignore, htic/.cvsignore,
+	dumb/.cvsignore, doom/.cvsignore, docs/.cvsignore,
+	docs/patches/.cvsignore, docs/maint/.cvsignore,
+	docs/dos/.cvsignore, debian/.cvsignore, aux/.cvsignore,
+	.cvsignore: Ignore files which are generated during compilation.
+
+1998-10-31  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* docs/Makefile.am (EXTRA_DIST): Added MMX.txt.
+
+	* dumb/renderc.h:
+	(Active_wall): Added comment on what MMX requires.
+	[HAVE_MMX] (mmx_vecadd): Made entire function conditional.
+	Changed int * arguments to int[2] arrays.  Made src parameter
+	const.
+	[HAVE_MMX] (mmx_load, mmx_storelo, mmx_storehi): Don't define
+	without HAVE_MMX.
+
+	* AUTHORS: MMX support is by Josh Parsons.
+
+	* dumb/dumb.c (sigill_handler_mmx): Internationalized.
+	Exit with EXIT_FAILURE, not 1.
+	(main): Initialize gettext before checking MMX.
+
+	* Applied Josh Parsons' MMX patches 1 to 3.
+	* docs/MMX.txt: New file.
+	* dumb/bangbang.c (wall_ray_intersection) [HAVE_MMX]: Compute dot
+	products with MMX.
+	* dumb/dumb.c [HAVE_MMX] (sigill_handler_mmx): New function.
+	(main) [HAVE_MMX]: Test that MMX works.
+	* dumb/le32_fbrerend.c (fbrerender8, fbrerender16, fbrerender32)
+	[HAVE_MMX]: Use MMX.
+	* dumb/renderc.h (View_constants) [HAVE_MMX]: Added
+	view_sincos_mmx[].
+	(render) [HAVE_MMX]: Initialize MM1 & MM5 and clean up.
+	(transform_vertices) [HAVE_MMX]: Rotate with MMX.
+	(add_objects) [HAVE_MMX]: Rotate with MMX.
+	(mmx_vecadd): New function.
+	(render_walls) [HAVE_MMX]: Use mmx_vecadd().
+	(wall_ray_intersection) [HAVE_MMX]: Use MMX.
+	(mmx_load, mmx_storelo, mmx_storehi): New macros.
+	(calc_view_constants) [HAVE_MMX]: Initialize
+	view_constants.view_sincos_mmx[].  Use MMX to initialize cos_tab[]
+	and sin_tab[] in view_constants.
+	* libdumb/sound_mix.c (calc_stereo_16) [HAVE_MMX]: Mix with MMX.
+
+1998-10-30  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* tool/wadtool.c (print_help): Rewrote help message to document
+	long options.  They don't work yet, so the changes are wrapped in
+	#if 0.  The options look rather messy.  It might be good to
+	rethink them completely.
+
+	* acinclude.m4 (DUMB_SYS_SHMAT_RMID):
+	Removed extraneous "the" from comment.
+
+	* .cvsignore: Ignore aclocal.m4 and config.h.in which are
+	generated by aclocal and autoheader.
+	* config.h.in, aclocal.m4: Removed from CVS.
+
+	* .cvsignore, docs/.cvsignore, docs/dos/.cvsignore,
+	docs/maint/.cvsignore, docs/patches/.cvsignore, doom/.cvsignore,
+	dumb/.cvsignore, htic/.cvsignore, libdumb/.cvsignore,
+	libdumbrender/.cvsignore, libdumbutil/.cvsignore,
+	libdumbwad/.cvsignore, libdumbworldb/.cvsignore,
+	libmissing/.cvsignore, po/.cvsignore, ptcomp/.cvsignore,
+	test/.cvsignore, tool/.cvsignore, xwad/.cvsignore: New files.
+	* configure, Makefile.in, stamp-h.in, docs/Makefile.in,
+	docs/dos/Makefile.in, docs/maint/Makefile.in,
+	docs/patches/Makefile.in, doom/Makefile.in, dumb-0.13.3-1.spec,
+	dumb/Makefile.in, htic/Makefile.in, libdumb/Makefile.in,
+	libdumbrender/Makefile.in, libdumbutil/Makefile.in,
+	libdumbwad/Makefile.in, libdumbworldb/Makefile.in,
+	libmissing/Makefile.in, po/cat-id-tbl.c, po/dumb.pot, po/fi.gmo,
+	po/stamp-cat-id, ptcomp/Makefile.in, test/Makefile.in,
+	tool/Makefile.in, xwad/Makefile.in: Removed these files from CVS
+	because they are now listed in .cvsignore.
+
+	* aux/: New directory.
+	* aux/rpmspec.m4, aux/mkinstalldirs, aux/missing, aux/install-sh:
+	Moved from parent directory.
+	* aux/dumb-lsm.in: Renamed from docs/maint/lsm-template.
+	* aux/Makefile.am: New file.
+	* configure.in: Added AC_CONFIG_AUX_DIR(aux).
+	(AC_OUTPUT): Added aux/Makefile.
+	* Makefile.am: Lowercased all internal variables.
+	Take rpmspec.m4 and dumb-lsm.in from aux/.
+	(SUBDIRS): Added aux.
+
+	* ChangeLog: It's --enable-libdumbworldb, not --enable-worldbase.
+	* docs/configure.txt: Documented --enable-libdumbworldb.
+	* README: We support the Degas version of GGI, not Dali any more.
+	* docs/maint/contrib.html: Changes should be sent to dumb-list.
+
+	* configure.in: Updated version number to 0.13.4.
+	* NEWS: Added a section for DUMB 0.13.4.
+	* README, docs/maint/source.html, docs/configure.txt: Updated DUMB
+	version numbers.
+
 1998-10-21  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
 
 	* Released 0.13.3.
@@ -19,10 +352,10 @@
 	* docs/maint/indent.pro: Added -TXImage.
 
 	* Makefile.am, configure.in: Compile libdumbworldb only if
-	--enable-worldbase is given.
+	--enable-libdumbworldb is given.
 	* acconfig.h: Added DUMB_CONFIG_LDWB.
-	* test/Makefile.am: Compile ldltest only if --enable-worldbase was
-	given.
+	* test/Makefile.am: Compile ldltest only if --enable-libdumbworldb
+	was given.
 
 	* ptcomp/ptcomp.c (main): --output-directory is -d, not -o.
 	* doom/Makefile.am ($(d4d_pt_lumps)): Use -d.

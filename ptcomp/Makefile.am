@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
+EXTRA_DIST = .cvsignore
+
 bin_PROGRAMS = ptcomp
 
 ptcomp_SOURCES = ptcomp.c globals.h token.c token.h parm.c parm.h	\

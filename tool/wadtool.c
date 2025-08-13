@@ -55,6 +55,31 @@ typedef enum {
 void
 print_help(FILE *dest)
 {
+#if 0
+   fprintf(dest,
+	   _("Usage: %s [OPTION FILE [FILE]...]...\n"
+	     "Extract, copy and concatenate WAD files.\n"
+	     "\n"), argv0);
+   fputs(_(
+"  -r, --read-iwad=FILE               read this file as an IWAD\n"
+"  -p, --read-pwad=FILE [FILE]...     read these files as PWADs\n"
+"  -w, --output-pwad=FILE             start writing output to this PWAD\n"
+"  -W, --output-iwad=FILE             start writing output to this IWAD\n"
+"  -D, --output-directory=DIRECTORY   start writing output to this directory\n"
+"  -c, --copy-wad=FILE [FILE]...      copy all lumps in these wadfiles\n"
+"                                     (without patching)\n"
+"  -l, --copy-lump=LUMP [LUMP]...     copy these lumps to the current wad\n"
+"  -L, --empty-lump=LUMP [LUMP]...    spit out an empty lump\n"
+"  -x, --extract-lump=LUMP [LUMP]...  copy these lumps to raw files\n"
+"  -f, --read-lump=FILE [FILE]...     copy raw files to lumps\n"
+"                                     (guessing lump names)\n"
+"  -F, --append-lump=FILE [FILE]...   copy raw files to lump\n"
+"                                     (adding to current)\n"
+"  -n, --rename-lump OLD NEW          copy lump OLD to lump NEW\n"
+"      --help                         display this help and exit\n"
+"      --version                      output version information and exit\n"
+"\n"), dest);
+#endif
    fprintf(dest,
 	   _("Usage:  wadtool <option> <file> <file>... <option> <file>...\n\n"
 	     "Options:\n"

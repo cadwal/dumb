@@ -70,8 +70,11 @@ DUMB_CONFIG_SOUND = @DUMB_CONFIG_SOUND@
 DUMB_CONFIG_SOUND_LDADD = @DUMB_CONFIG_SOUND_LDADD@
 DUMB_DGA_LDADD = @DUMB_DGA_LDADD@
 DUMB_FBREREND_SOURCES = @DUMB_FBREREND_SOURCES@
+DUMB_GGI_LDADD = @DUMB_GGI_LDADD@
+DUMB_GGI_SOURCES = @DUMB_GGI_SOURCES@
 DUMB_NETWORK_LDADD = @DUMB_NETWORK_LDADD@
 DUMB_NETWORK_SOURCES = @DUMB_NETWORK_SOURCES@
+DUMB_PPM_LDADD = @DUMB_PPM_LDADD@
 DUMB_RENDER_SOURCES = @DUMB_RENDER_SOURCES@
 DUMB_XKB_LDADD = @DUMB_XKB_LDADD@
 DUMB_XSHM_LDADD = @DUMB_XSHM_LDADD@
@@ -100,8 +103,9 @@ l = @l@
 
 EXTRA_DIST = aalib-1.2-add_.diff gettext-0.10.35-1-po-regexp.diff	\
 gettext-0.10.35-2-intllibs.diff gettext-0.10.35-3-memcpy.diff		\
-gettext-0.10.35-4-comments.diff
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+gettext-0.10.35-4-comments.diff gettext-0.10.35-5-destdir.diff		\
+gettext-0.10.35-6-mkinstalldirs.diff .cvsignore
+mkinstalldirs = $(SHELL) $(top_srcdir)/aux/mkinstalldirs
 CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
 DIST_COMMON =  Makefile.am Makefile.in

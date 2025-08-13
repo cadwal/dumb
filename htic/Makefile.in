@@ -70,8 +70,11 @@ DUMB_CONFIG_SOUND = @DUMB_CONFIG_SOUND@
 DUMB_CONFIG_SOUND_LDADD = @DUMB_CONFIG_SOUND_LDADD@
 DUMB_DGA_LDADD = @DUMB_DGA_LDADD@
 DUMB_FBREREND_SOURCES = @DUMB_FBREREND_SOURCES@
+DUMB_GGI_LDADD = @DUMB_GGI_LDADD@
+DUMB_GGI_SOURCES = @DUMB_GGI_SOURCES@
 DUMB_NETWORK_LDADD = @DUMB_NETWORK_LDADD@
 DUMB_NETWORK_SOURCES = @DUMB_NETWORK_SOURCES@
+DUMB_PPM_LDADD = @DUMB_PPM_LDADD@
 DUMB_RENDER_SOURCES = @DUMB_RENDER_SOURCES@
 DUMB_XKB_LDADD = @DUMB_XKB_LDADD@
 DUMB_XSHM_LDADD = @DUMB_XSHM_LDADD@
@@ -98,10 +101,12 @@ USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 l = @l@
 
+CLEANFILES = $(h4d_lumps) PLAYPAL.lump
+
+EXTRA_DIST = $(h4d_sources) .cvsignore
+
 @DUMB_CONFIG_HERETIC_TRUE@pkgdata_DATA = htic4dum.wad
 @DUMB_CONFIG_HERETIC_FALSE@pkgdata_DATA = 
-
-CLEANFILES = $(h4d_lumps) PLAYPAL.lump
 
 h4d_pt_lumps = ANIMTEX.lump GETTABLE.lump LEVINFO.lump LINETYPE.lump \
  PHASES.lump PROTOS.lump SECTTYPE.lump SOUNDS.lump
@@ -121,9 +126,7 @@ ptcomp = ../ptcomp/ptcomp
 # heretic's are based
 
 pt_preprocess = $(CXXCPP) -x c-header -I$(srcdir) -I$(top_srcdir)
-
-EXTRA_DIST = $(h4d_sources)
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(SHELL) $(top_srcdir)/aux/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
 DATA =  $(pkgdata_DATA)

@@ -22,5 +22,5 @@
 #include <animtex.pt>
 #include <levels.pt>
 
-
+#include <camera.pt>
 

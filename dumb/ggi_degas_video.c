@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
- * dumb/ggi_video.c: GGI video & input driver.
- * Copyright (C) 1998 by Andrew Apted <andrew.apted@ggi-project.org>
+ * dumb/ggi_degas_video.c: GGI video & input driver.
+ * Copyright (C) 1998  Andrew Apted  <andrew@ggi-project.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,10 @@
 
 #include <config.h>
 
-#include <ggi/maintainers.h>
-#define MAINTAINER      "Andrew Apted <ajapted@ggi-project.org>"
-#define REVISION        "Revision: 1.6"
-
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #include "libdumbutil/dumb-nls.h"
 
@@ -50,14 +47,15 @@
 ConfItem input_conf[] =
 {
    /* no input configs yet... */
-   /* one idea: --input-sensitivity 24 */
+   /* idea: --input-sensitivity 100 (percent) */
+   /* idea: --input-target input-stdin */
    CONFITEM_END
 };
 
 ConfItem video_conf[] =
 {
    /* no video configs yet... */
-   /* one idea: --video-target display-X */
+   /* idea: --video-target display-X */
    CONFITEM_END
 };
 
@@ -132,10 +130,6 @@ init_video(int *width, int *height, int *bpp, int *real_width)
 
    ggiCheckMode(ggi_screen.vis, &ggi_screen.mode);
 
-   *width      = ggi_screen.mode.visible.x;
-   *height     = ggi_screen.mode.visible.y;
-   *real_width = ggi_screen.mode.visible.x;
-
    switch(ggi_screen.mode.graphtype & GT_DEPTH_MASK) {
       case 8:  *bpp = 1; break;
       case 16: *bpp = 2; break;
@@ -151,6 +145,10 @@ init_video(int *width, int *height, int *bpp, int *real_width)
    }
 
    ggiSetFlags(ggi_screen.vis, GGIFLAG_ASYNC);
+
+   *width      = ggi_screen.mode.visible.x;
+   *height     = ggi_screen.mode.visible.y;
+   *real_width = ggi_screen.mode.visible.x;
 
    ggi_screen.pagelen = (*width) * (*height) * (*bpp);
    ggi_screen.pagev = safe_malloc(ggi_screen.pagelen);
@@ -211,7 +209,7 @@ video_winstuff(const char *desc, int xdim, int ydim)
 /*****  GGI Input  *****/
 
 
-#define GGI_EVENTS  (emKey | emPointer)
+#define GGI_EVENTS  (emKey | emPointer | emValuator)
 
 
 static void
@@ -227,37 +225,22 @@ handle_ggi_key_event(ggi_event *ev)
       return;
    }
 
-   if ((ev->key.label == GGI_KEY_VOID) ||
-       (ev->key.label == GGI_KEY_NIL)) return;
+   if ((ev->key.label == GIIK_VOID) ||
+       (ev->key.label == GIIK_NIL)) return;
    
-   /* handling shift & alt */
+   /* handle shift & alt */
 
    switch (ev->key.label) {
 
-#if defined(GGI_KEY_NORMAL_SHIFT)   /* NOTE: old API only */
-     case GGI_KEY_NORMAL_SHIFT:
-     case GGI_KEY_NORMAL_SHIFTL:
-     case GGI_KEY_NORMAL_SHIFTR:
+     case GIIK_ShiftL:
+     case GIIK_ShiftR:
        ggi_screen.running = state;
        break;
      
-     case GGI_KEY_NORMAL_ALT:
-     case GGI_KEY_NORMAL_ALTGR:
+     case GIIK_AltL: case GIIK_MetaL:
+     case GIIK_AltR: case GIIK_MetaR:
        ggi_screen.strafing = state;
        break;
-
-#elif defined(GGI_KEY_SHIFT)
-     case GGI_KEY_SHIFT:
-     case GGI_KEY_SHIFTL:
-     case GGI_KEY_SHIFTR:
-       ggi_screen.running = state;
-       break;
-     
-     case GGI_KEY_ALTL:
-     case GGI_KEY_ALTR:
-       ggi_screen.strafing = state;
-       break;
-#endif
    }
     
    keymap_press_keycode(ev->key.label, state);
@@ -296,15 +279,15 @@ handle_ggi_ptr_event(ggi_event *ev, int *forward, int *rotate,
       return;
    }
 
-   if (ev->pbutton.button & 1) {	/* primary button */
+   if (ev->pbutton.button == GII_PBUTTON_PRIMARY) {
       ctlkey_press(CTLKEY_SHOOT, state);
    }
-   if (ev->pbutton.button & 2) {	/* secondary button */
-      ctlkey_press(CTLKEY_MOVE_FORWARD, state);
-   }
-   if (ev->pbutton.button & 4) {	/* tertiary button */
+   if (ev->pbutton.button == GII_PBUTTON_SECONDARY) {
       ctlkey_press(CTLKEY_STRAFE, state);
       ggi_screen.strafing = state;
+   }
+   if (ev->pbutton.button == GII_PBUTTON_TERTIARY) {
+      ctlkey_press(CTLKEY_NEXT_WEAPON, state);
    }
 }
 
@@ -313,9 +296,9 @@ get_input(PlayerInput *in)
 {
    ggi_event ev;
 
+   int d_sideways = 0;
    int d_forward  = 0;
    int d_rotate   = 0;
-   int d_sideways = 0;
 
    for (;;) {
       struct timeval tv = {0, 0};
@@ -359,80 +342,117 @@ keymap_keycode_to_keyname(keymap_keycode keycode)
     * representation of the particular key pressed.
     */
 
-   if (GGI_KTYP(keycode) == GGI_KT_LATIN1)
-      return keyname_of_char((char) GGI_KVAL(keycode));
-
    switch (keycode) {
-      case GGI_KEY_ENTER:  return "Return";
-      
-      case GGI_KEY_UP:     return "Up";
-      case GGI_KEY_DOWN:   return "Down";
-      case GGI_KEY_LEFT:   return "Left";
-      case GGI_KEY_RIGHT:  return "Right";
 
-      case GGI_KEY_INSERT: return "Insert";
-      case GGI_KEY_REMOVE: return "Delete";
-      case GGI_KEY_FIND:   return "Home";
-      case GGI_KEY_END:    return "End";
-      case GGI_KEY_PGUP:   return "PageUp";
-      case GGI_KEY_PGDN:   return "PageDown";
+      case GIIUC_Tab:		return "Tab";
+      case GIIUC_Linefeed:
+      case GIIUC_Return:	return "Return";
+      case GIIUC_Escape:	return "Escape";
+      case GIIUC_Space:		return "Space";
+      case GIIUC_Delete:	return "Delete";
 
-      case GGI_KEY_F1:  return "F1";
-      case GGI_KEY_F2:  return "F2";
-      case GGI_KEY_F3:  return "F3";
-      case GGI_KEY_F4:  return "F4";
-      case GGI_KEY_F5:  return "F5";
-      case GGI_KEY_F6:  return "F6";
-      case GGI_KEY_F7:  return "F7";
-      case GGI_KEY_F8:  return "F8";
-      case GGI_KEY_F9:  return "F9";
-      case GGI_KEY_F10: return "F10";
-      case GGI_KEY_F11: return "F11";
-      case GGI_KEY_F12: return "F12";
+      case GIIK_Up:		return "Up";
+      case GIIK_Down:		return "Down";
+      case GIIK_Left:		return "Left";
+      case GIIK_Right:		return "Right";
 
-      case GGI_KEY_P0:  return "Pad 0";
-      case GGI_KEY_P1:  return "Pad 1";
-      case GGI_KEY_P2:  return "Pad 2";
-      case GGI_KEY_P3:  return "Pad 3";
-      case GGI_KEY_P4:  return "Pad 4";
-      case GGI_KEY_P5:  return "Pad 5";
-      case GGI_KEY_P6:  return "Pad 6";
-      case GGI_KEY_P7:  return "Pad 7";
-      case GGI_KEY_P8:  return "Pad 8";
-      case GGI_KEY_P9:  return "Pad 9";
+      case GIIK_Insert:		return "Insert";
+      case GIIK_Home:		return "Home";
+      case GIIK_End:		return "End";
+      case GIIK_PageUp:		return "PageUp";
+      case GIIK_PageDown:	return "PageDown";
+      case GIIK_Help:		return "Help";
+      case GIIK_Break:		return "Break";
 
-      case GGI_KEY_PPLUS:  return "Pad +";
-      case GGI_KEY_PMINUS: return "Pad -";
-      case GGI_KEY_PSTAR:  return "Pad *";
-      case GGI_KEY_PSLASH: return "Pad /";
-      case GGI_KEY_PENTER: return "Pad Enter";
+      case GIIK_Find:		return "Find";
+      case GIIK_Select:		return "Select";
+      case GIIK_Begin:		return "Begin";
+      case GIIK_Clear:		return "Clear";
+      case GIIK_Cancel:		return "Cancel";
+      case GIIK_Menu:		return "Menu";
+      case GIIK_Undo:		return "Undo";
+      case GIIK_Redo:		return "Redo";
+      case GIIK_Do:		return "Do";
+      case GIIK_Execute:	return "Execute";
+      case GIIK_Macro:		return "Macro";
+      case GIIK_SysRq:		return "SysRq";
+      case GIIK_PrintScreen:	return "PrintScreen";
+      case GIIK_ToggleScreen:
+      case GIIK_ModeSwitch:	return "Mode_switch";
 
-#if defined(GGI_KEY_NORMAL_SHIFT)   /* NOTE: old API only */
-      case GGI_KEY_NORMAL_SHIFT:
-      case GGI_KEY_NORMAL_SHIFTL:
-      case GGI_KEY_NORMAL_SHIFTR: return "Shift";
+      case GIIK_F1:		return "F1";
+      case GIIK_F2:		return "F2";
+      case GIIK_F3:		return "F3";
+      case GIIK_F4:		return "F4";
+      case GIIK_F5:		return "F5";
+      case GIIK_F6:		return "F6";
+      case GIIK_F7:		return "F7";
+      case GIIK_F8:		return "F8";
+      case GIIK_F9:		return "F9";
+      case GIIK_F10:		return "F10";
+      case GIIK_F11:		return "F11";
+      case GIIK_F12:		return "F12";
+      case GIIK_F13:		return "F13";
+      case GIIK_F14:		return "F14";
+      case GIIK_F15:		return "F15";
+      case GIIK_F16:		return "F16";
+      case GIIK_F17:		return "F17";
+      case GIIK_F18:		return "F18";
+      case GIIK_F19:		return "F19";
+      case GIIK_F20:		return "F20";
 
-      case GGI_KEY_NORMAL_CTRL:
-      case GGI_KEY_NORMAL_CTRLL:
-      case GGI_KEY_NORMAL_CTRLR: return "Control";
+      case GIIK_P0:		return "Pad 0";
+      case GIIK_P1:		return "Pad 1";
+      case GIIK_P2:		return "Pad 2";
+      case GIIK_P3:		return "Pad 3";
+      case GIIK_P4:		return "Pad 4";
+      case GIIK_P5:		return "Pad 5";
+      case GIIK_P6:		return "Pad 6";
+      case GIIK_P7:		return "Pad 7";
+      case GIIK_P8:		return "Pad 8";
+      case GIIK_P9:		return "Pad 9";
+      case GIIK_PA:		return "Pad A";
+      case GIIK_PB:		return "Pad B";
+      case GIIK_PC:		return "Pad C";
+      case GIIK_PD:		return "Pad D";
+      case GIIK_PE:		return "Pad E";
+      case GIIK_PF:		return "Pad F";
 
-      case GGI_KEY_NORMAL_ALT:
-      case GGI_KEY_NORMAL_ALTGR: return "Alt";
+      case GIIK_PPlus:		return "Pad +";
+      case GIIK_PMinus:		return "Pad -";
+      case GIIK_PStar:		return "Pad *";
+      case GIIK_PSlash:		return "Pad /";
+      case GIIK_PDot:		return "Pad .";
+      case GIIK_PComma:		return "Pad ,";
+      case GIIK_PNumber:	return "Pad #"; 
+      case GIIK_PParenLeft:	return "Pad (";
+      case GIIK_PParenRight:	return "Pad )";
+      case GIIK_PF1:		return "Pad F1";
+      case GIIK_PF2:		return "Pad F2";
+      case GIIK_PF3:		return "Pad F3";
+      case GIIK_PF4:		return "Pad F4";
+      case GIIK_PF5:		return "Pad F5";
+      case GIIK_PEnter:		return "Pad Enter";
 
-#elif defined(GGI_KEY_SHIFT)
-      case GGI_KEY_SHIFT:
-      case GGI_KEY_SHIFTL:
-      case GGI_KEY_SHIFTR: return "Shift";
-
-      case GGI_KEY_CTRL:
-      case GGI_KEY_CTRLL:
-      case GGI_KEY_CTRLR: return "Control";
-
-      case GGI_KEY_ALTL:
-      case GGI_KEY_ALTR: return "Alt";
-#endif
+      case GIIK_ShiftL:		return "Shift_L";
+      case GIIK_ShiftR:		return "Shift_L";
+      case GIIK_CtrlL:		return "Control_L";
+      case GIIK_CtrlR:		return "Control_L";
+      case GIIK_AltL:		return "Alt_L";
+      case GIIK_AltR:		return "Alt_L";
+      case GIIK_MetaL:		return "Meta_L";
+      case GIIK_MetaR:		return "Meta_L";
+      case GIIK_CapsLock:	return "CapsLock";
+      case GIIK_NumLock:	return "NumLock";
+      case GIIK_ScrollLock:	return "ScrollLock";
+      case GIIK_Pause:		return "Pause";
    }
    
+   /* latin-1 ? */
+
+   if (GII_KTYP(keycode) == GII_KT_LATIN1)
+      return keyname_of_char((char) tolower(GII_KVAL(keycode)));
+
    /* unknown */
 
    sprintf(namebuf, "ggi_%04x", keycode);

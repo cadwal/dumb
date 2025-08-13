@@ -1,3 +1,8 @@
+1998-09-23  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* localealias.c: Check #ifndef HAVE_MEMCPY rather than #ifndef
+	memcpy.  Patch from Paul Thomas.
+
 1998-04-29  Ulrich Drepper  <drepper@cygnus.com>
 
 	* intl/localealias.c (read_alias_file): Use unsigned char for

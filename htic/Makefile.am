@@ -1,12 +1,14 @@
 ## Process this file with automake to produce Makefile.in
 
+CLEANFILES = $(h4d_lumps) PLAYPAL.lump
+
+EXTRA_DIST = $(h4d_sources) .cvsignore
+
 if DUMB_CONFIG_HERETIC
 pkgdata_DATA = htic4dum.wad
 else
 pkgdata_DATA = 
 endif
-
-CLEANFILES = $(h4d_lumps) PLAYPAL.lump
 
 h4d_pt_lumps = ANIMTEX.lump GETTABLE.lump LEVINFO.lump LINETYPE.lump \
  PHASES.lump PROTOS.lump SECTTYPE.lump SOUNDS.lump
@@ -57,5 +59,3 @@ COLORM32.lump: PLAYPAL.lump $(ppmtodumb)
 
 htic4dum.wad: $(wadtool) $(h4d_lumps)
 	$(wadtool) -w $@ -f $(h4d_lumps)
-
-EXTRA_DIST = $(h4d_sources)

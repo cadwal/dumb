@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
+EXTRA_DIST = WADTOOL.PLAN .cvsignore
+
 if DUMB_CONFIG_X
 x_noinst_programs = mkdfnt
 else
@@ -17,7 +19,7 @@ noinst_PROGRAMS = $(x_noinst_programs)
 
 x_ldadd = $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS)
 
-ppm_ldadd = -lppm -lpgm -lpbm
+ppm_ldadd = @DUMB_PPM_LDADD@
 
 # DUMB libraries are in the build tree, so don't use $(srcdir).
 LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a			\

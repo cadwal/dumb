@@ -1,0 +1,69 @@
+
+1: What is MMX?
+
+MMX ("Multi Media eXtension") is a set of instructions that Intel
+added to late-model Pentium processors.  It is also available on some
+other IA (Intel Architecture) processors, such as Cyrix's 6x86MX and
+AMD's K6.  "MMX" is a trademark of Intel Corp.
+
+
+2: What will I need to use it?
+
+To compile DUMB with MMX, you'll need a recent version of GNU
+binutils.  2.9.* is definitely OK, 2.8 might be as well.  You do *not*
+need an MMX-equipped processor to merely compile DUMB with MMX
+support.
+
+To actually run the thing, you'll need an processor that supports MMX.
+Given the hype Intel has put into it, you will probably know if you
+do.  If you are still unsure, you can try compiling with MMX support
+and see if the binary you produce will run.  On Linux systems, there
+is a quick way to find out: type "grep flags /proc/cpuinfo".  If you
+see a line containing the string "mmx", you have an MMX-capable
+processor.
+
+You cannot, of course, use MMX on any processor that is not of the IA
+family (ie. not on a sparc or powerpc).  
+
+
+3: How do I compile DUMB with MMX support?
+
+Before running configure, insert "-DHAVE_MMX" into your CFLAGS
+environment variable.  So, for example, (if you are running bash)
+
+CFLAGS="-pipe -O2 -DHAVE_MMX" ./configure
+
+then run make as per normal.
+
+
+4: How do I run DUMB with MMX support?
+
+The same way you run DUMB without.
+
+
+5: How much faster is it?
+
+Not an awful lot.  It depends on how much time DUMB spends in the
+MMX-optimized parts of its code on your system.  In general, slow
+processors will be advantaged more than fast ones; complicated levels
+more than simple ones; lower resolution displays more than higher
+ones, machines with sound cards more than machines without.
+MMX-compiled DUMB will also deal better with large numbers of active
+monsters.
+
+In tests, I got about a 10-15% improvement in frame rate on average
+levels.
+
+
+6: Can I...?
+...disable MMX use at runtime?
+...enable MMX use at runtime?
+...emulate MMX instructions like I can floating point instructions?
+...make DUMB run slower by enabling MMX?
+
+No, no, no, and no.
+
+
+---------------
+Josh Parsons
+24 October 1998

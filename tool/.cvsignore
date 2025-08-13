@@ -1,0 +1,9 @@
+.deps
+Makefile
+Makefile.in
+dark2trans
+mkdfnt
+mknulmap
+mkpnames
+ppmtodumb
+wadtool

@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
+EXTRA_DIST = .cvsignore
+
 noinst_LIBRARIES = libdumb.a
 
 libdumb_a_SOURCES = dsound.c prothing.c texture.c view.c \

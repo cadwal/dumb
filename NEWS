@@ -1,3 +1,73 @@
+* Changes in DUMB 0.13.4.
+
+** MMX support.
+
+Thanks to Josh Parsons, you can now compile DUMB to use the MMX
+instructions of modern IA-32-compatible processors.  See docs/MMX.txt
+for more information.
+
+** Linux framebuffer support.
+
+Josh Parsons wrote: 
+> Attached is a video driver for use with linux framebuffer devices in
+> recent linux kernel versions.  It does page flipping/triple
+> buffering, and all that; I've tested it with the Matrox MGA
+> framebuffer in linux-ix86 2.1.130, and with a valkyrie fb /
+> linux-ppc 2.1.129
+> 
+> This should help to make dumb a bit nicer to use to those platforms
+> (such as ppc and sparc) that don't widely support either XF86-DGA or
+> svgalib.  Unfortunately, there's still no keyboard support under
+> such a configuration (anyone want to write linuxfb_input.c?)  Until
+> there is some, you can use linuxfb_video.c in combination with
+> dummy_input.c, or linux_input.c (if you have svgalib).
+> 
+> If you are using a system which supports both framebuffer devices
+> and svgalib, there may be some advantage to be had in using the
+> framebuffer device for output.  The framebuffer drivers support
+> linear video RAM addressing better than svgalib does, and in many
+> cases support more resolutions (ie. for Matrox).
+
+The configure script and Makefiles don't support this driver yet, so
+you'll have to tinker a little to use it.
+
+** GGI Degas support.
+
+Andrew Apted has updated DUMB's GGI driver to use the General Input
+Interface introduced in Degas.
+
+The previous driver is still included, and the configure script
+examines <ggi/ggi.h> to choose which driver to use.
+
+** New option --dumb-third-person enables third-person perspective.
+
+Thanks to Andrew Apted for this.
+
+** LT_IMPASSIBLE lines don't stop missiles any more.
+
+Andrew Apted fixed the bug.
+
+** The sky now scrolls when you look up and down.
+
+This one is from Andrew Apted too.
+
+** The default wadpath includes "." and $datadir/dumb.
+
+** Configuration changes
+
+*** The configure script now warns you if it decides not to build something.
+
+For example, if you haven't installed netpbm, you get this message:
+
+configure: warning: ppm_readppm() not found; programs `dark2trans' and `ppmtodumb' will not be built
+
+Previous versions just skipped the programs which couldn't be built,
+without any warning.
+
+*** The script tries -lnetpbm if -lppm -lpgm -lpbm doesn't work.
+
+This is required under Debian GNU/Linux.
+
 * Changes in DUMB 0.13.3.
 
 ** --help and --version supported.
@@ -843,3 +913,7 @@ miscellaneous bugfixes
 * version 0.01:
 first released
 
+* The following is for Emacs.
+Local Variables:
+mode: outline
+End:

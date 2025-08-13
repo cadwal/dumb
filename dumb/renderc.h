@@ -131,6 +131,9 @@ typedef struct {
     * | /                     \ |
     * |/________bottom_________\|
     */
+   /* The MMX version requires that each *start* member is kept
+    * together with the corresponding *end* -- the pairs are read and
+    * written as 64-bit values.  */
    fixed pstart1, pend1, pstart2, pend2;
    fixed dpstart1, dpend1, dpstart2, dpend2;
 } Active_wall;
@@ -141,7 +144,7 @@ typedef struct {
 /* true if AWALL completely obscures anything (at all) behind it */
 #define AWALL_TERMINAL(a) ((a)->backsect<0||ldsectord(ld)[(a)->backsect].floor>=ldsectord(ld)[(a)->backsect].ceiling)
 
-#define copy_wevent_to_active(wv,a) memcpy(a,wv,sizeof(Wall_start))
+#define copy_wevent_to_active(wv,a) memcpy(a, wv, sizeof(Wall_start))
 
 /*** typedefs for object event lists ***/
 
@@ -172,6 +175,9 @@ typedef struct {
    fixed view_sin, view_cos;
    fixed sin_dx, cos_dx;
    fixed *sin_tab, *cos_tab, *row_view, *row_reci;
+#ifdef HAVE_MMX
+   short view_sincos_mmx[4];
+#endif
 } View_constants;
 
 static void transform_vertices(void);
@@ -338,13 +344,25 @@ render(void *fbp, LevData *w, const View *v)
    invis += invinc;
    if (invis == 16 || invis == 8)
       invinc = -invinc;
-#endif
+#endif /* USE_COLORMAP */
    init_buffers();
    calc_view_constants(view_width, view_height);
+
+#ifdef HAVE_MMX
+   /* set up for MMX use in the renderer: load view constants into mm1 & 5 */
+   __asm__("movq %0, %%mm1\n\t"::"m"(*view_constants.view_sincos_mmx));
+   __asm__("movq %0, %%mm5\n\t"::"m"(v->x));
+#endif
+
    transform_vertices();
    clip_walls();
    add_objects();
    render_walls();
+
+#ifdef HAVE_MMX
+   /* clean up MMX stuff ready to go back to floating point */
+   __asm__("emms\n\t");
+#endif
 }
 
 static void
@@ -358,14 +376,39 @@ transform_vertices(void)
    vertex = ldvertexd(ld);
 
    for (i = 0; i < ldnvertices(ld); i++, vertex++) {
+      fixed tx;
+
+#ifdef HAVE_MMX
+      /*mmx_rotate(x, y, vertex->tx, vertex->ty);*/
+      __asm__(                                           
+              /* load (x,y) into %%mm0 */                
+	      "movq %2, %%mm0\n\t"
+
+	      /* adjust for view (assumed to be in mm5) */
+	      "psubd %%mm5, %%mm0\n\t"
+							 
+	      /* rotate 'em: the appropriate constants   
+	         are assumed to be already in mm1 */     
+	      "psrad $12, %%mm0\n\t"	 
+	      "packssdw %%mm0, %%mm0\n\t" 
+	      "pmaddwd %%mm1, %%mm0\n\t"
+							 
+	      /* and store the results into (tx,ty) */  
+	      "movq %%mm0, %0\n\t"
+	      "movd %%mm0, %1\n\t"
+
+	      : "=m"(vertex->tx), "=mr"(tx)
+	      : "m"(vertex->x)		 
+	      );
+#else  /* !HAVE_MMX */
       fixed x = vertex->x - view->x;
       fixed y = vertex->y - view->y;
-
-      vertex->tx = fixmul(x, view_cos) - fixmul(y, view_sin);
+      tx=vertex->tx = fixmul(x, view_cos) - fixmul(y, view_sin);
       vertex->ty = fixmul(x, view_sin) + fixmul(y, view_cos);
-      if (vertex->tx > view->eye_distance)
+#endif /* !HAVE_MMX */
+      if (tx > view->eye_distance)
 	 /* project point onto view plane */
-	 vertex->proj = fixdiv(vertex->ty, vertex->tx);
+	 vertex->proj = fixdiv(vertex->ty, tx);
    }
 }
 
@@ -574,7 +617,7 @@ add_objects(void)
    const fixed view_cos = view_constants.view_cos;
 
    for (i = 0; i < NUM_OBJECTS; i++) {
-      fixed x, y, z;
+      fixed z;
       fixed tx, ty;
       fixed height, width;
       ThingDyn *o = ldthingd(ld) + i;
@@ -597,8 +640,6 @@ add_objects(void)
 	 continue;
 
       /* Convert object coordinates to fixed point and transform. */
-      x = o->x - view->x;
-      y = o->y - view->y;
       z = o->z;
 #if 0	/* the old way: uses object's real width and height */
       height = OBJECT_HEIGHT(i);
@@ -608,8 +649,36 @@ add_objects(void)
       width = PIXEL_TO_MAP(o->image->width);
 #endif
       /* Rotate into viewer's coordinate system. */
+#ifdef HAVE_MMX
+      __asm__(                                           
+              /* load (x,y) into %%mm0 */                
+	      "movq %2, %%mm0\n\t"
+
+	      /* adjust for view (assumed to be in mm5) */
+	      "psubd %%mm5, %%mm0\n\t"
+							 
+	      /* rotate 'em: the appropriate constants   
+	         are assumed to be already in mm1 */     
+	      "psrad $12, %%mm0\n\t"	 
+	      "packssdw %%mm0, %%mm0\n\t" 
+	      "pmaddwd %%mm1, %%mm0\n\t"
+							 
+	      /* and store the results into (tx,ty) */  
+	      "movd %%mm0, %0\n\t"
+	      "psrlq $32, %%mm0\n\t"
+	      "movd %%mm0, %1\n\t"		 
+	      
+	      : "=mr"(tx), "=mr"(ty)
+	      : "m"(o->x)		 
+	      );
+#else  /* !HAVE_MMX */
+      {
+      int x = o->x - view->x;
+      int y = o->y - view->y;
       tx = fixmul(x, view_cos) - fixmul(y, view_sin);
       ty = fixmul(x, view_sin) + fixmul(y, view_cos);
+      };
+#endif /* !HAVE_MMX */
 
       /* Only worry about the object if it is in front of the view plane */
       if (tx > view->eye_distance + FIXED_EPSILON) {
@@ -660,6 +729,19 @@ add_objects(void)
       }
    }
 }
+
+#ifdef HAVE_MMX
+static inline void
+mmx_vecadd(int dst[2], const int src[2])
+{
+   __asm__("movq %0, %%mm0\n\t"
+	   "paddd %1, %%mm0\n\t"
+	   "movq %%mm0, %0\n\t"
+	   : "m="(*dst)
+	   : "m"(*src)
+	   );
+};
+#endif /* HAVE_MMX */
 
 #define MAX_ACTIVE_OBJECTS 128
 
@@ -737,10 +819,16 @@ render_walls(void)
       for (current = active; current < last; current++) {
 	 current->z += current->dz;
 	 if (!AWALL_UNSEEN(current)) {
+#ifdef HAVE_MMX
+	    /* use MMX to do two adds at a time here */
+	    mmx_vecadd(&current->pstart1, &current->dpstart1);
+	    mmx_vecadd(&current->pstart2, &current->dpstart2);
+#else  /* !HAVE_MMX */
 	    current->pstart1 += current->dpstart1;
 	    current->pend1 += current->dpend1;
 	    current->pstart2 += current->dpstart2;
 	    current->pend2 += current->dpend2;
+#endif /* !HAVE_MMX */
 	 }
       }
 
@@ -1068,22 +1156,61 @@ remove_obj_events(Active_object *active, int n_active, int column)
 static fixed
 wall_ray_intersection(fixed Vx, fixed Vy, int wall)
 {
-   fixed denominator;
+   fixed denominator, numerator;
 
-   const fixed Nx = -Vy;
-   const fixed Ny = Vx;
-   const fixed Wx = WALL_VER2(wall).tx - WALL_VER1(wall).tx;
-   const fixed Wy = WALL_VER2(wall).ty - WALL_VER1(wall).ty;
+#ifndef HAVE_MMX
+   fixed Nx = -Vy;
+   fixed Ny = Vx;
+   fixed Wx = WALL_VER2(wall).tx - WALL_VER1(wall).tx;
+   fixed Wy = WALL_VER2(wall).ty - WALL_VER1(wall).ty;
 
    denominator = fixmul(Nx, Wx) + fixmul(Ny, Wy);	/* N dot W */
+   numerator=fixmul(Nx, WALL_VER1(wall).tx)+fixmul(Ny, WALL_VER1(wall).ty);
+#else  /* HAVE_MMX */
+
+   /* MMX version of wall-intersect stuff.  this one is especially elegant
+      as we can use load the transformed vertices straight into MMX regs
+      and do all the arithmetic there */
+
+   __asm__(
+	   /* load (Nx,Ny) into mm0 */
+	   "movd %3, %%mm0\n\t"
+	   "movd %2, %%mm2\n\t"
+	   "psllq $32, %%mm0\n\t"
+	   "por %%mm2, %%mm0\n\t"
+	   
+	   /* load (Wx,Wy) and (W1x,W1y) into mm2 and mm3 */
+	   "movq %4, %%mm2\n\t"
+	   "movq %5, %%mm3\n\t"
+	   "psubd %%mm3, %%mm2\n\t"
+
+	   /* shift everything right by 8 bits to adjust for fixed point mul */
+	   "psrad $8, %%mm0\n\t"
+	   "psrad $8, %%mm2\n\t"
+	   "psrad $8, %%mm3\n\t"
+
+	   /* pack the regs up right ready for pmaddwd */
+	   "packssdw %%mm0, %%mm0\n\t"
+	   "packssdw %%mm3, %%mm2\n\t"
+	   
+	   /* two dot products in one insn: who says CISC is dead? */
+	   "pmaddwd %%mm2, %%mm0\n\t"
+	   
+	   /* now unpack the results */
+	   "movd %%mm0, %0\n\t"
+	   "psrlq $32, %%mm0\n\t"
+	   "movd %%mm0, %1\n\t"
+
+	   : "=mr"(denominator), "=mr"(numerator)
+	   : "mr"(-Vy), "mr"(Vx),
+	   "m"(WALL_VER2(wall).tx), "m"(WALL_VER1(wall).tx)
+	   );
+#endif /* HAVE_MMX */
+   
    if (denominator < FIXED_EPSILON)
-      return FIXED_ONE - fixdiv(fixmul(Nx, WALL_VER1(wall).tx) +
-				fixmul(Ny, WALL_VER1(wall).ty),
-				-denominator);
+      return FIXED_ONE - fixdiv(numerator,-denominator);
    else if (denominator > FIXED_EPSILON)
-      return fixdiv(fixmul(Nx, WALL_VER1(wall).tx) +
-		    fixmul(Ny, WALL_VER1(wall).ty),
-		    -denominator);
+      return fixdiv(numerator,-denominator);
    else
       return FIXED_ZERO;
 }
@@ -1099,6 +1226,25 @@ init_buffers(void)
    }
 }
 
+
+#ifdef HAVE_MMX
+
+#define mmx_load(reg,lo,hi) \
+  __asm__("movd %1, %%mm7\n\t" \
+	  "psllq $32, %%mm7\n\t" \
+	  "movd %0, %%" reg "\n\t" \
+	  "por %%mm7, %%" reg "\n\t" \
+	  :: "mr"(lo), "mr"(hi))
+
+#define mmx_storelo(reg,to) \
+  __asm__("movd %%" reg ", %0\n\t" \
+	  : "mr="(to))
+#define mmx_storehi(reg,to) \
+  __asm__("psrlq $32, %%" reg "\n\t" \
+	  "movd %%" reg ", %0\n\t" \
+	  : "mr="(to))
+
+#endif /* HAVE_MMX */
 
 /*
 ** Calculate values that are dependent only on the screen dimensions
@@ -1144,6 +1290,15 @@ calc_view_constants(int screen_width, int screen_height)
    }
    view_constants.view_sin = fixsin(-view->angle);
    view_constants.view_cos = fixcos(-view->angle);
+
+#ifdef HAVE_MMX
+   /* make a pre-packed quadword for use in mmx view rotation */
+   view_constants.view_sincos_mmx[0] = view_constants.view_cos>>4;
+   view_constants.view_sincos_mmx[1] = -view_constants.view_sin>>4;
+   view_constants.view_sincos_mmx[2] = view_constants.view_sin>>4;
+   view_constants.view_sincos_mmx[3] = view_constants.view_cos>>4;
+#endif /* HAVE_MMX */
+
    view_constants.screen_dx = fixdiv(FIXED_DOUBLE(view->view_plane_size),
 				     INT_TO_FIXED(screen_width));
    view_constants.screen_dy = fixdiv(FIXED_ONE,
@@ -1154,11 +1309,22 @@ calc_view_constants(int screen_width, int screen_height)
 				  view_constants.screen_dx);
    y = FIXED_SCALE(view_constants.sin_dx, -(screen_width >> 1));
    x = FIXED_SCALE(view_constants.cos_dx, -(screen_width >> 1));
+#ifdef HAVE_MMX
+   mmx_load("mm0",x,y);
+   mmx_load("mm2",view_constants.cos_dx,view_constants.sin_dx);
+#endif   
    for (i = 0; i < screen_width; i++) {
+#ifdef HAVE_MMX
+      __asm__("movq %%mm0, %%mm3\n\t"::""(0));
+      mmx_storelo("mm3",view_constants.cos_tab[i]);
+      mmx_storehi("mm3",view_constants.sin_tab[i]);
+      __asm__("paddd %%mm2, %%mm0\n\t"::""(0));
+#else  /* !HAVE_MMX */
       view_constants.sin_tab[i] = y;
       view_constants.cos_tab[i] = x;
       y += view_constants.sin_dx;
       x += view_constants.cos_dx;
+#endif /* !HAVE_MMX */
    }
 
    y = FIXED_SCALE(view_constants.screen_dy, screen_height >> 1);

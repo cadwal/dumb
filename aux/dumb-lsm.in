@@ -10,8 +10,8 @@ Description:	DUMB is a 3D graphics engine more or less compatible
 		Requires GCC, G++ (but no class libraries) and netpbm
 		to compile properly, and a Doom or Heretic .wad to
 		play.  Supports Linux, Solaris, Digital UNIX,
-		DJGPP/MS-DOS; X11, GGI, AA-lib, SVGAlib; OSS/Free,
-		MME, Allegro; UDP networking.
+		DJGPP/MS-DOS; X11, GGI (Degas), AA-lib, SVGAlib;
+		OSS/Free, MME, Allegro; UDP networking.
 		Visit the DUMB home page at
 		http://samba.anu.edu.au/dumb/
 Keywords:	3D game graphics X11 GGI AA-lib DUMB Doom GPL
@@ -19,6 +19,6 @@ Author:		josh@coombs.anu.edu.au (Josh Parsons)
 Maintained-by:	tosi@stekt.oulu.fi (Kalle Niemitalo)
 Primary-site:	samba.anu.edu.au /pub/dumb/source
 		@LSM-KILOS@k @LSM-TARGZ@
-Alternate-site: x2ftp.oulu.fi /pub/unix/programming/games
+Alternate-site: x2ftp.oulu.fi /pub/unix/programming/games/dumb
 Copying-policy:	GNU GPL
 End

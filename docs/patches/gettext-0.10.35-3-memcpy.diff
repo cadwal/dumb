@@ -6,6 +6,11 @@ To apply this in the gettext sources:
 # cd /usr/local/src/gettext-0.10.35
 (or wherever you have extracted the source tree)
 # patch -p1 </PATH/TO/gettext-0.10.35-3-memcpy.diff
+# aclocal
+# autoconf
+
+After installing the patched gettext, rerun `gettextize -f', `aclocal'
+and `autoconf' in your favorite packages to let them use the changes.
 
 
 diff -Nurp gettext-0.10.35.kn.2/intl/ChangeLog gettext-0.10.35.kn.3/intl/ChangeLog
