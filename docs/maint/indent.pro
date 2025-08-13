@@ -157,11 +157,13 @@
 -Tkeymap_keycode
 -Tnls_uint32
 
+-TDisplay
 -TXButtonEvent
 -TXCrossingEvent
 -TXErrorEvent
 -TXEvent
 -TXExposeEvent
+-TXFontStruct
 -TXImage
 -TXKeyEvent
 -TXMotionEvent

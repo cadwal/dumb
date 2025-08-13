@@ -31,7 +31,7 @@ const char *program_bug_address = "dumb-list@schlick.anu.edu.au";
 void
 print_bugaddr_message(FILE *dest)
 {
-   fprintf(dest, _("Report bugs to %s.\n"), program_bug_address);
+   fprintf(dest, _("Report bugs to <%s>.\n"), program_bug_address);
 }
 
 // Local Variables:

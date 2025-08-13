@@ -1,8 +1,8 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * xwad/xwad.c: The level editor.
+ * Copyright (C) 1998, 1999 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,16 +83,19 @@ static void
 print_help(FILE *dest)
 {
    fprintf(dest,
-	   _("Usage: %s [OPTION]...\n"
+	   _("Usage: %s [OPTION]... [WADFILE]...\n"
 	     "Interactively edit DUMB levels in X11.\n"
 	     "\n"), argv0);
-   fputs(_("  -w, --load-wad=FILE    load FILE as a WAD\n"
+   fputs(_("  -w, --load-wad=FILE    load FILE as a WAD.  WADFILE argument does the same.\n"
 	   "  -m, --map=MAPNAME      start editing map MAPNAME (default E1M1)\n"
 	   "  -d, --display=DISPLAY  use X display DISPLAY\n"
 	   "  -l, --log-to=FILE      save messages to FILE\n"
 	   "  -v, --verbose          log to the screen\n"
 	   "      --help             display this help and exit\n"
 	   "      --version          output version information and exit\n"
+	   "\n"), dest);
+   fputs(_("If no WADFILE nor --load-wad=FILE arguments are given, XWad loads\n"
+	   "`doom.wad' if the map name begins with `E' and `doom2.wad' otherwise.\n"
 	   "\n"), dest);
    print_bugaddr_message(dest);
 }
@@ -175,7 +178,7 @@ main(int argc, char **argv)
 	 log_file(optarg, LOG_ALL, NULL);
 	 break;
       case 'v':			/* -v, --verbose */
-	 verbose_flag = 0;
+	 verbose_flag = 1;
 	 break;
       case 'h':			/*     --help */
 	 print_help(stdout);
@@ -189,11 +192,18 @@ main(int argc, char **argv)
       }	/* switch */
    } /* for ever */
 
-   /* start logging */
-   if (verbose_flag) {
-      /*setlinebuf(stdout); *//* if stdout is a socket, we'll need this */
-      log_stdout();
+   /* process non-option arguments */
+   while (optind < argc) {
+      if (nwads >= MAX_WADS) {
+	 fprintf(stderr, _("%s: internal limit on wad files exceeded\n"),
+		 argv0);
+	 exit(DUMB_EXIT_INTERNAL_LIMIT);
+      } else
+	 wadf[nwads++] = argv[optind++];
    }
+
+   /* start logging */
+   log_stream(stderr, verbose_flag ? LOG_ALL : LOG_WARNING, NULL);
    logprintf(LOG_BANNER, 'M', "XWAD");
 
    /* start Xlib */
@@ -371,15 +381,15 @@ init_instance(XWadInstance *inst)
    inst->curselect = -1;
 
    /* allocate big tables */
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    dumblevel_init(&inst->level);
-#else  /* !USE_LIBDUMBLEVEL */
+#else  /* !DUMB_CONFIG_LDWB */
    inst->ver = (VertexData *) safe_vmalloc(sizeof(VertexData) * MAXENTS);
    inst->thing = (ThingData *) safe_vmalloc(sizeof(ThingData) * MAXENTS);
    inst->line = (LineData *) safe_vmalloc(sizeof(LineData) * MAXENTS);
    inst->side = (SideData *) safe_vmalloc(sizeof(SideData) * MAXENTS);
    inst->sect = (SectorData *) safe_vmalloc(sizeof(SectorData) * MAXENTS);
-#endif /* !USE_LIBDUMBLEVEL */
+#endif /* !DUMB_CONFIG_LDWB */
    inst->enttbl = (EntFlags *) safe_vcalloc(sizeof(EntFlags) * MAXENTS);
 
    /* create frame & map viewer */
@@ -420,15 +430,15 @@ free_instance(XWadInstance *inst)
    free_cseti(&inst->mapctls);
    free_cseti(&inst->modectls);
    XDestroyWindow(dpy, inst->mapframe);
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    dumblevel_fini(&inst->level);
-#else  /* !USE_LIBDUMBLEVEL */
+#else  /* !DUMB_CONFIG_LDWB */
    safe_vfree(inst->ver, sizeof(VertexData) * MAXENTS);
    safe_vfree(inst->thing, sizeof(ThingData) * MAXENTS);
    safe_vfree(inst->line, sizeof(LineData) * MAXENTS);
    safe_vfree(inst->side, sizeof(SideData) * MAXENTS);
    safe_vfree(inst->sect, sizeof(SectorData) * MAXENTS);
-#endif /* !USE_LIBDUMBLEVEL */
+#endif /* !DUMB_CONFIG_LDWB */
    safe_vfree(inst->enttbl, sizeof(EntFlags) * MAXENTS);
 }
 
@@ -438,10 +448,10 @@ load_instance(XWadInstance *inst, const char *mapname)
    strncpy(inst->mapname, mapname, 8);
    inst->mapname[8] = 0;
    strcpy(inst->loadname, inst->mapname);
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    dumblevel_fini(&inst->level);
    dumblevel_init_doom(&inst->level, mapname, 3, 0);
-#else  /* !USE_LIBDUMBLEVEL */
+#else  /* !DUMB_CONFIG_LDWB */
    inst->thing_ln = safe_lookup_lump("THINGS", mapname, NULL, LOG_FATAL);
    inst->ver_ln = safe_lookup_lump("VERTEXES", mapname, NULL, LOG_FATAL);
    inst->side_ln = safe_lookup_lump("SIDEDEFS", mapname, NULL, LOG_FATAL);
@@ -467,15 +477,15 @@ load_instance(XWadInstance *inst, const char *mapname)
    free_lump(inst->sect_ln);
    free_lump(inst->line_ln);
    free_lump(inst->side_ln);
-#endif /* !USE_LIBDUMBLEVEL */
+#endif /* !DUMB_CONFIG_LDWB */
    update_wmtitle(inst);
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    inst->xoffset = inst->level.vertices[0].x;
    inst->yoffset = inst->level.vertices[0].y;
-#else  /* !USE_LIBDUMBLEVEL */
+#else  /* !DUMB_CONFIG_LDWB */
    inst->xoffset = inst->ver[0].x;
    inst->yoffset = inst->ver[0].y;
-#endif /* !USE_LIBDUMBLEVEL */
+#endif /* !DUMB_CONFIG_LDWB */
    /* force redo *everything* */
    inst->mode = NumModes;
    enter_mode(inst, VerMode);
@@ -601,7 +611,7 @@ int
 maxsel(const XWadInstance *inst)
 {
    switch (inst->mode) {
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    case VerMode:
       return inst->level.vertex_alloc.inited;
    case SectMode:
@@ -610,7 +620,7 @@ maxsel(const XWadInstance *inst)
       return inst->level.line_alloc.inited;
    case ThingMode:
       return 0;			/* FIXME */
-#else  /* !USE_LIBDUMBLEVEL */
+#else  /* !DUMB_CONFIG_LDWB */
    case (VerMode):
       return inst->nvers;
    case (SectMode):
@@ -619,7 +629,7 @@ maxsel(const XWadInstance *inst)
       return inst->nlines;
    case (ThingMode):
       return inst->nthings;
-#endif /* !USE_LIBDUMBLEVEL */
+#endif /* !DUMB_CONFIG_LDWB */
    }
    return 0;
 }

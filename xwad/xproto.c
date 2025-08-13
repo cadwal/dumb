@@ -1,8 +1,8 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * tool/xproto.c: XProtoThing, a program for viewing ProtoThings.
+ * Copyright (C) 1998, 1999 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,6 +110,8 @@ sigalarm_handler(int i)
       rdoutp_cseti(&inst->dispctls, inst);
    }
    /* done */
+   /* FIXME: This isn't safe -- XNextEvent() may have been updating a
+    * critical variable.  */
    longjmp(alarm_jb, 1);
 }
 
@@ -117,16 +119,19 @@ static void
 print_help(FILE *dest)
 {
    fprintf(dest,
-	   _("Usage: %s [OPTION]...\n"
+	   _("Usage: %s [OPTION]... [WADFILE]...\n"
 	     "Interactively view ProtoThings in X11.\n"
 	     "\n"), argv0);
-   fputs(_("  -w, --load-wad=FILE    load FILE as a WAD\n"
+   fputs(_("  -w, --load-wad=FILE    load FILE as a WAD.  WADFILE argument does the same.\n"
 	   "  -s, --no-sound         don't try to play sounds\n"
 	   "  -d, --display=DISPLAY  use X display DISPLAY\n"
 	   "  -l, --log-to=FILE      save messages to FILE\n"
 	   "  -v, --verbose          log to the screen\n"
 	   "      --help             display this help and exit\n"
 	   "      --version          output version information and exit\n"
+	   "\n"), dest);
+   fputs(_("If no WADFILE nor --load-wad=FILE arguments are given, XProtoThing\n"
+	   "loads `doom2.wad'.\n"
 	   "\n"), dest);
    print_bugaddr_message(dest);
 }
@@ -177,7 +182,7 @@ main(int argc, char **argv)
 
    for (;;) {
       int c = getopt_long(argc, argv, "w:sd:l:v", long_options, NULL);
-      if (c == 1)
+      if (c == -1)
 	 break;			/* end of options */
       switch (c) {
       case 'w':			/* -w, --load-wad=FILE */
@@ -212,11 +217,18 @@ main(int argc, char **argv)
       }	/* switch */
    } /* for ever */
 
-   /* start logging */
-   if (verbose_flag) {
-      /*setlinebuf(stdout); *//* if stdout is a socket, we'll need this */
-      log_stdout();
+   /* process non-option arguments */
+   while (optind < argc) {
+      if (nwads >= MAX_WADS) {
+	 fprintf(stderr, _("%s: internal limit on wad files exceeded\n"),
+		 argv0);
+	 exit(DUMB_EXIT_INTERNAL_LIMIT);
+      } else
+	 wadf[nwads++] = argv[optind++];
    }
+
+   /* start logging */
+   log_stream(stderr, verbose_flag ? LOG_ALL : LOG_WARNING, NULL);
    logprintf(LOG_BANNER, 'M', "XPROTO");
 
    /* start Xlib */
@@ -239,6 +251,8 @@ main(int argc, char **argv)
       while (i < nwads)
 	 init_pwad(wadf[i++], NULL);
    } else {
+      /* There's no MAPNAME, so the program cannot know whether
+       * doom.wad or doom2.wad is meant.  Assume doom2.wad. */
       init_iwad("doom2.wad", NULL);	/* FIXME: from .dumbrc */
       init_pwad("doom4dum.wad", NULL);
    }
@@ -258,15 +272,26 @@ main(int argc, char **argv)
       XEvent ev;
       setjmp(alarm_jb);
       /*if(inst->rotate||inst->animate) */  {
+	 /* Hook the signal before triggering it. */
+	 signal(SIGALRM, sigalarm_handler);
+	 /* Linux 2.0.36 with GNU libc 2.0.7 seems to keep SIGALRM blocked
+	  * after the handler calls longjmp().  Unblock it.  */
+	 {
+	    sigset_t sigs;
+	    sigemptyset(&sigs);
+	    sigaddset(&sigs, SIGALRM);
+	    sigprocmask(SIG_UNBLOCK, &sigs, NULL);
+	 }
 #ifdef HAVE_SETITIMER
-	 struct itimerval itv;
-	 memset(&itv, 0, sizeof(itv));
-	 itv.it_value.tv_usec = 100000;		/* 1/10 of a second */
-	 setitimer(ITIMER_REAL, &itv, NULL);
+	 {
+	    struct itimerval itv;
+	    memset(&itv, 0, sizeof(itv));
+	    itv.it_value.tv_usec = 100000; /* 1/10 of a second */
+	    setitimer(ITIMER_REAL, &itv, NULL);
+	 }
 #else  /* !HAVE_SETITIMER */
 	 alarm(1);
 #endif /* !HAVE_SETITIMER */
-	 signal(SIGALRM, sigalarm_handler);
       }
       XNextEvent(dpy, &ev);
       alarm(0);

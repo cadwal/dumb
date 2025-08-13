@@ -66,7 +66,7 @@ extra_sources = render8.c render16.c render32.c generic_fbrerend.c	\
 le32_fbrerend.c le64_fbrerend.c dummy_net.c unix_net.c
 
 dummy_ldadd = 
-ggi_ldadd = $(DUMB_GGI_LDADD)
+ggi_ldadd = -lggi
 svgalib_ldadd = -lvga
 x_ldadd = $(X_PRE_LIBS) $(DUMB_DGA_LDADD) $(DUMB_XSHM_LDADD)	\
 $(DUMB_XKB_LDADD) -lX11 $(X_EXTRA_LIBS)

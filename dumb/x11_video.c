@@ -559,7 +559,7 @@ get_input(PlayerInput *in)
 }
 
 static void
-handle_keyevent(XKeyEvent * ev)
+handle_keyevent(XKeyEvent *ev)
 {
    /* The parameter should be const but XLookupKeysym() isn't const in
     * my headers and I don't want to insert casts.  And it doesn't
@@ -587,7 +587,7 @@ handle_keyevent(XKeyEvent * ev)
  * and was very slow and unreliable.  So I chose this as a compromise.
  */
 static void
-handle_crossingevent(XCrossingEvent * ev)
+handle_crossingevent(XCrossingEvent *ev)
 {
    if (grab_kbd == GRAB_WHEN_POINTED) {
       if (ev->type == EnterNotify) {

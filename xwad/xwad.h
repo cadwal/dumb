@@ -24,12 +24,10 @@
 
 #define PI M_PI
 
-/* #define USE_LIBDUMBLEVEL */
-
 #include "libdumbutil/fixed.h"
 #include "libdumbwad/wadstruct.h"
 #include "libdumbwad/wadio.h"
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
 #include "libdumblevel/dumblevel.h"
 #endif
 #include "controls.h"
@@ -71,9 +69,9 @@ typedef struct AppInstance {
    /* these may be null for a new level */
    char mapname[10];
    char loadname[10];
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    struct dumblevel level;
-#else				/* !USE_LIBDUMBLEVEL */
+#else  /* !DUMB_CONFIG_LDWB */
    LumpNum thing_ln, ver_ln, line_ln, side_ln, sect_ln;
    /* level data */
    int nthings, nvers, nlines, nsides, nsects;
@@ -82,7 +80,7 @@ typedef struct AppInstance {
    LineData *line;
    SideData *side;
    SectorData *sect;
-#endif				/* !USE_LIBDUMBLEVEL */
+#endif /* !DUMB_CONFIG_LDWB */
    /* texture chooser stuff */
    ChooseInst tch;
    char *tch_buf;

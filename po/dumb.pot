@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1998-12-22 18:49+0200\n"
+"POT-Creation-Date: 1999-01-06 01:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -493,7 +493,7 @@ msgstr ""
 #: dumb/dumb.c:198 ptcomp/ptcomp.c:124 test/fixed_bm.c:170 test/ldltest.c:164
 #: tool/dark2trans.c:148 tool/mkdfnt.c:137 tool/mknulmap.c:208
 #: tool/mkpnames.c:206 tool/ppmtodumb.c:241 tool/wadtool.c:112
-#: xwad/xproto.c:143 xwad/xwad.c:110
+#: xwad/xproto.c:148 xwad/xwad.c:113
 msgid ""
 "This program is free software; you may redistribute it under the terms of\n"
 "the GNU General Public License.  This program has absolutely no warranty.\n"
@@ -677,6 +677,34 @@ msgstr ""
 #: dumb/gettable.c:362
 #, c-format
 msgid "init %d gettables"
+msgstr ""
+
+#: dumb/ggi_degas_video.c:86 dumb/ggi_olddegas_video.c:88
+msgid "GGI: ggiInit failed."
+msgstr ""
+
+#: dumb/ggi_degas_video.c:92 dumb/ggi_olddegas_video.c:94
+msgid "GGI: ggiOpen failed."
+msgstr ""
+
+#: dumb/ggi_degas_video.c:128 dumb/ggi_olddegas_video.c:130
+#: dumb/linux_video.c:154 dumb/vgagl_video.c:138
+#, c-format
+msgid "Bad BPP (%d) in init_video"
+msgstr ""
+
+#: dumb/ggi_degas_video.c:139 dumb/ggi_olddegas_video.c:145
+#, c-format
+msgid "Depth %d not supported."
+msgstr ""
+
+#: dumb/ggi_degas_video.c:144 dumb/ggi_olddegas_video.c:150
+msgid "Mode not supported by LibGGI."
+msgstr ""
+
+#: dumb/ggi_degas_video.c:156 dumb/ggi_olddegas_video.c:158
+#, c-format
+msgid "init_video in copying mode pagelen=%d"
 msgstr ""
 
 #: dumb/keymap.c:177
@@ -966,12 +994,6 @@ msgstr ""
 
 #: dumb/linux_video.c:40
 msgid "minimum pages to use for flipping"
-msgstr ""
-
-#: dumb/ggi_degas_video.c:128 dumb/ggi_olddegas_video.c:130
-#: dumb/linux_video.c:154 dumb/vgagl_video.c:138
-#, c-format
-msgid "Bad BPP (%d) in init_video"
 msgstr ""
 
 #: dumb/linux_video.c:163
@@ -1566,28 +1588,6 @@ msgstr ""
 msgid "keyboard grab failed!"
 msgstr ""
 
-#: dumb/ggi_degas_video.c:86 dumb/ggi_olddegas_video.c:88
-msgid "GGI: ggiInit failed."
-msgstr ""
-
-#: dumb/ggi_degas_video.c:92 dumb/ggi_olddegas_video.c:94
-msgid "GGI: ggiOpen failed."
-msgstr ""
-
-#: dumb/ggi_degas_video.c:139 dumb/ggi_olddegas_video.c:145
-#, c-format
-msgid "Depth %d not supported."
-msgstr ""
-
-#: dumb/ggi_degas_video.c:144 dumb/ggi_olddegas_video.c:150
-msgid "Mode not supported by LibGGI."
-msgstr ""
-
-#: dumb/ggi_degas_video.c:156 dumb/ggi_olddegas_video.c:158
-#, c-format
-msgid "init_video in copying mode pagelen=%d"
-msgstr ""
-
 #: libdumb/dos_sound.c:88
 #, c-format
 msgid "Couldn't initialize sound: %s"
@@ -1936,7 +1936,7 @@ msgstr ""
 
 #: libdumbutil/bugaddr.c:34
 #, c-format
-msgid "Report bugs to %s.\n"
+msgid "Report bugs to <%s>.\n"
 msgstr ""
 
 #. FIXME: halt the program if given from cmdline
@@ -2637,7 +2637,7 @@ msgstr ""
 #: ptcomp/ptcomp.c:171 ptcomp/ptcomp.c:178 test/fixed_bm.c:94
 #: test/ldltest.c:249 tool/dark2trans.c:187 tool/mkdfnt.c:145
 #: tool/mknulmap.c:216 tool/mkpnames.c:169 tool/ppmtodumb.c:249
-#: xwad/xproto.c:210 xwad/xwad.c:187
+#: xwad/xproto.c:215 xwad/xwad.c:190
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr ""
@@ -2989,12 +2989,12 @@ msgstr ""
 msgid "%s: You must use `--character=C'.\n"
 msgstr ""
 
-#: tool/mkdfnt.c:245 xwad/xproto.c:225 xwad/xwad.c:202
+#: tool/mkdfnt.c:245 xwad/xproto.c:237 xwad/xwad.c:212
 #, c-format
 msgid "Can't open display %s"
 msgstr ""
 
-#: tool/mkdfnt.c:245 xwad/xproto.c:226 xwad/xwad.c:202
+#: tool/mkdfnt.c:245 xwad/xproto.c:238 xwad/xwad.c:212
 msgid "<default>"
 msgstr ""
 
@@ -3379,17 +3379,18 @@ msgstr ""
 msgid "ID:"
 msgstr ""
 
-#: xwad/xproto.c:120
+#: xwad/xproto.c:122
 #, c-format
 msgid ""
-"Usage: %s [OPTION]...\n"
+"Usage: %s [OPTION]... [WADFILE]...\n"
 "Interactively view ProtoThings in X11.\n"
 "\n"
 msgstr ""
 
-#: xwad/xproto.c:123
+#: xwad/xproto.c:125
 msgid ""
-"  -w, --load-wad=FILE    load FILE as a WAD\n"
+"  -w, --load-wad=FILE    load FILE as a WAD.  WADFILE argument does the "
+"same.\n"
 "  -s, --no-sound         don't try to play sounds\n"
 "  -d, --display=DISPLAY  use X display DISPLAY\n"
 "  -l, --log-to=FILE      save messages to FILE\n"
@@ -3399,16 +3400,23 @@ msgid ""
 "\n"
 msgstr ""
 
-#: xwad/xproto.c:185 xwad/xwad.c:162
+#: xwad/xproto.c:133
+msgid ""
+"If no WADFILE nor --load-wad=FILE arguments are given, XProtoThing\n"
+"loads `doom2.wad'.\n"
+"\n"
+msgstr ""
+
+#: xwad/xproto.c:190 xwad/xproto.c:223 xwad/xwad.c:165 xwad/xwad.c:198
 #, c-format
 msgid "%s: internal limit on wad files exceeded\n"
 msgstr ""
 
-#: xwad/xproto.c:402
+#: xwad/xproto.c:427
 msgid "no PROTOS lump in wad"
 msgstr ""
 
-#: xwad/xproto.c:405
+#: xwad/xproto.c:430
 msgid "no protos"
 msgstr ""
 
@@ -3420,20 +3428,28 @@ msgstr ""
 #: xwad/xwad.c:86
 #, c-format
 msgid ""
-"Usage: %s [OPTION]...\n"
+"Usage: %s [OPTION]... [WADFILE]...\n"
 "Interactively edit DUMB levels in X11.\n"
 "\n"
 msgstr ""
 
 #: xwad/xwad.c:89
 msgid ""
-"  -w, --load-wad=FILE    load FILE as a WAD\n"
+"  -w, --load-wad=FILE    load FILE as a WAD.  WADFILE argument does the "
+"same.\n"
 "  -m, --map=MAPNAME      start editing map MAPNAME (default E1M1)\n"
 "  -d, --display=DISPLAY  use X display DISPLAY\n"
 "  -l, --log-to=FILE      save messages to FILE\n"
 "  -v, --verbose          log to the screen\n"
 "      --help             display this help and exit\n"
 "      --version          output version information and exit\n"
+"\n"
+msgstr ""
+
+#: xwad/xwad.c:97
+msgid ""
+"If no WADFILE nor --load-wad=FILE arguments are given, XWad loads\n"
+"`doom.wad' if the map name begins with `E' and `doom2.wad' otherwise.\n"
 "\n"
 msgstr ""
 

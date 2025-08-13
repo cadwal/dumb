@@ -43,21 +43,21 @@
 static int
 mkvxy(XWadInstance *inst, int x, int y)
 {
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    return dumblevel_new_vertex(&inst->level, x, y);
-#else  /* !USE_LIBDUMBLEVEL */
+#else  /* !DUMB_CONFIG_LDWB */
    int i = inst->nvers++;
    V(i).x = x;
    V(i).y = y;
    return i;
-#endif /* !USE_LIBDUMBLEVEL */
+#endif /* !DUMB_CONFIG_LDWB */
 }
 #define mkver(i) mkvxy(i,0,0)
 
 static int
 mksect(XWadInstance *inst)
 {
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    static const struct dumblevel_sector modelsector =
    {
       0, 128,			/* floor_level, ceiling_level */
@@ -67,17 +67,17 @@ mksect(XWadInstance *inst)
       -1			/* first_side */
    };
    return dumblevel_new_sector(&inst->level, &modelsector);
-#else  /* !USE_LIBDUMBLEVEL */
+#else  /* !DUMB_CONFIG_LDWB */
    int i = inst->nsects++;
    memset(&SE(i), 0, sizeof(SectorData));
    return i;
-#endif /* !USE_LIBDUMBLEVEL */
+#endif /* !DUMB_CONFIG_LDWB */
 }
 
 static int
 cpysect(XWadInstance *inst, int s)
 {
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    return dumblevel_new_sector(&inst->level, &inst->level.sectors[s]);
 #else
    int i = inst->nsects++;
@@ -89,7 +89,7 @@ cpysect(XWadInstance *inst, int s)
 static int
 mkside(XWadInstance *inst)
 {
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    static const struct dumblevel_side modelside =
    {
       {NULL, 0, 0, 0x0000},	/* upper */
@@ -99,18 +99,18 @@ mkside(XWadInstance *inst)
       -1, -1
    };
    return dumblevel_new_side(&inst->level, &modelside);
-#else  /* !USE_LIBDUMBLEVEL */
+#else  /* !DUMB_CONFIG_LDWB */
    int i = inst->nsides++;
    memset(inst->side + i, 0, sizeof(SideData));
    inst->side[i].sector = -1;
    return i;
-#endif /* !USE_LIBDUMBLEVEL */
+#endif /* !DUMB_CONFIG_LDWB */
 }
 
 static int
 mkline(XWadInstance *inst)
 {
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    static struct dumblevel_line modelline =
    {
       -1, -1,			/* ver1, ver2 */
@@ -120,19 +120,19 @@ mkline(XWadInstance *inst)
    };
    modelline.side[0] = mkside(inst);
    return dumblevel_new_line(&inst->level, &modelline);
-#else  /* !USE_LIBDUMBLEVEL */
+#else  /* !DUMB_CONFIG_LDWB */
    int l = inst->nlines++;
    memset(&L(l), 0, sizeof(LineData));
    L(l).side[0] = mkside(inst);
    L(l).side[1] = -1;
    return l;
-#endif /* !USE_LIBDUMBLEVEL */
+#endif /* !DUMB_CONFIG_LDWB */
 }
 
 static int
 mkline2s(XWadInstance *inst)
 {
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    static struct dumblevel_line modelline =
    {
       -1, -1,			/* ver1, ver2 */
@@ -143,19 +143,19 @@ mkline2s(XWadInstance *inst)
    modelline.side[0] = mkside(inst);
    modelline.side[1] = mkside(inst);
    return dumblevel_new_line(&inst->level, &modelline);
-#else  /* !USE_LIBDUMBLEVEL */
+#else  /* !DUMB_CONFIG_LDWB */
    int l = inst->nlines++;
    memset(&L(l), 0, sizeof(LineData));
    L(l).side[0] = mkside(inst);
    L(l).side[1] = mkside(inst);
    return l;
-#endif /* !USE_LIBDUMBLEVEL */
+#endif /* !DUMB_CONFIG_LDWB */
 }
 
 static int
 cpyline(XWadInstance *inst, int o)
 {
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    struct dumblevel_line modelline = inst->level.lines[o];
    int i;
    for (i = 0; i < 2; i++) {
@@ -164,7 +164,7 @@ cpyline(XWadInstance *inst, int o)
 						&modelline.side[i]);
    }
    return dumblevel_new_line(&inst->level, &modelline);
-#else  /* !USE_LIBDUMBLEVEL */
+#else  /* !DUMB_CONFIG_LDWB */
    int i, l = inst->nlines++;
    memcpy(&L(l), &L(o), sizeof(LineData));
    for (i = 0; i < 2; i++)
@@ -173,7 +173,7 @@ cpyline(XWadInstance *inst, int o)
 	 memcpy(&S(l, i), &S(o, i), sizeof(SideData));
       }
    return l;
-#endif /* !USE_LIBDUMBLEVEL */
+#endif /* !DUMB_CONFIG_LDWB */
 }
 
 /* Find all the lines that begin or end at VER and put the numbers of
@@ -181,11 +181,11 @@ cpyline(XWadInstance *inst, int o)
  * of lines found, whether that is less or more than TBLLEN.  If
  * TBLLEN is 0, TBL is not used and may be NULL.  */
 static unsigned
-find_lines_at_vertex(AppInst * inst, int ver, int tbl[], unsigned tbllen)
+find_lines_at_vertex(AppInst *inst, int ver, int tbl[], unsigned tbllen)
 {
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    return 0;			/* FIXME */
-#else  /* !USE_LIBDUMBLEVEL */
+#else  /* !DUMB_CONFIG_LDWB */
    unsigned found = 0;
    int l;
    for (l = 0; l < inst->nlines; l++) {
@@ -201,7 +201,7 @@ find_lines_at_vertex(AppInst * inst, int ver, int tbl[], unsigned tbllen)
       }
    }
    return found;
-#endif /* !USE_LIBDUMBLEVEL */
+#endif /* !DUMB_CONFIG_LDWB */
 }
 
 /* Find all selected lines and put the numbers of the TBLLEN first
@@ -209,11 +209,11 @@ find_lines_at_vertex(AppInst * inst, int ver, int tbl[], unsigned tbllen)
  * the number of lines found, whether that is less or more than
  * TBLLEN.  If TBLLEN is 0, TBL is not used and may be NULL.  */
 static unsigned
-find_sel_lines(AppInst * inst, int tbl[], unsigned tbllen)
+find_sel_lines(AppInst *inst, int tbl[], unsigned tbllen)
 {
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    return 0;			/* FIXME */
-#else  /* !USE_LIBDUMBLEVEL */
+#else  /* !DUMB_CONFIG_LDWB */
    unsigned found = 0;
    int l;
    for (l = 0; l < inst->nlines; l++) {
@@ -225,16 +225,16 @@ find_sel_lines(AppInst * inst, int tbl[], unsigned tbllen)
       }
    }
    return found;
-#endif /* !USE_LIBDUMBLEVEL */
+#endif /* !DUMB_CONFIG_LDWB */
 }
 
 void
 split_sel_lines(XWadInstance *inst)
 {
-#ifdef USE_LIBDUMBLEVEL
+#ifdef DUMB_CONFIG_LDWB
    FIXME...now !
        And then update ChangeLog.
-#else  /* !USE_LIBDUMBLEVEL */
+#else  /* !DUMB_CONFIG_LDWB */
    int i;
    int nv, nl;
    for (i = 0; i < inst->nlines; i++) {
@@ -248,7 +248,7 @@ split_sel_lines(XWadInstance *inst)
       L(nl).ver1 = L(i).ver2 = nv;
    }
    /*new_selection(-1,inst,0); */
-#endif /* !USE_LIBDUMBLEVEL */
+#endif /* !DUMB_CONFIG_LDWB */
 }
 
 /* If lines (L1X1,L1Y1)-(L1X2,L1Y2) and (L2X1,L2Y1)-(L2X2,L2Y2) cross,

@@ -44,7 +44,7 @@ static GC gc, sbgc;
 static XFontStruct *font;
 
 void
-init_choosers(XFontStruct * f)
+init_choosers(XFontStruct *f)
 {
    sbgc = XCreateGC(dpy, root, 0, NULL);
    gc = XCreateGC(dpy, root, 0, NULL);
@@ -60,14 +60,14 @@ reset_choosers(void)
 }
 
 void
-choose_cur(ChooseInst *ci, int i, AppInst * inst)
+choose_cur(ChooseInst *ci, int i, AppInst *inst)
 {
    if (ci->choose)
       ci->choose(i, inst);
 }
 
 static void
-draw_item(ChooseInst *ci, AppInst * inst, int i)
+draw_item(ChooseInst *ci, AppInst *inst, int i)
 {
    int y = SLOT_START(i);
    const char *s;
@@ -88,7 +88,7 @@ draw_item(ChooseInst *ci, AppInst * inst, int i)
 }
 
 static void
-redraw(ChooseInst *ci, AppInst * inst, int y1, int y2)
+redraw(ChooseInst *ci, AppInst *inst, int y1, int y2)
 {
    int i;
    y1 += ci->scroll;
@@ -123,7 +123,7 @@ movescroll(ChooseInst *ci, int i)
 
 #define setcur choose_setcur
 void
-choose_setcur(ChooseInst *ci, int i, AppInst * inst)
+choose_setcur(ChooseInst *ci, int i, AppInst *inst)
 {
    int y, did_redraw = 0;
    if (i < 0)
@@ -150,7 +150,7 @@ choose_setcur(ChooseInst *ci, int i, AppInst * inst)
 }
 
 static void
-butsel(ChooseInst *ci, int y, AppInst * inst)
+butsel(ChooseInst *ci, int y, AppInst *inst)
 {
    y += ci->scroll;
    y /= SLOT_HEIGHT;
@@ -161,7 +161,7 @@ butsel(ChooseInst *ci, int y, AppInst * inst)
 }
 
 void
-choose_keycmd(ChooseInst *ci, int code, AppInst * inst)
+choose_keycmd(ChooseInst *ci, int code, AppInst *inst)
 {
    switch (code) {
    case (XK_KP_8):
@@ -322,7 +322,7 @@ sb_motion(ChooseInst *ci, int y)
 }
 
 static void
-scrolldhf(XEvent * ev, AppInst * inst, void *info)
+scrolldhf(XEvent *ev, AppInst *inst, void *info)
 {
    switch (ev->type) {
    case (ButtonPress):
@@ -341,7 +341,7 @@ scrolldhf(XEvent * ev, AppInst * inst, void *info)
 }
 
 void
-init_choose(ChooseInst *ci, Window parent, AppInst * inst)
+init_choose(ChooseInst *ci, Window parent, AppInst *inst)
 {
    memset(ci, 0, sizeof(sizeof(ChooseInst)));
    ci->w = XCreateSimpleWindow(dpy, parent, 0, 0,

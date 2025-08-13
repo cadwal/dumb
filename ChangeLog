@@ -1,3 +1,74 @@
+1999-01-06  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Released DUMB 0.13.6.
+
+	* docs/Install-FAQ: Doc fix.
+	* docs/patches/gettext-0.10.35-1-po-regexp.diff,
+	docs/patches/gettext-0.10.35-2-intllibs.diff,
+	docs/patches/gettext-0.10.35-3-memcpy.diff,
+	docs/patches/gettext-0.10.35-4-comments.diff,
+	docs/patches/gettext-0.10.35-5-destdir.diff,
+	docs/patches/gettext-0.10.35-6-mkinstalldirs.diff:
+	Added a	copyright disclaimer of some sort.
+
+	* docs/patches/gettext-0.10.35-7-gnusource.diff: New file.
+	* docs/patches/Makefile.am (EXTRA_DIST): Added
+	gettext-0.10.35-7-gnusource.diff.
+	* intl/ChangeLog, intl/dcgettext.c: New versions from
+	gettext-0.10.35.kn.7.
+
+	* NEWS: Logged changes in DUMB 0.13.6.
+	* configure.in: Bumped version number to 0.13.6.
+
+	* dumb/things.h (camera_to_view, update_camera): Added prototypes.
+
+	* xwad/xproto.c (main): Hook and unblock SIGALRM before calling
+	setitimer() or alarm().
+	* TODO: Added XProtoThing core dump notice.
+	* po/fi.po: Line number changes only.
+
+1999-01-05  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* xwad/xproto.c (main):
+	Treat non-option arguments as --load-wad=FILE.
+	(print_help): Adjusted accordingly.
+	* po/fi.po: Synchronized with source and added 1999 to copyright.
+
+	* TODO: Merged some items and added ALSA.
+
+1999-01-03  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* xwad/xproto.c, xwad/xwad.c (main):
+	Log to stderr rather than stdout.  Log LOG_WARNING and higher
+	even when !verbose_flag.
+
+1998-12-28  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* xwad/xwad.c (main): --verbose sets verbose_flag to 1, not 0.
+	Treat non-option arguments as WAD files to load.
+	(print_help): WADFILE arguments are allowed.
+	
+	* xwad/xtexture.h, xwad/xtexture.c, xwad/controls.h,
+	xwad/controls.c, xwad/connect.c, xwad/choose.h, xwad/choose.c,
+	dumb/x11_video.c: ,s/\([A-Z][a-z]\+ \*\) /\1/g
+	* docs/maint/indent.pro: Added -TDisplay and -TXFontStruct.
+
+	* xwad/connect.c, xwad/xwad.c, xwad/xwad.h:
+	,s/USE_LIBDUMBLEVEL/DUMB_CONFIG_LDWB/g
+
+	* libdumbutil/bugaddr.c (print_bugaddr_message):
+	Print <> around program_bug_address.
+
+1998-12-27  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* configure.in: Restored ggiParseMode() check.
+	(DUMB_GGI_LDADD): Removed, since "-lggi" is always enough.
+	* dumb/Makefile.am (ggi_ldadd):
+	Use -lggi instead of $(DUMB_GGI_LDADD), which no longer exists.
+
+	* xwad/xproto.c (main): Exit loop when c==-1, not when c==1.
+	Reported by Jan Rocho.
+
 1998-12-25  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
 
 	* Released DUMB 0.13.5.

@@ -80,5 +80,5 @@ means DUMB was compiled with the libintl.h of the included gettext
 library which defines dcgettext__, but linked with your system gettext
 library which defines __dcgettext.
 
-The solution is to remove intl/libintl.h (which is a copy of
-$top_srcdir/intl/libgettext.h) and recompile all files (make clean).
+Clearing the cruft with `make distclean', removing config.cache (if it
+still exists) and rerunning configure should help.

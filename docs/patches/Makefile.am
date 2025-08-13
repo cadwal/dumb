@@ -3,4 +3,5 @@
 EXTRA_DIST = aalib-1.2-add_.diff gettext-0.10.35-1-po-regexp.diff	\
 gettext-0.10.35-2-intllibs.diff gettext-0.10.35-3-memcpy.diff		\
 gettext-0.10.35-4-comments.diff gettext-0.10.35-5-destdir.diff		\
-gettext-0.10.35-6-mkinstalldirs.diff .cvsignore
+gettext-0.10.35-6-mkinstalldirs.diff gettext-0.10.35-7-gnusource.diff	\
+.cvsignore

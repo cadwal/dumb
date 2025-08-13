@@ -1,6 +1,6 @@
 * Highest-priority queue:
 fix all configure/compile/install bugs
-rewrite libdumbworldb in C++
+rewrite libdumbworldb in C++, but don't get too excited
 separate renderer from rest of code again
 speed up rendering by checking recursively which sectors can be seen
 fix wall collision checks
@@ -15,9 +15,9 @@ center DUMB logo vertically (just look at aadumb)
 check that inventory items work
 compile as C++ on little-endian machines too
 continuous sounds for moving sectors
-documentation
+documentation in Texinfo or something
 end-level statistics (secret%, kill%, collect%, hit%)
-finish off heretic protos
+finish off heretic protos (done?)
 gamma control from keyboard
 get rid of alarm(), use select() instead
 get rid of all arbitrary limits
@@ -44,7 +44,6 @@ use function keys for special commands, select weapons with numbers
 use PNG instead of PPM
 use regular fixed point instead of UNIT_SPEED
 weapon numbering
-write documents in Texinfo or something
 AA-lib: aadumb doesn't build when using configure --without-x
 AA-lib: ASCII snapshot
 AA-lib: draw text as text
@@ -77,7 +76,6 @@ keymap: conditional entries like X11:KP_Up AA:8
 keymap: keymap_keyname_to_keycode()
 ldwb: make loops over things as efficient as possible
 ldwb: tunneling
-ldwb: rewrite in C++?
 log: replace perror() with something which works in a window too
 menu: configuration menus
 menu: confirm quitting
@@ -97,7 +95,7 @@ render: truecolor textures
 sound: Doppler effects?
 sound: do something about music
 sound: echoes in sewers
-sound: support Enlightened Sound Daemon, rplay and NAS
+sound: support ALSA, Enlightened Sound Daemon, rplay and NAS
 sound: multi-threaded sound driver
 sound: output to a file/pipe the user can postprocess any way (s)he wants
 wadtool: --verbose
@@ -107,4 +105,5 @@ X11: KeymapNotify
 X11: set icon in program, not in window manager config
 X11: turn autorepeat off when window has focus and XKB isn't available
 X11: use timestamps from keyboard events
+XProtoThing: dumps core when stepping past end of TFOG
 XWad: preview window, could even be a full game

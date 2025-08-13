@@ -14,6 +14,10 @@ After installing the patched gettext, rerun `gettextize -f', `aclocal'
 and `autoconf' in your favorite packages to let them use the changes.
 
 
+I (Kalle Niemitalo) don't think copyright applies to changes as simple
+as these.
+
+
 diff -Nurp gettext-0.10.35.kn.5/m4/ChangeLog gettext-0.10.35.kn.6/m4/ChangeLog
 --- gettext-0.10.35.kn.5/m4/ChangeLog	Wed Sep 23 21:38:12 1998
 +++ gettext-0.10.35.kn.6/m4/ChangeLog	Fri Dec 18 17:52:44 1998

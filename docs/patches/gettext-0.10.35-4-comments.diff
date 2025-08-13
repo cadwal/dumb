@@ -18,6 +18,11 @@ To apply this in the gettext sources:
 After installing the patched gettext, rerun `aclocal' and `autoconf'
 in your favorite packages to let them use the changes.
 
+
+I (Kalle Niemitalo) don't think copyright applies to changes as simple
+as these.
+
+
 diff -Nurp gettext-0.10.35.kn.3/m4/ChangeLog gettext-0.10.35.kn.4/m4/ChangeLog
 --- gettext-0.10.35.kn.3/m4/ChangeLog	Wed Sep 23 18:20:10 1998
 +++ gettext-0.10.35.kn.4/m4/ChangeLog	Wed Sep 23 18:28:33 1998

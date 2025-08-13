@@ -56,7 +56,7 @@ GC ctlgc;
 XFontStruct *ctlfont, *ctlfont1, *ctlfont2;
 
 void
-setctlfont(XFontStruct * f)
+setctlfont(XFontStruct *f)
 {
    if (ctlfont != f) {
       XSetFont(dpy, ctlgc, f->fid);
@@ -65,7 +65,7 @@ setctlfont(XFontStruct * f)
 }
 
 void
-init_controls(Display * d, XFontStruct * f1, XFontStruct * f2)
+init_controls(Display *d, XFontStruct *f1, XFontStruct *f2)
 {
    dpy = d;
    root = DefaultRootWindow(dpy);

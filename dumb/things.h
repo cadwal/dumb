@@ -63,6 +63,8 @@ void thingd_apply_torque(ThingDyn *td, fixed t);
 void thingd_apply_up(ThingDyn *td, fixed f);
 
 void thing_to_view(const LevData *ld, int thing, View *view, const ViewTrans *vt);
+void camera_to_view(const LevData *ld, int cam, View *v, const ViewTrans *vx);
+void update_camera(const LevData *ld, int cam, int follow);
 
 void thing_rotate_image(const LevData *ld, int thing, fixed view_angle);
 

@@ -1,0 +1,56 @@
+This patch avoids a compiler warning about stpcpy() if you're using
+version 2 of the GNU C library.
+
+
+To apply this in the gettext sources:
+
+# cd /usr/local/src/gettext-0.10.35
+(or wherever you have extracted the source tree)
+# patch -p1 </PATH/TO/gettext-0.10.35-7-gnusource.diff
+
+After installing the patched gettext, rerun `gettextize -f' in your
+favorite packages to let them use the changes.
+
+
+I (Kalle Niemitalo) don't think copyright applies to changes as simple
+as these.
+
+
+diff -Nurp gettext-0.10.35.kn.6/intl/ChangeLog gettext-0.10.35.kn.7/intl/ChangeLog
+--- gettext-0.10.35.kn.6/intl/ChangeLog	Wed Sep 23 21:38:12 1998
++++ gettext-0.10.35.kn.7/intl/ChangeLog	Wed Jan  6 16:54:26 1999
+@@ -1,3 +1,8 @@
++1999-01-06  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
++
++	* dcgettext.c: Define _GNU_SOURCE immediately after including
++	config.h.
++
+ 1998-09-23  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+ 
+ 	* localealias.c: Check #ifndef HAVE_MEMCPY rather than #ifndef
+diff -Nurp gettext-0.10.35.kn.6/intl/dcgettext.c gettext-0.10.35.kn.7/intl/dcgettext.c
+--- gettext-0.10.35.kn.6/intl/dcgettext.c	Tue Apr 28 00:12:33 1998
++++ gettext-0.10.35.kn.7/intl/dcgettext.c	Wed Jan  6 16:52:39 1999
+@@ -19,6 +19,12 @@
+ # include <config.h>
+ #endif
+ 
++/* The GNU C library defines stpcpy() in <string.h> only if _GNU_SOURCE
++   is defined before including any GNU headers.  */
++#ifndef _GNU_SOURCE
++# define _GNU_SOURCE 1
++#endif
++
+ #include <sys/types.h>
+ 
+ #ifdef __GNUC__
+@@ -58,9 +64,6 @@ void free ();
+ #endif
+ 
+ #if defined HAVE_STRING_H || defined _LIBC
+-# ifndef _GNU_SOURCE
+-#  define _GNU_SOURCE	1
+-# endif
+ # include <string.h>
+ #else
+ # include <strings.h>

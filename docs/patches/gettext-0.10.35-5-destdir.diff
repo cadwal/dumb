@@ -13,6 +13,10 @@ After installing the patched gettext, rerun `gettextize -f' in your
 favorite packages to let them use the changes.
 
 
+I (Kalle Niemitalo) don't think copyright applies to changes as simple
+as these.
+
+
 diff -Nurp gettext-0.10.35.kn.4/po/ChangeLog gettext-0.10.35.kn.5/po/ChangeLog
 --- gettext-0.10.35.kn.4/po/ChangeLog	Wed Apr 29 04:07:27 1998
 +++ gettext-0.10.35.kn.5/po/ChangeLog	Fri Dec 18 17:53:20 1998

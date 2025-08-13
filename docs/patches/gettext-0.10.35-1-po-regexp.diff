@@ -13,6 +13,11 @@ gettext binary package as well.  Use `locate' to find the files.
 Remember to get rid of the old po-mode.elc.
 
 
+This change was made by François Pinard, the author of po-mode.
+It is included in the version distributed by him at
+<http://www.iro.umontreal.ca/contrib/po/po-mode/>.
+
+
 diff -Nurp gettext-0.10.35/misc/po-mode.el gettext-0.10.35.kn.1/misc/po-mode.el
 --- gettext-0.10.35/misc/po-mode.el	Wed Apr 29 22:28:56 1998
 +++ gettext-0.10.35.kn.1/misc/po-mode.el	Wed Sep 23 16:36:32 1998
