@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumbutil/safem.h: "Safe" (checked) memory allocation.
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  * Copyright (C) 1994 by Chris Laurel
  *

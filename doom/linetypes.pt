@@ -786,10 +786,10 @@ LineType Light-W1-Off-LE 104
   AllowPlayer OnCrossed
   Action Sector LightLE
 
-//  LineType Light-W1-Blink  17
-//    AllowPlayer OnCrossed
-//    Action Sector LightBlink
-//
+/*  LineType Light-W1-Blink  17
+ *    AllowPlayer OnCrossed
+ *    Action Sector LightBlink
+ */
 LineType Light-WR-On  81
   Repeatable AllowPlayer OnCrossed
   Action Sector LightOn

@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumb/texture.c: Textures.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,6 +22,7 @@
 
 #include <config.h>
 
+#include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -797,7 +799,7 @@ init_font(const char *format, int nchars, int ofs)
    /* OK, now set up each character to be loaded when needed */
    logprintf(LOG_INFO, 'T', _("Loading font #%d (%s)"), nfonts, format);
    for (i = 0; i < nchars; i++) {
-      Texture *t = fonts[nfonts] + i;
+      Texture *t = &fonts[nfonts][i];
       t->opaque = 0;
       t->type = TT_FONT;
       sprintf(t->name, format, i);
@@ -820,14 +822,24 @@ reset_fonts(void)
 }
 
 Texture *
-get_font_texture(int fontnum, unsigned char _ch)
+get_font_texture(int fontnum, unsigned char ch)
 {
-   int ch = _ch - fontofs[fontnum];
+   int ch_ind = ch - fontofs[fontnum];
    if (fontnum < 0 || fontnum >= nfonts)
       logfatal('T', _("Request for bad fontnum (%d)"), fontnum);
-   if (ch >= nfontents[fontnum])
-      logfatal('T', _("Request for bad font char (%d:%d)"), fontnum, ch);
-   return fonts[fontnum] + ch;
+   if (islower(ch)
+       && (ch_ind >= nfontents[fontnum]
+	   || !LUMPNUM_OK(fonts[fontnum][ch_ind].lumpnum))) {
+      /* Recurse for upper-case version */
+      return get_font_texture(fontnum, toupper(ch));
+   }
+   if (ch_ind >= nfontents[fontnum]) {
+      logprintf(LOG_WARNING, 'T', 
+		_("Request for bad font char (%d:%d, `%c')"),
+		fontnum, ch_ind, ch);
+      return NULL;
+   }
+   return &fonts[fontnum][ch_ind];
 }
 
 

@@ -1,8 +1,11 @@
+The files ptcomp.texinfo and ptcomp.sgml contain the most up-to-date
+information, but many older things are missing from those.
 
           *** WARNING: this information is out of date!!!  ***
           *** it's mostly right for protos and phases, but ***
           *** misses out linetypes, gettables and heaps    ***
 	  *** of other stuff                               ***
+
 
 
 Several people have contacted me about creating more proto entries for
@@ -581,7 +584,8 @@ co-opt images from other objects (for explosions, for example).
 
 * Keywords by hierarchy
 
-This is from ptcomp.c of DUMB 0.12.1.
+This list was originally from ptcomp.c of DUMB 0.12.1.  It was
+partially updated for DUMB 0.13.7.
 
 ** (data types)
 *** <string>
@@ -653,6 +657,7 @@ This is from ptcomp.c of DUMB 0.12.1.
 **** LightestAdjacentSector
 **** VeryDark
 **** VeryLight
+
 ** Proto <name:string> [<id:integer>]
 *** Phases <phasetable>
 *** SigDetect <phase>
@@ -667,6 +672,7 @@ This is from ptcomp.c of DUMB 0.12.1.
 *** Splat <proto>
 *** Shoots <proto> | Spawns <proto>
 *** Spawn2 <proto>
+*** SpawnMax <count:integer>
 *** Becomes <proto>
 *** Become2 <proto>
 *** Sprite <string5>
@@ -703,7 +709,30 @@ This is from ptcomp.c of DUMB 0.12.1.
 *** ShootMany <shootnum:integer> <horiz:arc> [<vert:arc=horiz/8>]
 *** ShootPara <shootnum:integer> <width:integer>
 *** Size <radius:integer> <height:integer>
-*** Gets <gettable> <howmany:integer>
+*** Gets <gettable> <howmany:integer> [Maximum <max:integer>]
+
+Adding this clause in a Proto turns the Things it describes to
+powerups which the player can pick up.
+
+If <max> isn't given, it defaults to one of the values given in the
+DefaultMaximum clause of <gettable>.  Which value is used depends on
+whether the player has a backpack.
+
+If the player already has <max> or more units of <gettable>, he
+doesn't pick the Thing up.  The IgnoreMessage may be printed in this
+case.
+
+Otherwise, he gets <howmany> units more.  Then, if he has more than
+<max> units, the amount is clipped to <max>.
+
+If the ProtoThing contains multiple <Gets> clauses, the player ignores
+the Thing only if none of the clauses would give him Gettables.
+
+*** PickupSound <sound>
+*** FirstPickupMessage <message:string>
+*** PickupMessage <message:string>
+*** IgnoreMessage <message:string>
+
 ** PhaseTable <name:string>
 *** Default
 *** Phase <name:string> <spritephase:char>
@@ -750,31 +779,47 @@ This is from ptcomp.c of DUMB 0.12.1.
 *** Sound <sound>
 *** SpritePh <spritephase:char>
 *** Sprite <string4>
+
 ** Gettable <name:string>
 *** XCenter
 *** YCenter
 *** WepSel
 *** SpeSel
-*** GotThe
-*** GotA
-*** Local
+*** OneMapOnly
 *** KeyType <integer>
 *** Decay <integer>
 *** Timing <time>
 *** Sound <sound>
-*** PickupSound <sound>
 *** Special <integer>
-*** Collect <integer>
+
+Various special effects; see doom/dumbdefs.pt for the list.  Not all
+of them have been implemented.
+
+*** DefaultMaximum <max:integer> [WithBackpack <maxwithpack:integer>]
+
+When this gettable is got via a Get clause in a proto, the maximum
+possible amount defaults to <max> if not overridden in the Get clause.
+However, if the hero has a backpack, <maxwithpack> is used instead.
+
 *** Initial <integer>
-*** Usenum <integer>
-*** AddAmmo <integer>
-*** Ammo <gettable>
+
+How many units of this gettable the hero has when the game begins.
+Defaults to 0.
+
+If the gettable is defined as OneMapOnly, the value is reset to this
+at the beginning of each map.
+
+*** Ammo <ammo:gettable> <count:integer>
+
+When this gettable is used as a weapon, use up <count> units of <ammo>.
+If there is not enough ammo, the weapon cannot be used.
+
 *** Bogotype <proto>
 *** Icon <string9>
 *** Anim <char>
 *** RevAnim <char>
-*** Message <string>
 *** IconPos <xo:integer> <yo:integer>
+
 ** LineType <name:string> <id:integer> | SectorType <name:string> <id:integer>
 *** Action <lumptype> <eventtype>
 *** KeyType <integer>
@@ -814,11 +859,13 @@ This is from ptcomp.c of DUMB 0.12.1.
 *** ContSound <sound>
 *** StartSound <sound>
 *** StopSound <sound>
+
 ** SoundType <name:string>
 *** Bend <integer>
 *** BendConst <integer>
 *** Chance <integer>
 *** Random <sound> | Redir <sound>
+
 ** AnimTexture <name:string> | (SwitchTexture | SwTexture) <name: string>
 *** Flat
 *** Parm <integer>
@@ -826,6 +873,7 @@ This is from ptcomp.c of DUMB 0.12.1.
 *** To <integer>
 *** Tag
 *** Texture <string>
+
 ** Level <name:string>
 *** Music <string>
 *** Sky <string>

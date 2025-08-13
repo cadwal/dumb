@@ -1,3 +1,154 @@
+* Changes in DUMB 0.13.7.
+
+** Installation changes.
+
+*** Using autoconf 2.13 and automake 1.4.
+
+*** Bugfix: configure script thought Heretic files were in Doom directory.
+
+*** <gr/ppm.h> is used if <ppm.h> doesn't exist.
+
+** Corrupted WAD files are perhaps better handled.
+
+If the WAD directory doesn't fit in the file, the code reads what it
+can instead of just giving up.
+
+** XProtoThing no longer breaks out of XNextEvent() with longjmp().
+
+That was "safe on all known implementations", but the new way using
+select() should still be cleaner.
+
+If select() is missing, the previous method is still used.
+
+** Armour absorbs half of damage.
+
+** ptcomp changes.
+
+*** Beginnings of ptcomp documentation in TeXinfo and DocBook.
+
+I don't yet know which format I should use.
+
+*** ptcomp can output a WAD.
+
+This is now the recommended output mode, because it allows adding new
+lumps in future versions of ptcomp without changing Makefiles.
+
+Use --output-wad=WADFILE or -o WADFILE to invoke this mode.
+
+*** ptcomp error messages changed.
+
+They should now look a lot like those of GCC.
+
+*** New token type: quoted string.
+
+These can contain any characters except NULs and double quotes.  The
+escape sequences \\, \' and \" are also implemented.
+
+Many clauses now require a quoted string as a parameter.  Basically,
+everything that goes directly in the WAD must be quoted.  This rule
+can however be relaxed with the --fake-strings option which makes
+ptcomp accept unquoted names as strings.
+
+*** .pt scripts can contain internationalized messages.
+
+Those are marked with the N_ macro:  N_("You got the laser shotgun!")
+
+*** Less arbitrary limits.
+
+The following strings are now allocated dynamically and can be of any
+length (memory permitting):
+
+- filenames in # 1 "file.pt" lines
+- messages printed when picking up Gettables
+- names of Gettables
+- names of Phases
+- names of ProtoThings
+
+*** Changes in Proto clauses
+
+**** UseNum replaced by new required parameter of Ammo.
+
+If you previously had:
+
+   Ammo Cell
+   UseNum 20
+
+now you must instead write:
+
+   Ammo Cell 20
+
+**** Collect renamed to DefaultMaximum and takes optional WithBackpack.
+
+If you previously had:
+
+   Collect 100
+
+now you must instead write:
+
+   DefaultMaximum 100 WithBackpack 200
+
+WithBackpack and the number after it are optional.
+
+**** Multiple Gets implemented.  Gets takes optional Maximum.
+
+Proto BlueBonus  ... Gets Health 1 Maximum 200
+Proto Stimpak    ... Gets Health 10
+Proto Soulsphere ... Gets Health 100 Maximum 200
+
+If the Maximum isn't given, the DefaultMaximum of the Gettable is
+used.
+
+**** New clause SpawnMax says how many missiles can be in air.
+
+Each Thing has a spawn counter which is incremented each time it sends
+out missiles and decremented when the missiles are destroyed.  If the
+counter is maxed out, the Thing can't spawn more missiles.
+
+Previously, the maximum was defined as 5 at compile time.  Now you can
+choose a separate maximum for each kind of enemy:
+
+Proto PROTO
+  ...
+  SpawnMax MAXIMUM:INTEGER
+
+If you don't specify SpawnMax, it defaults to the old value, 5.
+
+*** Changes in Gettable clauses.
+
+**** Local renamed to OneMapOnly.
+
+**** AddAmmo removed.
+
+You can get the same effect by adding another Gets clause in the Proto
+which gives this Gettable.
+
+**** PickupSound moved to Proto.
+
+This avoids ambiguity with multiple Gets clauses.
+
+**** GotThe, GotA and Message replaced with new clauses in Proto.
+
+The following new clauses can be written in a Proto:
+
+- FirstPickupMessage MESSAGE:STRING
+- PickupMessage MESSAGE:STRING
+- IgnoreMessage MESSAGE:STRING
+
+FirstPickupMessage is similar to GotThe Message.
+PickupMessage is similar to GotA Message.
+IgnoreMessage holds the "that foo would be wasted" message.
+
+These new clauses differ from Message by the syntax of their
+parameter.  The parameter of Message was a name token from which
+ptcomp translated underscores to spaces.  Now that ptcomp supports
+quoted strings, the new clauses take those instead.
+
+Also, the content of the string is different.  Message took just the
+name of the object, but the new clauses require full sentences.  This
+way, the sentences can easily be translated to other languages.
+
+**** <dumb/dumbdefs.pt> contains #defines for Special.
+
 * Changes in DUMB 0.13.6.
 
 ** WADFILE parameter of XProtoThing and XWad no longer requires -w.

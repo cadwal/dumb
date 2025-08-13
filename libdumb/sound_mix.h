@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumb/sound_mix.h: Mixing sounds to one stream.
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

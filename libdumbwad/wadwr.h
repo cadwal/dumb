@@ -33,10 +33,11 @@ typedef struct {
    unsigned maxdir;
    char *fname;
    char type;
+   int error_flag;
 } WADWR;
 
 WADWR *wadwr_open(const char *fname, char wadtype);
-void wadwr_close(WADWR *w);
+int wadwr_close(WADWR *w);	/* returns 0 if ok */
 
 void wadwr_lump(WADWR *w, const char *lumpname);
 void wadwr_write(WADWR *w, const void *lump, size_t len);

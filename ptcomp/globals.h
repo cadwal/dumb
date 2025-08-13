@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * ptcomp/globals.h: Global definitions.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,6 +25,10 @@
 
 #define NAMELEN 32
 #define ALLOC_BLK 64
+
+/* If true, translate name tokens to strings where needed.  Set with
+   --fake-strings.  */
+extern int fake_strings_flag;
 
 #endif
 

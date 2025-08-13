@@ -22,11 +22,11 @@
 #ifndef PROTOCOMP_H
 #define PROTOCOMP_H
 
-#include <stdio.h>
+#include "libdumbwad/wadwr.h"
 
 void init_protocomp(void);
 void protocomp(void);
-void wrprotos(FILE *fout);
+void wrprotos(WADWR *w);
 
 int parm_proto(void);
 

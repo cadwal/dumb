@@ -1,3 +1,601 @@
+1999-03-19  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Released DUMB 0.13.7.
+
+	* po/fi.po: Refreshed (no changes in text)
+
+	* Makefile.am (rpmrelease): Renamed variable to rpm_release.
+	(rpmstem): Renamed variable to rpm_stem.
+	(rpmspec): Renamed variable to rpm_spec.
+	(rpmin): Renamed variable to rpm_in.
+
+	* po/POTFILES.in: Regenerated.
+	* po/fi.po: Translated some more.
+
+	* xwad/xtexture.c (rotate, mirror): Renamed to upper case and
+	added plenty of whitespace.
+
+	* libdumb/prothingstruct.h (ProtoThing_inwad_Gets, ProtoThing_inwad):
+	Moved to protoinwad.c.
+	* libdumb/protoinwad.c (ProtoThing_inwad_Gets, ProtoThing_inwad):
+	Moved from prothingstruct.h.
+	* libdumb/protoinwad.h (ProtoThing_inwad): Declare as opaque.
+
+	* dumb/linux_video.c (init_video), dumb/levdata.c (apply_update),
+	ptcomp/parm.c (parm_strdup), ptcomp/protocomp.c (protocomp),
+	xwad/controls.c (init_cseti): Added explicit casts for C++.
+	* xwad/choose.c (chksize, choosedhf, sb_motion), xwad/controls.c
+	(ctldhf): Added local variable chinst.  Use it instead of INFO.
+	* xwad/timewait.c (timeval_subtract): ANSIfied.
+	* xwad/xproto.c: Added #include "libdumb/protoinwad.h".
+	(init_instance): Removed obsolete variables.
+
+	* htic/Makefile.am (htic4dum.wad): Added missing backslash.
+
+1999-03-18  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* TODO: Unlisted features which have been implemented :)
+	and added some missing ones :(
+
+	* htic/gettables.pt (PowerUpQty, PowerUpTimeout): Copied from
+	../doom/gettables.pt.
+	(Gettable ActiveTorch): Added DefaultMaximum and PowerUpTimeout.
+	(Proto CrystalVial, QuartzFlask): Added PickupMessage.
+
+	* doom/Makefile.am (d4d_sources): Renamed variable to pt_sources.
+	(d4d_wad): Renamed variable to pt_wad.  Also changed filename to pt.wad.
+	(d4d_lumps): Renamed variable to other_lumps.
+	(playpal_src_wad): New variable.
+	(PLAYPAL.lump): Use $(playpal_src_wad).
+	* htic/Makefile.am: Mostly rewritten to match ../doom/Makefile.am.
+
+	* htic/Makefile.am (pt_preprocess): Use $(CPP), not $(CXXCPP).  We
+	no longer support // comments.
+	($(h4d_pt_lumps)): Don't use -DHERETIC; htic.pt takes care of that
+	now.
+	* htic/htic.pt: Added #include <dumb/dumbdefs.pt>.  Include the
+	other files with "", not <>.
+	(HERETIC): Define here, not in Makefile.
+	* htic/gettables.pt: Adapted to new ptcomp.
+	(Gettable Health): Use GETT_SPC_HEALTH rather than 1.
+	(Gettable ActiveTorch): Added.
+	(Proto WimpyWandAmmo, HeftyWandAmmo, WimpyBowAmmo, HeftyBowAmmo,
+	WimpyClawAmmo, HeftyClawAmmo): Added messages.
+	* htic/generic.pt, htic/animtex.pt, htic/ambient.pt,
+	htic/monsters.pt, htic/missiles.pt, htic/levels.pt, htic/keys.pt:
+	Adapted to new ptcomp.
+	* htic/weapons.pt, htic/furniture.pt: Adapted to new ptcomp and
+	replaced // with /* */.
+
+	* configure.in: Removed AC_PROG_CXXCPP.
+	Bug fix: Replaced DUMB_SOUND references with DUMB_CONFIG_SOUND.
+	* doom/Makefile.am (pt_preprocess): Use $(CPP), not $(CXXCPP).  We
+	no longer support // comments.
+	($(d4d_pt_wad)): Don't use -DDOOM; doom.pt takes care of that now.
+	* doom/doom.pt (DOOM): Define here, not in Makefile.
+	* doom/monsters.pt, doom/linetypes.pt, doom/gettables.pt: Changed
+	// comments to /* */.
+
+	* libdumb/texture.c (init_font): Don't try upper-case versions --
+	that's now in get_font_texture.
+	(get_font_texture): Try upper-case version on failure.  Made
+	missing chars non-fatal.
+	* dumb/banner.c (add_text_to_banner): Substitute a space if
+	get_font_texture returns NULL.
+	* dumb/game.c (process_input): Added font test in key 7.
+
+	* dumb/thinghit.c (thing_hit_wall): Added some braces for clarity.
+	* dumb/netplay.c (send_sync): Added explicit int for last_ack.
+	* dumb/gettable.c (count_font): Added explicit int.
+	* dumb/le32_fbrerend.c (fbrerender8, fbrerender16, fbrerender32):
+	Added explicit ints.
+	* libdumbutil/confdef.h (CONFITEM_END, CONFENUM_END): List all
+	members.
+	* dumb/unix_net.c (netdriver): Changed {NULL} to {NULL,}.
+
+	* libdumb/Makefile.am: Removed $(DUMB_CONFIG_SOUND)_sound.c from
+	libdumb_a_SOURCES and added the corresponding .o in
+	libdumb_a_DEPENDENCIES and libdumb_a_LIBADD.  This avoids a bug in
+	GNU Make 3.77.
+
+	* tool/mkdfnt.c (main): Bug fix: did not print argv0.
+	* tool/mkpnames.c (print_help): Printed one argv0 too many.
+
+	* libdumbutil/safeio.c (safe_read): Retry after EINTR or short
+	read.
+
+1999-03-14  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* libdumb/protoinwad.h, libdumb/protoinwad.c
+	(decode_protoinwad_array): New function.
+	* xwad/xproto.c (init_instance): Use decode_protoinwad_array().
+	* libdumb/prothing.c (init_prothings): Use
+	decode_protoinwad_array().
+
+	* docs/README.ptcomp: Added Gettable.SpawnMax.
+
+	* NEWS: Added armour damage.
+
+1999-03-13  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* docs/dumb-pt.texinfo, docs/dumb-pt.sgml: Mostly documented Level.
+
+	* docs/dumb-pt.sgml: Reindented with step 1.
+
+1999-03-11  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* docs/dumb-pt.texinfo, docs/dumb-pt.sgml: Doc fix.
+
+	* docs/dumb-pt.texinfo, docs/ptcomp.texinfo:
+	Renamed ptcomp.texinfo to dumb-pt.texinfo.
+	* docs/dumb-pt.sgml, docs/ptcomp.sgml:
+	Renamed ptcomp.sgml to dumb-pt.sgml.
+	* docs/Makefile.am (EXTRA_DIST): Added dumb-pt.sgml.
+	(info_TEXINFOS): Renamed ptcomp.texinfo to dumb-pt.texinfo.
+	(book1.html): Renamed ptcomp.sgml to dumb-pt.sgml.
+	* docs/.cvsignore: ptcomp.info renamed to dumb-pt.info.
+
+1999-03-10  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* NEWS: Synchronized.
+
+	* libdumb/prothingstruct.h (ProtoThing, ProtoThing_inwad): Added
+	member spawnmax.
+	* dumb/bangbang.c (MAX_SPAWNCOUNT): Removed.  The number can now
+	be set separately for each ProtoThing.
+	* libdumb/protoinwad.c (decode_protoinwad, encode_protoinwad):
+	Copy spawnmax.
+	* ptcomp/protocomp.c (protocomp): Initialize spawnmax at 5 and
+	allow changing it with "SpawnMax".
+
+	* ptcomp/token.c (unget_token): Barf if called twice in a row.
+
+	* po/fi.po: Updated, although untranslated entries still remain.
+
+	* libdumbwad/wadio.h: Added #include "libdumbutil/log.h".
+	* libdumbutil/log.h (logvprintf): Added __attribute__.
+
+	* libdumb/texture.c (init_font): If a lower-case character is
+	missing, try the upper-case one.
+
+	* dumb/thingm.c (thing_take_damage): Handle temporary
+	invulnerability and armour.
+
+	* dumb/gettable.c (getcount): Assert validity of type.
+	(init_plinfo): Bugfix: count to ngetts, not to PLINFOPOS_GETTCOUNTS.
+	(use_selection): Renamed cd to itemptr and cb to ammoptr.  Don't
+	initialize them until PLINFO_SEL is valid.
+	* dumb/updthing.c (pickup_proto): Bugfix: get gets[i], not gets[0].
+	* doom/gettables.pt (PowerUpQty): Increased tenfold.
+	(Gettable Backpack): Added DefaultMaximum 1.
+	* ptcomp/protocomp.c (set_phid): Use a loop rather than memcpy().
+	* libdumb/protoinwad.c (encode_protoinwad):
+	Use safe_calloc() rather than safe_malloc().
+
+	* dumb/message.c, dumb/message.h: New files.  Contents ripped from
+	dumb.c and game.c.
+	* dumb/Makefile.am (core_sources): Added message.c and message.h.
+	* dumb/game.c (game_vmessage, game_message): Moved to message.c.
+	* dumb/dumb.c (banner): Replaced by message_banner in message.c.
+	(wbanner): Replaced by waffle_banner in message.c.
+	(bfont): Replaced by message_font in message.c.
+	(do_gmsg): Replaced by show_local_message() in message.c.
+	(gmsg): Replaced by dispatch_message() in message.c.
+	(main): Renamed txh to tex_xhair.  Initialise it via
+	get_xhair_texture().  Moved banner initialisation to
+	init_message() in message.c.
+
+	* dumb/dumbdefs.pt (PROTO_ID_CAMERA): New constant.
+	* dumb/dumb.c (main), doom/camera.pt (Proto Camera): Use
+	PROTO_ID_CAMERA rather than 8888.
+
+	* doom/dumbdefs.pt: Moved to ../dumb/.
+	* dumb/dumbdefs.pt: Moved from ../doom/.
+	* dumb/Makefile.am (pkginclude_HEADERS): New variable.
+	* doom/doom.pt: Take dumbdefs.pt from dumb/
+	* doom/Makefile.am (pt_preprocess): Added -I$(top_srcdir) because
+	of <dumb/dumbdefs.pt>.
+
+	* docs/ptcomp.texinfo: Added @direntry.
+	(EDITION, UPDATED, VERSION): Now taken from version.texi.
+	* docs/.cvsignore: Ignore stamp-vti and version.texi.
+	* aux/texinfo.tex: Added from Automake distribution.
+	* aux/Makefile.am (EXTRA_DIST): Added texinfo.tex.
+
+	* ptcomp/token.c (synerr): Use class_of_token() and handle EOF
+	tokens.
+	(getc_or_perror, synerr, err): Use DUMB_EXIT_ constants.
+
+	* ptcomp/token.h (TokenClass): New enum.
+	(class_of_token): New function.
+	* ptcomp/token.c (class_of_token): New function.
+	* ptcomp/parm.c (parm_str, parm_strdup, parm_name, parm_ch,
+	parm_num, parm_dbl, parm_time, parm_speed, parm_arc,
+	parm_arc_opt): Use class_of_token().
+
+	* ptcomp/globals.h (fake_strings_flag): New variable.
+	* ptcomp/ptcomp.c (fake_strings_flag): New variable.
+	(show_help): Show --fake-strings.
+	(main): Deprecated-usage message recommends --output-directory
+	rather than the short form -d.  Parse --fake-strings.
+	* ptcomp/parm.c (parm_str, parm_strdup, parm_ch): Accept name
+	tokens if fake_strings_flag is true.
+
+	* libdumbutil/align.h (ALIGN_PROTOTHING, ALIGN_PROTOTHING_GETS):
+	New constants.  * libdumb/protoinwad.c (encode_protoinwad): Use
+	ALIGN macro from "libdumbutil/align.h" instead of the static
+	align().
+	(align): Removed function.
+
+1999-03-09  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* ptcomp/protocomp.c (wrprotos): Call encode_protoinwad() to
+	convert the ProtoThing to external format.  Free the converted
+	blocks.
+
+	* libdumb/mme_sound.c, libdumb/linux_sound.c, dumb/x11_video.c,
+	dumb/rendcommon.c, dumb/linetype.h, dumb/linetype.c,
+	dumb/keyname.h, dumb/keyname.c, dumb/keymapdummy.c,
+	dumb/keymapconf.h, dumb/keymapconf.c, dumb/keymap.h,
+	dumb/keymap.c, dumb/dumb.c, dumb/ctlkey.h, dumb/ctlkey.c,
+	dumb/aalib_video.c, dumb/aalib_input.c, docs/maint/source.html,
+	docs/maint/dumb-autoins.el, docs/maint/contrib.html,
+	libdumbutil/align.h, libdumb/sound_mix.h, libdumb/sound_mix.c,
+	libdumbutil/confeng.h, libdumbutil/confeng.c,
+	libdumbutil/dumb-nls.h, tool/wadtool.c, tool/mknulmap.c,
+	tool/mkdfnt.c, tool/dark2trans.c, test/ldltest.c, test/fixed_bm.c,
+	libdumbworldb/thingsec.c, libdumbworldb/savedoom.c,
+	libdumbworldb/prop.c, libdumbworldb/private.h,
+	libdumbworldb/observer.c, libdumbworldb/loaddoom.c,
+	libdumbworldb/lineprop.c, libdumbworldb/isok.c,
+	libdumbworldb/initfini.c, libdumbworldb/hexenwad.h,
+	libdumbworldb/findsec.c, libdumbworldb/dummyvtbl.c,
+	libdumbworldb/dumbworldb.hh, libdumbworldb/dumbworldb.h,
+	libdumbworldb/doomwad.h, libdumbworldb/difficulty.c,
+	libdumbworldb/detach.c, libdumbworldb/del.c,
+	libdumbworldb/alloc.c, libdumbutil/safem.h, libdumbutil/safeio.h,
+	libdumbutil/safeio.c, libdumbutil/log.h, libdumbutil/intset.h,
+	libdumbutil/intset.c, xwad/xwad.c, xwad/xproto.c: Removed my
+	middle initial.
+	* libdumbutil/bugaddr.h, libdumbutil/bugaddr.c,
+	libdumb/protoinwad.h, libdumb/protoinwad.c,
+	libdumbutil/copyright.h, libdumbutil/copyright.c,
+	libdumbutil/exitcode.h, xwad/timewait.h, xwad/timewait.c: Removed
+	my middle name.
+
+	* po/fi.po: Translated some more strings.
+
+	* ptcomp/token.c (synerr): Don't print the token directly if it is
+	a newline.
+
+	* po/POTFILES.in: Regenerated.
+	* po/fi.po: Mostly updated.  Untranslated entries still remain, though.
+
+	* libdumb/protoinwad.h: New file.
+	* libdumb/protoinwad.c: New file.  Most functions stolen from
+	prothing.c.
+	* libdumb/prothingstruct.h: Moved in-memory structures before
+	in-WAD structures.
+	(Protos_inwad): Renamed to ProtoThing_inwad.
+	(Protos_inwad_Gets): Renamed to ProtoThing_inwad_Gets.
+	* libdumb/prothing.c (is_proto): Moved to is_protoinwad() in
+	protoinwad.c.
+	(next_proto): Moved to next_protoinwad() in protoinwad.c.
+	(protothing_strdup): Moved to protoinwad_strdup() in protoinwad.c.
+	(load_proto): Moved to decode_protoinwad() in protoinwad.c.
+	* libdumb/Makefile.am (libdumb_a_SOURCES): Added protoinwad.c and
+	protoinwad.h.
+
+	* docs/ptcomp.texinfo (Tokens): Some C-style backslash escapes
+	have been implemented.
+	(Tokens, N_): N_ should not be used so hastily.
+	* docs/ptcomp.sgml (doc-cpp-invocation, doc-gettext-lib,
+	doc-gettext-xgettext): Use "<texinfo>" rather than "Info:".  No
+	idea which one is correct.
+	(sect-tokens): Some C-style backslash escapes have been
+	implemented.
+	(sect-tokens, sect-n): N_ should not be used so hastily.
+
+1999-03-08  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* ptcomp/ptcomp.c (show_help): Must print argv0 twice.
+
+	* NEWS: Logged from ChangeLog.
+
+	* xwad/xproto.h (struct AppInstance): ProtoThing pointer cannot be
+	to const.
+
+	* ptcomp/protocomp.c (ProtoThingRec): Changed char name[NAMELEN]
+	to char *name.
+	(protocomp): Use parm_name() to get the name of the Proto.  Unget
+	the token after the name if it wasn't the ID.  Added
+	"PickupSound", "FirstPickupMessage", "PickupMessage" and
+	"IgnoreMessage".  "FastShoot" prints a warning message.  Multiple
+	"Gets" are allowed and properly stored, and each may be followed
+	by "Maximum".
+	(wrprotos): Write to WADWR, not to FILE.
+	(parm_proto): Use parm_name().  Use err() rather than synerr().
+	(chkuniqueid): Use err().
+
+	* doom/levels.pt: Quoted level, music and sky names.  Removed
+	Secret pointers which were the same as Next.
+	* doom/weapons.pt, doom/monsters.pt, doom/missiles.pt: Quoted all
+	sprites and their phases.
+	* doom/gettables.pt: Quoted all sprites, icons and animation mode
+	characters.  Removed PickupSounds from Gettables.
+	* doom/generic.pt: Quoted all sprite phases.
+	* doom/furnishings.pt: Quoted all sprite names.
+	* doom/camera.pt (PhaseTable Camera): Quoted sprite phase.
+
+	* ptcomp/ptcomp.c (ptcomp): Don't give NULL to synerr().
+	(print_help): Print -o before -d because it's better.
+	(main): Parse -o before -d.
+
+	* ptcomp/phasecomp.h (ThingPhaseRec): Replaced char *tpname with
+	char **tpnames.  Changed char name[NAMELEN] to char *name.
+	* ptcomp/phasecomp.c (phasecomp): ThingPhaseRec::tpname is now
+	tpnames and is allocated differently.  Use parm_name().  Convert
+	phase name "-" to NULL.
+	(parm_ph_tbl): Use parm_name().  Use err() rather than synerr().
+	(parm_phase): Use parm_name().  Don't compare NULL pointers in
+	tpnames.  Use err() rather than synerr().
+
+	* ptcomp/parm.h (parm_keyword_opt): New function.
+	* ptcomp/parm.c (parm_str): Print maximum length in error message.
+	(parse_string): Print invalid sequence in error message.
+	(parm_name): Disallow string tokens.
+	(parm_keyword_opt): New function.
+	(speed_units): Suggest new syntax in warning message.  Use warn().
+	* ptcomp/ltcomp.c (ltcomp): Use parm_name(), parm_num() and err().
+	(ltacomp): Use parm_name().
+	(ltcomp, parm_termmtype, atolumptype, atoeventtype): Capitalized
+	and enhanced error messages.
+	* ptcomp/licomp.c (licomp): Use parm_str().
+	(wrlinfos): SECRET defaults to NEXT, not to empty.
+	* ptcomp/gettcomp.c (gettcomp, parm_gett): Capitalized error
+	messages.
+	(gettcomp."DefaultMaximum"): Use parm_keyword_opt().
+	* ptcomp/soundcomp.c (soundcomp): Use parm_name().  Print
+	MAX_REDIR_SOUNDS in error message.
+	(parm_sound): Use parm_name().
+
+	* ptcomp/token.h (warn): New function.
+	(synerr, err): Made variadic and added format attribute.
+	* ptcomp/token.c (next_token, parse_hash_line): Tweaked error
+	messages.
+	(warn): New function.
+	(err, synerr): Made variadic.  Print the formatted parameters
+	instead of old fixed "syntax error" and "fatal error" strings.
+	synerr() prints token after error message, not before.
+	* ptcomp/parm.c: Capitalized all error messages as in GNU
+	standard.
+	(parm_ch): Require a string of length 1.
+	(parm_arc_opt): Unget the token if it doesn't match.
+	(arc_units): Print a warning if the obsolete syntax is used.
+	* ptcomp/animcomp.c (animcomp):
+	Use parm_name().  Print more detail on erroneous "To".
+
+	* ptcomp/gettcomp.c (wrgetts): Write proper padding in the file.
+
+	* ptcomp/parm.h, ptcomp/parm.c (parm_name): New function.
+	* ptcomp/gettcomp.c (GettableRec): Don't limit name length to
+	NAMELEN.
+	(gettcomp): Use parm_name().  Removed "GotThe", "GotA",
+	"PickupSound", "AddAmmo" and "Message".  Renamed "Local" to
+	"OneMapOnly" and "Sound" to "UseSound".  Renamed "Collect" to
+	"DefaultMaximum" and added optional "WithBackpack".  Replaced
+	"UseNum" with new required parameter of "Ammo".
+	(parm_gett): Use parm_name() rather than next_token().  Don't
+	allow ID references.
+
+	* libdumb/prothing.c: Removed all BUILT_IN_XLUMPS and proto_phases
+	stuff which was already ifdeffed or commented out.
+
+	* libdumb/prothingstruct.h: Made the PROTOS lump consist of
+	variable-length blocks.
+	(Protos_inwad_Gets): New structure.
+	(Protos_inwad): Used to be called ProtoThing.  Removed _spare1 and
+	_spare2 because the structure can now be easily extended.
+	Replaced artitype and artinum with ngets and getsofs.  Other new
+	members: pickup_sound, firstpickupmsgofs, pickupmsgofs,
+	ignoremsgofs.
+	(ProtoThing_Gets, ProtoThing): New structures.
+	* libdumb/prothing.c: PROTOS lump now consists of variable-length
+	blocks which are converted to internal format at startup.  Changed
+	all ProtoThing pointers to non-const.
+	(proto_ln): Moved inside init_prothings().
+	(sprites): Replaced by ProtoThing::sprites.
+	(get_sprite_table): Use pr->sprites rather than
+	sprites[pr-protos].
+	(reset_prothings): Free the objects pointed to by each ProtoThing.
+	(is_proto, next_proto, protothing_strdup, load_proto): New
+	functions.
+	(init_prothings): Convert the protos to internal format and free
+	the lump.
+
+	* ptcomp/token.c (next_token): Append a quote to each string token.
+	* ptcomp/token.h: Commented.
+
+	* ptcomp/parm.c (parm_str): Require a real string parameter, not
+	just a name.
+	(parm_strdup, parse_string): New functions.
+	(parm_num, parm_dbl, parm_time, parm_speed, parm_arc,
+	parm_arc_opt): Barf if the token is a string.
+	(parm_msg): Removed.
+	* ptcomp/parm.h (parm_strdup): New function.
+	(parm_msg): Removed.
+
+	* ptcomp/ltcomp.c (wrlts, wrsts): Call wadwr_lump.
+	* ptcomp/licomp.c (wrlinfos): Call wadwr_lump.
+	* ptcomp/animcomp.c (wranims): Call wadwr_lump.
+	* ptcomp/phasecomp.c (wrphases): Call wadwr_lump.
+	* ptcomp/soundcomp.c (wrsounds): Call wadwr_lump.
+	* ptcomp/ptcomp.c (save_ptlumps_in_wadwr): Greatly simplified.
+	* ptcomp/gettcomp.h, ptcomp/gettcomp.c (wrgetts): Write to WADWR,
+	not FILE.
+	* ptcomp/protocomp.h (wrprotos): Write to WADWR, not FILE.
+
+	* libdumbutil/strgrow.h: Commented.
+	(strgrow_strdup_clear): New function.
+	* libdumbutil/strgrow.c (strgrow_strdup_clear): New function.
+
+	* ptcomp/token.c (cppfile): Replaced by finname which allows
+	filenames of any length.
+	(begin_file): Assert.  Allocate finname dynamically.
+	(end_file): Function used to be empty.
+	(print_error_prefix, synerr, err): Print to stderr.
+	(line): Changed type from int to unsigned long.
+	(print_error_prefix): Print line number with "%lu", not "%d".
+	(tokbuf): Use struct strgrow instead of fixed-size array.
+	(getc_or_perror, parse_hash_line): New functions.
+	(next_token): Thoroughly rewritten.  This version understands quoted
+	strings and allows '#' in tokens, except as first character.
+
+1999-03-07  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	I actually made most of these changes last week, but didn't check
+	them in until now.
+
+	* dumb/levdyn.h (ThingDyn): proto pointer is now non-const.
+	* dumb/dumb.c (do_preload): ProtoThing pointers can no longer be const.
+	* libdumb/prothing.h: ProtoThing pointers are no longer const.
+
+	* libdumbwad/wadio.c (load_wad): Try to cope with
+	corrupted/truncated WAD files whose directory doesn't fit in.
+
+	* libdumbutil/safem.c (safe_vcalloc): Renamed fd to devzerofd.
+	(safe_malloc): Formatting changes only.  Really!
+
+	* libdumb/gettablestruct.h: Made the GETTABLE lump consist of
+	variable-length blocks.
+	(GK_MSG_LEN): Killed.
+	(Gettable): Added block_length.  Renamed bulletkind and usenum to
+	ammotype and ammocount.  Removed bulletadd, string and
+	pickup_sound.  Replaced collect with defaultmax and backpackmax.
+	Renamed sound to usesound.
+	(GK_GOT_THE, GK_GOT_A): Removed.
+	(GK_LOCAL): Renamed to GK_ONEMAPONLY.
+	* dumb/gettable.h (enum gettable_pickup, GETT_PU_YES): New.
+	(pickup_gettable): Added parameter MAX.  Return enum gettable_pickup,
+	not void.
+	* dumb/gettable.c (ln): Renamed to gettable_ln.
+	(gett): Used to point to an array of Gettables; now it points to
+	an array of pointers to Gettables.  All references changed.
+	(PLEXTRA): Replaced by PLINFOPOS_GETTCOUNTS.
+	(PLINFOK): Renamed to PLINFO_OK.
+	(PLCOUNT): Removed in favor of getcount().
+	(PLSEL): Renamed to PLINFO_SEL.
+	(PLINFO_BACKPACK): New macro.
+	(getcount): Use constants from <dumbdefs.pt>.  Added backpack.
+	(gettmax, scan_gettables): New functions.
+	(init_plinfo): Split parameter in two.  Use *getcount(ld, pl, i)
+	rather than pli[i + PLEXTRA].  This makes sure specials go to the
+	right counters.
+	(pickup_gettable): Returns code numbers instead of emitting sounds
+	and messages directly.
+	(draw_gettables): Use gettmax(ld, pl, i) instead of gt->collect.
+	(cheat_gettables, reset_local_gettables, gettable_chk_key): Use
+	getcount().
+	(init_gettables): Use scan_gettables() and fancier allocation.
+	(reset_gettables): Free the gettable pointer array too.  Reset
+	gettable_ln to invalid, just in case.
+	* dumb/updthing.c (pickup_proto): New function.
+	(thing_chk_collide): Use pickup_proto() instead of
+	pickup_gettable().
+
+	* dumb/levdata.h: init_plinfo now takes two arguments.
+	* dumb/levdata.c (init_player): Pass ld argument to init_plinfo().
+
+	* doom/dumbdefs.pt: First version.
+	* doom/doom.pt: Using "foo.pt" rather than <foo.pt> in #includes,
+	except for the newly added <dumbdefs.pt>.
+
+	* libdumbwad/wadwr.h (WADWR): New member error_flag.
+	(wadwr_close): Returns int, not void.
+	* libdumbwad/wadwr.c (wadwr_open, wadwr_close, wadwr_lump,
+	wadwr_write): Set w->error_flag on errors.
+	(wadwr_close): Return w->error_flag.
+	* ptcomp/ptcomp.c (show_help): Added --output-wad=WADFILE.
+	(show_version): Updated copyrights.
+	(main): Support --output-wad=WADFILE.  Moved actual saving in helper
+	functions.
+	(save_ptlumps_in_dir, save_ptlumps_in_wad, save_ptlumps_in_wadwr): New
+	functions.
+	* ptcomp/soundcomp.h, ptcomp/soundcomp.c, ptcomp/phasecomp.h,
+	ptcomp/phasecomp.c, ptcomp/animcomp.h, ptcomp/animcomp.c,
+	ptcomp/ltcomp.h, ptcomp/ltcomp.c, ptcomp/licomp.c,
+	ptcomp/licomp.h: Write to WADWR, not FILE.
+	* doom/Makefile.am: Using new WAD-writing mode of ptcomp.
+	Previously each lump was in a separate file.
+	(wadtool, ppmtodumb, ptcomp): Changed variable names to upper
+	case.
+
+	* docs/ptcomp.texinfo, docs/ptcomp.sgml: New files.
+	* docs/.cvsignore: Ignore ptcomp.info.
+	* docs/Makefile.am (info_TEXINFOS, book1.html): Added.
+	* docs/README.ptcomp: Added notice about new doc files.
+	(Proto.Gets): Takes optional Maximum.
+	(Gettable.GotThe, Gettable.GotA, Gettable.Message): Replaced by
+	FirstPickupMessage, PickupMessage and IgnoreMessage in Proto.
+	(Gettable.PickupSound): Moved in Proto.
+	(Gettable.Local): Renamed to OneMapOnly.
+	(Gettable.Collect): Renamed to DefaultMaximum.  Added optional
+	WithBackpack.
+	(Gettable.AddAmmo): Replaced by multiple Gets.
+	(Gettable.Usenum): Replaced by required parameter of Ammo.
+	(Gettable.Ammo): New <count> parameter replaces UseNum.
+	* doom/weapons.pt, doom/gettables.pt: Adapted Gettables and their
+	Protos to new system; see the changes of ../docs/README.ptcomp.
+
+	* TODO: Backpack and radiation-immune monsters have been implemented.
+
+	* Makefile.am (update-po): Scan *.pt too.  Use "\0"-terminated
+	strings between find and xargs.
+	* po/POTFILES.in: Regenerated.
+	* po/fi.po: Regenerated but not yet manually filled in.
+
+1999-02-27  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* configure.in: Removed AC_OUTPUT_COMMANDS, since AM_GNU_GETTEXT
+	takes care of po/Makefile.
+
+1999-01-26  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* NEWS: Logged the changes below.
+
+	* xwad/timewait.h, xwad/timewait.c: New files.
+	* docs/log-classes: Added 'X'.
+	* xwad/Makefile.am (XProtoThing_SOURCES): Added timewait.c and
+	timewait.h.
+	* xwad/xproto.c [!USE_LONGJMP]: Use xnextevent_before() instead of
+	jumping out of XNextEvent() via a SIGALRM handler.
+
+	* configure.in: Look for both <ppm.h> and <gr/ppm.h>, and #define
+	the result in DUMB_CONFIG_PPM_H in config.h.  Reported by Rubens
+	Ramos Fernandes Junior <rubens_ramos@yahoo.com>.
+	(DUMB_PPM_LDADD): Fixed a typo which caused it not to be properly
+	cleared.  It defaulted to empty, though.
+	* acconfig.h (DUMB_CONFIG_PPM_H): Added.
+	* tool/dark2trans.c, tool/ppmtodumb.c: #include DUMB_CONFIG_PPM_H
+	rather than <ppm.h>.
+
+	* aclocal.m4: Regenerated with aclocal 1.4.
+
+	* configure.in (DUMB_CONFIG_HERETIC_DIR): Take dirname from
+	${DUMB_CONFIG_HERETIC_WAD}, not ${DUMB_CONFIG_DOOM_WAD}.
+	Reported by Rubens Ramos Fernandes Junior <rubens_ramos@yahoo.com>.
+
+1999-01-15  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* configure.in: Added comment about AC_CHECK_SIZEOF.
+
+	* po/fi.po: Synchronized line numbers.
+
+	* libdumbutil/conffile.c (save_conf): Added TRANS comment.
+
+	* configure.in: Bumped version number to 0.13.7.
+	* NEWS: Added entry for DUMB 0.13.7.
+
 1999-01-06  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
 
 	* Released DUMB 0.13.6.

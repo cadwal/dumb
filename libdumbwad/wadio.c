@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumbutil/wadio.c: Loading WADs and looking up lumps.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -267,9 +268,18 @@ load_wad(const char *fname, const char *_sig, const char *const path[],
       logfatal('W', _("Bad signature on %s: expecting %s, got %.4s"),
 	       wad->fname, _sig, wh->sig);
    wad->nlumps = wh->nlumps;
-   if (wh->diroffset + wad->nlumps * sizeof(WadDirEntry) > wad->wadlen)
-       logfatal('W', _("directory for %s would be beyond end of file"),
-		wad->fname);
+   if (wh->diroffset + wad->nlumps * sizeof(WadDirEntry) > wad->wadlen) {
+      logprintf(LOG_ERROR, 'W', 
+                _("directory for %s would be beyond end of file; truncating"),
+                wad->fname);
+      logprintf(LOG_INFO, 'W',
+                "nlumps=%u, wadlen=%lu, diroffset=%lu, sizeof entry=%lu",
+                wad->nlumps,
+                (unsigned long) wad->wadlen,
+                (unsigned long) wh->diroffset,
+                (unsigned long) sizeof(WadDirEntry));
+      wad->nlumps = (wad->wadlen - wh->diroffset) / sizeof(WadDirEntry);
+   }
    /* say what we've done */
    logprintf(LOG_INFO, 'W', _("%s %s: %d lumps dir @ %d"),
 	     _sig, wad->fname, (int) wad->nlumps, (int) wh->diroffset);

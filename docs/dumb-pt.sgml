@@ -1,0 +1,1172 @@
+<!DOCTYPE Book PUBLIC "-//Davenport//DTD DocBook V3.0//EN" [
+  <!ENTITY pt-lang ".pt">
+
+  <!-- FIXME: Is this the right way of defining entities referred to
+       by OLINK? -->
+
+  <!NOTATION Texinfo
+             -- PUBLIC "-//GNU's Not Unix//NOTATION Texinfo//EN" --
+             SYSTEM>
+
+  <!ENTITY doc-cpp
+           -- PUBLIC "-//GNU's Not Unix//DOCUMENT The C Preprocessor//EN" --
+           SYSTEM
+           NDATA Texinfo>
+  <!ENTITY doc-gettext
+           -- PUBLIC "-//GNU's Not Unix//DOCUMENT GNU gettext utilities//EN" --
+           SYSTEM
+           NDATA Texinfo>
+]>
+
+<book> <!-- dbl10n.dsl 1.12 would choke on lang="en" -->
+ <bookinfo>
+  <title>The &pt-lang; Language</title>
+  <author>
+   <firstname>Kalle</firstname>
+   <surname>Niemitalo</surname>
+  </author>
+  <address>
+   <street>Takkurannantie 36</street>
+   <postcode>90820 Kello</postcode>
+   <country>Finland</country>
+   <email>tosi@stekt.oulu.fi</email>
+  </address>
+  <copyright>
+   <year>1999</year>
+   <holder>Kalle Niemitalo</holder>
+  </copyright>
+  <legalnotice>
+   <simpara>For now, this manual is under the
+    <ulink url="http://www.gnu.org/copyleft/gpl.html"><acronym>GNU</acronym>
+     General Public License</ulink>, version 2 or later.  I'll
+    probably place later versions under a looser license which
+    allows distributing printed copies without source code, but I
+    don't want to think about that yet.</simpara>
+  </legalnotice>
+  <productname>DUMB</productname>
+ </bookinfo>
+ <part>
+  <title>Introduction</title>
+  <chapter id="sect-invoking-ptcomp">
+   <title>Invoking <command>ptcomp</command></title>
+   <simpara><command>ptcomp</command> compiles &pt-lang; scripts to
+    the binary format used by <application>DUMB</application>.  It
+    creates several lumps: one for Gettables, one for ProtoThings, one
+    for Sounds, etc.  It can save all the lumps in one big WAD file,
+    but it can also save each lump in a separate file.  You must use
+    either
+    <option>--output-directory=<replaceable>directory</replaceable></option>
+    or <option>--output-wad=<replaceable>wadfile</replaceable></option> to
+    choose what it does.</simpara> 
+   <simpara>A &pt-lang; script usually contains C preprocessor
+    directives like <literal>#include
+     &lt;dumb/dumbdefs.pt&gt;</literal>. <command>ptcomp</command>
+    does not understand those directives, so the script must be run
+    via the C preprocessor before giving it to
+    <command>ptcomp</command>.  Do something like this:</simpara>
+   <informalexample>
+<programlisting>
+<command>/lib/cpp</command> <filename><replaceable>input</replaceable>.pt</filename> | <command>ptcomp</command> <option>-o <filename><replaceable>output</replaceable>.wad</filename></option>
+</programlisting>
+   </informalexample>
+   <simpara>Unfortunately, the C preprocessor may not understand
+    C++-style <literal>//</literal> comments which the scripts tend to
+    use. If you are using <acronym>GNU</acronym>
+    <application>cpp</application>, you can use its
+    <olink targetdocent="doc-cpp"
+	   localinfo="Invocation"><option>-lang-c++</option>
+     option</olink>.  Otherwise, you have a problem.  It would be best
+    not to use <literal>//</literal> comments in &pt-lang;
+    scripts.</simpara>
+   <variablelist>
+    <title>Options understood by <command>ptcomp</command></title>
+    <varlistentry>
+     <term><option>--output-wad=<replaceable>wadfile</replaceable></option></term>
+     <term><option>-o <replaceable>wadfile</replaceable></option></term>
+     <listitem>
+      <simpara>Create a WAD file called
+       <replaceable>wadfile</replaceable> and write the lumps in it.
+       This is now the recommended way of using
+       <command>ptcomp</command>.</simpara>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><option>--output-directory=<replaceable>directory</replaceable></option></term>
+     <term><option>-d <replaceable>directory</replaceable></option></term>
+     <listitem>
+      <simpara>Write each lump in a separate file in
+       <replaceable>directory</replaceable>.  The files
+       <filename>PHASES.lump</filename>,
+       <filename>PROTOS.lump</filename>,
+       <filename>GETTABLE.lump</filename>,
+       <filename>LINETYPE.lump</filename>,
+       <filename>SECTTYPE.lump</filename>,
+       <filename>SOUNDS.lump</filename>,
+       <filename>ANIMTEX.lump</filename> and
+       <filename>LEVINFO.lump</filename> are generated.  Some of them
+       may be empty if the script doesn't define such objects.  You
+       can use the <command>wadtool</command> utility to combine them
+       into a WAD later, perhaps with other lumps.</simpara>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><option>--fake-strings</option></term>
+     <listitem>
+      <simpara>If <command>ptcomp</command> sees a name token when it
+       expects a string, it normally aborts compilation.  But if
+       <option>--fake-strings</option> is given, it instead quietly
+       translates names to strings where needed.</simpara>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><option>--help</option></term>
+     <listitem>
+      <simpara>Print a usage message listing all available options,
+       then exit successfully.</simpara>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><option>--version</option></term>
+     <listitem>
+      <simpara>Print the version number, then exit
+       successfully.</simpara>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </chapter>
+  <chapter id="sect-syntax">
+   <title>Syntax of &pt-lang; scripts</title>
+   <simpara>Scripts are usually fed through the C preprocessor before
+    giving them to <command>ptcomp</command>.  Thus C comments and
+    preprocessor directives can be used.</simpara>
+   <simpara>After preprocessing, scripts consist of tokens separated
+    by tabs and spaces.  The number of spaces doesn't
+    matter.</simpara>
+   <sect1 id="sect-tokens">
+    <title>What the scripts are made of</title>
+    <simpara>There are three major kinds of tokens:</simpara>
+    <variablelist>
+     <varlistentry>
+      <term>Newline</term>
+      <listitem>
+       <simpara>Newlines may appear between clauses but not inside
+	them.</simpara>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <indexterm id="concept-string">
+       <primary>string</primary>
+      </indexterm>
+      <term>String</term>
+      <listitem>
+       <simpara>If the token begins with a double quote
+	(<token>"</token>), it is a string.  The string can contain
+	spaces and doesn't end until a closing quote is
+	found.</simpara>
+       <simpara>The C-style backslash escapes <literal>\"</literal>,
+	<literal>\'</literal> and <literal>\\</literal> can be used to
+	embed quotes and backslashes in the string.  Other sequences
+	like <literal>\a</literal> and <literal>\x1B</literal> have
+	not been implemented; <command>ptcomp</command> gives an error
+	message if it sees those.</simpara>
+       <simpara>Strings seen by players should be wrapped in the
+	<link linkend="sect-n"><literal>N_</literal>
+	 macro</link>.</simpara>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>Other</term>
+      <listitem>
+       <simpara>If the token isn't a newline or a string, it ends at
+	the next whitespace character (which may itself be a new
+	token, if it is a newline).  Numbers, names and
+	<link linkend="sect-keyword-index">keywords</link>
+	fall in this class.  The recognition of keywords is
+	context-sensitive: <wordasword>Proto</wordasword> is
+	interpreted as a keyword if it begins a declaration, but if it
+	follows a keyword which expects a name, it is taken as a
+	name.</simpara>
+       <simpara>Keywords are case-insensitive.</simpara>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect1>
+   <sect1 id="sect-n">
+    <title>Marking strings for translation</title>
+    <para>If a string is going to be shown to the player, it should be
+     wrapped in the <literal>N_</literal> macro, like this:
+     <informalexample>
+<programlisting>
+PickupMessage N_("Picked up a stimpak.")
+</programlisting>
+     </informalexample>
+    </para>
+    <simpara>The macro is defined in
+     <filename><indexterm id="concept-1-dumb-dumbdefs-pt">
+       <primary>&lt;dumb/dumbdefs.pt&gt;</primary>
+      </indexterm>&lt;dumb/dumbdefs.pt&gt;</filename> which your
+     &pt-lang; script should <literal>#include</literal>.</simpara>
+    <simpara>The purpose of <literal>N_</literal> is to mark the
+     string for translation, so that people around the world can get
+     the messages in their own languages.
+     <application>DUMB</application> is not smart enough to
+     automatically translate messages to the languages of the world,
+     but it can use the
+     <olink targetdocent="doc-gettext"
+	    localinfo="gettext"><acronym>GNU</acronym>
+      <application>gettext</application> library</olink> to look up
+     the translations from a file if someone first collects them
+     there.  The
+     <olink targetdocent="doc-gettext"
+	    localinfo="xgettext Invocation"><command>xgettext</command></olink>
+     program can be made to scan files for strings wrapped in
+     <literal>N_</literal> macros and present the list to the person
+     translating them to another language.</simpara>
+    <simpara>Do not use <literal>N_</literal> on sprite names or
+     other such things the player will never see.</simpara>
+   </sect1>
+  </chapter>
+  <chapter id="sect-conventions">
+   <title>How to read this manual</title>
+   <simpara>FIXME: some blurb</simpara>
+   <sect1 id="sect-sample-clause">
+    <title>Sample clause</title>
+    <simpara>Here's one example of how the syntax of &pt-lang; clauses
+     is shown in this manual:</simpara>
+<synopsis>
+Gets <replaceable>gettable</replaceable> <replaceable>howmany:integer</replaceable> <optional>Maximum <replaceable>max:integer</replaceable></optional>
+</synopsis>
+    <simpara><indexterm id="concept-clause">
+      <primary>clause</primary>
+     </indexterm>This clause begins with the <literal>Gets</literal>
+     keyword.  The keyword must be followed by two parameters:
+     <replaceable>gettable</replaceable> which is the name of some
+     Gettable, and <replaceable>howmany</replaceable> which is an
+     integer.  In these syntax descriptions, the colon
+     (<wordasword>:</wordasword>) separates the names of parameters
+     from their types.  The type of
+     <replaceable>gettable</replaceable> is omitted, since it should
+     be obvious from the name.</simpara>
+    <simpara>After <replaceable>howmany</replaceable>, there may be a
+     <literal>Maximum</literal> keyword followed by the
+     <replaceable>max</replaceable> parameter which is an
+     integer.</simpara>
+    <simpara>Colons and square brackets are not used in real &pt-lang;
+     scripts, except perhaps in strings.</simpara>
+   </sect1>
+   <sect1 id="sect-arc">
+    <indexterm id="concept-arc-units">
+     <primary>arc units</primary>
+    </indexterm>
+    <title>Arc parameter syntax</title>
+    <simpara>Arcs are quantities like <literal>180deg</literal> or
+     <literal>2pi</literal>.  When a keyword expects an arc parameter,
+     you can form it in any of the following ways:</simpara>
+    <variablelist>
+     <varlistentry>
+      <term><literal><replaceable>integer</replaceable>deg</literal></term>
+      <listitem>
+       <simpara><literal>360deg</literal> is a full circle;
+	<literal>180deg</literal> is half of it.</simpara>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><literal><optional><replaceable>integer</replaceable></optional>pi</literal></term>
+      <listitem>
+       <simpara><literal>2pi</literal> is a full circle;
+	<literal>1pi</literal> or <literal>pi</literal> is half of
+	it.</simpara>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><literal><optional><replaceable>integer</replaceable></optional>pi/<replaceable>divisor</replaceable></literal></term>
+      <listitem>
+       <simpara>As above but divided with
+	<replaceable>divisor</replaceable> which must also be an
+	integer.  So, <literal>pi/5</literal> or
+	<literal>2pi/10</literal> would be the same as
+	<literal>36deg</literal>.</simpara>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><literal><replaceable>integer</replaceable></literal></term>
+      <listitem>
+       <simpara>This is an obsolete syntax which should not be used
+	any more.  It means <literal>0deg</literal> if
+	<replaceable>integer</replaceable> is 0, or
+	<literal>pi/<replaceable>integer</replaceable></literal>
+	otherwise.</simpara>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect1>
+   <sect1 id="sect-time">
+    <indexterm id="concept-time-units">
+     <primary>time units</primary>
+    </indexterm>
+    <title>Time parameter syntax</title>
+    <simpara>When a keyword needs a time as a parameter, use one of
+     the following syntaxes:</simpara>
+    <variablelist>
+     <varlistentry>
+      <term><literal><replaceable>integer</replaceable>sec</literal></term>
+      <listitem>
+       <simpara><replaceable>integer</replaceable> seconds.</simpara>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><literal><replaceable>integer</replaceable>msec</literal></term>
+      <listitem>
+       <simpara><replaceable>integer</replaceable> milliseconds
+	(1/1000).  The game doesn't really ave millisecond accuracy
+	but you can pretend it has.</simpara>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><literal><replaceable>integer</replaceable>ticks</literal></term>
+      <listitem>
+       <simpara><replaceable>integer</replaceable> timer ticks. As of
+	<application>DUMB</application> 0.13.7, there are 100 ticks
+	per second.</simpara>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><literal><replaceable>integer</replaceable></literal></term>
+      <listitem>
+       <simpara>If the time unit isn't given, the default unit is
+	used.  It defaults to ticks but can be changed with the
+	<link linkend="sect-timeunits"><literal>TimeUnits</literal>
+	 clause</link>.</simpara>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect1>
+  </chapter>
+ </part>
+ <part>
+  <title>Reference</title>
+  <chapter id="sect-timeunits">
+   <title>Changing default time units</title>
+<synopsis><anchor id="keyword-timeunits">
+TimeUnits <replaceable>time</replaceable>
+</synopsis>
+   <simpara>The <literal>TimeUnits</literal> clause changes the
+    default time unit for the rest of the script.  If you don't change
+    the default time unit, it is <literal>1ticks</literal>.</simpara>
+   <simpara><replaceable>time</replaceable> can contain both a number
+    and a unit.  For example, after <literal>TimeUnits 2ms</literal>,
+    the time value <literal>10</literal> would mean
+    <literal>20ms</literal>. </simpara>
+   <simpara>For a list of time units, see
+    <xref linkend="sect-time">.</simpara>
+  </chapter>
+  <chapter id="sect-gettable">
+   <title>Defining Gettables</title>
+   <simpara>Gettables are objects carried by players, such as weapons,
+    ammunition and inventory items.  The player usually gets them by
+    collecting a  Thing from the level, but you can also make the
+    player have some Gettables right from the beginning of the
+    game.</simpara>
+   <simpara>Temporary special powers like invisibility are also
+    implemented as Gettables.  So are health and armour.</simpara>
+<synopsis><anchor id="keyword-gettable">
+Gettable <replaceable>gettable</replaceable>
+</synopsis>
+   <simpara>This clause begins the definition of a Gettable called
+    <replaceable>gettable</replaceable>.  To specify the details of
+    the new Gettable, follow it with the other clauses defined in the
+    following sections.</simpara>
+   <sect1 id="sect-amounts" xreflabel="Amounts of Gettables">
+    <title>Amounts of Gettables</title>
+    <simpara>The following clauses can only be used inside a
+     <literal>Gettable</literal> definition:</simpara>
+    <variablelist>
+     <varlistentry>
+      <term>
+<synopsis><anchor id="keyword-initial">
+Initial <replaceable>initial:integer</replaceable>
+</synopsis>
+      </term>
+      <term>
+<synopsis><anchor id="keyword-onemaponly">
+OneMapOnly
+</synopsis>
+      </term>
+      <listitem>
+       <simpara>When the game begins, each player gets
+	<replaceable>initial</replaceable> units of this Gettable.
+	Defaults to 0 if not given.</simpara>
+       <simpara>If the Gettable is defined as
+	<literal>OneMapOnly</literal>, the value is reset to
+	<replaceable>initial</replaceable> at the beginning of each
+	map.</simpara>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+<synopsis><anchor id="keyword-defaultmaximum"><anchor id="keyword-withbackpack">
+DefaultMaximum <replaceable>max:integer</replaceable> <optional>WithBackpack <replaceable>maxwithpack:integer</replaceable></optional>
+</synopsis>
+      </term>
+      <listitem>
+       <simpara>When this Gettable is got via a
+	<link linkend="sect-gets"><literal>Gets</literal>
+	 clause</link> in a <literal>Proto</literal>, the maximum
+	possible amount defaults to <literal>max</literal> if not
+	overridden in the <literal>Gets</literal> clause.</simpara>
+       <simpara>However, if the player has a backpack,
+	<replaceable>maxwithpack</replaceable> is used instead. For
+	information on how to define a Gettable as the backpack, see
+	<xref linkend="sect-special">.</simpara>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect1>
+   <sect1 id="sect-icon">
+    <title>Icon of Gettable</title>
+    <simpara>FIXME: describe what the icons are, also
+     <option>--dumb-uncrowd</option></simpara>
+    <variablelist>
+     <varlistentry>
+      <term>
+<synopsis><anchor id="keyword-icon">
+Icon <replaceable>icon:string9</replaceable>
+</synopsis>
+      </term>
+      <listitem>
+       <simpara>FIXME: document</simpara>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+<synopsis><anchor id="keyword-iconpos">
+IconPos <replaceable>xo:integer</replaceable> <replaceable>yo:integer</replaceable>
+</synopsis>
+      </term>
+      <term>
+<synopsis><anchor id="keyword-xcenter">
+XCenter
+</synopsis>
+      </term>
+      <term>
+<synopsis><anchor id="keyword-ycenter">
+YCenter
+</synopsis>
+      </term>
+      <listitem>
+       <simpara>FIXME: document</simpara>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+<synopsis><anchor id="keyword-anim">
+Anim <replaceable>char</replaceable>
+</synopsis>
+      </term>
+      <term>
+<synopsis><anchor id="keyword-revanim">
+RevAnim <replaceable>char</replaceable>
+</synopsis>
+      </term>
+      <listitem>
+       <simpara>FIXME: document</simpara>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+<synopsis><anchor id="keyword-timing">
+Timing <replaceable>time</replaceable>
+</synopsis>
+      </term>
+      <listitem>
+       <simpara>FIXME: document</simpara>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect1>
+   <sect1 id="sect-items">
+    <title>Weapons and inventory items</title>
+    <indexterm id="concept-weapon">
+     <primary>weapon</primary>
+    </indexterm>
+    <indexterm id="concept-inventory">
+     <primary>inventory</primary>
+    </indexterm>
+    <simpara>FIXME: explain why to use these, and what key bindings
+     apply</simpara>
+    <variablelist>
+     <varlistentry>
+      <term>
+<synopsis><anchor id="keyword-wepsel">
+WepSel
+</synopsis>
+      </term>
+      <term>
+<synopsis><anchor id="keyword-spesel">
+SpeSel
+</synopsis>
+      </term>
+      <listitem>
+       <simpara>FIXME: document</simpara>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+<synopsis><anchor id="keyword-bogotype">
+Bogotype <replaceable>proto</replaceable>
+</synopsis>
+      </term>
+      <listitem>
+       <simpara>FIXME: document</simpara>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+<synopsis><anchor id="keyword-ammo">
+Ammo <replaceable>ammo:gettable</replaceable> <replaceable>count:integer</replaceable>
+</synopsis>
+      </term>
+      <listitem>
+       <simpara>When this Gettable is used as a weapon, use up
+	<replaceable>count</replaceable> units of
+	<replaceable>ammo</replaceable>.  If there is not enough ammo,
+	the weapon cannot be used.</simpara>
+       <simpara>By default, weapons don't need ammo.</simpara>
+       <simpara>This clause has no effect to what kind of missiles the
+	weapon sends.  That is defined by the
+	<literal>Spawns</literal> clause in the weapon's bogothing.
+	FIXME: add a link when Spawns has been documented</simpara>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect1>
+   <sect1 id="sect-special">
+    <title>Special features as Gettables</title>
+    <simpara>In addition to weapons and other tangible items,
+     Gettables can also represent other properties of the player, like
+     health and armour.  This way, the same mechanism which gives the
+     player bullets when he picks up a clip, can be used to increase
+     his health when he picks up a health bonus.</simpara>
+    <variablelist>
+     <varlistentry>
+      <term>
+<synopsis><anchor id="keyword-special">
+Special <replaceable>code:enum</replaceable>
+</synopsis>
+      </term>
+      <listitem>
+       <simpara>This clause marks the Gettable as denoting one special
+	feature.</simpara>
+       <simpara><replaceable>code</replaceable> must be one of the
+	following constants, defined in
+	<filename>&lt;dumb/dumbdefs.pt&gt;</filename>:</simpara>
+       <variablelist>
+	<varlistentry>
+	 <indexterm id="concept-health">
+	  <primary>health</primary>
+	 </indexterm>
+	 <term>
+	  <literal><anchor id="keyword-gett-spc-health">GETT_SPC_HEALTH</literal>
+	 </term>
+	 <listitem>
+	  <simpara>This marks the Gettable as your health.  When you
+	   get damage, it's taken from the health.  If health goes to
+	   0, you die.</simpara>
+	 </listitem>
+	</varlistentry>
+	<varlistentry>
+	 <indexterm id="concept-armour">
+	  <primary>armour</primary>
+	 </indexterm>
+	 <term>
+	  <literal><anchor id="keyword-gett-spc-armour">GETT_SPC_ARMOUR</literal>
+	 </term>
+	 <listitem>
+	  <simpara>This marks the Gettable as your armour. When you
+	   have armour, half of the damage you get is taken from
+	   it.</simpara>
+	 </listitem>
+	</varlistentry>
+	<varlistentry>
+	 <indexterm id="concept-invisibility">
+	  <primary>invisibility</primary>
+	 </indexterm>
+	 <term>
+	  <literal><anchor id="keyword-gett-spc-invisibility">GETT_SPC_INVISIBILITY</literal>
+	 </term>
+	 <listitem>
+	  <simpara>If you have this Gettable, you are invisible.</simpara>
+	 </listitem>
+	</varlistentry>
+	<varlistentry>
+	 <indexterm id="concept-damage-protection">
+	  <primary>damage protection</primary>
+	 </indexterm>
+	 <indexterm id="concept-invulnerability">
+	  <primary>invulnerability</primary>
+	 </indexterm>
+	 <indexterm id="concept-god-mode">
+	  <primary>god mode</primary>
+	 </indexterm>
+	 <term>
+	  <literal><anchor id="keyword-gett-spc-damageprotection">GETT_SPC_DAMAGEPROTECTION</literal>
+	 </term>
+	 <listitem>
+	  <simpara>If you have this Gettable, you can't be hurt at
+	   all.</simpara>
+	 </listitem>
+	</varlistentry>
+	<varlistentry>
+	 <indexterm id="concept-slime-protection">
+	  <primary>slime protection</primary>
+	 </indexterm>
+	 <indexterm id="concept-radiation-suit">
+	  <primary>radiation suit</primary>
+	 </indexterm>
+	 <term>
+	  <literal><anchor id="keyword-gett-spc-slimeprotection">GETT_SPC_SLIMEPROTECTION</literal>
+	 </term>
+	 <listitem>
+	  <simpara>If you have this Gettable, the icky goo on the
+	   floor doesn't hurt you.</simpara>
+	 </listitem>
+	</varlistentry>
+	<varlistentry>
+	 <indexterm id="concept-night-vision">
+	  <primary>night vision</primary>
+	 </indexterm>
+	 <indexterm id="concept-goggles">
+	  <primary>goggles</primary>
+	 </indexterm>
+	 <indexterm id="concept-light-amplification-visor">
+	  <primary>light amplification visor</primary>
+	 </indexterm>
+	 <term>
+	  <literal><anchor id="keyword-gett-spc-supersight">GETT_SPC_SUPERSIGHT</literal>
+	 </term>
+	 <listitem>
+	  <simpara>If you have this Gettable, you see in the
+	   dark.</simpara>
+	 </listitem>
+	</varlistentry>
+	<varlistentry>
+	 <indexterm id="concept-backpack">
+	  <primary>backpack</primary>
+	 </indexterm>
+	 <term>
+	  <literal><anchor id="keyword-gett-spc-backpack">GETT_SPC_BACKPACK</literal>
+	 </term>
+	 <listitem>
+	  <simpara>When you collect items,
+	   <application>DUMB</application> checks whether you have the
+	   backpack.  If so, a different maximum may be used.  See
+	   <xref linkend="sect-amounts">.</simpara>
+	 </listitem>
+	</varlistentry>
+	<varlistentry>
+	 <indexterm id="concept-computer-area-map">
+	  <primary>computer area map</primary>
+	 </indexterm>
+	 <indexterm id="concept-map-automatic">
+	  <primary>map</primary>
+	  <secondary>automatic</secondary>
+	 </indexterm>
+	 <term>
+	  <literal><anchor id="keyword-gett-spc-allmap">GETT_SPC_ALLMAP</literal>
+	 </term>
+	 <listitem>
+	  <simpara>When you have this Gettable, the map shows you even
+	   the places you haven't visited yet.</simpara>
+	 </listitem>
+	</varlistentry>
+       </variablelist>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+    <simpara>It is not possible to use the same special number in two
+     Gettables, but you can define several powerups which give
+     different amounts of the same Gettable to the player.  See
+     <xref linkend="sect-gets">.</simpara>
+   </sect1>
+  </chapter>
+  <chapter id="sect-proto">
+   <title>Defining ProtoThings</title>
+   <variablelist>
+    <varlistentry>
+     <term>
+<synopsis><anchor id="keyword-proto">
+Proto <replaceable>proto</replaceable> <optional><replaceable>id:integer</replaceable></optional>
+</synopsis>
+     </term>
+     <listitem>
+      <simpara>FIXME: document</simpara>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+   <sect1 id="sect-powerups">
+    <title>Powerups</title>
+    <simpara>Powerups are Things which award the player one or more
+     <link linkend="sect-gettable">Gettables</link>.</simpara>
+    <simpara>You turn a Thing to a powerup by adding one or more
+     <literal>Gets</literal> clauses in the ProtoThing defining that
+     Thing.  They take effect when a player collides with the Thing.
+     Until then, the powerup may even behave like a monster if you
+     define it as one.</simpara>
+    <simpara>You can also define a sound and messages which are
+     emitted when the powerup is collected.</simpara>
+    <sect2 id="sect-gets" xreflabel="Gettables from a powerup">
+     <title>Gettables from a powerup</title>
+     <variablelist>
+      <varlistentry>
+       <term>
+<synopsis><anchor id="keyword-gets"><anchor id="keyword-maximum">
+Gets <replaceable>gettable</replaceable> <replaceable>howmany</replaceable> <optional>Maximum <replaceable>max:integer</replaceable></optional>
+</synopsis>
+       </term>
+       <listitem>
+	<simpara>Adding this clause in a <literal>Proto</literal>
+	 turns the Things it describes to powerups which the player
+	 can pick up.</simpara>
+	<simpara>If <replaceable>max</replaceable> isn't given, it
+	 defaults to one of the values given in the
+	 <literal>DefaultMaximum</literal> clause of
+	 <replaceable>gettable</replaceable>.  Which value is used
+	 depends on whether the player has a
+	 <link linkend="concept-backpack">backpack</link>.</simpara>
+	<simpara>If the player already has
+	 <replaceable>max</replaceable> or more units of
+	 <replaceable>gettable</replaceable>, he doesn't pick the
+	 Thing up.  The
+	 <link linkend="keyword-ignoremessage"><literal>IgnoreMessage</literal></link>
+	 may be printed in this case.</simpara>
+	<simpara>Otherwise, he gets <replaceable>howmany</replaceable>
+	 units more.  Then, if he has more than
+	 <replaceable>max</replaceable> units, the amount is clipped
+	 to <replaceable>max</replaceable>.</simpara>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+     <simpara>You can write multiple <literal>Gets</literal> clauses
+      in one ProtoThing.  When the player collects such a powerup, he
+      gets all the Gettables listed.  He will ignore the powerup only
+      if none of the clauses would give him Gettables.</simpara>
+    </sect2>
+    <sect2 id="sect-pickupsound">
+     <title>PickupSound</title>
+     <variablelist>
+      <varlistentry>
+       <term>
+<synopsis><anchor id="keyword-pickupsound">
+PickupSound <replaceable>sound</replaceable>
+</synopsis>
+       </term>
+       <listitem>
+	<simpara>FIXME: document</simpara>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+    </sect2>
+    <sect2 id="sect-pickupmessage">
+     <title>Powerup messages</title>
+     <variablelist>
+      <varlistentry>
+       <term>
+<synopsis><anchor id="keyword-firstpickupmessage">
+FirstPickupMessage <replaceable>firstpickupmessage:string</replaceable>
+</synopsis>
+       </term>
+       <term>
+<synopsis><anchor id="keyword-pickupmessage">
+PickupMessage <replaceable>pickupmessage:string</replaceable>
+</synopsis>
+       </term>
+       <listitem>
+	<simpara>When a player succeeds in picking up the powerup,
+	 <application>DUMB</application> shows either
+	 <replaceable>firstpickupmessage</replaceable> or
+	 <replaceable>pickupmessage</replaceable>.  If the player
+	 didn't already have the Gettable which the ProtoThing gives
+	 and <replaceable>firstpickupmessage</replaceable> is defined,
+	 <application>DUMB</application> prints that; otherwise,
+	 <application>DUMB</application> prints
+	 <replaceable>pickupmessage</replaceable> if that is
+	 defined.</simpara>
+	<simpara>If the ProtoThing has multiple
+	 <literal>Gets</literal> clauses and thus gives many different
+	 Gettables, only the first of them affects the choice of
+	 message.</simpara>
+	<simpara><literal>FirstPickupMessage</literal> may be useful
+	 with decaying Gettables like temporary invisibility:
+	 <application>DUMB</application> can show
+	 <replaceable>firstpickupmessage</replaceable> when the player
+	 becomes invisible and
+	 <replaceable>pickupmessage</replaceable> when he gets more
+	 time for the invisibility.  Currently, there is no way to
+	 specify a message to be shown when the Gettable has decayed
+	 completely and the player becomes visible again; if such a
+	 feature were added, it would belong in
+	 <literal>Gettable</literal>, not
+	 <literal>Proto</literal>.</simpara>
+       </listitem>
+      </varlistentry>
+      <varlistentry>
+       <term>
+<synopsis><anchor id="keyword-ignoremessage">
+IgnoreMessage <replaceable>ignoremessage:string</replaceable>
+</synopsis>
+       </term>
+       <listitem>
+	<simpara>When a player attempts to pick up the powerup but
+	 can't carry it, <application>DUMB</application> shows him the
+	 <replaceable>ignoremessage</replaceable>.  If you don't
+	 define that, no message is shown.</simpara>
+       </listitem>
+      </varlistentry>
+     </variablelist>
+     <simpara>The message strings should be wrapped in the
+      <link linkend="sect-n"><literal>N_</literal>
+       macro.</link></simpara>
+    </sect2>
+   </sect1>
+  </chapter>
+  <chapter id="sect-level">
+   <title>Defining Levels</title>
+   <simpara><indexterm id="concept-episode">
+     <primary>episode</primary>
+    </indexterm>
+    <indexterm id="concept-level">
+     <primary>level</primary>
+    </indexterm>
+    <indexterm id="concept-map-meaning-a-level">
+     <primary>map</primary>
+     <secondary>meaning a level</secondary>
+    </indexterm>
+    <indexterm id="concept-mission">
+     <primary>mission</primary>
+    </indexterm>
+    An episode usually consists of several levels (also known
+    as maps or missions) which the player plays in sequence.  Each of
+    those levels needs a separate <literal>Level</literal> clause in
+    the &pt-lang; script.  This example is from
+    <application>DUMB</application>'s
+    <filename>doom/levels.pt</filename>:</simpara>
+   <informalexample>
+<programlisting>
+Level "E1M1"  Music "D_E1M1"  Sky "SKY1"  StartGame
+Level "E1M2"  Music "D_E1M2"  Sky "SKY1"
+Level "E1M3"  Music "D_E1M3"  Sky "SKY1"  Secret "E1M9"
+Level "E1M4"  Music "D_E1M4"  Sky "SKY1"
+Level "E1M5"  Music "D_E1M5"  Sky "SKY1"
+Level "E1M6"  Music "D_E1M6"  Sky "SKY1"
+Level "E1M7"  Music "D_E1M7"  Sky "SKY1"
+Level "E1M8"  Music "D_E1M8"  Sky "SKY1"  EndGame
+Level "E1M9"  Music "D_E1M9"  Sky "SKY1"  Next "E1M4"
+</programlisting>
+   </informalexample>
+   <simpara><indexterm id="keyword-startgame">
+     <primary>StartGame</primary>
+    </indexterm>
+    <indexterm id="keyword-endgame">
+     <primary>EndGame</primary>
+    </indexterm>
+    Since <quote>E1M1</quote> has the <literal>StartGame</literal>
+    flag, the game will start there.  When the player finishes
+    <quote>E1M1</quote>, he's taken to <quote>E1M2</quote>, from there
+    to <quote>E1M3</quote> and so on.  <quote>E1M8</quote> is marked
+    with <literal>EndGame</literal>, so the game ends when the player
+    gets to the exit there.  <quote>E1M9</quote> is a secret
+    level.</simpara>
+   <sect1 id="sect-secret">
+    <title>Secret levels</title>
+    <simpara><indexterm id="concept-secret-exit">
+      <primary>secret exit</primary>
+     </indexterm>
+     A level can have a secret exit which breaks the usual sequence of
+     levels and takes the player somewhere else.  The
+     <literal>Secret</literal> clause defines where it
+     leads:</simpara>
+    <variablelist>
+     <varlistentry>
+      <term>
+<synopsis><anchor id="keyword-secret">
+Secret <replaceable>secret:level</replaceable>
+</synopsis>
+      </term>
+      <listitem>
+       <simpara>When the player exits this level via the secret exit,
+	take him to <replaceable>secret</replaceable>, not the usual
+	next level.</simpara>
+       <simpara>For example, <application>DUMB</application>'s
+	<filename>doom/levels.pt</filename> contains these
+	lines:</simpara>
+       <informalexample>
+<programlisting>
+Level "E1M3"  Music "D_E1M3"  Sky "SKY1"  Secret "E1M9"
+Level "E1M4"  Music "D_E1M4"  Sky "SKY1"
+</programlisting>
+       </informalexample>
+       <simpara>If the player goes to the secret exit in
+	<quote>E1M3</quote>, he is taken to <quote>E1M9</quote>.  The
+	normal exit would take him to <quote>E1M4</quote>.</simpara>
+       <simpara>If you don't use <literal>Secret</literal>, the secret
+	exit behaves just like the normal exit.</simpara>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+    <simpara>When the player finishes a secret level, he should be
+     taken back to the normal sequence.  This could be done by making
+     the secret level's exit another secret exit and using
+    <literal>Secret</literal> to direct that to the correct level, but
+     in <application>Doom</application> maps it is a normal exit.  So
+     we have the <literal>Next</literal> keyword for changing the
+     destination of the normal exit:</simpara>
+    <variablelist>
+     <varlistentry>
+      <term>
+<synopsis><anchor id="keyword-next">
+Next <replaceable>next:level</replaceable>
+</synopsis>
+      </term>
+      <listitem>
+       <simpara>When the player exits this level via the normal exit,
+	take him to <replaceable>next</replaceable>, not the usual
+	next level.</simpara>
+       <simpara>Here is a piece of
+	<filename>doom/levels.pt</filename>:</simpara>
+       <informalexample>
+<programlisting>
+Level "E1M8"  Music "D_E1M8"  Sky "SKY1"  EndGame
+Level "E1M9"  Music "D_E1M9"  Sky "SKY1"  Next "E1M4"
+
+Level "E2M1"  Music "D_E2M1"  Sky "SKY2"  StartGame
+Level "E2M2"  Music "D_E2M2"  Sky "SKY2"
+</programlisting>
+       </informalexample>
+       <simpara>When the player exits <quote>E1M9</quote>, he is
+	taken to <quote>E1M4</quote>.  Without
+	<literal>Next</literal>, the default would have been
+	<quote>E2M1</quote>.</simpara>
+       <simpara>If there were a secret exit in <quote>E1M9</quote>,
+	that too would take the player to <quote>E1M4</quote>.  This
+	is because the secret exit's target defaults to that of the
+	normal exit unless overridden with
+	<literal>Secret</literal>.</simpara>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+    <simpara>The use of <literal>Secret</literal> and
+     <literal>Next</literal> isn't limited to secret levels; you could
+     form more complex structures with them.  You shouldn't make links
+     back to levels the player has already been in, because the status
+     of a level is lost when the player leaves it, and he would have
+     to fight all the same monsters again.  But if you want to do
+     this, you can.</simpara>
+   </sect1>
+  </chapter>
+ </part>
+ <part>
+  <title>Indices</title>
+  <index id="sect-concept-index">
+   <title>Concept Index</title>
+   <indexentry>
+    <primaryie linkends="concept-arc-units">arc units</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-armour">armour</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-backpack">backpack</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-clause">clause</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-computer-area-map">computer area map</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-damage-protection">damage protection</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-1-dumb-dumbdefs-pt">&lt;dumb/dumbdefs.pt&gt;</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-episode">episode</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-god-mode">god mode</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-goggles">goggles</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-health">health</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-inventory">inventory</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-invisibility">invisibility</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-invulnerability">invulnerability</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-level">level</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-light-amplification-visor">light
+     amplification visor</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie>map</primaryie>
+    <secondaryie linkends="concept-map-automatic">automatic</secondaryie>
+    <secondaryie linkends="concept-map-meaning-a-level">meaning a level</secondaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-mission">mission</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-night-vision">night vision</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-radiation-suit">radiation suit</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-secret-exit">secret exit</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-slime-protection">slime protection</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-string">string</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-time-units">time units</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="concept-weapon">weapon</primaryie>
+   </indexentry>
+  </index>
+  <index id="sect-keyword-index">
+   <title>Keyword Index</title>
+   <simpara>Keywords are case-insensitive.  The preferred form is
+    shown here.</simpara>
+   <simpara>This list also contains macros defined via the C
+    preprocessor.  Those must be written in upper case.</simpara>
+   <indexentry>
+    <primaryie linkends="keyword-ammo">Ammo</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-bogotype">Bogotype</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-wepsel">WepSel</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-defaultmaximum">DefaultMaximum</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-firstpickupmessage">FirstPickupMessage</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-gets">Gets</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-gettable">Gettable</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-gett-spc-allmap">GETT_SPC_ALLMAP</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-gett-spc-armour">GETT_SPC_ARMOUR</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-gett-spc-backpack">GETT_SPC_BACKPACK</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-gett-spc-damageprotection">GETT_SPC_DAMAGEPROTECTION</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-gett-spc-health">GETT_SPC_HEALTH</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-gett-spc-invisibility">GETT_SPC_INVISIBILITY</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-gett-spc-slimeprotection">GETT_SPC_SLIMEPROTECTION</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-gett-spc-supersight">GETT_SPC_SUPERSIGHT</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-icon">Icon</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-iconpos">IconPos</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-ignoremessage">IgnoreMessage</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-initial">Initial</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-maximum">Maximum</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-next">Next</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-initial">OneMapOnly</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-pickupmessage">PickupMessage</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-pickupsound">PickupSound</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-proto">Proto</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-revanim">RevAnim</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-secret">Secret</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-special">Special</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-spesel">SpeSel</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-startgame">StartGame</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-timeunits">TimeUnits</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-timing">Timing</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-wepsel">WepSel</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-withbackpack">WithBackpack</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-xcenter">XCenter</primaryie>
+   </indexentry>
+   <indexentry>
+    <primaryie linkends="keyword-ycenter">YCenter</primaryie>
+   </indexentry>
+  </index>
+ </part>
+</book>
+
+<!--
+Local Variables:
+sgml-indent-step: 1
+End:
+-->

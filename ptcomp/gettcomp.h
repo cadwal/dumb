@@ -22,11 +22,11 @@
 #ifndef GETTCOMP_H
 #define GETTCOMP_H
 
-#include <stdio.h>
+#include "libdumbwad/wadwr.h"
 
 void init_gettcomp(void);
 void gettcomp(void);
-void wrgetts(FILE *fout);
+void wrgetts(WADWR *fout);
 
 int parm_gett(void);
 

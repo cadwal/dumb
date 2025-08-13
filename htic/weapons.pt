@@ -8,15 +8,15 @@
 PhaseTable HeldWand
   Default Duration 100msec
 
-  Phase IDLE    A  Goto IDLE
+  Phase IDLE    "A"  Goto IDLE
 
   Default NoSigs
-  Phase SHOOT   B  SigShoot
-  Phase -       C  Shoot Sound GLDHIT
-  Phase -       D  Goto IDLE
+  Phase SHOOT   "B"  SigShoot
+  Phase -       "C"  Shoot Sound GLDHIT
+  Phase -       "D"  Goto IDLE
 
 Proto HeldWand
-  Sprite GWND
+  Sprite "GWND"
   Size 32 56
   Bogus Shooter
   NoHurtOwner
@@ -25,36 +25,36 @@ Proto HeldWand
 
 PhaseTable HeldCrossbow
   Default Duration 100msec
-  Phase IDLE	A
-  Phase -	B
-  Phase -	C Goto IDLE
+  Phase IDLE	"A"
+  Phase -	"B"
+  Phase -	"C" Goto IDLE
   Default NoSigs
-  Phase SHOOT	D SigShoot Shoot Sound BOWSHT
-  Phase -	E
-  Phase -	F
-  Phase -	G
-  Phase -	H Goto IDLE
+  Phase SHOOT	"D" SigShoot Shoot Sound BOWSHT
+  Phase -	"E"
+  Phase -	"F"
+  Phase -	"G"
+  Phase -	"H" Goto IDLE
 
 Proto HeldCrossbow
-  Sprite CRBW
+  Sprite "CRBW"
   Size 32 56
   Bogus
   Shoots ArrowZap
-  ShootMany 3 18
+  ShootMany 3 pi/18
   AimArc 0deg
 
 PhaseTable HeldClaw
   Default Duration 100msec
 
-  Phase IDLE    A  Goto IDLE
+  Phase IDLE    "A"  Goto IDLE
 
   Default NoSigs
-  Phase SHOOT   B  SigShoot
-  Phase -       C
-  Phase -       D  Shoot Sound BLSSHT Goto IDLE
+  Phase SHOOT   "B"  SigShoot
+  Phase -       "C"
+  Phase -       "D"  Shoot Sound BLSSHT Goto IDLE
 
 Proto HeldClaw
-  Sprite BLSR
+  Sprite "BLSR"
   Size 32 56
   Bogus
   Shoots ClawZap
@@ -65,51 +65,50 @@ Proto HeldClaw
 
 Gettable Wand
   Initial 1
-  Collect 1
+  DefaultMaximum 1
   WepSel
   BogoType HeldWand
-  Ammo WandCrystals
+  Ammo WandCrystals 1
 
 Gettable Crossbow
-  Collect 1
+  DefaultMaximum 1
   WepSel
   BogoType HeldCrossbow
-  Ammo EtherealArrows
-  PickupSound WPNUP
+  Ammo EtherealArrows 1
 
 Gettable DragonClaw
-  Collect 1
+  DefaultMaximum 1
   WepSel
   BogoType HeldClaw
-  Ammo ClawOrbs
-  PickupSound WPNUP
+  Ammo ClawOrbs 1
 
 Gettable Gauntlets
-  Collect 1
+  DefaultMaximum 1
   WepSel
-  //Melee
-  //Sound GNTUSE
-  PickupSound WPNUP
+  /* Melee */
+  /* Sound GNTUSE */
 
 
 Proto Crossbow 2001
-  Sprite WBOW
+  Sprite "WBOW"
   Phases Mundane
   Size 16 48
-  Gets Crossbow 1
   StickToFloor
+  Gets Crossbow 1
+  PickupSound WPNUP
 
 Proto DragonClaw 53
-  Sprite WBLS
+  Sprite "WBLS"
   Phases Mundane
   Size 16 48
-  Gets DragonClaw 1
   StickToFloor
+  Gets DragonClaw 1
+  PickupSound WPNUP
 
 Proto Gauntlets 2005
-  Sprite WGNT
+  Sprite "WGNT"
   Phases Mundane
   Size 16 48
-  Gets Gauntlets 1
   StickToFloor
-
+  Gets Gauntlets 1
+  PickupSound WPNUP

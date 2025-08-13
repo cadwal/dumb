@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumbworldb/hexenwad.h: Data structures in Hexen WAD files.
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1997 by Josh Parsons <josh@schlick.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify

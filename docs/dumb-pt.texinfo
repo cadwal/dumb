@@ -1,0 +1,885 @@
+\input texinfo                  @c -*- texinfo -*-
+
+@c %**start of header
+
+@setfilename dumb-pt.info
+@settitle The @file{.pt} Language
+@c @setchapternewpage odd
+
+@include version.texi
+
+@dircategory Games
+@direntry
+* pt: (dumb-pt).                     The .pt language used by the DUMB 3D
+                                     game engine.
+* ptcomp: (dumb-pt)Invoking ptcomp.  The compiler for that language.
+@end direntry
+
+@set ptclause-via-def
+@clear ptclause-via-format
+
+@macro pt
+@file{.pt}
+@end macro
+
+@macro FIXME{explanation}
+FIXME: \explanation\
+@end macro
+
+@ifset ptclause-via-def
+
+@macro ptclause{clause}
+@deftypefn {Clause in top level} {} \clause\
+@end macro
+@macro ptclausex{clause}
+@deftypefnx {Clause in top level} {} \clause\
+@end macro
+@macro endptclause
+@end deftypefn
+@end macro
+
+@macro ptclausein{container, clause}
+@deftypefn {Clause in @code{\container\}} {} \clause\
+@end macro
+@macro ptclauseinx{container, clause}
+@deftypefnx {Clause in @code{\container\}} {} \clause\
+@end macro
+@macro endptclausein
+@end deftypefn
+@end macro
+
+@end ifset
+
+@ifset ptclause-via-format
+
+@macro ptclause{clause}
+@format
+ - Clause in top level: \clause\
+@end format
+@end macro
+@macro ptclausex{clause}
+@format
+ - Clause in top level: \clause\
+@end format
+@end macro
+@macro endptclause
+@end macro
+
+@macro ptclausein{container, clause}
+@format
+ - Clause in @code{\container\}: \clause\
+@end format
+@end macro
+@macro ptclauseinx{container, clause}
+@format
+ - Clause in @code{\container\}: \clause\
+@end format
+@end macro
+@macro endptclausein
+@end macro
+
+@end ifset
+
+@c %**end of header
+
+@ifinfo
+This is Edition @value{EDITION},
+last updated @value{UPDATED},
+of @cite{The @pt Language},
+for DUMB, Version @value{VERSION}.
+
+Copyright 1999 Kalle Niemitalo @email{tosi@@stekt.oulu.fi}
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+     
+@ignore
+Permission is granted to process this file through TeX and print the
+results, provided the printed document carries a copying permission
+notice identical to this one except for the removal of this paragraph
+(this paragraph not being relevant to the printed manual).
+@end ignore
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+@c If the GNU General Public License is added in this file, then the
+@c paragraph above must be changed to forbid modifying the GPL chapter.
+@c See the Texinfo manual.
+     
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation
+approved by the Free Software Foundation.
+
+@end ifinfo
+
+@titlepage
+@title The @file{.pt} Language
+@subtitle Edition @value{EDITION}
+@subtitle @value{UPDATED}
+@author Kalle Niemitalo
+
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 1999 Kalle Niemitalo
+
+Published electronically within the DUMB package, available from@*
+@uref{http://samba.anu.edu.au/dumb/} or
+@uref{http://stekt.oulu.fi/~tosi/dumb/}.
+
+Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+@c If the GNU General Public License is added in this file, then the
+@c paragraph above must be changed to forbid modifying the GPL chapter.
+@c See the Texinfo manual.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation
+approved by the Free Software Foundation.
+
+@end titlepage
+
+@ifinfo
+@node Top, Invoking ptcomp, (dir), (dir)
+@top The @pt Language
+
+Scripts written in the @pt language customize the DUMB 3D game engine to
+the needs of a specific game.
+
+This is Edition @value{EDITION}
+of @cite{The @pt Language},
+last updated @value{UPDATED}
+for DUMB Version @value{VERSION}.
+
+@end ifinfo
+
+@menu
+* Invoking ptcomp::             How to run the compiler.
+* Syntax::                      Syntax of @pt scripts.
+* Conventions::                 How to read this manual.
+
+* TimeUnits::                   Changing default time units.
+* Gettable::                    Defining Gettables.
+* Proto::                       Defining ProtoThings.
+* Level::                       Defining Levels.
+
+* Concept Index::               An entry for each concept.
+* Keyword Index::               An entry for each keyword.
+
+@detailmenu
+ --- The Detailed Node Listing ---
+
+Syntax of @pt scripts
+
+* Tokens::                      What the scripts are made of
+* N_::                          Marking strings for translation
+
+How to read this manual
+
+* Sample clause::               How this manual explains clauses.
+* Arc::                         Arc parameter syntax
+* Time::                        Time parameter syntax
+
+Defining Gettables
+
+* Amounts::                     How much the player has and can have.
+* Icon::                        
+* Items::                       Weapons and inventory items.
+* Special::                     Some Gettables denote special features.
+
+Defining ProtoThings
+
+* Powerups::                    Players may be able to pick it up.
+
+Powerups
+
+* Gets::                        What the player gets.
+* PickupSound::                 A sound can be emitted.
+* PickupMessage::               One of three messages is shown.
+
+Defining Levels
+
+* Secret::                      Secret levels
+
+@end detailmenu
+@end menu
+
+@node Invoking ptcomp, Syntax, Top, Top
+@chapter Invoking @code{ptcomp}
+
+@code{ptcomp} compiles @pt scripts to the binary format used by DUMB.
+It creates several lumps: one for Gettables, one for ProtoThings, one
+for Sounds, etc.  It can save all the lumps in one big WAD file, but it
+can also save each lump in a separate file.  You must use either
+@samp{--output-directory=@var{directory}} or
+@samp{--output-wad=@var{wadfile}} to choose what it does.
+
+A @pt script usually contains C preprocessor directives like
+@code{#include <dumb/dumbdefs.pt>}.  @code{ptcomp} does not understand
+those directives, so the script must be run via the C preprocessor
+before giving it to @code{ptcomp}.  Do something like this:
+
+@example
+/lib/cpp @var{input}.pt | ptcomp -o @var{output}.wad
+@end example
+
+Unfortunately, the C preprocessor may not understand C++-style @code{//}
+comments which the scripts tend to use.  If you are using GNU
+@code{cpp}, you can use its @samp{-lang-c++} option. @xref{Invocation, ,
+Invoking the C Preprocessor, cpp, The C Preprocessor}.  Otherwise, you
+have a problem.  It would be best not to use @code{//} comments in
+@pt scripts.
+
+Here are the options @code{ptcomp} understands:
+
+@table @samp
+
+@item --output-wad=@var{wadfile}
+@itemx -o @var{wadfile}
+Create a WAD file called @var{wadfile} and write the lumps in it.  This
+is now the recommended way of using @code{ptcomp}.
+
+@item --output-directory=@var{directory}
+@itemx -d @var{directory}
+Write each lump in a separate file in @var{directory}.  The files
+@file{PHASES.lump}, @file{PROTOS.lump}, @file{GETTABLE.lump},
+@file{LINETYPE.lump}, @file{SECTTYPE.lump}, @file{SOUNDS.lump},
+@file{ANIMTEX.lump} and @file{LEVINFO.lump} are generated.  Some of them
+may be empty if the script doesn't define such objects.  You can use the
+@code{wadtool} utility to combine them into a WAD later, perhaps with
+other lumps.
+
+@item --fake-strings
+If @code{ptcomp} sees a name token when it expects a string, it normally
+aborts compilation.  But if @samp{--fake-strings} is given, it instead
+quietly translates names to strings where needed.
+
+@item --help
+Print a usage message listing all available options, then exit
+successfully.
+
+@item --version
+Print the version number, then exit successfully.
+
+@end table
+
+
+@node Syntax, Conventions, Invoking ptcomp, Top
+@chapter Syntax of @pt scripts
+
+Scripts are usually fed through the C preprocessor before giving them to
+@code{ptcomp}.  Thus C comments and preprocessor directives can be used.
+
+After preprocessing, scripts consist of tokens separated by tabs and
+spaces.  The number of spaces doesn't matter.
+
+@menu
+* Tokens::                      What the scripts are made of
+* N_::                          Marking strings for translation
+@end menu
+
+
+@node Tokens, N_, Syntax, Syntax
+@section Tokens
+
+There are three major kinds of tokens:
+
+@table @asis
+
+@item Newline
+Newlines may appear between clauses but not inside them.
+
+@cindex string
+@item String
+If the token begins with a double quote @samp{"}, it is a string.  The
+string can contain spaces and doesn't end until a closing quote is
+found.
+
+The C-style backslash escapes @samp{\"}, @samp{\'} and @samp{\\} can be
+used to embed quotes and backslashes in the string.  Other sequences
+like @samp{\a} and @samp{\x1B} have not been implemented; @code{ptcomp}
+gives an error message if it sees those.
+
+Strings seen by players should be wrapped in the @code{N_} macro.
+@xref{N_}.
+
+@item Other
+If the token isn't a newline or a string, it ends at the next whitespace
+character (which may itself be a new token, if it is a newline).
+Numbers, names and keywords fall in this class.  The recognition of
+keywords is context-sensitive: @samp{Proto} is interpreted as a keyword
+if it begins a declaration, but if it follows a keyword which expects a
+name, it is taken as a name.
+
+Keywords are case-insensitive.  @xref{Keyword Index}.
+
+@end table
+
+
+@node N_,  , Tokens, Syntax
+@section Marking strings for translation
+
+If a string is going to be shown to the player, it should be wrapped in
+the @code{N_} macro, like this:
+
+@example
+PickupMessage N_("Picked up a stimpak.")
+@end example
+
+@cindex <dumb/dumbdefs.pt>
+The macro is defined in @file{<dumb/dumbdefs.pt>} which your @pt script
+should @code{#include}.
+
+The purpose of @code{N_} is to mark the string for translation, so that
+people around the world can get the messages in their own languages.
+DUMB is not smart enough to automatically translate messages to the
+languages of the world, but it can use the GNU @code{gettext} library
+(@pxref{gettext, , About @code{gettext}, gettext, GNU @code{gettext}
+utilities}) to look up the translations from a file if someone first
+collects them there.  The @code{xgettext} program can be made to scan
+files for strings wrapped in @code{N_} macros and present the list to
+the person translating them to another language.  @xref{xgettext
+Invocation, , Invoking the @code{xgettext} Program, gettext, GNU
+@code{gettext} utilities}.
+
+Do not use @code{N_} on sprite names or other such things the player
+will never see.
+
+
+@node Conventions, TimeUnits, Syntax, Top
+@chapter How to read this manual
+
+@FIXME some blurb
+
+
+@menu
+* Sample clause::               How this manual explains clauses.
+* Arc::                         Arc parameter syntax
+* Time::                        Time parameter syntax
+@end menu
+
+
+@node Sample clause, Arc, Conventions, Conventions
+@section Sample clause
+
+
+Here's one example of how the syntax of @pt clauses is shown in this
+manual:
+
+@ptclausein{Gettable, Gets @var{gettable} @var{howmany:integer} [Maximum @var{max:integer}]}
+@FIXME How to write this example so that it doesn't generate an index entry?
+@endptclausein
+
+@cindex clause
+This clause begins with the @code{Gets} keyword.  The keyword must be
+followed by two parameters: @var{gettable} which is the name of some
+Gettable, and @var{howmany} which is an integer.  In these syntax
+descriptions, the colon (@samp{:}) separates the names of parameters
+from their types.  The type of @var{gettable} is omitted, since it
+should be obvious from the name.
+
+After @var{howmany}, there may be a @code{Maximum} keyword followed by
+the @var{max} parameter which is an integer.  This part is surrounded by
+square brackets (@samp{[]}) which mean it is optional.
+
+Colons and square brackets are not used in real @pt scripts, except
+perhaps in strings.
+
+
+@node Arc, Time, Sample clause, Conventions
+@section Arc parameter syntax
+
+@cindex arc
+Arcs are quantities like 180deg or 2pi.  When a keyword expects an arc
+parameter, you can form it in any of the following ways:
+
+@table @code
+
+@item @var{integer}deg
+@code{360deg} is a full circle; @code{180deg} is half of it.
+
+@item [@var{integer}]pi
+@code{2pi} is a full circle; @code{1pi} or @code{pi} is half of it.
+
+@item [@var{integer}]pi/@var{divisor}
+As above but divided with @var{divisor} which must also be an integer.
+So, @code{pi/5} or @code{2pi/10} would be the same as @code{36deg}.
+
+@item @var{integer}
+This is an obsolete syntax which should not be used any more.  It means
+@code{0deg} if @var{integer} is 0, or @code{pi/@var{integer}}
+otherwise.
+
+@end table
+
+
+@node Time,  , Arc, Conventions
+@section Time parameter syntax
+@cindex time units
+
+When a keyword needs a time as a parameter, use one of the following
+syntaxes:
+
+@table @code
+
+@item @var{integer}sec
+@var{integer} seconds.
+
+@item @var{integer}msec
+@var{integer} milliseconds (1/1000).  The game doesn't really have
+millisecond accuracy but you can pretend it has.
+
+@item @var{integer}hsec
+@var{integer} hundredths of seconds (1/100).
+
+@item @var{integer}ticks
+@var{integer} timer ticks.  As of DUMB 0.13.7, there are 100 ticks per
+second.
+
+@item @var{integer}
+If the time unit isn't given, the default unit is used.  It defaults to
+ticks but can be changed with the @code{TimeUnits} clause.
+@xref{TimeUnits}.
+
+@end table
+
+
+@node TimeUnits, Gettable, Conventions, Top
+@chapter Changing default time units
+
+@findex TimeUnits
+@ptclause{TimeUnits @var{time}}
+
+The @code{TimeUnits} clause changes the default time unit for the rest
+of the script.  If you don't change the default time unit, it is
+@code{1ticks}.
+
+@var{time} can contain both a number and a unit.  For example, after
+@code{TimeUnits 2ms}, the time value @code{10} would mean @code{20ms}.
+@endptclause
+
+For a list of time units, see @ref{Time}.
+
+
+@node Gettable, Proto, TimeUnits, Top
+@chapter Defining Gettables
+
+Gettables are objects carried by players, such as weapons, ammunition
+and inventory items.  The player usually gets them by collecting a Thing
+from the level, but you can also make the player have some Gettables
+right from the beginning of the game.
+
+Temporary special powers like invisibility are also implemented as
+Gettables.  So are health and armour.
+
+@findex Gettable
+@ptclause{Gettable @var{gettable}}
+This clause begins the definition of a Gettable called @var{gettable}.
+To specify the details of the new Gettable, follow it with the other
+clauses defined in the following sections.
+@endptclause
+
+@menu
+* Amounts::                     How much the player has and can have.
+* Icon::                        
+* Items::                       Weapons and inventory items.
+* Special::                     Some Gettables denote special features.
+@end menu
+
+
+@node Amounts, Icon, Gettable, Gettable
+@section Amounts of Gettables
+
+@findex Initial
+@ptclausein{Gettable, Initial @var{initial:integer}}
+@findex OneMapOnly
+@ptclauseinx{Gettable, OneMapOnly}
+When the game begins, each player gets @var{initial} units of this
+Gettable.  Defaults to 0 if not given.
+
+If the Gettable is defined as @code{OneMapOnly}, the value is reset to
+@var{initial} at the beginning of each map.
+@endptclausein
+
+@findex DefaultMaximum
+@findex WithBackpack
+@ptclausein{Gettable, DefaultMaximum @var{max:integer} [WithBackpack @var{maxwithpack:integer}]}
+When this Gettable is got via a @code{Gets} clause in a @code{Proto}, the
+maximum possible amount defaults to @var{max} if not overridden in the
+@code{Gets} clause.  @xref{Gets}.
+
+However, if the player has a backpack, @var{maxwithpack} is used
+instead.  For information on how to define a Gettable as the backpack,
+see @ref{Special}.
+@endptclausein
+
+
+@node Icon, Items, Amounts, Gettable
+@section Icon of Gettable
+
+@FIXME describe what the icons are, also @samp{--dumb-uncrowd}
+
+@findex Icon
+@ptclausein{Gettable, Icon @var{icon:string9}}
+@FIXME document
+@endptclausein
+
+@findex IconPos
+@ptclausein{Gettable, IconPos @var{xo:integer} @var{yo:integer}}
+@findex XCenter
+@ptclauseinx{Gettable, XCenter}
+@findex YCenter
+@ptclauseinx{Gettable, YCenter}
+@FIXME document
+@endptclausein
+
+@findex Anim
+@ptclausein{Gettable, Anim @var{char}}
+@findex RevAnim
+@ptclauseinx{Gettable, RevAnim @var{char}}
+@FIXME document
+@endptclausein
+
+@findex Timing
+@ptclausein{Gettable, Timing @var{time}}
+@FIXME document
+@endptclausein
+
+
+@node Items, Special, Icon, Gettable
+@section Weapons and inventory items
+@cindex weapon
+@cindex inventory
+
+@FIXME explain why to use these, and what key bindings apply
+
+@findex WepSel
+@ptclausein{Gettable, WepSel}
+@findex SpeSel
+@ptclauseinx{Gettable, SpeSel}
+@FIXME document
+@endptclausein
+
+@findex Bogotype
+@ptclausein{Gettable, Bogotype @var{proto}}
+@FIXME document
+@endptclausein
+
+@findex Ammo
+@ptclausein{Gettable, Ammo @var{ammo:gettable} @var{count:integer}}
+When this Gettable is used as a weapon, use up @var{count} units of
+@var{ammo}.  If there is not enough ammo, the weapon cannot be used.
+
+By default, weapons don't need ammo.
+
+This clause has no effect to what kind of missiles the weapon sends.
+That is defined by the @code{Spawns} clause in the weapon's bogothing.
+@FIXME add a link when Spawns has been documented
+@endptclausein
+
+
+@node Special,  , Items, Gettable
+@section Special features as Gettables
+
+In addition to weapons and other tangible items, Gettables can also
+represent other properties of the player, like health and armour.  This
+way, the same mechanism which gives the player bullets when he picks up
+a clip, can be used to increase his health when he picks up a health
+bonus.
+
+@findex Special
+@ptclausein{Gettable, Special @var{code:enum}}
+
+This clause marks the Gettable as denoting one special feature.
+
+@cindex <dumb/dumbdefs.pt>
+@var{code} must be one of the following constants, defined in
+@file{<dumb/dumbdefs.pt>}:
+
+@table @code
+
+@item GETT_SPC_HEALTH
+@cindex health
+This marks the Gettable as your health.  When you get damage, it's taken
+from the health.  If health goes to 0, you die.
+
+@item GETT_SPC_ARMOUR
+@cindex armour
+This marks the Gettable as your armour.  When you have armour, half of
+the damage you get is taken from it.
+
+@item GETT_SPC_INVISIBILITY
+@cindex invisibility
+If you have this Gettable, you are invisible.
+
+@item GETT_SPC_DAMAGEPROTECTION
+@cindex damage protection
+@cindex invulnerability
+@cindex god mode
+If you have this Gettable, you can't be hurt at all.
+
+@item GETT_SPC_SLIMEPROTECTION
+@cindex slime protection
+@cindex radiation suit
+If you have this Gettable, the icky goo on the floor doesn't hurt you.
+
+@item GETT_SPC_SUPERSIGHT
+@cindex night vision
+@cindex goggles
+@cindex light amplification visor
+If you have this Gettable, you see in the dark.
+
+@item GETT_SPC_BACKPACK
+@cindex backpack
+When you collect items, DUMB checks whether you have the backpack.  If
+so, a different maximum may be used.  @xref{Amounts}.
+
+@item GETT_SPC_ALLMAP
+@cindex computer area map
+@cindex map
+When you have this Gettable, the map shows you even the places you
+haven't visited yet.
+
+@end table
+@endptclausein
+
+It is not possible to use the same special number in two Gettables, but
+you can define several powerups which give different amounts of the same
+Gettable to the player.  @xref{Gets}.
+
+
+@node Proto, Level, Gettable, Top
+@chapter Defining ProtoThings
+
+@findex Proto
+@ptclause{Proto @var{proto} [@var{id:integer}]}
+@FIXME document
+@endptclause
+
+@menu
+* Powerups::                    Players may be able to pick it up.
+@end menu
+
+
+@node Powerups,  , Proto, Proto
+@section Powerups
+
+Powerups are Things which award the player one or more Gettables
+(@pxref{Gettable})
+
+You turn a Thing to a powerup by adding one or more @code{Gets} clauses
+in the ProtoThing defining that Thing.  They take effect when a player
+collides with the Thing.  Until then, the powerup may even behave like a
+monster if you define it as one.
+
+You can also define a sound and messages which are emitted when the
+powerup is collected.
+
+@menu
+* Gets::                        What the player gets.
+* PickupSound::                 A sound can be emitted.
+* PickupMessage::               One of three messages is shown.
+@end menu
+
+
+@node Gets, PickupSound, Powerups, Powerups
+@subsection Gettables from a powerup
+
+@findex Gets
+@findex Maximum
+@ptclausein{Proto, Gets @var{gettable} @var{howmany:integer} [Maximum @var{max:integer}]}
+
+Adding this clause in a @code{Proto} turns the Things it describes to
+powerups which the player can pick up.
+
+If @var{max} isn't given, it defaults to one of the values given in the
+@code{DefaultMaximum} clause of @var{gettable}.  Which value is used
+depends on whether the player has a backpack.  @xref{Special}.
+
+If the player already has @var{max} or more units of @var{gettable}, he
+doesn't pick the Thing up.  The @code{IgnoreMessage} may be printed in
+this case.  @xref{PickupMessage}
+
+Otherwise, he gets @var{howmany} units more.  Then, if he has more than
+@var{max} units, the amount is clipped to @var{max}.
+@endptclausein
+
+You can write multiple @code{Gets} clauses in one ProtoThing.  When the
+player collects such a powerup, he gets all the Gettables listed.  He
+will ignore the powerup only if none of the clauses would give him
+Gettables.
+
+
+@node PickupSound, PickupMessage, Gets, Powerups
+@subsection PickupSound
+
+@findex PickupSound
+@ptclausein{Proto, PickupSound @var{sound}}
+@FIXME document
+@endptclausein
+
+
+@node PickupMessage,  , PickupSound, Powerups
+@subsection Powerup messages
+
+@findex FirstPickupMessage
+@ptclausein{Proto, FirstPickupMessage @var{firstpickupmessage:string}}
+@findex PickupMessage
+@ptclauseinx{Proto, PickupMessage @var{pickupmessage:string}}
+When a player succeeds in picking up the powerup, DUMB shows either
+@var{firstpickupmessage} or @var{pickupmessage}.  If the player didn't
+already have the Gettable which the ProtoThing gives and
+@var{firstpickupmessage} is defined, DUMB prints that; otherwise, DUMB
+prints @var{pickupmessage} if that is defined.
+
+If the ProtoThing has multiple @code{Gets} clauses and thus gives many
+different Gettables, only the first of them affects the choice of
+message.
+
+@code{FirstPickupMessage} may be useful with decaying Gettables like
+temporary invisibility: DUMB can show @var{firstpickupmessage} when the
+player becomes invisible and @var{pickupmessage} when he gets more time
+for the invisibility.  Currently, there is no way to specify a message
+to be shown when the Gettable has decayed completely and the player
+becomes visible again; if such a feature were added, it would belong in
+@code{Gettable}, not @code{Proto}.
+@endptclausein
+
+@findex IgnoreMessage
+@ptclausein{Proto, IgnoreMessage @var{ignoremessage:string}}
+When a player attempts to pick up the powerup but can't carry it, DUMB
+shows him the @var{ignoremessage}.  If you don't define that, no message
+is shown.
+@endptclausein
+
+The message strings should be wrapped in the @code{N_} macro.  @xref{N_}
+
+
+@node Level, Concept Index, Proto, Top
+@chapter Defining Levels
+
+@cindex episode
+@cindex level
+@cindex map
+@cindex mission
+An episode usually consists of several levels (also known as maps or
+missions) which the player plays in sequence.  Each of those levels
+needs a separate @code{Level} clause in the @pt script.  This example is
+from DUMB's @file{doom/levels.pt}:
+
+@findex Level
+@example
+Level "E1M1"  Music "D_E1M1"  Sky "SKY1"  StartGame
+Level "E1M2"  Music "D_E1M2"  Sky "SKY1"
+Level "E1M3"  Music "D_E1M3"  Sky "SKY1"  Secret "E1M9"
+Level "E1M4"  Music "D_E1M4"  Sky "SKY1"
+Level "E1M5"  Music "D_E1M5"  Sky "SKY1"
+Level "E1M6"  Music "D_E1M6"  Sky "SKY1"
+Level "E1M7"  Music "D_E1M7"  Sky "SKY1"
+Level "E1M8"  Music "D_E1M8"  Sky "SKY1"  EndGame
+Level "E1M9"  Music "D_E1M9"  Sky "SKY1"  Next "E1M4"
+@end example
+
+@findex StartGame
+@findex EndGame
+Since @samp{E1M1} has the @code{StartGame} flag, the game will start
+there.  When the player finishes @samp{E1M1}, he's taken to @samp{E1M2},
+from there to @samp{E1M3} and so on.  @samp{E1M8} is marked with
+@code{EndGame}, so the game ends when the player gets to the exit there.
+@samp{E1M9} is a secret level.
+
+
+@menu
+* Secret::                      Secret levels
+@end menu
+
+@node Secret,  , Level, Level
+@section Secret levels
+
+@cindex secret exit
+A level can have a secret exit which breaks the usual sequence of levels
+and takes the player somewhere else.  The @code{Secret} clause defines
+where it leads:
+
+@findex Secret
+@ptclausein{Level, Secret @var{secret:level}}
+When the player exits this level via the secret exit, take him to
+@var{secret}, not the usual next level.
+
+For example, DUMB's @file{doom/levels.pt} contains these lines:
+
+@example
+Level "E1M3"  Music "D_E1M3"  Sky "SKY1"  Secret "E1M9"
+Level "E1M4"  Music "D_E1M4"  Sky "SKY1"
+@end example
+
+If the player goes to the secret exit in @samp{E1M3}, he is taken to
+@samp{E1M9}.  The normal exit would take him to @samp{E1M4}.
+
+If you don't use @code{Secret}, the secret exit behaves just like the
+normal exit.
+@endptclausein
+
+When the player finishes a secret level, he should be taken back to the
+normal sequence.  This could be done by making the secret level's exit
+another secret exit and using @code{Secret} to direct that to the
+correct level, but in Doom maps it is a normal exit.  So we have the
+@code{Next} keyword for changing the destination of the normal exit:
+
+@findex Next
+@ptclausein{Level, Next @var{next:level}}
+When the player exits this level via the normal exit, take him to
+@var{next}, not the usual next level.
+
+Here is a piece of @file{doom/levels.pt}:
+
+@example
+Level "E1M8"  Music "D_E1M8"  Sky "SKY1"  EndGame
+Level "E1M9"  Music "D_E1M9"  Sky "SKY1"  Next "E1M4"
+
+Level "E2M1"  Music "D_E2M1"  Sky "SKY2"  StartGame
+Level "E2M2"  Music "D_E2M2"  Sky "SKY2"
+@end example
+
+When the player exits @samp{E1M9}, he is taken to @samp{E1M4}.  Without
+@code{Next}, the default would have been @samp{E2M1}.
+
+If there were a secret exit in @samp{E1M9}, that too would take the
+player to @samp{E1M4}.  This is because the secret exit's target
+defaults to that of the normal exit unless overridden with
+@code{Secret}.
+@endptclausein
+
+The use of @code{Secret} and @code{Next} isn't limited to secret levels;
+you could form more complex structures with them.  You shouldn't make
+links back to levels the player has already been in, because the status
+of a level is lost when the player leaves it, and he would have to fight
+all the same monsters again.  But if you want to do this, you can.
+
+
+@node Concept Index, Keyword Index, Level, Top
+@unnumbered Concept Index
+
+@printindex cp
+
+
+@node Keyword Index,  , Concept Index, Top
+@unnumbered Keyword Index
+
+@printindex fn
+
+
+@contents
+@bye

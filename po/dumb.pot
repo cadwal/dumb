@@ -6,13 +6,119 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1999-01-06 01:35+0200\n"
+"POT-Creation-Date: 1999-03-19 20:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: ENCODING\n"
+
+#: doom/gettables.pt:87
+msgid "Picked up body armour."
+msgstr ""
+
+#: doom/gettables.pt:96
+msgid "You found the mega armour!"
+msgstr ""
+
+#: doom/gettables.pt:105
+msgid "Picked up a stimpak."
+msgstr ""
+
+#: doom/gettables.pt:114
+msgid "Picked up a medikit."
+msgstr ""
+
+#: doom/gettables.pt:131
+msgid "Megasphere!"
+msgstr ""
+
+#: doom/gettables.pt:211
+msgid "You found a backpack full of ammo!"
+msgstr ""
+
+#: doom/gettables.pt:224
+msgid "Computer area map!"
+msgstr ""
+
+#: doom/gettables.pt:279
+msgid "You got the red key!"
+msgstr ""
+
+#: doom/gettables.pt:280 doom/gettables.pt:290 doom/gettables.pt:300
+#: doom/gettables.pt:310 doom/gettables.pt:320 doom/gettables.pt:330
+msgid "You already have that key."
+msgstr ""
+
+#: doom/gettables.pt:289
+msgid "You got the blue key!"
+msgstr ""
+
+#: doom/gettables.pt:299
+msgid "You got the yellow key!"
+msgstr ""
+
+#: doom/gettables.pt:309
+msgid "You got the red skull key!"
+msgstr ""
+
+#: doom/gettables.pt:319
+msgid "You got the blue skull key!"
+msgstr ""
+
+#: doom/gettables.pt:329
+msgid "You got the yellow skull key!"
+msgstr ""
+
+#: doom/gettables.pt:371
+msgid "Invincibility... Oh my God!"
+msgstr ""
+
+#. TRANS: This is a NetHack reference.
+#: doom/gettables.pt:381
+msgid "Suddenly you can't see yourself."
+msgstr ""
+
+#: doom/gettables.pt:390
+msgid "Radiation shielding suit!"
+msgstr ""
+
+#: doom/gettables.pt:399
+msgid "You got the light amplification goggles!"
+msgstr ""
+
+#: doom/weapons.pt:336
+msgid "You got the chainsaw... Find some meat!"
+msgstr ""
+
+#: doom/weapons.pt:345
+msgid "You smell blood!"
+msgstr ""
+
+#: doom/weapons.pt:355
+msgid "You got the shotgun!"
+msgstr ""
+
+#: doom/weapons.pt:365
+msgid "You got the super shotgun!"
+msgstr ""
+
+#: doom/weapons.pt:375
+msgid "You got the chaingun!"
+msgstr ""
+
+#: doom/weapons.pt:385
+msgid "You got the rocket launcher!"
+msgstr ""
+
+#: doom/weapons.pt:395
+msgid "You got the plasma rifle!"
+msgstr ""
+
+#: doom/weapons.pt:405
+msgid "You got the BFG!"
+msgstr ""
 
 #: dumb/aalib_input.c:42
 msgid "ticks to pass before key autorelease or 0"
@@ -322,220 +428,220 @@ msgstr ""
 msgid "Video mode: %s (%s)"
 msgstr ""
 
-#: dumb/dumb.c:81
+#: dumb/dumb.c:83
 msgid "got SIGALRM: renderer must have gotten stuck..."
 msgstr ""
 
-#: dumb/dumb.c:89
+#: dumb/dumb.c:91
 msgid "save configuration after every run"
 msgstr ""
 
-#: dumb/dumb.c:90
+#: dumb/dumb.c:92
 msgid "save configuration this time only"
 msgstr ""
 
-#: dumb/dumb.c:91
+#: dumb/dumb.c:93
 msgid "specify wadfiles to load"
 msgstr ""
 
-#: dumb/dumb.c:92
+#: dumb/dumb.c:94
 msgid "directories in which to look for wads"
 msgstr ""
 
-#: dumb/dumb.c:93
+#: dumb/dumb.c:95
 msgid "filename of doom.wad"
 msgstr ""
 
-#: dumb/dumb.c:94
+#: dumb/dumb.c:96
 msgid "filename of doom2.wad"
 msgstr ""
 
-#: dumb/dumb.c:95
+#: dumb/dumb.c:97
 msgid "filename of doom4dum.wad"
 msgstr ""
 
-#: dumb/dumb.c:96
+#: dumb/dumb.c:98
 msgid "set starting map"
 msgstr ""
 
-#: dumb/dumb.c:97
+#: dumb/dumb.c:99
 msgid "don't log to the screen"
 msgstr ""
 
-#: dumb/dumb.c:98
+#: dumb/dumb.c:100
 msgid "don't create any objects, just preview the map"
 msgstr ""
 
-#: dumb/dumb.c:99
+#: dumb/dumb.c:101
 msgid "set difficulty level"
 msgstr ""
 
-#: dumb/dumb.c:100
+#: dumb/dumb.c:102
 msgid "disable sound"
 msgstr ""
 
-#: dumb/dumb.c:101
+#: dumb/dumb.c:103
 msgid "video width"
 msgstr ""
 
-#: dumb/dumb.c:102
+#: dumb/dumb.c:104
 msgid "video height"
 msgstr ""
 
-#: dumb/dumb.c:103
+#: dumb/dumb.c:105
 msgid "video depth (in bytes/pixel)"
 msgstr ""
 
-#: dumb/dumb.c:104
+#: dumb/dumb.c:106
 msgid "log to this file"
 msgstr ""
 
-#: dumb/dumb.c:105
+#: dumb/dumb.c:107
 msgid "record player actions to file"
 msgstr ""
 
-#: dumb/dumb.c:106
+#: dumb/dumb.c:108
 msgid "playback player actions from file"
 msgstr ""
 
-#: dumb/dumb.c:107
+#: dumb/dumb.c:109
 msgid "hide gettables and banners"
 msgstr ""
 
-#: dumb/dumb.c:108
+#: dumb/dumb.c:110
 msgid "show a crosshair in the center of the view"
 msgstr ""
 
-#: dumb/dumb.c:109
+#: dumb/dumb.c:111
 msgid "multiply the pixels x size"
 msgstr ""
 
-#: dumb/dumb.c:110
+#: dumb/dumb.c:112
 msgid "multiply the pixels y size"
 msgstr ""
 
-#: dumb/dumb.c:111
+#: dumb/dumb.c:113
 msgid "skip pixels when multiplying x size"
 msgstr ""
 
-#: dumb/dumb.c:112
+#: dumb/dumb.c:114
 msgid "skip pixels when multiplying y size"
 msgstr ""
 
-#: dumb/dumb.c:113
+#: dumb/dumb.c:115
 msgid "load textures before game starts"
 msgstr ""
 
-#: dumb/dumb.c:114
+#: dumb/dumb.c:116
 msgid "angle from forward of player view"
 msgstr ""
 
-#: dumb/dumb.c:115
+#: dumb/dumb.c:117
 msgid "offset from center of player view"
 msgstr ""
 
-#: dumb/dumb.c:116
+#: dumb/dumb.c:118
 msgid "network play: slave mode"
 msgstr ""
 
-#: dumb/dumb.c:117
+#: dumb/dumb.c:119
 msgid "network play: master mode"
 msgstr ""
 
-#: dumb/dumb.c:118
+#: dumb/dumb.c:120
 msgid "force single player mode"
 msgstr ""
 
-#: dumb/dumb.c:119
+#: dumb/dumb.c:121
 msgid "angle to rotate view by"
 msgstr ""
 
-#: dumb/dumb.c:120
+#: dumb/dumb.c:122
 msgid "maximum frames to render"
 msgstr ""
 
-#: dumb/dumb.c:121
+#: dumb/dumb.c:123
 msgid "enable 3rd person perspective"
 msgstr ""
 
-#: dumb/dumb.c:161
+#: dumb/dumb.c:163
 msgid "Input Driver"
 msgstr ""
 
-#: dumb/dumb.c:162
+#: dumb/dumb.c:164
 msgid "Video Driver"
 msgstr ""
 
-#: dumb/dumb.c:163
+#: dumb/dumb.c:165
 msgid "Sound Driver"
 msgstr ""
 
-#: dumb/dumb.c:164
+#: dumb/dumb.c:166
 msgid "Network Driver"
 msgstr ""
 
-#: dumb/dumb.c:165
+#: dumb/dumb.c:167
 msgid "Network Play"
 msgstr ""
 
-#: dumb/dumb.c:166
+#: dumb/dumb.c:168
 msgid "General Game Control"
 msgstr ""
 
-#: dumb/dumb.c:167
+#: dumb/dumb.c:169
 msgid "Player Interface"
 msgstr ""
 
-#: dumb/dumb.c:168
+#: dumb/dumb.c:170
 msgid "Keyboard Mapping"
 msgstr ""
 
-#: dumb/dumb.c:198 ptcomp/ptcomp.c:124 test/fixed_bm.c:170 test/ldltest.c:164
+#: dumb/dumb.c:198 ptcomp/ptcomp.c:138 test/fixed_bm.c:170 test/ldltest.c:164
 #: tool/dark2trans.c:148 tool/mkdfnt.c:137 tool/mknulmap.c:208
 #: tool/mkpnames.c:206 tool/ppmtodumb.c:241 tool/wadtool.c:112
-#: xwad/xproto.c:148 xwad/xwad.c:113
+#: xwad/xproto.c:373 xwad/xwad.c:113
 msgid ""
 "This program is free software; you may redistribute it under the terms of\n"
 "the GNU General Public License.  This program has absolutely no warranty.\n"
 msgstr ""
 
-#: dumb/dumb.c:239
+#: dumb/dumb.c:221
 msgid "Preloading wall textures"
 msgstr ""
 
-#: dumb/dumb.c:249
+#: dumb/dumb.c:231
 msgid "Preloading floor/ceiling textures"
 msgstr ""
 
-#: dumb/dumb.c:257
+#: dumb/dumb.c:239
 msgid "Preloading sprites"
 msgstr ""
 
-#: dumb/dumb.c:276
+#: dumb/dumb.c:258
 msgid ""
 "This program was compiled to use MMX, but your processor\n"
 "does not appear to support it.\n"
 msgstr ""
 
-#: dumb/dumb.c:381
+#: dumb/dumb.c:363
 #, c-format
 msgid "Read configuration from %s"
 msgstr ""
 
-#: dumb/dumb.c:427
+#: dumb/dumb.c:409
 msgid "network mode: slave"
 msgstr ""
 
-#: dumb/dumb.c:433
+#: dumb/dumb.c:415
 msgid "network mode: master"
 msgstr ""
 
-#: dumb/dumb.c:509
+#: dumb/dumb.c:491
 #, c-format
 msgid "Unsupported BPP=%d"
 msgstr ""
 
-#: dumb/dumb.c:535
+#: dumb/dumb.c:517
 msgid "Can't find sector for player"
 msgstr ""
 
@@ -562,45 +668,45 @@ msgstr ""
 #. * 	 }
 #. * }
 #.
-#: dumb/dumb.c:590
+#: dumb/dumb.c:554
 msgid "starting game"
 msgstr ""
 
-#: dumb/dumb.c:637
+#: dumb/dumb.c:601
 msgid "Demo ran out..."
 msgstr ""
 
-#: dumb/dumb.c:686
+#: dumb/dumb.c:650
 msgid "saving snapshot..."
 msgstr ""
 
-#: dumb/dumb.c:714
+#: dumb/dumb.c:678
 msgid "snapshot done"
 msgstr ""
 
-#: dumb/dumb.c:718
+#: dumb/dumb.c:682
 #, c-format
 msgid "%d ticks passed with MAXTICKS=%d"
 msgstr ""
 
-#: dumb/dumb.c:748
+#: dumb/dumb.c:712
 msgid "WARNING: this system is running faster than the timer resolution"
 msgstr ""
 
-#: dumb/dumb.c:751
+#: dumb/dumb.c:715
 msgid "Try running DUMB in a larger window."
 msgstr ""
 
-#: dumb/dumb.c:754
+#: dumb/dumb.c:718
 msgid "YOU DIED.  TOO BAD..."
 msgstr ""
 
-#: dumb/dumb.c:770
+#: dumb/dumb.c:734
 #, c-format
 msgid "%d frames, %d seconds, %f fps"
 msgstr ""
 
-#: dumb/dumb.c:796
+#: dumb/dumb.c:760
 #, c-format
 msgid "Saving config to %s"
 msgstr ""
@@ -609,72 +715,63 @@ msgstr ""
 msgid "dummy input: always quit"
 msgstr ""
 
-#: dumb/game.c:64
+#: dumb/game.c:40
 msgid "processor timing overcompensation tweak"
 msgstr ""
 
-#: dumb/game.c:65
+#: dumb/game.c:41
 msgid "forward speed"
 msgstr ""
 
-#: dumb/game.c:66
+#: dumb/game.c:42
 msgid "strafe speed"
 msgstr ""
 
-#: dumb/game.c:67
+#: dumb/game.c:43
 msgid "turning speed"
 msgstr ""
 
-#: dumb/game.c:68
+#: dumb/game.c:44
 msgid "jumping speed"
 msgstr ""
 
-#: dumb/game.c:108
+#: dumb/game.c:84
 #, c-format
 msgid "PLAYER %d WARPED"
 msgstr ""
 
-#: dumb/game.c:115
+#: dumb/game.c:91
 #, c-format
 msgid "PLAYER %d CHEATED"
 msgstr ""
 
-#: dumb/game.c:122
+#: dumb/game.c:98
 #, c-format
 msgid "PLAYER %d WIBBLED LOUDLY"
 msgstr ""
 
-#: dumb/game.c:129
+#: dumb/game.c:105
 #, c-format
 msgid "PLAYER %d RETURNED"
 msgstr ""
 
-#: dumb/game.c:136
+#. SPISPOPD = Smashing Pumpkins In Small Piles Of Putrid Debris
+#. or something like that.
+#: dumb/game.c:114
 #, c-format
 msgid "PLAYER %d SMASHES PUMPKINS"
 msgstr ""
 
-#: dumb/gettable.c:198
+#: dumb/gettable.c:130
+msgid "Gettable block chain corrupted"
+msgstr ""
+
+#: dumb/gettable.c:252
 #, c-format
 msgid "Strange gettable type=%d num=%d"
 msgstr ""
 
-#: dumb/gettable.c:210
-#, c-format
-msgid "YOU GOT THE %s!"
-msgstr ""
-
-#: dumb/gettable.c:212
-#, c-format
-msgid "THAT %s WOULD BE WASTED..."
-msgstr ""
-
-#: dumb/gettable.c:215
-#, c-format
-msgid "GOT A %s."
-msgstr ""
-
-#: dumb/gettable.c:362
+#: dumb/gettable.c:413
 #, c-format
 msgid "init %d gettables"
 msgstr ""
@@ -1230,32 +1327,32 @@ msgstr ""
 msgid "tried manual_f action on wall with no front?"
 msgstr ""
 
-#: dumb/thinghit.c:396
+#: dumb/thinghit.c:398
 #, c-format
 msgid "strange lumptype (%d) while performing actions"
 msgstr ""
 
-#: dumb/thingm.c:118
+#: dumb/thingm.c:119
 #, c-format
 msgid "Obj %d is heatseeking %d"
 msgstr ""
 
-#: dumb/thingm.c:242
+#: dumb/thingm.c:243
 #, c-format
 msgid "thing %d is out to get %d!"
 msgstr ""
 
-#: dumb/thingm.c:417
+#: dumb/thingm.c:421
 #, c-format
-msgid "thing %d took %d damage (%d/%d hits)"
+msgid "thing %d took %d damage (%d/%d hits, %d/%d armour)"
 msgstr ""
 
-#: dumb/thingm.c:528
+#: dumb/thingm.c:544
 #, c-format
 msgid "melee: %d's attack on %d failed"
 msgstr ""
 
-#: dumb/thingm.c:615
+#: dumb/thingm.c:631
 #, c-format
 msgid "Thing %d becomes type %d; old type was %d"
 msgstr ""
@@ -1429,7 +1526,7 @@ msgstr ""
 msgid "%d is being crushed, but not by sector %d ???"
 msgstr ""
 
-#: dumb/updthing.c:491
+#: dumb/updthing.c:536
 #, c-format
 msgid "climbing, factor=%d"
 msgstr ""
@@ -1588,6 +1685,50 @@ msgstr ""
 msgid "keyboard grab failed!"
 msgstr ""
 
+#: htic/gettables.pt:59
+msgid "wand crystal"
+msgstr ""
+
+#: htic/gettables.pt:68
+msgid "crystal geode"
+msgstr ""
+
+#: htic/gettables.pt:78
+msgid "ethereal arrows"
+msgstr ""
+
+#: htic/gettables.pt:87
+msgid "quiver of ethereal arrows"
+msgstr ""
+
+#: htic/gettables.pt:97
+msgid "claw orb"
+msgstr ""
+
+#: htic/gettables.pt:106
+msgid "power orb"
+msgstr ""
+
+#: htic/gettables.pt:116
+msgid "crystal vial"
+msgstr ""
+
+#: htic/gettables.pt:125
+msgid "quartz flask"
+msgstr ""
+
+#: htic/keys.pt:65
+msgid "green key"
+msgstr ""
+
+#: htic/keys.pt:74
+msgid "blue key"
+msgstr ""
+
+#: htic/keys.pt:83
+msgid "yellow key"
+msgstr ""
+
 #: libdumb/dos_sound.c:88
 #, c-format
 msgid "Couldn't initialize sound: %s"
@@ -1727,19 +1868,28 @@ msgstr ""
 msgid "waveOutWrite failed"
 msgstr ""
 
-#: libdumb/prothing.c:83
+#: libdumb/prothing.c:75
 #, c-format
 msgid "wanted rot %c for sprite %s phase %d???"
 msgstr ""
 
-#: libdumb/prothing.c:103
+#: libdumb/prothing.c:95
 #, c-format
 msgid "Can't find sprite %s, ph=%d (%c) rot=%c"
 msgstr ""
 
-#: libdumb/prothing.c:124
+#: libdumb/prothing.c:116
 #, c-format
 msgid "Can't find ThingPhase id=%d"
+msgstr ""
+
+#: libdumb/prothing.c:203
+#, c-format
+msgid "init %d protothings"
+msgstr ""
+
+#: libdumb/protoinwad.c:98
+msgid "ProtoThing block chain corrupted"
 msgstr ""
 
 #: libdumb/sound_mix.c:112
@@ -1756,180 +1906,180 @@ msgstr ""
 msgid "sndmix_calc_frag: strange format %d"
 msgstr ""
 
-#: libdumb/texture.c:158
+#: libdumb/texture.c:160
 msgid "Bad BPP value in paste_pict"
 msgstr ""
 
-#: libdumb/texture.c:178
+#: libdumb/texture.c:180
 msgid "Bad BPP value in paste_jpatch"
 msgstr ""
 
-#: libdumb/texture.c:214
+#: libdumb/texture.c:216
 #, c-format
 msgid "npnames=%d (should be %d)"
 msgstr ""
 
-#: libdumb/texture.c:232
+#: libdumb/texture.c:234
 msgid "No metatexture lumps in WAD"
 msgstr ""
 
-#: libdumb/texture.c:239 libdumb/texture.c:243
+#: libdumb/texture.c:241 libdumb/texture.c:245
 #, c-format
 msgid "%s has %d wall textures"
 msgstr ""
 
-#: libdumb/texture.c:338
+#: libdumb/texture.c:340
 msgid "Can't find any sprites in WAD"
 msgstr ""
 
-#: libdumb/texture.c:354
+#: libdumb/texture.c:356
 #, c-format
 msgid "too short sprite: %s"
 msgstr ""
 
-#: libdumb/texture.c:363
+#: libdumb/texture.c:365
 #, c-format
 msgid "Init %d sprites"
 msgstr ""
 
-#: libdumb/texture.c:383
+#: libdumb/texture.c:385
 #, c-format
 msgid "Bad lumpnum for texture %s in load_sprite()"
 msgstr ""
 
-#: libdumb/texture.c:422
+#: libdumb/texture.c:424
 #, c-format
 msgid "Can't find sprite texture %s"
 msgstr ""
 
-#: libdumb/texture.c:471
+#: libdumb/texture.c:473
 msgid "Can't find any flats in WAD"
 msgstr ""
 
-#: libdumb/texture.c:509
+#: libdumb/texture.c:511
 #, c-format
 msgid "funny length (%d) for flat %s"
 msgstr ""
 
-#: libdumb/texture.c:514
+#: libdumb/texture.c:516
 #, c-format
 msgid "Init %d flats"
 msgstr ""
 
-#: libdumb/texture.c:569
+#: libdumb/texture.c:571
 #, c-format
 msgid "Can't find flat texture %s"
 msgstr ""
 
-#: libdumb/texture.c:624
+#: libdumb/texture.c:626
 #, c-format
 msgid "Patchnum %d (%s) doesn't exist"
 msgstr ""
 
-#: libdumb/texture.c:628
+#: libdumb/texture.c:630
 #, c-format
 msgid "loading patchnum %d (%s)"
 msgstr ""
 
-#: libdumb/texture.c:651
+#: libdumb/texture.c:653
 #, c-format
 msgid "init_walltexs(): %d textures"
 msgstr ""
 
-#: libdumb/texture.c:685
+#: libdumb/texture.c:687
 #, c-format
 msgid "Can't find wall texture %s"
 msgstr ""
 
-#: libdumb/texture.c:700
+#: libdumb/texture.c:702
 #, c-format
 msgid "wtex \"%s\" is unaligned with offset %ld!"
 msgstr ""
 
-#: libdumb/texture.c:712
+#: libdumb/texture.c:714
 #, c-format
 msgid "using one-patch kludge for %s"
 msgstr ""
 
-#: libdumb/texture.c:732
+#: libdumb/texture.c:734
 #, c-format
 msgid "load_walltex %s at %d bpp"
 msgstr ""
 
-#: libdumb/texture.c:741
+#: libdumb/texture.c:743
 #, c-format
 msgid "%s: %d patches"
 msgstr ""
 
-#: libdumb/texture.c:752
+#: libdumb/texture.c:754
 #, c-format
 msgid "Can't make sense of patch #%d, texture %s"
 msgstr ""
 
-#: libdumb/texture.c:756
+#: libdumb/texture.c:758
 #, c-format
 msgid "%s: loaded"
 msgstr ""
 
-#: libdumb/texture.c:786
+#: libdumb/texture.c:788
 #, c-format
 msgid "found font %s already loaded"
 msgstr ""
 
-#: libdumb/texture.c:792
+#: libdumb/texture.c:794
 msgid "Too many fonts"
 msgstr ""
 
 #. OK, now set up each character to be loaded when needed
-#: libdumb/texture.c:798
+#: libdumb/texture.c:800
 #, c-format
 msgid "Loading font #%d (%s)"
 msgstr ""
 
-#: libdumb/texture.c:827
+#: libdumb/texture.c:829
 #, c-format
 msgid "Request for bad fontnum (%d)"
 msgstr ""
 
-#: libdumb/texture.c:829
+#: libdumb/texture.c:838
 #, c-format
-msgid "Request for bad font char (%d:%d)"
+msgid "Request for bad font char (%d:%d, `%c')"
 msgstr ""
 
-#: libdumb/texture.c:870
+#: libdumb/texture.c:882
 msgid "too many misc textures"
 msgstr ""
 
-#: libdumb/texture.c:897
+#: libdumb/texture.c:909
 #, c-format
 msgid "get_texture_num: unsupported texture type (%d)"
 msgstr ""
 
-#: libdumb/texture.c:916
+#: libdumb/texture.c:928
 #, c-format
 msgid "get_texture_bynum: unsupported texture type (%d)"
 msgstr ""
 
-#: libdumb/texture.c:936
+#: libdumb/texture.c:948
 #, c-format
 msgid "count_textures: unsupported texture type (%d)"
 msgstr ""
 
-#: libdumb/texture.c:950
+#: libdumb/texture.c:962
 msgid "init_textures(): done"
 msgstr ""
 
-#: libdumb/texture.c:987
+#: libdumb/texture.c:999
 #, c-format
 msgid "Strange texture type (0x%x) in free_texels"
 msgstr ""
 
-#: libdumb/texture.c:998
+#: libdumb/texture.c:1010
 #, c-format
 msgid "Strange BPP value (%d) in load_texels"
 msgstr ""
 
-#: libdumb/texture.c:1019
+#: libdumb/texture.c:1031
 #, c-format
 msgid "Strange texture type (0x%x) in load_texels"
 msgstr ""
@@ -1957,30 +2107,31 @@ msgstr ""
 msgid "internal error: set_conf(): strange type %d\n"
 msgstr ""
 
-#: libdumbutil/conffile.c:119
+#. TRANS Each line must begin with a semicolon.
+#: libdumbutil/conffile.c:120
 #, c-format
 msgid ""
 "; %s\n"
 "; this file was created automatically, but you can modify it if you want\n"
 msgstr ""
 
-#: libdumbutil/conffile.c:131
+#: libdumbutil/conffile.c:132
 #, c-format
 msgid ""
 "\n"
 "; Module `%s': %s\n"
 msgstr ""
 
-#: libdumbutil/conffile.c:137
+#: libdumbutil/conffile.c:138
 #, c-format
 msgid "internal error: save_conf(): strange type %d, treating as int\n"
 msgstr ""
 
-#: libdumbutil/conffile.c:202
+#: libdumbutil/conffile.c:203
 msgid "Missing quote in configuration file\n"
 msgstr ""
 
-#: libdumbutil/conffile.c:224
+#: libdumbutil/conffile.c:225
 msgid "Trailing backslash in configuration file\n"
 msgstr ""
 
@@ -2180,17 +2331,21 @@ msgstr ""
 msgid "%s: short read (%lu<%lu): %s"
 msgstr ""
 
-#: libdumbutil/safeio.c:106
-#, c-format
-msgid "%s: short read (%d<%lu): %s"
+#: libdumbutil/safeio.c:105
+msgid "<unknown file>"
 msgstr ""
 
-#: libdumbutil/safeio.c:119
+#: libdumbutil/safeio.c:113
+#, c-format
+msgid "%s: unexpected EOF"
+msgstr ""
+
+#: libdumbutil/safeio.c:131
 #, c-format
 msgid "%s: opening: %s"
 msgstr ""
 
-#: libdumbutil/safeio.c:130
+#: libdumbutil/safeio.c:142
 #, c-format
 msgid "%s: closing: %s"
 msgstr ""
@@ -2215,12 +2370,22 @@ msgstr ""
 msgid "out of memory reallocating %lu bytes (old=%p)"
 msgstr ""
 
-#: libdumbutil/safem.c:132 libdumbutil/safem.c:142
+#. If we're out of memory, does gettext() work?  Perhaps this
+#. * string should be pretranslated and saved in a variable.
+#. *
+#. * I asked Ulrich Drepper and he told me:
+#. * 1) the current gettext implementation doesn't need more
+#. *    memory for translation after it has loaded the catalog;
+#. * 2) they are planning more complex schemes (compression?)
+#. *    which might need more memory at runtime.  But even then,
+#. *    gettext would just return the string untranslated if it
+#. *    ran out of memory.
+#: libdumbutil/safem.c:142 libdumbutil/safem.c:153
 #, c-format
 msgid "out of memory allocating %lu bytes"
 msgstr ""
 
-#: libdumbutil/safem.c:160
+#: libdumbutil/safem.c:171
 msgid "Attempt to free NULL."
 msgstr ""
 
@@ -2237,100 +2402,100 @@ msgstr ""
 msgid "Bad lumpnum in free_lump"
 msgstr ""
 
-#: libdumbwad/wadio.c:186
+#: libdumbwad/wadio.c:187
 #, c-format
 msgid "wad hashtable: %d entries unused, max chain %d"
 msgstr ""
 
-#: libdumbwad/wadio.c:226
+#: libdumbwad/wadio.c:227
 #, c-format
 msgid "%s: lump %d has no name"
 msgstr ""
 
-#: libdumbwad/wadio.c:232
+#: libdumbwad/wadio.c:233
 #, c-format
 msgid "%s: lump %d is too big for wad"
 msgstr ""
 
-#: libdumbwad/wadio.c:254
+#: libdumbwad/wadio.c:255
 #, c-format
 msgid "%s is too short to be a valid wadfile"
 msgstr ""
 
-#: libdumbwad/wadio.c:261
+#: libdumbwad/wadio.c:262
 #, c-format
 msgid "%s mapped at %p (%lu bytes)"
 msgstr ""
 
-#: libdumbwad/wadio.c:267
+#: libdumbwad/wadio.c:268
 #, c-format
 msgid "Bad signature on %s: expecting %s, got %.4s"
 msgstr ""
 
-#: libdumbwad/wadio.c:271
+#: libdumbwad/wadio.c:273
 #, c-format
-msgid "directory for %s would be beyond end of file"
+msgid "directory for %s would be beyond end of file; truncating"
 msgstr ""
 
 #. say what we've done
-#: libdumbwad/wadio.c:274
+#: libdumbwad/wadio.c:284
 #, c-format
 msgid "%s %s: %d lumps dir @ %d"
 msgstr ""
 
-#: libdumbwad/wadio.c:387
+#: libdumbwad/wadio.c:397
 #, c-format
 msgid "Can't find lump marker %s (lump %s)"
 msgstr ""
 
-#: libdumbwad/wadio.c:396
+#: libdumbwad/wadio.c:406
 #, c-format
 msgid "Can't find lump %s:%s"
 msgstr ""
 
-#: libdumbwad/wadio.c:399
+#: libdumbwad/wadio.c:409
 #, c-format
 msgid "Can't find lump %s"
 msgstr ""
 
-#: libdumbwad/wadio.c:405
+#: libdumbwad/wadio.c:415
 #, c-format
 msgid "Can't find end-marker %s"
 msgstr ""
 
 #. didn't find one, fail
-#: libdumbwad/wadio.c:414
+#: libdumbwad/wadio.c:424
 #, c-format
 msgid "End-marker %s occurs before lump %s"
 msgstr ""
 
-#: libdumbwad/wadio.c:446 libdumbwad/wadio.c:456
+#: libdumbwad/wadio.c:456 libdumbwad/wadio.c:466
 #, c-format
 msgid "Bad lumpnum (%x) in get_lump_*"
 msgstr ""
 
-#: libdumbwad/wadwr.c:63 libdumbwad/wadwr.c:125
+#: libdumbwad/wadwr.c:61 libdumbwad/wadwr.c:141
 #, c-format
 msgid "%s: can't open: %s"
 msgstr ""
 
-#: libdumbwad/wadwr.c:76 libdumbwad/wadwr.c:89 libdumbwad/wadwr.c:95
-#: libdumbwad/wadwr.c:154
+#: libdumbwad/wadwr.c:75 libdumbwad/wadwr.c:90 libdumbwad/wadwr.c:100
+#: libdumbwad/wadwr.c:172
 #, c-format
 msgid "%s: short write: %s"
 msgstr ""
 
-#: libdumbwad/wadwr.c:92
+#: libdumbwad/wadwr.c:95
 #, c-format
 msgid "%s: can't rewind: %s"
 msgstr ""
 
-#: libdumbwad/wadwr.c:164
+#: libdumbwad/wadwr.c:183
 #, c-format
 msgid "%s: can't get position: %s"
 msgstr ""
 
-#: libdumbwad/wadwr.c:170
+#: libdumbwad/wadwr.c:189
 #, c-format
 msgid "%s: can't align: %s"
 msgstr ""
@@ -2409,45 +2574,45 @@ msgstr ""
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr ""
 
-#: ptcomp/animcomp.c:76
-msgid "name expected after AnimTex"
+#. one parameter, name
+#: ptcomp/animcomp.c:74
+msgid "Name expected after AnimTex"
 msgstr ""
 
-#: ptcomp/animcomp.c:98
-msgid "To must exceed Parm"
+#: ptcomp/animcomp.c:97
+#, c-format
+msgid "To (%d) must exceed Parm (%d)"
 msgstr ""
 
-#: ptcomp/animcomp.c:114
+#: ptcomp/animcomp.c:113
 msgid "Tag must come before any Texture"
 msgstr ""
 
-#: ptcomp/animcomp.c:145
+#: ptcomp/animcomp.c:144
 #, c-format
 msgid "%5d animtexes\n"
 msgstr ""
 
-#: ptcomp/gettcomp.c:77
-msgid "name expected after Gettable"
+#. Gettable -!- NAME
+#: ptcomp/gettcomp.c:74
+msgid "Name expected after Gettable"
 msgstr ""
 
-#: ptcomp/gettcomp.c:150
+#: ptcomp/gettcomp.c:140
 #, c-format
 msgid "%5d gettables\n"
 msgstr ""
 
-#: ptcomp/gettcomp.c:161
-msgid "gettable name parameter expected"
+#: ptcomp/gettcomp.c:154
+msgid "Gettable name parameter expected"
 msgstr ""
 
-#: ptcomp/gettcomp.c:167
-msgid "gettable name unrecognised"
+#: ptcomp/gettcomp.c:163
+#, c-format
+msgid "Gettable name `%s' unrecognised"
 msgstr ""
 
-#: ptcomp/licomp.c:75
-msgid "name expected after Level"
-msgstr ""
-
-#: ptcomp/licomp.c:105
+#: ptcomp/licomp.c:104
 #, c-format
 msgid "%5d levinfos\n"
 msgstr ""
@@ -2457,238 +2622,324 @@ msgstr ""
 msgid "unrecognised levelname: %s\n"
 msgstr ""
 
-#: ptcomp/ltcomp.c:75
-msgid "name expected after Line/SectorType"
+#. two parameters, name and id
+#: ptcomp/ltcomp.c:74
+msgid "Name expected after Line/SectorType"
 msgstr ""
 
-#: ptcomp/ltcomp.c:80
-msgid "ID expected after Line/SectorType"
-msgstr ""
-
-#: ptcomp/ltcomp.c:111
+#: ptcomp/ltcomp.c:106
 #, c-format
-msgid "ID %d (%s) not unique (clashes with %s)\n"
+msgid "ID %d (%s) not unique (clashes with %s)"
 msgstr ""
 
-#: ptcomp/ltcomp.c:125
-msgid "too many actions"
+#: ptcomp/ltcomp.c:120
+#, c-format
+msgid "Too many actions (max %d)"
 msgstr ""
 
-#: ptcomp/ltcomp.c:128
-msgid "lumptype expected after Action"
+#: ptcomp/ltcomp.c:121
+msgid "Lumptype expected after Action"
 msgstr ""
 
-#: ptcomp/ltcomp.c:132
-msgid "eventtype expected after Action"
+#: ptcomp/ltcomp.c:123
+msgid "Eventtype expected after Action"
 msgstr ""
 
-#: ptcomp/ltcomp.c:174
+#: ptcomp/ltcomp.c:165
 #, c-format
 msgid "%5d linetypes\n"
 msgstr ""
 
-#: ptcomp/ltcomp.c:183
+#: ptcomp/ltcomp.c:175
 #, c-format
 msgid "%5d sectortypes\n"
 msgstr ""
 
-#: ptcomp/ltcomp.c:274
-msgid "termtype parameter expected"
+#: ptcomp/ltcomp.c:268
+msgid "Termtype parameter expected"
 msgstr ""
 
-#: ptcomp/ltcomp.c:288
-msgid "strange lumptype"
+#: ptcomp/ltcomp.c:282
+msgid "Strange lumptype"
 msgstr ""
 
-#: ptcomp/ltcomp.c:322
-msgid "strange eventtype"
+#: ptcomp/ltcomp.c:316
+msgid "Strange eventtype"
 msgstr ""
 
-#: ptcomp/ltcomp.c:332
-msgid "eventtype expected after WaitFor"
+#: ptcomp/ltcomp.c:324
+msgid "Eventtype expected after WaitFor"
 msgstr ""
 
-#: ptcomp/parm.c:49
-msgid "string parameter expected"
+#: ptcomp/parm.c:57 ptcomp/parm.c:66
+#, c-format
+msgid "String is too long (max %d characters)"
 msgstr ""
 
-#: ptcomp/parm.c:59
-msgid "character parameter expected"
+#: ptcomp/parm.c:69 ptcomp/parm.c:93 ptcomp/parm.c:176
+msgid "String parameter expected.  Try --fake-strings"
 msgstr ""
 
-#: ptcomp/parm.c:68
-msgid "integer parameter expected"
+#: ptcomp/parm.c:72 ptcomp/parm.c:96
+msgid "String parameter expected"
 msgstr ""
 
-#: ptcomp/parm.c:77
-msgid "floating-point parameter expected"
+#: ptcomp/parm.c:120
+#, c-format
+msgid "Invalid escape sequence `\\%c'"
 msgstr ""
 
-#: ptcomp/parm.c:86
-msgid "time parameter expected"
+#: ptcomp/parm.c:165 ptcomp/parm.c:174
+msgid "Must be exactly one character"
 msgstr ""
 
-#: ptcomp/parm.c:95
-msgid "speed parameter expected"
+#: ptcomp/parm.c:179
+msgid "Character parameter expected"
 msgstr ""
 
-#: ptcomp/parm.c:104
-msgid "arc parameter expected"
+#: ptcomp/parm.c:190
+msgid "Integer parameter expected"
 msgstr ""
 
-#: ptcomp/parm.c:155
-msgid "strange timing unit"
+#: ptcomp/parm.c:200
+msgid "Floating-point parameter expected"
 msgstr ""
 
-#: ptcomp/parm.c:176
-msgid "strange speed unit"
+#: ptcomp/parm.c:210
+msgid "Time parameter expected"
 msgstr ""
 
-#: ptcomp/parm.c:206
-msgid "strange arc unit"
+#: ptcomp/parm.c:220
+msgid "Speed parameter expected"
 msgstr ""
 
-#: ptcomp/phasecomp.c:76
-msgid "name expected after PhaseTable"
+#: ptcomp/parm.c:230
+msgid "Arc parameter expected"
 msgstr ""
 
-#: ptcomp/phasecomp.c:221
+#: ptcomp/parm.c:273
+msgid "Strange timing unit"
+msgstr ""
+
+#: ptcomp/parm.c:294
+msgid "Strange speed unit"
+msgstr ""
+
+#: ptcomp/parm.c:307
+#, c-format
+msgid "Obsolete arc syntax `%s'; use `0deg'"
+msgstr ""
+
+#: ptcomp/parm.c:310
+#, c-format
+msgid "Obsolete arc syntax `%s'; use `pi/%d'"
+msgstr ""
+
+#: ptcomp/parm.c:329
+msgid "Strange arc unit"
+msgstr ""
+
+#. one parameter, name
+#: ptcomp/phasecomp.c:74
+msgid "Name expected after PhaseTable"
+msgstr ""
+
+#: ptcomp/phasecomp.c:97
+msgid "Name expected after Phase"
+msgstr ""
+
+#: ptcomp/phasecomp.c:223
 #, c-format
 msgid "%5d phase tables\n"
 msgstr ""
 
 #: ptcomp/phasecomp.c:243
-msgid "phase table name parameter expected"
+msgid "Phase table name parameter expected"
 msgstr ""
 
 #: ptcomp/phasecomp.c:246
-msgid "phase table name unrecognised"
+#, c-format
+msgid "Phase table name `%s' unrecognised"
 msgstr ""
 
 #: ptcomp/phasecomp.c:256
-msgid "you need to specify a phasetable first"
+msgid "You need to specify a phasetable first"
 msgstr ""
 
-#: ptcomp/phasecomp.c:258
-msgid "phase name parameter expected"
+#: ptcomp/phasecomp.c:257
+msgid "Phase name parameter expected"
 msgstr ""
 
-#: ptcomp/phasecomp.c:262
-msgid "phase name unrecognised"
+#: ptcomp/phasecomp.c:261
+#, c-format
+msgid "Phase name `%s' unrecognised"
 msgstr ""
 
-#: ptcomp/protocomp.c:88
-msgid "name expected after Proto"
+#. Proto -!- NAME [ID:INTEGER]
+#: ptcomp/protocomp.c:89
+msgid "Name expected after Proto"
 msgstr ""
 
-#: ptcomp/protocomp.c:243
+#: ptcomp/protocomp.c:184
+msgid "FastShoot is obsolete; use Nasty"
+msgstr ""
+
+#: ptcomp/protocomp.c:265
 #, c-format
 msgid "%5d protos: sorting"
 msgstr ""
 
-#: ptcomp/protocomp.c:246
+#: ptcomp/protocomp.c:268
 msgid ", writing"
 msgstr ""
 
-#: ptcomp/protocomp.c:250
+#: ptcomp/protocomp.c:275
 #, c-format
 msgid "warning: proto %s (%d) has no phasetable\n"
 msgstr ""
 
-#: ptcomp/protocomp.c:263
-msgid "proto name parameter expected"
+#: ptcomp/protocomp.c:288
+msgid "Proto name parameter expected"
 msgstr ""
 
-#: ptcomp/protocomp.c:269
-msgid "proto name unrecognised"
-msgstr ""
-
-#: ptcomp/protocomp.c:281
+#: ptcomp/protocomp.c:294
 #, c-format
-msgid "ID %d not unique (clashes with %s)\n"
+msgid "Proto name `%s' unrecognised"
+msgstr ""
+
+#: ptcomp/protocomp.c:305
+#, c-format
+msgid "ID %d not unique (clashes with %s)"
 msgstr ""
 
 #: ptcomp/ptcomp.c:101
+msgid "Syntax error"
+msgstr ""
+
+#: ptcomp/ptcomp.c:109
 #, c-format
 msgid ""
-"Usage: %s -d DIRECTORY\n"
+"Usage: %s -o WADFILE\n"
+"   or: %s -d DIRECTORY\n"
 "Compile .pt files to various lumps used by DUMB.  Ptcomp reads .pt source\n"
-"from standard input, and creates the following files in DIRECTORY:\n"
-"PHASES.lump, PROTOS.lump, GETTABLE.lump, LINETYPE.lump, SECTTYPE.lump,\n"
-"SOUNDS.lump, ANIMTEX.lump and LEVINFO.lump.\n"
+"from standard input, and creates the following lumps: PHASES, PROTOS,\n"
+"GETTABLE, LINETYPE, SECTTYPE, SOUNDS, ANIMTEX and LEVINFO.  It saves them\n"
+"either in WADFILE or as *.lump files in DIRECTORY.\n"
 "\n"
 msgstr ""
 
-#: ptcomp/ptcomp.c:107
+#: ptcomp/ptcomp.c:118
 msgid ""
-"  -d, --output-directory=DIRECTORY  write the output files to DIRECTORY\n"
+"  -o, --output-wad=WADFILE          create WADFILE containing the lumps\n"
+"  -d, --output-directory=DIRECTORY  write *.lump files in DIRECTORY\n"
+"      --fake-strings                translate name tokens to strings\n"
+"                                    where needed\n"
 "      --help                        display this help and exit\n"
 "      --version                     output version information and exit\n"
 "\n"
 msgstr ""
 
-#: ptcomp/ptcomp.c:146 tool/dark2trans.c:73 tool/mkdfnt.c:180
+#: ptcomp/ptcomp.c:158 tool/dark2trans.c:73 tool/mkdfnt.c:180
 #: tool/mknulmap.c:112 tool/mkpnames.c:101
 #, c-format
 msgid "%s: Deprecated usage.  Assuming you meant:\n"
 msgstr ""
 
 #. invalid option
-#: ptcomp/ptcomp.c:171 ptcomp/ptcomp.c:178 test/fixed_bm.c:94
+#: ptcomp/ptcomp.c:191 ptcomp/ptcomp.c:200 test/fixed_bm.c:94
 #: test/ldltest.c:249 tool/dark2trans.c:187 tool/mkdfnt.c:145
 #: tool/mknulmap.c:216 tool/mkpnames.c:169 tool/ppmtodumb.c:249
-#: xwad/xproto.c:215 xwad/xwad.c:190
+#: xwad/xproto.c:153 xwad/xwad.c:190
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr ""
 
-#: ptcomp/ptcomp.c:177
+#: ptcomp/ptcomp.c:198
 #, c-format
-msgid "%s: You must use `-o DIRECTORY'\n"
+msgid "%s: You must use `-d DIRECTORY' or `-o WADFILE'\n"
 msgstr ""
 
-#: ptcomp/ptcomp.c:193 tool/mkpnames.c:408
+#: ptcomp/ptcomp.c:214 tool/mkpnames.c:408
 msgid "stdin"
 msgstr ""
 
-#: ptcomp/ptcomp.c:194
+#: ptcomp/ptcomp.c:215
 #, c-format
 msgid "%s: compiling...\n"
 msgstr ""
 
-#: ptcomp/ptcomp.c:198
+#. one parameter: name
+#: ptcomp/soundcomp.c:62
+msgid "Name expected after SoundType"
+msgstr ""
+
+#: ptcomp/soundcomp.c:80
 #, c-format
-msgid "%s: writing...\n"
+msgid "Too many sound redirects (max %d)"
 msgstr ""
 
-#: ptcomp/soundcomp.c:64
-msgid "name expected after SoundType"
-msgstr ""
-
-#: ptcomp/soundcomp.c:81
-msgid "too many sound redirects"
-msgstr ""
-
-#: ptcomp/soundcomp.c:94
+#: ptcomp/soundcomp.c:93
 #, c-format
 msgid "%5d sounds\n"
 msgstr ""
 
-#: ptcomp/soundcomp.c:105
-msgid "sound name parameter expected"
+#: ptcomp/soundcomp.c:103
+msgid "Sound name parameter expected"
 msgstr ""
 
-#: ptcomp/soundcomp.c:122
-msgid "soundtype redefined"
-msgstr ""
-
-#: ptcomp/token.c:134
+#: ptcomp/soundcomp.c:120
 #, c-format
-msgid "syntax error near token `%s'\n"
+msgid "Soundtype `%s' redefined"
 msgstr ""
 
-#: ptcomp/token.c:144
-msgid "fatal error\n"
+#. this will save grief later
+#: ptcomp/token.c:60
+msgid "NUL characters are not allowed"
+msgstr ""
+
+#: ptcomp/token.c:132 ptcomp/token.c:156
+msgid "Unexpected EOF"
+msgstr ""
+
+#: ptcomp/token.c:155
+msgid "In string which begins here:"
+msgstr ""
+
+#: ptcomp/token.c:188
+msgid "Line number is too large"
+msgstr ""
+
+#: ptcomp/token.c:190
+msgid "Line number expected"
+msgstr ""
+
+#: ptcomp/token.c:200
+msgid "`\"' expected before filename"
+msgstr ""
+
+#: ptcomp/token.c:205
+msgid "`\"' expected after filename"
+msgstr ""
+
+#: ptcomp/token.c:238
+msgid "Warning: "
+msgstr ""
+
+#: ptcomp/token.c:257
+msgid "End of file.\n"
+msgstr ""
+
+#: ptcomp/token.c:260
+msgid "Token was a newline.\n"
+msgstr ""
+
+#: ptcomp/token.c:264
+msgid "Token was a long string.\n"
+msgstr ""
+
+#: ptcomp/token.c:268
+#, c-format
+msgid "Token was: %s\n"
 msgstr ""
 
 #. strtol() couldn't parse it at all, or there is some garbage
@@ -2989,12 +3240,12 @@ msgstr ""
 msgid "%s: You must use `--character=C'.\n"
 msgstr ""
 
-#: tool/mkdfnt.c:245 xwad/xproto.c:237 xwad/xwad.c:212
+#: tool/mkdfnt.c:245 xwad/xproto.c:178 xwad/xwad.c:212
 #, c-format
 msgid "Can't open display %s"
 msgstr ""
 
-#: tool/mkdfnt.c:245 xwad/xproto.c:238 xwad/xwad.c:212
+#: tool/mkdfnt.c:245 xwad/xproto.c:179 xwad/xwad.c:212
 msgid "<default>"
 msgstr ""
 
@@ -3319,6 +3570,10 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
+#: xwad/timewait.c:91
+msgid "Out of memory in XInternalConnectionNumbers"
+msgstr ""
+
 #: xwad/xproctls.c:98
 msgid "RotState:"
 msgstr ""
@@ -3379,7 +3634,12 @@ msgstr ""
 msgid "ID:"
 msgstr ""
 
-#: xwad/xproto.c:122
+#: xwad/xproto.c:128 xwad/xproto.c:164 xwad/xwad.c:165 xwad/xwad.c:198
+#, c-format
+msgid "%s: internal limit on wad files exceeded\n"
+msgstr ""
+
+#: xwad/xproto.c:347
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [WADFILE]...\n"
@@ -3387,7 +3647,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: xwad/xproto.c:125
+#: xwad/xproto.c:350
 msgid ""
 "  -w, --load-wad=FILE    load FILE as a WAD.  WADFILE argument does the "
 "same.\n"
@@ -3400,23 +3660,18 @@ msgid ""
 "\n"
 msgstr ""
 
-#: xwad/xproto.c:133
+#: xwad/xproto.c:358
 msgid ""
 "If no WADFILE nor --load-wad=FILE arguments are given, XProtoThing\n"
 "loads `doom2.wad'.\n"
 "\n"
 msgstr ""
 
-#: xwad/xproto.c:190 xwad/xproto.c:223 xwad/xwad.c:165 xwad/xwad.c:198
-#, c-format
-msgid "%s: internal limit on wad files exceeded\n"
-msgstr ""
-
-#: xwad/xproto.c:427
+#: xwad/xproto.c:478
 msgid "no PROTOS lump in wad"
 msgstr ""
 
-#: xwad/xproto.c:430
+#: xwad/xproto.c:485
 msgid "no protos"
 msgstr ""
 

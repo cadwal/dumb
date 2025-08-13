@@ -73,7 +73,7 @@ init_player(LevData *ld, int pl, int th)
       logprintf(LOG_DEBUG, 'M', "init_plinfo: player=%d thing=%d", pl, th);
       ld->plinfo[pl] = (int *) safe_calloc(sizeof(int), ld->plinfo_len);
       ld->plbkup[pl] = (int *) safe_calloc(sizeof(int), ld->plinfo_len);
-      init_plinfo(ld->plinfo[pl]);
+      init_plinfo(ld, pl);
       memcpy(ld->plbkup[pl], ld->plinfo[pl], sizeof(int) * ld->plinfo_len);
    }
 }
@@ -241,7 +241,7 @@ apply_update(LevData *ld, MapLumpType mlt, int ofs,
       logfatal('M', _("no decode func for maplumptype %d"), (int) mlt);
    if (ofs < 0 || ofs >= ld->count[mlt])
       logfatal('M', _("out of range item (%d) in apply_update()"), ofs);
-   p = ld->dyn[mlt];
+   p = (char *) ld->dyn[mlt];
    p += mlti[mlt].dyngrain * ofs;
    mlti[mlt].decode(p, code, codelen, ld);
 }

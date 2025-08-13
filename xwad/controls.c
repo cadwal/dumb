@@ -455,29 +455,30 @@ crossev_cseti(CSetInstance *csi, XCrossingEvent *ev, AppInst *inst)
 static void
 ctldhf(XEvent *ev, AppInst *inst, void *info)
 {
+   CSetInstance *csinst = (CSetInstance *) info;
    switch (ev->type) {
    case (ButtonPress):
    case (ButtonRelease):
       /* button event */
-      butev_cseti(info, &ev->xbutton, inst);
+      butev_cseti(csinst, &ev->xbutton, inst);
       break;
    case (KeyPress):
    case (KeyRelease):
       /* key event */
-      keyev_cseti(info, &ev->xkey, inst);
+      keyev_cseti(csinst, &ev->xkey, inst);
       break;
    case (MotionNotify):
       /* pointer motion event */
-      motev_cseti(info, &ev->xmotion, inst);
+      motev_cseti(csinst, &ev->xmotion, inst);
       break;
    case (EnterNotify):
    case (LeaveNotify):
       /* pointer leaving controls */
-      crossev_cseti(info, &ev->xcrossing, inst);
+      crossev_cseti(csinst, &ev->xcrossing, inst);
       break;
    case (Expose):
       /* need to redraw */
-      expose_cseti(info, &ev->xexpose, inst);
+      expose_cseti(csinst, &ev->xexpose, inst);
       break;
    }
 }
@@ -498,7 +499,7 @@ init_cseti(CSetInstance *csi,
       if (k > j)
 	 j = k;
    }
-   csi->inst = safe_calloc(j, sizeof(ControlInstance));
+   csi->inst = (ControlInstance *) safe_calloc(j, sizeof(ControlInstance));
    add_dh(csi->w, ctldhf, inst, csi);
    XMapWindow(dpy, csi->w);
    XSelectInput(dpy, csi->w, CTL_EVMASK);

@@ -22,11 +22,11 @@
 #ifndef LICOMP_H
 #define LICOMP_H
 
-#include <stdio.h>
+#include "libdumbwad/wadwr.h"
 
 void init_licomp(void);
 void licomp(void);
-void wrlinfos(FILE *fout);
+void wrlinfos(WADWR *w);
 
 #endif
 

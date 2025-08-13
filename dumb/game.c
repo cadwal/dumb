@@ -27,35 +27,11 @@
 #include "libdumbutil/dumb-nls.h"
 
 #include "libdumbutil/log.h"
-#include "things.h"
+#include "game.h"
 #include "gettable.h"
 #include "netplay.h"
 #include "render.h"		/* for renderer_debug_flags */
-#include "game.h"
-
-/* game message stuff */
-
-/* this will eventually get moved here from dumb.c */
-void gmsg(int pl, const char *s);
-
-void
-game_vmessage(int pl, const char *fmt, va_list argl)
-{
-   char buf[256]; /* better not ever print out a message bigger than this! */
-   vsprintf(buf, fmt, argl);
-   /*logprintf(LOG_DEBUG, 'D', _("game_message: `%s'"), buf); */
-   gmsg(pl, buf);
-}
-
-void
-game_message(int pl, const char *fmt,...)
-{
-   va_list ap;
-   va_start(ap, fmt);
-   game_vmessage(pl, fmt, ap);
-   va_end(ap);
-}
-
+#include "things.h"
 
 /* process player input stuff */
 
@@ -133,22 +109,31 @@ process_input(LevData *ld, const PlayerInput *in, int tickspassed, int pl)
    if (in->select[5]) {
       cheated++;
       if (!(ld->plflags[pl] & PLF_CHEAT)) {
+	 /* SPISPOPD = Smashing Pumpkins In Small Piles Of Putrid Debris
+	    or something like that.  */
 	 game_message(-1, _("PLAYER %d SMASHES PUMPKINS"), pl + 1);
 	 /* This toggles the flag all the time if you keep the button
-	  * down... but who cares?
-	  * In fact, it would be the input side's job to prevent this.
-	  */
+	    down... but who cares?
+
+	    In fact, it would be the input side's job to prevent this.  */
 	 td->flags ^= THINGDF_NOCLIP;
       }
-   }
-   if (in->select[6]) {
-      /* not a cheat */
-      renderer_debug_flags++;
    }
    if (cheated)
       ld->plflags[pl] |= PLF_CHEAT;
    else
       ld->plflags[pl] &= ~PLF_CHEAT;
+
+   /* The following are not cheats.  */
+   if (in->select[6]) {
+      renderer_debug_flags++;
+   }
+   if (in->select[7]) {
+      /* font test */
+      game_message(pl, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+      game_message(pl, "0123456789");
+      game_message(pl, "abcdefghijklmnopqrstuvwxyz");
+   }
 
    /* only allow movement if player isn't dead */
    process_input_ms(ld, in, tickspassed, pl);

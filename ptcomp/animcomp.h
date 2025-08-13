@@ -22,11 +22,11 @@
 #ifndef ANIMCOMP_H
 #define ANIMCOMP_H
 
-#include <stdio.h>
+#include "libdumbwad/wadwr.h"
 
 void init_animcomp(void);
 void animcomp(int is_sw);
-void wranims(FILE *fout);
+void wranims(WADWR *w);
 
 #endif
 

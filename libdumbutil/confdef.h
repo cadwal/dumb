@@ -67,8 +67,10 @@ typedef struct {
 #define CONFL(n,mn,sn,h) {n,mn,sn,h,CONF_TYPE_LIST,NULL,0,0, \
     0,NULL,NULL,DIRT_NONE}	/* list({}) */
 
-#define CONFITEM_END {NULL}
-#define CONFENUM_END {NULL}
+/* the first member is what matters, but listing them all avoids
+   warnings with gcc -b i486-linux -V egcs-2.91.60 -W */
+#define CONFITEM_END {NULL,NULL,0,NULL,CONF_TYPE_INT,NULL,0,0,0,NULL,NULL,0}
+#define CONFENUM_END {NULL,0}
 
 typedef struct {
    ConfItem *items;

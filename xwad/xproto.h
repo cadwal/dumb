@@ -36,7 +36,7 @@ extern const ControlSet cho_cset[1];
 extern const ControlSet disp_cset[1];
 
 typedef struct AppInstance {
-   const ProtoThing *protos;
+   ProtoThing *protos;
    LumpNum protos_ln;
    int nprotos;
    const ThingPhase *phase_tbl;

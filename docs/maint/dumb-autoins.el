@@ -1,8 +1,8 @@
 ;;; dumb-autoins.el --- Auto-insertion for DUMB .c and .h files
 
-;; Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+;; Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
 
-;; Author: Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+;; Author: Kalle Niemitalo <tosi@stekt.oulu.fi>
 ;; Keywords: local, c
 
 ;; This file is part of DUMB, a Doom-like 3D game engine.

@@ -12,15 +12,15 @@ PhaseTable WandZap
   Default Duration 50msec
   Default Glow
 
-  Phase BOOM C  Melee
-  Phase -    D
-  Phase -    E
-  Phase -    F
-  Phase -    G
-  Phase -    H  Destroy
+  Phase BOOM "C"  Melee
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G"
+  Phase -    "H"  Destroy
 
 Proto WandZap
-  Sprite FX01
+  Sprite "FX01"
   Size 16 16
   Damage 2
   Explosive ZCenter
@@ -31,38 +31,38 @@ PhaseTable Mine
   Default Duration 50msec
   Default Glow
 
-  Phase INIT	H	TInvis NoSigs
-  Phase -	H	NoSigs
-  Phase -	G	NoSigs
-  Phase -	F	
-  Phase -	E	
-  Phase -	D	
-  Phase -	C	
-  Phase -	B
-  Phase -	C	
-  Phase -	D	
-  Phase -	E	
-  Phase -	F	
-  Phase -	G	NoSigs
-  Phase -	H	NoSigs Destroy	
+  Phase INIT	"H"	 TInvis NoSigs
+  Phase -	"H"	 NoSigs
+  Phase -	"G"	 NoSigs
+  Phase -	"F"	 
+  Phase -	"E"	 
+  Phase -	"D"	 
+  Phase -	"C"	 
+  Phase -	"B"
+  Phase -	"C"	 
+  Phase -	"D"	 
+  Phase -	"E"	 
+  Phase -	"F"	 
+  Phase -	"G"	 NoSigs
+  Phase -	"H"	 NoSigs Destroy	
 
   Default Duration 100msec NoSigs
-  Phase BOOM	I	SigExplode Sound LOBHIT
-  Phase	-	J	Explode
-  Phase -	K	
-  Phase	-	L	
-  Phase	-	M	Destroy
+  Phase BOOM	"I"	 SigExplode Sound LOBHIT
+  Phase	-	"J"	 Explode
+  Phase -	"K"	 
+  Phase	-	"L"	 
+  Phase	-	"M"	 Destroy
 
 Proto Mine
-  Sprite FX13
+  Sprite "FX13"
   Size 48 48
   Damage 20
   Mine StuckDown NoHurtOwner
 
 PhaseTable MineSpawner
-  Phase INIT	A Duration 350msec /* wait a bit before we start spawning */
-  Phase LOOP	B Duration 120msec Spawn2 TargetSeek Goto LOOP
-  Phase BOOM	A SigExplode Destroy
+  Phase INIT	"A" Duration 350msec /* wait a bit before we start spawning */
+  Phase LOOP	"B" Duration 120msec Spawn2 TargetSeek Goto LOOP
+  Phase BOOM	"A" SigExplode Destroy
 
 Proto MineSpawner
   Size 16 16
@@ -79,22 +79,22 @@ PhaseTable ArrowZap
   Default Duration 100msec
   Default Glow
 
-  Phase INIT A  Goto INIT
+  Phase INIT "A"  Goto INIT
 
   Default Duration 50msec
   Default NoSigs
-  Phase BOOM A  SigExplode
-  Phase -    B
-  Phase -    D  Explode Sound PHOHIT
-  Phase -    E
-  Phase -    F
-  Phase -    G
-  Phase -    H  Explode
-  Phase -    I
-  Phase -    J  Destroy
+  Phase BOOM "A"  SigExplode
+  Phase -    "B"
+  Phase -    "D"  Explode Sound PHOHIT
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G"
+  Phase -    "H"  Explode
+  Phase -    "I"
+  Phase -    "J"  Destroy
 
 Proto ArrowZap
-  Sprite FX03
+  Sprite "FX03"
   Size 16 16
   Damage 3
   Mass 0
@@ -106,19 +106,19 @@ PhaseTable ClawZap
   Default Duration 100msec
   Default Glow
 
-  Phase INIT A
-  Phase -    B  Goto INIT
+  Phase INIT "A"
+  Phase -    "B"  Goto INIT
 
   Default Duration 50msec
-  Phase BOOM C  Explode SigExplode Sound BLSHIT
-  Phase -    D
-  Phase -    E
-  Phase -    F
-  Phase -    G
-  Phase -    H  Destroy
+  Phase BOOM "C"  Explode SigExplode Sound BLSHIT
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G"
+  Phase -    "H"  Destroy
 
 Proto ClawZap
-  Sprite FX17
+  Sprite "FX17"
   Size 10 10
   Damage 6
   Mass 0
@@ -128,18 +128,18 @@ Proto ClawZap
 
 PhaseTable WizardZap
   Duration NormalRate Glow
-  Phase INIT A
-  Phase - B Goto INIT
+  Phase INIT "A"
+  Phase -    "B" Goto INIT
   Default Duration ExplodeRate
   Default NoSigs
-  Phase BOOM C  SigExplode Explode
-  Phase - D
-  Phase - E
-  Phase - F
-  Phase - G Destroy
+  Phase BOOM "C" SigExplode Explode
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G" Destroy
 
 Proto WizardZap
-  Sprite FX11
+  Sprite "FX11"
   Size 16 16
   Damage 6
   Mass 0
@@ -149,18 +149,18 @@ Proto WizardZap
 
 PhaseTable ImpZap
   Duration NormalRate Glow
-  Phase INIT A
-  Phase - B
-  Phase - C Goto INIT
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C" Goto INIT
   Default Duration ExplodeRate
   Default NoSigs
-  Phase BOOM C  SigExplode Explode
-  Phase - D
-  Phase - E
-  Phase - F Destroy
+  Phase BOOM "C" SigExplode Explode
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F" Destroy
 
 Proto ImpZap
-  Sprite FX10
+  Sprite "FX10"
   Size 16 16
   Damage 3
   Mass 0
@@ -172,23 +172,23 @@ PhaseTable MummyZap
   Default Duration 35msec
   Default Glow
 
-  Phase INIT A TargetSeek
-  Phase -    A TargetSeek
-  Phase -    B TargetSeek
-  Phase -    B TargetSeek
-  Phase -    C TargetSeek
-  Phase -    C TargetSeek Goto INIT
+  Phase INIT "A" TargetSeek
+  Phase -    "A" TargetSeek
+  Phase -    "B" TargetSeek
+  Phase -    "B" TargetSeek
+  Phase -    "C" TargetSeek
+  Phase -    "C" TargetSeek Goto INIT
 
   Default Duration ExplodeRate
   Default NoSigs
-  Phase BOOM C  SigExplode Explode Sound MUMHED
-  Phase -    D
-  Phase -    E
-  Phase -    F
-  Phase -    G Destroy
+  Phase BOOM "C"  SigExplode Explode Sound MUMHED
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G" Destroy
 
 Proto MummyZap
-  Sprite FX15
+  Sprite "FX15"
   Size 16 16
   Damage 6
   Mass 0
@@ -199,19 +199,19 @@ PhaseTable WereDragonBreath
   Default Duration 50msec
   Default Glow
 
-  Phase INIT A
-  Phase -    B
-  Phase -    C Goto INIT
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C" Goto INIT
 
   Default Duration ExplodeRate
   Default NoSigs
-  Phase BOOM D  SigExplode Explode Sound LOBHIT
-  Phase -    E
-  Phase -    F
-  Phase -    G Destroy
+  Phase BOOM "D"  SigExplode Explode Sound LOBHIT
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G" Destroy
 
 Proto WereDragonBreath
-  Sprite FX06
+  Sprite "FX06"
   Size 40 40
   Damage 18
   Mass 0
@@ -221,25 +221,25 @@ Proto WereDragonBreath
 
 PhaseTable GreenAxe
   Default Duration 100msec
-  Phase INIT	A
-  Phase -	B
-  Phase -	C Goto INIT
+  Phase INIT	"A"
+  Phase -	"B"
+  Phase -	"C" Goto INIT
   Default NoSigs Duration ExplodeRate
-  Phase BOOM	D SigExplode Explode
-  Phase -	E
-  Phase -	F Destroy
+  Phase BOOM	"D" SigExplode Explode
+  Phase -	"E"
+  Phase -	"F" Destroy
 
 PhaseTable RedAxe
   Default Duration 100msec
-  Phase INIT	A
-  Phase -	B Goto INIT
+  Phase INIT	"A"
+  Phase -	"B" Goto INIT
   Default NoSigs Duration ExplodeRate
-  Phase BOOM	C SigExplode Explode
-  Phase -	D
-  Phase -	E Destroy
+  Phase BOOM	"C" SigExplode Explode
+  Phase -	"D"
+  Phase -	"E" Destroy
 
 Proto GreenAxe
-  Sprite SPAX
+  Sprite "SPAX"
   Size 16 16
   Damage 15
   Mass 0
@@ -247,7 +247,7 @@ Proto GreenAxe
   Explosive ZCenter
 
 Proto RedAxe
-  Sprite RAXE
+  Sprite "RAXE"
   Size 16 16
   Damage 25
   Mass 0
@@ -259,22 +259,22 @@ PhaseTable TeleportFog
   Default Duration 200msec
   Default Glow
 
-  Phase TELEPORT G
-  Phase -        E
-  Phase -        C
+  Phase TELEPORT "G"
+  Phase -        "E"
+  Phase -        "C"
 
-  Phase -        A Sound TELEPT
-  Phase -        B
-  Phase -        C
-  Phase -        D
-  Phase -        E
-  Phase -        F
-  Phase -        G
-  Phase -        H Destroy
+  Phase -        "A" Sound TELEPT
+  Phase -        "B"
+  Phase -        "C"
+  Phase -        "D"
+  Phase -        "E"
+  Phase -        "F"
+  Phase -        "G"
+  Phase -        "H" Destroy
 
 
 Proto TeleportFog
-  Sprite TELE
+  Sprite "TELE"
   Phantom ZCenter
 
 Proto TeleSpot 14

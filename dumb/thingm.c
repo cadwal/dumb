@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/thingm.c: Moving things.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  * Copyright (C) 1994 by Chris Laurel
  *
@@ -391,6 +392,7 @@ void
 thing_take_damage(const LevData *ld, int th, int dmg)
 {
    ThingDyn *td = ldthingd(ld) + th;
+   int hitdmg, armdmg;
 
    /* bail out if dmg<=0 */
    if (dmg <= 0)
@@ -411,13 +413,27 @@ thing_take_damage(const LevData *ld, int th, int dmg)
       return;
    }
 
-   /* TODO: check temporary invulnerability */
+   /* temporary invulnerability */
+   if (td->tmpinv > 0)
+      return;
 
 #ifdef THINGM_DEBUG
-   logprintf(LOG_DEBUG, 'O', _("thing %d took %d damage (%d/%d hits)"),
-	     th, dmg, td->hits, (int) (td->proto->hits));
+   logprintf(LOG_DEBUG, 'O', _("thing %d took %d damage (%d/%d hits, %d/%d armour)"),
+	     th, dmg,
+	     td->hits, (int) (td->proto->hits),
+	     td->armour, (int) (td->proto->armour));
 #endif
-   td->hits -= dmg;
+
+   /* this should divide damage nicely between armour and health */
+   armdmg = (dmg + (rand() < (RAND_MAX / 2))) / 2;
+   hitdmg = dmg - armdmg;
+   td->armour -= armdmg;
+   td->hits -= hitdmg;
+   if (td->armour < 0) {
+      td->hits += td->armour;
+      td->armour = 0;
+   }
+
    /* we survived */
    if (td->hits > 0) {
       thing_send_sig(ld, th, TS_OUCH);

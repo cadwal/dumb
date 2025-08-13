@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/gettable.c: Gettables.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,7 +37,18 @@ int gettable_chk_key(const LevData *ld, int plnum, int keytype);
 void draw_gettables(LevData *ld, int pl, void *fb, int width, int height);
 void update_gettables(LevData *ld, int ticks);
 
-void pickup_gettable(LevData *ld, int plnum, int type, int num);
+enum gettable_pickup {
+   GETT_PU_NO_HASMAX = -2,	/* didn't pick up because already has max */
+   GETT_PU_NO_ERROR  = -1,	/* erroneous parameters, etc */
+   GETT_PU_YES_FIRST = 1,	/* picked it up; didn't have any before */
+   GETT_PU_YES_MORE  = 2	/* picked it up; had some before */
+};
+/* Return true if PU means the player picked the object up. */
+#define GETT_PU_YES(pu) ((pu) > 0)
+
+/* max==0 means use the default.  */
+enum gettable_pickup pickup_gettable(LevData *ld, int plnum,
+				     int type, int num, int max);
 
 void rotate_selection(LevData *ld, int plnum, int type, int dir);
 void use_selection(int type, LevData *ld, int plnum);

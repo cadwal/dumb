@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/x11_video.c: Video and input driver for X11R6.
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  * Copyright (C) 1994 by Chris Laurel
  *

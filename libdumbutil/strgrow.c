@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumbutil/strgrow.c: Buffer for a growing string
- * Copyright (C) 1998 by Kalle Olavi Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +56,16 @@ void
 strgrow_clear(struct strgrow *sg)
 {
    sg->current = 0;
+}
+
+char *
+strgrow_strdup_clear(struct strgrow *sg)
+{
+   char *s;
+   strgrow_grow(sg, '\0');
+   s = safe_strdup(sg->str);
+   strgrow_clear(sg);
+   return s;
 }
 
 // Local Variables:

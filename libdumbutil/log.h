@@ -1,8 +1,8 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumbutil/log.h: Logging.
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,13 +37,14 @@ enum log_level {
    LOG_ALL = LOG_DEBUG
 };
 
-void logvprintf(int lvl, char cl, const char *fmt, va_list argl);
+void logvprintf(int lvl, char cl, const char *fmt, va_list argl)
+     __attribute__((format(printf, 3, 0)));
 
-void logprintf(int lvl, char cl, const char *fmt,...)
+void logprintf(int lvl, char cl, const char *fmt, ...)
      __attribute__((format(printf, 3, 4)));
 
-void logfatal(char cl, const char *fmt,...)
-     __attribute__((noreturn, format(printf, 2, 3)));
+void logfatal(char cl, const char *fmt, ...)
+     __attribute__((format(printf, 2, 3), noreturn));
 
 void log_stream(FILE *f, enum log_level, const char *cl);
 void log_file(const char *fname, enum log_level, const char *cl);

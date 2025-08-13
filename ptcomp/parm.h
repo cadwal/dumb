@@ -24,7 +24,24 @@
 
 #include "libdumbutil/fixed.h"
 
+/* Require a string parameter and save it in BUF which is N characters
+   long.  Because of the null terminator, the string can have at most
+   N-1 characters.  */
 void parm_str(char *buf, size_t n);
+
+/* Require a string parameter of any length and return it in a buffer
+   which must free()d when no longer needed.  A null terminator is
+   automatically added.  */
+char *parm_strdup(void);
+
+/* Require a name parameter of any length and return it in a static
+   buffer.  If the name isn't there, print ERRMSG and exit.  */
+const char *parm_name(const char *errmsg);
+
+/* If the next token is KEYWORD, eat it and return true.  Otherwise,
+   return false.  */
+int parm_keyword_opt(const char *keyword);
+
 char parm_ch(void);
 int parm_num(void);
 double parm_dbl(void);
@@ -32,7 +49,6 @@ int parm_time(void);
 int parm_speed(void);
 fixed parm_arc(void);
 fixed parm_arc_opt(fixed def);
-void parm_msg(char *buf, size_t n);
 
 extern fixed default_speed;
 

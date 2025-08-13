@@ -1,7 +1,7 @@
 # DUMB: A Doom-like 3D game engine.
 #
 # po/fi.po: Finnish translation.
-# Copyright (C) 1998, 1999 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+# Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
 #
 # Joitakin käännöksiä:
 # lump = köntti
@@ -48,14 +48,121 @@
 # Project-Id on "dumb" eikä "DUMB", koska mo-tiedoston nimi muistaakseni tulee siitä.
 msgid ""
 msgstr ""
-"Project-Id-Version: dumb 0.13.3\n"
-"POT-Creation-Date: 1999-01-06 01:35+0200\n"
-"PO-Revision-Date: 1999-01-05 23:29+02:00\n"
+"Project-Id-Version: dumb 0.13.7\n"
+"POT-Creation-Date: 1999-03-19 20:51+0200\n"
+"PO-Revision-Date: 1999-03-10 11:57+02:00\n"
 "Last-Translator: Kalle Olavi Niemitalo <tosi@stekt.oulu.fi>\n"
 "Language-Team: Finnish <fi@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: doom/gettables.pt:87
+msgid "Picked up body armour."
+msgstr ""
+
+#: doom/gettables.pt:96
+msgid "You found the mega armour!"
+msgstr ""
+
+#: doom/gettables.pt:105
+msgid "Picked up a stimpak."
+msgstr ""
+
+#: doom/gettables.pt:114
+msgid "Picked up a medikit."
+msgstr ""
+
+#: doom/gettables.pt:131
+msgid "Megasphere!"
+msgstr ""
+
+#: doom/gettables.pt:211
+msgid "You found a backpack full of ammo!"
+msgstr "Löysit repullisen ammuksia!"
+
+# En minä tuota computer areaa ikinä tajunnut.
+#: doom/gettables.pt:224
+msgid "Computer area map!"
+msgstr "Kartta!"
+
+#: doom/gettables.pt:279
+msgid "You got the red key!"
+msgstr "Sait punaisen avaimen!"
+
+#: doom/gettables.pt:280 doom/gettables.pt:290 doom/gettables.pt:300
+#: doom/gettables.pt:310 doom/gettables.pt:320 doom/gettables.pt:330
+msgid "You already have that key."
+msgstr "Sinulla on jo se avain."
+
+#: doom/gettables.pt:289
+msgid "You got the blue key!"
+msgstr "Sait sinisen avaimen!"
+
+#: doom/gettables.pt:299
+msgid "You got the yellow key!"
+msgstr "Sait keltaisen avaimen!"
+
+#: doom/gettables.pt:309
+msgid "You got the red skull key!"
+msgstr "Sait punaisen kalloavaimen!"
+
+#: doom/gettables.pt:319
+msgid "You got the blue skull key!"
+msgstr "Sait sinisen kalloavaimen!"
+
+#: doom/gettables.pt:329
+msgid "You got the yellow skull key!"
+msgstr "Sait keltaisen kalloavaimen!"
+
+#: doom/gettables.pt:371
+msgid "Invincibility... Oh my God!"
+msgstr ""
+
+#. TRANS: This is a NetHack reference.
+#: doom/gettables.pt:381
+msgid "Suddenly you can't see yourself."
+msgstr ""
+
+#: doom/gettables.pt:390
+msgid "Radiation shielding suit!"
+msgstr "Säteilysuojapuku!"
+
+#: doom/gettables.pt:399
+msgid "You got the light amplification goggles!"
+msgstr "Sait valonvahvistinlasit!"
+
+#: doom/weapons.pt:336
+msgid "You got the chainsaw... Find some meat!"
+msgstr ""
+
+#: doom/weapons.pt:345
+msgid "You smell blood!"
+msgstr "Hakkaa päälle!"
+
+#: doom/weapons.pt:355
+msgid "You got the shotgun!"
+msgstr "Sait haulikon!"
+
+#: doom/weapons.pt:365
+msgid "You got the super shotgun!"
+msgstr "Sait tuplahaulikon!"
+
+#: doom/weapons.pt:375
+msgid "You got the chaingun!"
+msgstr "Sait konarin!"
+
+#: doom/weapons.pt:385
+msgid "You got the rocket launcher!"
+msgstr "Sait raketinheittimen!"
+
+#: doom/weapons.pt:395
+msgid "You got the plasma rifle!"
+msgstr "Sait plasmakiväärin!"
+
+#: doom/weapons.pt:405
+msgid "You got the BFG!"
+msgstr "Sait BFG:n!"
 
 #: dumb/aalib_input.c:42
 msgid "ticks to pass before key autorelease or 0"
@@ -333,7 +440,7 @@ msgstr "hiiren herkkyys y-suunnassa (2)"
 
 #: dumb/dos_input.c:142
 msgid "Can't initialize mouse! Missing driver?"
-msgstr "En voi alustaa hiirtä!  Puuttuuko ohjain?"
+msgstr "En voi alustaa hiirtä! Puuttuuko ohjain?"
 
 #: dumb/dos_video.c:39
 msgid "dont try to use page flipping"
@@ -365,178 +472,178 @@ msgstr "Kaksivaiheinen kaksoispuskurointi käytössä"
 msgid "Video mode: %s (%s)"
 msgstr "Näyttötila: %s (%s)"
 
-#: dumb/dumb.c:81
+#: dumb/dumb.c:83
 msgid "got SIGALRM: renderer must have gotten stuck..."
 msgstr "tuli SIGALRM: piirto-osa taisi jäädä jumiin..."
 
-#: dumb/dumb.c:89
+#: dumb/dumb.c:91
 msgid "save configuration after every run"
 msgstr "tallenna asetukset joka kerta"
 
-#: dumb/dumb.c:90
+#: dumb/dumb.c:92
 msgid "save configuration this time only"
 msgstr "tallenna asetukset vain tällä kertaa"
 
-#: dumb/dumb.c:91
+#: dumb/dumb.c:93
 msgid "specify wadfiles to load"
 msgstr "lataa nämä wad-tiedostot"
 
-#: dumb/dumb.c:92
+#: dumb/dumb.c:94
 msgid "directories in which to look for wads"
 msgstr "mistä hakemistoista wadeja etsitään"
 
-#: dumb/dumb.c:93
+#: dumb/dumb.c:95
 msgid "filename of doom.wad"
 msgstr "doom.wad-tiedoston nimi"
 
-#: dumb/dumb.c:94
+#: dumb/dumb.c:96
 msgid "filename of doom2.wad"
 msgstr "doom2.wad-tiedoston nimi"
 
-#: dumb/dumb.c:95
+#: dumb/dumb.c:97
 msgid "filename of doom4dum.wad"
 msgstr "doom4dum.wad-tiedoston nimi"
 
-#: dumb/dumb.c:96
+#: dumb/dumb.c:98
 msgid "set starting map"
 msgstr "ensimmäisen kentän nimi"
 
-#: dumb/dumb.c:97
+#: dumb/dumb.c:99
 msgid "don't log to the screen"
 msgstr "älä tulostele lokeja näytölle"
 
-#: dumb/dumb.c:98
+#: dumb/dumb.c:100
 msgid "don't create any objects, just preview the map"
 msgstr "älä tee olioita, näytä vain kartta"
 
-#: dumb/dumb.c:99
+#: dumb/dumb.c:101
 msgid "set difficulty level"
 msgstr "vaikeustaso"
 
-#: dumb/dumb.c:100
+#: dumb/dumb.c:102
 msgid "disable sound"
 msgstr "äänet pois"
 
-#: dumb/dumb.c:101
+#: dumb/dumb.c:103
 msgid "video width"
 msgstr "kuvan leveys"
 
-#: dumb/dumb.c:102
+#: dumb/dumb.c:104
 msgid "video height"
 msgstr "kuvan korkeus"
 
-#: dumb/dumb.c:103
+#: dumb/dumb.c:105
 msgid "video depth (in bytes/pixel)"
 msgstr "kuvan syvyys (tavuina/pikseli)"
 
-#: dumb/dumb.c:104
+#: dumb/dumb.c:106
 msgid "log to this file"
 msgstr "tee loki tähän tiedostoon"
 
-#: dumb/dumb.c:105
+#: dumb/dumb.c:107
 msgid "record player actions to file"
 msgstr "tallenna pelaajan liikkeet tiedostoon"
 
-#: dumb/dumb.c:106
+#: dumb/dumb.c:108
 msgid "playback player actions from file"
 msgstr "toista pelaajan liikkeet tiedostosta"
 
-#: dumb/dumb.c:107
+#: dumb/dumb.c:109
 msgid "hide gettables and banners"
 msgstr "piilota esineet ja tekstit"
 
-#: dumb/dumb.c:108
+#: dumb/dumb.c:110
 msgid "show a crosshair in the center of the view"
 msgstr "näytä tähtäin keskellä ruutua"
 
-#: dumb/dumb.c:109
+#: dumb/dumb.c:111
 msgid "multiply the pixels x size"
 msgstr "venytä pikseleitä x-suunnassa"
 
-#: dumb/dumb.c:110
+#: dumb/dumb.c:112
 msgid "multiply the pixels y size"
 msgstr "venytä pikseleitä y-suunnassa"
 
-#: dumb/dumb.c:111
+#: dumb/dumb.c:113
 msgid "skip pixels when multiplying x size"
 msgstr "hypi pikselien yli x-suunnassa"
 
-#: dumb/dumb.c:112
+#: dumb/dumb.c:114
 msgid "skip pixels when multiplying y size"
 msgstr "hypi pikselien yli y-suunnassa"
 
-#: dumb/dumb.c:113
+#: dumb/dumb.c:115
 msgid "load textures before game starts"
 msgstr "lataa kuviot ennen pelin alkua"
 
-#: dumb/dumb.c:114
+#: dumb/dumb.c:116
 msgid "angle from forward of player view"
 msgstr "katselusuunta, 0=eteenpäin"
 
-#: dumb/dumb.c:115
+#: dumb/dumb.c:117
 msgid "offset from center of player view"
 msgstr "katselupisteen etäisyys pelaajasta"
 
-#: dumb/dumb.c:116
+#: dumb/dumb.c:118
 msgid "network play: slave mode"
 msgstr "verkkopeli: ole orja"
 
-#: dumb/dumb.c:117
+#: dumb/dumb.c:119
 msgid "network play: master mode"
 msgstr "verkkopeli: ole isäntä"
 
-#: dumb/dumb.c:118
+#: dumb/dumb.c:120
 msgid "force single player mode"
 msgstr "pakota yksinpeli"
 
-#: dumb/dumb.c:119
+#: dumb/dumb.c:121
 msgid "angle to rotate view by"
 msgstr "katselusuunnan pyörimisnopeus"
 
-#: dumb/dumb.c:120
+#: dumb/dumb.c:122
 msgid "maximum frames to render"
 msgstr "montako framea enintään piirretään"
 
-#: dumb/dumb.c:121
+#: dumb/dumb.c:123
 msgid "enable 3rd person perspective"
 msgstr "ulkoinen kuvakulma"
 
-#: dumb/dumb.c:161
+#: dumb/dumb.c:163
 msgid "Input Driver"
 msgstr "Ohjaus"
 
-#: dumb/dumb.c:162
+#: dumb/dumb.c:164
 msgid "Video Driver"
 msgstr "Näyttö"
 
-#: dumb/dumb.c:163
+#: dumb/dumb.c:165
 msgid "Sound Driver"
 msgstr "Ääniohjain"
 
-#: dumb/dumb.c:164
+#: dumb/dumb.c:166
 msgid "Network Driver"
 msgstr "Verkko"
 
-#: dumb/dumb.c:165
+#: dumb/dumb.c:167
 msgid "Network Play"
 msgstr "Verkkopeli"
 
-#: dumb/dumb.c:166
+#: dumb/dumb.c:168
 msgid "General Game Control"
 msgstr "Pelin yleiset säädöt"
 
-#: dumb/dumb.c:167
+#: dumb/dumb.c:169
 msgid "Player Interface"
 msgstr "Pelihahmon ominaisuudet"
 
-#: dumb/dumb.c:168
+#: dumb/dumb.c:170
 msgid "Keyboard Mapping"
 msgstr "Näppäinten määrittely"
 
-#: dumb/dumb.c:198 ptcomp/ptcomp.c:124 test/fixed_bm.c:170 test/ldltest.c:164
+#: dumb/dumb.c:198 ptcomp/ptcomp.c:138 test/fixed_bm.c:170 test/ldltest.c:164
 #: tool/dark2trans.c:148 tool/mkdfnt.c:137 tool/mknulmap.c:208
 #: tool/mkpnames.c:206 tool/ppmtodumb.c:241 tool/wadtool.c:112
-#: xwad/xproto.c:148 xwad/xwad.c:113
+#: xwad/xproto.c:373 xwad/xwad.c:113
 msgid ""
 "This program is free software; you may redistribute it under the terms of\n"
 "the GNU General Public License.  This program has absolutely no warranty.\n"
@@ -545,19 +652,19 @@ msgstr ""
 "-sopimuksen mukaan. Tällä ohjelmalla ei ole minkäänlaista takuuta.\n"
 
 # valmiiksi, etukäteen?
-#: dumb/dumb.c:239
+#: dumb/dumb.c:221
 msgid "Preloading wall textures"
 msgstr "Lataan seinäkuvioita ennakkoon"
 
-#: dumb/dumb.c:249
+#: dumb/dumb.c:231
 msgid "Preloading floor/ceiling textures"
 msgstr "Lataan katto- ja lattiakuvioita ennakkoon"
 
-#: dumb/dumb.c:257
+#: dumb/dumb.c:239
 msgid "Preloading sprites"
 msgstr "Lataan spritejä ennakkoon"
 
-#: dumb/dumb.c:276
+#: dumb/dumb.c:258
 msgid ""
 "This program was compiled to use MMX, but your processor\n"
 "does not appear to support it.\n"
@@ -565,25 +672,25 @@ msgstr ""
 "Tämä ohjelma on käännetty käyttämään MMX:ää, mutta prosessorisi\n"
 "ei näköjään tue sitä.\n"
 
-#: dumb/dumb.c:381
+#: dumb/dumb.c:363
 #, c-format
 msgid "Read configuration from %s"
 msgstr "Asetukset ladattu tiedostosta %s"
 
-#: dumb/dumb.c:427
+#: dumb/dumb.c:409
 msgid "network mode: slave"
 msgstr "verkkopeli: orja"
 
-#: dumb/dumb.c:433
+#: dumb/dumb.c:415
 msgid "network mode: master"
 msgstr "verkkopeli: isäntä"
 
-#: dumb/dumb.c:509
+#: dumb/dumb.c:491
 #, c-format
 msgid "Unsupported BPP=%d"
 msgstr "BPP:tä %d ei tueta"
 
-#: dumb/dumb.c:535
+#: dumb/dumb.c:517
 msgid "Can't find sector for player"
 msgstr "Pelaajan sektoria ei löydy"
 
@@ -610,45 +717,45 @@ msgstr "Pelaajan sektoria ei löydy"
 #. * 	 }
 #. * }
 #.
-#: dumb/dumb.c:590
+#: dumb/dumb.c:554
 msgid "starting game"
 msgstr "peli alkaa"
 
-#: dumb/dumb.c:637
+#: dumb/dumb.c:601
 msgid "Demo ran out..."
 msgstr "Demo loppui..."
 
-#: dumb/dumb.c:686
+#: dumb/dumb.c:650
 msgid "saving snapshot..."
 msgstr "tallennan kuvaa..."
 
-#: dumb/dumb.c:714
+#: dumb/dumb.c:678
 msgid "snapshot done"
 msgstr "kuva tallennettu"
 
-#: dumb/dumb.c:718
+#: dumb/dumb.c:682
 #, c-format
 msgid "%d ticks passed with MAXTICKS=%d"
 msgstr "%d hetkeä kului ja MAXTICKS=%d"
 
-#: dumb/dumb.c:748
+#: dumb/dumb.c:712
 msgid "WARNING: this system is running faster than the timer resolution"
 msgstr "VAROITUS: tämä kone toimii nopeammin kuin ajastin ehtii mitata"
 
-#: dumb/dumb.c:751
+#: dumb/dumb.c:715
 msgid "Try running DUMB in a larger window."
 msgstr "Kokeile ajaa DUMBia isommassa ikkunassa."
 
-#: dumb/dumb.c:754
+#: dumb/dumb.c:718
 msgid "YOU DIED.  TOO BAD..."
 msgstr "KUOLIT. VOI HARMI..."
 
-#: dumb/dumb.c:770
+#: dumb/dumb.c:734
 #, c-format
 msgid "%d frames, %d seconds, %f fps"
 msgstr "%d framea, %d sekuntia, %f fps"
 
-#: dumb/dumb.c:796
+#: dumb/dumb.c:760
 #, c-format
 msgid "Saving config to %s"
 msgstr "Tallennan asetuksia tiedostoon %s"
@@ -657,76 +764,66 @@ msgstr "Tallennan asetuksia tiedostoon %s"
 msgid "dummy input: always quit"
 msgstr "muka-ohjaus: lopeta heti"
 
-#: dumb/game.c:64
+#: dumb/game.c:40
 msgid "processor timing overcompensation tweak"
 msgstr "prosessorin nopeuden yliarvointikikka"
 
-#: dumb/game.c:65
+#: dumb/game.c:41
 msgid "forward speed"
 msgstr "nopeus eteenpäin"
 
-#: dumb/game.c:66
+#: dumb/game.c:42
 msgid "strafe speed"
 msgstr "nopeus sivulle"
 
-#: dumb/game.c:67
+#: dumb/game.c:43
 msgid "turning speed"
 msgstr "kääntymisnopeus"
 
-#: dumb/game.c:68
+#: dumb/game.c:44
 msgid "jumping speed"
 msgstr "hyppynopeus"
 
-#: dumb/game.c:108
+#: dumb/game.c:84
 #, c-format
 msgid "PLAYER %d WARPED"
 msgstr "PELAAJA %d VARPPASI"
 
-#: dumb/game.c:115
+#: dumb/game.c:91
 #, c-format
 msgid "PLAYER %d CHEATED"
 msgstr "PELAAJA %d HUIJASI"
 
 # Tässä voisi olla "ÄÄNEKKÄÄSTI", mutta Doomissa ei ole Ä-kirjainta ja
 # peli päättyisi siihen.
-#: dumb/game.c:122
+#: dumb/game.c:98
 #, c-format
 msgid "PLAYER %d WIBBLED LOUDLY"
 msgstr "PELAAJA %d UIKUTTI KUULUVASTI"
 
-#: dumb/game.c:129
+#: dumb/game.c:105
 #, c-format
 msgid "PLAYER %d RETURNED"
 msgstr "PELAAJA %d PALASI"
 
 # Tätä ei ole tarkoituskaan ymmärtää tuntematta historiaa...
-#: dumb/game.c:136
+#. SPISPOPD = Smashing Pumpkins In Small Piles Of Putrid Debris
+#. or something like that.
+#: dumb/game.c:114
 #, c-format
 msgid "PLAYER %d SMASHES PUMPKINS"
 msgstr "PELAAJA %d MURSKAA KURPITSOJA"
 
-#: dumb/gettable.c:198
+#: dumb/gettable.c:130
+msgid "Gettable block chain corrupted"
+msgstr "Gettable-lohkoketju sekaisin"
+
+#: dumb/gettable.c:252
 #, c-format
 msgid "Strange gettable type=%d num=%d"
 msgstr "Outo kerättävä tyyppi=%d määrä=%d"
 
-# Nämä pitää tehdä uusiksi niin, että WAD:ssa on koko lauseet.
-#: dumb/gettable.c:210
-#, fuzzy, c-format
-msgid "YOU GOT THE %s!"
-msgstr "SAIT %s:N!"
-
-#: dumb/gettable.c:212
-#, c-format
-msgid "THAT %s WOULD BE WASTED..."
-msgstr "SE %s MENISI HUKKAAN..."
-
-#: dumb/gettable.c:215
-#, fuzzy, c-format
-msgid "GOT A %s."
-msgstr "SAIT %s:N."
-
-#: dumb/gettable.c:362
+#: dumb/gettable.c:413
 #, c-format
 msgid "init %d gettables"
 msgstr "alustetaan %d kerättävää"
@@ -1286,32 +1383,32 @@ msgstr "yritettiin manual-toimintaa seinälle, jolla ei ole takapuolta?"
 msgid "tried manual_f action on wall with no front?"
 msgstr "yritettiin manual_f-toimintaa seinälle, jolla ei ole etupuolta?"
 
-#: dumb/thinghit.c:396
+#: dumb/thinghit.c:398
 #, c-format
 msgid "strange lumptype (%d) while performing actions"
 msgstr "outo könttityyppi (%d) toimintoja suoritettaessa"
 
-#: dumb/thingm.c:118
+#: dumb/thingm.c:119
 #, c-format
 msgid "Obj %d is heatseeking %d"
 msgstr "Olio %d hakeutuu olioon %d"
 
-#: dumb/thingm.c:242
+#: dumb/thingm.c:243
 #, c-format
 msgid "thing %d is out to get %d!"
 msgstr "olio %d suuttui %d:lle!"
 
-#: dumb/thingm.c:417
+#: dumb/thingm.c:421
 #, c-format
-msgid "thing %d took %d damage (%d/%d hits)"
-msgstr "olio %d kärsi %d vahinkoa (%d/%d kestopistettä)"
+msgid "thing %d took %d damage (%d/%d hits, %d/%d armour)"
+msgstr "olio %d kärsi %d vahinkoa (%d/%d kestopistettä, %d/%d panssaria)"
 
-#: dumb/thingm.c:528
+#: dumb/thingm.c:544
 #, c-format
 msgid "melee: %d's attack on %d failed"
 msgstr "tappelu: %d:n hyökkäys %d:n kimppuun epäonnistui"
 
-#: dumb/thingm.c:615
+#: dumb/thingm.c:631
 #, c-format
 msgid "Thing %d becomes type %d; old type was %d"
 msgstr "Olio %d muuttuu tyyppi %d:ksi; ennen tyyppi oli %d"
@@ -1485,7 +1582,7 @@ msgstr "Outo könttityyppi %d um_events:ssä"
 msgid "%d is being crushed, but not by sector %d ???"
 msgstr "joku murskaa oliota %d muttei sektori %d ???"
 
-#: dumb/updthing.c:491
+#: dumb/updthing.c:536
 #, c-format
 msgid "climbing, factor=%d"
 msgstr "kiipeää, suhde=%d"
@@ -1644,6 +1741,50 @@ msgstr "DetectableAutorepeat käytössä"
 msgid "keyboard grab failed!"
 msgstr "näppäimistön omiminen epäonnistui!"
 
+#: htic/gettables.pt:59
+msgid "wand crystal"
+msgstr ""
+
+#: htic/gettables.pt:68
+msgid "crystal geode"
+msgstr ""
+
+#: htic/gettables.pt:78
+msgid "ethereal arrows"
+msgstr ""
+
+#: htic/gettables.pt:87
+msgid "quiver of ethereal arrows"
+msgstr ""
+
+#: htic/gettables.pt:97
+msgid "claw orb"
+msgstr ""
+
+#: htic/gettables.pt:106
+msgid "power orb"
+msgstr ""
+
+#: htic/gettables.pt:116
+msgid "crystal vial"
+msgstr ""
+
+#: htic/gettables.pt:125
+msgid "quartz flask"
+msgstr ""
+
+#: htic/keys.pt:65
+msgid "green key"
+msgstr "vihreä avain"
+
+#: htic/keys.pt:74
+msgid "blue key"
+msgstr "sininen avain"
+
+#: htic/keys.pt:83
+msgid "yellow key"
+msgstr "keltainen avain"
+
 #: libdumb/dos_sound.c:88
 #, c-format
 msgid "Couldn't initialize sound: %s"
@@ -1783,20 +1924,29 @@ msgstr ""
 msgid "waveOutWrite failed"
 msgstr "waveOutWrite epäonnistui"
 
-#: libdumb/prothing.c:83
+#: libdumb/prothing.c:75
 #, c-format
 msgid "wanted rot %c for sprite %s phase %d???"
 msgstr "haluttiin pyöritys %c spriten %s asennolle %d???"
 
-#: libdumb/prothing.c:103
+#: libdumb/prothing.c:95
 #, c-format
 msgid "Can't find sprite %s, ph=%d (%c) rot=%c"
 msgstr "Ei löydy spriteä %s, ph=%d (%c) rot=%c"
 
-#: libdumb/prothing.c:124
+#: libdumb/prothing.c:116
 #, c-format
 msgid "Can't find ThingPhase id=%d"
 msgstr "Ei löydy ThingPhasea jonka id=%d"
+
+#: libdumb/prothing.c:203
+#, c-format
+msgid "init %d protothings"
+msgstr "alustettu %d protoa"
+
+#: libdumb/protoinwad.c:98
+msgid "ProtoThing block chain corrupted"
+msgstr "ProtoThing-lohkoketju sekaisin"
 
 #: libdumb/sound_mix.c:112
 #, c-format
@@ -1812,181 +1962,181 @@ msgstr "sndmix_play_sound: paikat loppuivat (ääni jää soittamatta)"
 msgid "sndmix_calc_frag: strange format %d"
 msgstr "sndmix_calc_frag: outo muoto %d"
 
-#: libdumb/texture.c:158
+#: libdumb/texture.c:160
 msgid "Bad BPP value in paste_pict"
 msgstr "Kelvoton BPP-arvo paste_pict:ssä"
 
-#: libdumb/texture.c:178
+#: libdumb/texture.c:180
 msgid "Bad BPP value in paste_jpatch"
 msgstr "Kelvoton BPP-arvo paste_jpatch:ssa"
 
-#: libdumb/texture.c:214
+#: libdumb/texture.c:216
 #, c-format
 msgid "npnames=%d (should be %d)"
 msgstr "npnames=%d (pitäisi olla %d)"
 
-#: libdumb/texture.c:232
+#: libdumb/texture.c:234
 msgid "No metatexture lumps in WAD"
 msgstr "Ei metakuviokönttejä WAD:ssa"
 
 # %s on joko TEXTURE1 tai TEXTURE2
-#: libdumb/texture.c:239 libdumb/texture.c:243
+#: libdumb/texture.c:241 libdumb/texture.c:245
 #, c-format
 msgid "%s has %d wall textures"
 msgstr "%s:ssä on %d seinäkuviota"
 
-#: libdumb/texture.c:338
+#: libdumb/texture.c:340
 msgid "Can't find any sprites in WAD"
 msgstr "WAD:sta ei löydy yhtään spriteä"
 
-#: libdumb/texture.c:354
+#: libdumb/texture.c:356
 #, c-format
 msgid "too short sprite: %s"
 msgstr "liian lyhyt sprite: %s"
 
-#: libdumb/texture.c:363
+#: libdumb/texture.c:365
 #, c-format
 msgid "Init %d sprites"
 msgstr "Alustettu %d spriteä"
 
-#: libdumb/texture.c:383
+#: libdumb/texture.c:385
 #, c-format
 msgid "Bad lumpnum for texture %s in load_sprite()"
 msgstr "Kelvoton köntin numero kuviolla %s load_sprite():ssä"
 
-#: libdumb/texture.c:422
+#: libdumb/texture.c:424
 #, c-format
 msgid "Can't find sprite texture %s"
 msgstr "Spritekuviota %s ei löydy"
 
-#: libdumb/texture.c:471
+#: libdumb/texture.c:473
 msgid "Can't find any flats in WAD"
 msgstr "WAD:sta ei löydy yhtään tasokuviota"
 
-#: libdumb/texture.c:509
+#: libdumb/texture.c:511
 #, c-format
 msgid "funny length (%d) for flat %s"
 msgstr "outo pituus (%d) tasokuviolla %s"
 
-#: libdumb/texture.c:514
+#: libdumb/texture.c:516
 #, c-format
 msgid "Init %d flats"
 msgstr "Alustettu %d tasokuviota"
 
-#: libdumb/texture.c:569
+#: libdumb/texture.c:571
 #, c-format
 msgid "Can't find flat texture %s"
 msgstr "Tasokuviota %s ei löydy"
 
-#: libdumb/texture.c:624
+#: libdumb/texture.c:626
 #, c-format
 msgid "Patchnum %d (%s) doesn't exist"
 msgstr "Osakuviota %d (%s) ei ole"
 
-#: libdumb/texture.c:628
+#: libdumb/texture.c:630
 #, c-format
 msgid "loading patchnum %d (%s)"
 msgstr "lataan osakuvion %d (%s)"
 
-#: libdumb/texture.c:651
+#: libdumb/texture.c:653
 #, c-format
 msgid "init_walltexs(): %d textures"
 msgstr "init_walltexs(): %d kuviota"
 
-#: libdumb/texture.c:685
+#: libdumb/texture.c:687
 #, c-format
 msgid "Can't find wall texture %s"
 msgstr "Seinäkuviota %s ei löydy"
 
-#: libdumb/texture.c:700
+#: libdumb/texture.c:702
 #, c-format
 msgid "wtex \"%s\" is unaligned with offset %ld!"
 msgstr "seinäkuvio \"%s\" on %ld tavua poissa kohdaltaan!"
 
-#: libdumb/texture.c:712
+#: libdumb/texture.c:714
 #, c-format
 msgid "using one-patch kludge for %s"
 msgstr "käytän yhden osakuvion kikkaa %s:lle"
 
-#: libdumb/texture.c:732
+#: libdumb/texture.c:734
 #, c-format
 msgid "load_walltex %s at %d bpp"
 msgstr "load_walltex %s %d bpp:llä"
 
-#: libdumb/texture.c:741
+#: libdumb/texture.c:743
 #, c-format
 msgid "%s: %d patches"
 msgstr "%s: %d osakuviota"
 
-#: libdumb/texture.c:752
+#: libdumb/texture.c:754
 #, c-format
 msgid "Can't make sense of patch #%d, texture %s"
 msgstr "En saa selvää osasta #%d kuviossa %s"
 
-#: libdumb/texture.c:756
+#: libdumb/texture.c:758
 #, c-format
 msgid "%s: loaded"
 msgstr "%s: ladattu"
 
-#: libdumb/texture.c:786
+#: libdumb/texture.c:788
 #, c-format
 msgid "found font %s already loaded"
 msgstr "kirjasinlaji %s on näköjään jo ladattu"
 
-#: libdumb/texture.c:792
+#: libdumb/texture.c:794
 msgid "Too many fonts"
 msgstr "Liikaa kirjasinlajeja"
 
 #. OK, now set up each character to be loaded when needed
-#: libdumb/texture.c:798
+#: libdumb/texture.c:800
 #, c-format
 msgid "Loading font #%d (%s)"
 msgstr "Lataan kirjasinlajia #%d (%s)"
 
-#: libdumb/texture.c:827
+#: libdumb/texture.c:829
 #, c-format
 msgid "Request for bad fontnum (%d)"
 msgstr "Kelvoton kirjasinlajin numero (%d)"
 
-#: libdumb/texture.c:829
+#: libdumb/texture.c:838
 #, c-format
-msgid "Request for bad font char (%d:%d)"
-msgstr "Merkkiä ei ole kirjasinlajissa (%d:%d)"
+msgid "Request for bad font char (%d:%d, `%c')"
+msgstr "Merkkiä ei ole kirjasinlajissa (%d:%d, \"%c\")"
 
-#: libdumb/texture.c:870
+#: libdumb/texture.c:882
 msgid "too many misc textures"
 msgstr "liikaa luokittelemattomia kuvioita"
 
-#: libdumb/texture.c:897
+#: libdumb/texture.c:909
 #, c-format
 msgid "get_texture_num: unsupported texture type (%d)"
 msgstr "get_texture_num: kuvion tyyppiä %d ei tueta"
 
-#: libdumb/texture.c:916
+#: libdumb/texture.c:928
 #, c-format
 msgid "get_texture_bynum: unsupported texture type (%d)"
 msgstr "get_texture_bynum: kuvion tyyppiä %d ei tueta"
 
-#: libdumb/texture.c:936
+#: libdumb/texture.c:948
 #, c-format
 msgid "count_textures: unsupported texture type (%d)"
 msgstr "count_textures: kuvion tyyppiä %d ei tueta"
 
-#: libdumb/texture.c:950
+#: libdumb/texture.c:962
 msgid "init_textures(): done"
 msgstr "init_textures(): valmis"
 
-#: libdumb/texture.c:987
+#: libdumb/texture.c:999
 #, c-format
 msgid "Strange texture type (0x%x) in free_texels"
 msgstr "Outo kuvion tyyppi (0x%x) free_texels:ssä"
 
-#: libdumb/texture.c:998
+#: libdumb/texture.c:1010
 #, c-format
 msgid "Strange BPP value (%d) in load_texels"
 msgstr "Outo BPP-arvo (%d) load_texels:ssä"
 
-#: libdumb/texture.c:1019
+#: libdumb/texture.c:1031
 #, c-format
 msgid "Strange texture type (0x%x) in load_texels"
 msgstr "Outo kuvion tyyppi (0x%x) load_texels:ssä"
@@ -2014,7 +2164,8 @@ msgstr "Valitsin tarvitsee argumentin -- %s\n"
 msgid "internal error: set_conf(): strange type %d\n"
 msgstr "sisäinen virhe: set_conf(): outo tyyppi %d\n"
 
-#: libdumbutil/conffile.c:119
+#. TRANS Each line must begin with a semicolon.
+#: libdumbutil/conffile.c:120
 #, c-format
 msgid ""
 "; %s\n"
@@ -2023,7 +2174,7 @@ msgstr ""
 "; %s\n"
 "; tämä tiedosto on ohjelman tekemä, mutta voit muuttaa tätä jos haluat\n"
 
-#: libdumbutil/conffile.c:131
+#: libdumbutil/conffile.c:132
 #, c-format
 msgid ""
 "\n"
@@ -2032,17 +2183,17 @@ msgstr ""
 "\n"
 "; Osa \"%s\": %s\n"
 
-#: libdumbutil/conffile.c:137
+#: libdumbutil/conffile.c:138
 #, c-format
 msgid "internal error: save_conf(): strange type %d, treating as int\n"
 msgstr ""
 "sisäinen virhe: save_conf(): outo tyyppi %d, käsittelen kokonaislukuna\n"
 
-#: libdumbutil/conffile.c:202
+#: libdumbutil/conffile.c:203
 msgid "Missing quote in configuration file\n"
 msgstr "Asetustiedostosta puuttuu lainausmerkki\n"
 
-#: libdumbutil/conffile.c:224
+#: libdumbutil/conffile.c:225
 msgid "Trailing backslash in configuration file\n"
 msgstr "Asetustiedossa on kenoviiva rivin lopussa\n"
 
@@ -2259,17 +2410,21 @@ msgstr "%s: siirtyessä kohtaan %u: %s"
 msgid "%s: short read (%lu<%lu): %s"
 msgstr "%s: lukeminen katkesi (%lu<%lu): %s"
 
-#: libdumbutil/safeio.c:106
-#, c-format
-msgid "%s: short read (%d<%lu): %s"
-msgstr "%s: lukeminen katkesi (%d<%lu): %s"
+#: libdumbutil/safeio.c:105
+msgid "<unknown file>"
+msgstr "<tuntematon tiedosto>"
 
-#: libdumbutil/safeio.c:119
+#: libdumbutil/safeio.c:113
+#, c-format
+msgid "%s: unexpected EOF"
+msgstr "%s: odottamaton EOF"
+
+#: libdumbutil/safeio.c:131
 #, c-format
 msgid "%s: opening: %s"
 msgstr "%s: avatessa: %s"
 
-#: libdumbutil/safeio.c:130
+#: libdumbutil/safeio.c:142
 #, c-format
 msgid "%s: closing: %s"
 msgstr "%s: sulkiessa: %s"
@@ -2294,12 +2449,22 @@ msgstr "munmapatessa %lu tavua @ %p: %s"
 msgid "out of memory reallocating %lu bytes (old=%p)"
 msgstr "muisti loppui varattaessa %lu tavua (vanhat=%p)"
 
-#: libdumbutil/safem.c:132 libdumbutil/safem.c:142
+#. If we're out of memory, does gettext() work?  Perhaps this
+#. * string should be pretranslated and saved in a variable.
+#. *
+#. * I asked Ulrich Drepper and he told me:
+#. * 1) the current gettext implementation doesn't need more
+#. *    memory for translation after it has loaded the catalog;
+#. * 2) they are planning more complex schemes (compression?)
+#. *    which might need more memory at runtime.  But even then,
+#. *    gettext would just return the string untranslated if it
+#. *    ran out of memory.
+#: libdumbutil/safem.c:142 libdumbutil/safem.c:153
 #, c-format
 msgid "out of memory allocating %lu bytes"
 msgstr "muisti loppui varattaessa %lu tavua"
 
-#: libdumbutil/safem.c:160
+#: libdumbutil/safem.c:171
 msgid "Attempt to free NULL."
 msgstr "Yritys vapauttaa NULL."
 
@@ -2316,100 +2481,100 @@ msgstr "köntti"
 msgid "Bad lumpnum in free_lump"
 msgstr "Kelvoton köntin numero free_lump:ssa"
 
-#: libdumbwad/wadio.c:186
+#: libdumbwad/wadio.c:187
 #, c-format
 msgid "wad hashtable: %d entries unused, max chain %d"
 msgstr "wad-hajotustaulukko: %d tyhjää paikkaa, pisin ketju %d"
 
-#: libdumbwad/wadio.c:226
+#: libdumbwad/wadio.c:227
 #, c-format
 msgid "%s: lump %d has no name"
 msgstr "%s: köntillä %d ei ole nimeä"
 
-#: libdumbwad/wadio.c:232
+#: libdumbwad/wadio.c:233
 #, c-format
 msgid "%s: lump %d is too big for wad"
 msgstr "%s: köntti %d ei mahdu wadiin"
 
-#: libdumbwad/wadio.c:254
+#: libdumbwad/wadio.c:255
 #, c-format
 msgid "%s is too short to be a valid wadfile"
 msgstr "%s on liian lyhyt wad-tiedostoksi"
 
-#: libdumbwad/wadio.c:261
+#: libdumbwad/wadio.c:262
 #, c-format
 msgid "%s mapped at %p (%lu bytes)"
 msgstr "%s mapattu kohtaan %p (%lu tavua)"
 
-#: libdumbwad/wadio.c:267
+#: libdumbwad/wadio.c:268
 #, c-format
 msgid "Bad signature on %s: expecting %s, got %.4s"
 msgstr "%s alkaa väärin: pitäisi olla %s, on %.4s"
 
-#: libdumbwad/wadio.c:271
+#: libdumbwad/wadio.c:273
 #, c-format
-msgid "directory for %s would be beyond end of file"
-msgstr "tiedoston %s sisällysluettelo ei mahdu tiedostoon"
+msgid "directory for %s would be beyond end of file; truncating"
+msgstr "tiedoston %s sisällysluettelo ei mahdu tiedostoon; katkaisen"
 
 #. say what we've done
-#: libdumbwad/wadio.c:274
+#: libdumbwad/wadio.c:284
 #, c-format
 msgid "%s %s: %d lumps dir @ %d"
 msgstr "%s %s: %d könttiä, sisällysluettelo kohdassa %d"
 
-#: libdumbwad/wadio.c:387
+#: libdumbwad/wadio.c:397
 #, c-format
 msgid "Can't find lump marker %s (lump %s)"
 msgstr "Alkumerkkiä %s ei löydy köntille %s"
 
-#: libdumbwad/wadio.c:396
+#: libdumbwad/wadio.c:406
 #, c-format
 msgid "Can't find lump %s:%s"
 msgstr "Könttiä %s:%s ei löydy"
 
-#: libdumbwad/wadio.c:399
+#: libdumbwad/wadio.c:409
 #, c-format
 msgid "Can't find lump %s"
 msgstr "Könttiä %s ei löydy"
 
-#: libdumbwad/wadio.c:405
+#: libdumbwad/wadio.c:415
 #, c-format
 msgid "Can't find end-marker %s"
 msgstr "Loppumerkkiä %s ei löydy"
 
 #. didn't find one, fail
-#: libdumbwad/wadio.c:414
+#: libdumbwad/wadio.c:424
 #, c-format
 msgid "End-marker %s occurs before lump %s"
 msgstr "Köntti %2$s on vasta loppumerkin %1$s jälkeen"
 
-#: libdumbwad/wadio.c:446 libdumbwad/wadio.c:456
+#: libdumbwad/wadio.c:456 libdumbwad/wadio.c:466
 #, c-format
 msgid "Bad lumpnum (%x) in get_lump_*"
 msgstr "Kelvoton köntin numero (%x) jossakin get_lump_*-funktiossa"
 
-#: libdumbwad/wadwr.c:63 libdumbwad/wadwr.c:125
+#: libdumbwad/wadwr.c:61 libdumbwad/wadwr.c:141
 #, c-format
 msgid "%s: can't open: %s"
 msgstr "%s: ei aukea: %s"
 
-#: libdumbwad/wadwr.c:76 libdumbwad/wadwr.c:89 libdumbwad/wadwr.c:95
-#: libdumbwad/wadwr.c:154
+#: libdumbwad/wadwr.c:75 libdumbwad/wadwr.c:90 libdumbwad/wadwr.c:100
+#: libdumbwad/wadwr.c:172
 #, c-format
 msgid "%s: short write: %s"
 msgstr "%s: kirjoitus katkesi: %s"
 
-#: libdumbwad/wadwr.c:92
+#: libdumbwad/wadwr.c:95
 #, c-format
 msgid "%s: can't rewind: %s"
 msgstr "%s: ei pääse takaisin alkuun: %s"
 
-#: libdumbwad/wadwr.c:164
+#: libdumbwad/wadwr.c:183
 #, c-format
 msgid "%s: can't get position: %s"
 msgstr "%s: ei saa paikkaa selville: %s"
 
-#: libdumbwad/wadwr.c:170
+#: libdumbwad/wadwr.c:189
 #, c-format
 msgid "%s: can't align: %s"
 msgstr "%s: ei voi kohdistaa: %s"
@@ -2491,45 +2656,45 @@ msgstr "%s: valitsin \"-W %s\" on epäselvä\n"
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr "%s: valitsin \"-W %s\" ei salli argumenttia\n"
 
-#: ptcomp/animcomp.c:76
-msgid "name expected after AnimTex"
+#. one parameter, name
+#: ptcomp/animcomp.c:74
+msgid "Name expected after AnimTex"
 msgstr "AnimTex-sanan jälkeen pitää olla nimi"
 
-#: ptcomp/animcomp.c:98
-msgid "To must exceed Parm"
-msgstr "To:n pitää olla suurempi kuin Parm"
+#: ptcomp/animcomp.c:97
+#, c-format
+msgid "To (%d) must exceed Parm (%d)"
+msgstr "To:n (%d) pitää olla suurempi kuin Parm (%d)"
 
-#: ptcomp/animcomp.c:114
+#: ptcomp/animcomp.c:113
 msgid "Tag must come before any Texture"
 msgstr "Tag pitää olla ennen Textureja"
 
-#: ptcomp/animcomp.c:145
+#: ptcomp/animcomp.c:144
 #, c-format
 msgid "%5d animtexes\n"
 msgstr "%5d kuvioanimaatiota (ANIMTEX)\n"
 
-#: ptcomp/gettcomp.c:77
-msgid "name expected after Gettable"
+#. Gettable -!- NAME
+#: ptcomp/gettcomp.c:74
+msgid "Name expected after Gettable"
 msgstr "Gettable-sanan jälkeen pitää olla nimi"
 
-#: ptcomp/gettcomp.c:150
+#: ptcomp/gettcomp.c:140
 #, c-format
 msgid "%5d gettables\n"
 msgstr "%5d kerättävää (GETTABLE)\n"
 
-#: ptcomp/gettcomp.c:161
-msgid "gettable name parameter expected"
-msgstr "kerättävän (Gettable) nimi puuttuu"
+#: ptcomp/gettcomp.c:154
+msgid "Gettable name parameter expected"
+msgstr "Kerättävän (Gettable) nimi puuttuu"
 
-#: ptcomp/gettcomp.c:167
-msgid "gettable name unrecognised"
-msgstr "tätä kerättävää ei ole määritelty"
+#: ptcomp/gettcomp.c:163
+#, c-format
+msgid "Gettable name `%s' unrecognised"
+msgstr "Kerättävää (Gettable) \"%s\" ei ole määritelty"
 
-#: ptcomp/licomp.c:75
-msgid "name expected after Level"
-msgstr "Level-sanan jälkeen pitää olla nimi"
-
-#: ptcomp/licomp.c:105
+#: ptcomp/licomp.c:104
 #, c-format
 msgid "%5d levinfos\n"
 msgstr "%5d kenttää (LEVINFO)\n"
@@ -2539,250 +2704,345 @@ msgstr "%5d kenttää (LEVINFO)\n"
 msgid "unrecognised levelname: %s\n"
 msgstr "kenttää %s ei ole määritelty\n"
 
-#: ptcomp/ltcomp.c:75
-msgid "name expected after Line/SectorType"
+#. two parameters, name and id
+#: ptcomp/ltcomp.c:74
+msgid "Name expected after Line/SectorType"
 msgstr "LineType- ja SectorType-sanan jälkeen pitää olla nimi"
 
-#: ptcomp/ltcomp.c:80
-msgid "ID expected after Line/SectorType"
-msgstr "LineType ja SectorType tarvitsevat ID:n"
-
-#: ptcomp/ltcomp.c:111
+#: ptcomp/ltcomp.c:106
 #, c-format
-msgid "ID %d (%s) not unique (clashes with %s)\n"
-msgstr "ID %d (%s) on jo käytössä (%s)\n"
+msgid "ID %d (%s) not unique (clashes with %s)"
+msgstr "ID %d (%s) on jo käytössä (%s)"
 
-#: ptcomp/ltcomp.c:125
-msgid "too many actions"
-msgstr "liikaa toimintoja"
+#: ptcomp/ltcomp.c:120
+#, c-format
+msgid "Too many actions (max %d)"
+msgstr "Liikaa toimintoja (raja %d)"
 
-#: ptcomp/ltcomp.c:128
-msgid "lumptype expected after Action"
+#: ptcomp/ltcomp.c:121
+msgid "Lumptype expected after Action"
 msgstr "Action-sanan jälkeen pitää olla könttityyppi"
 
-#: ptcomp/ltcomp.c:132
-msgid "eventtype expected after Action"
+#: ptcomp/ltcomp.c:123
+msgid "Eventtype expected after Action"
 msgstr "Action-sanan ja könttityypin jälkeen pitää olla tapahtumatyyppi"
 
-#: ptcomp/ltcomp.c:174
+#: ptcomp/ltcomp.c:165
 #, c-format
 msgid "%5d linetypes\n"
 msgstr "%5d seinätyyppiä (LINETYPE)\n"
 
-#: ptcomp/ltcomp.c:183
+#: ptcomp/ltcomp.c:175
 #, c-format
 msgid "%5d sectortypes\n"
 msgstr "%5d sektorityyppiä (SECTTYPE)\n"
 
-#: ptcomp/ltcomp.c:274
-msgid "termtype parameter expected"
-msgstr "tarvitaan kohdetyyppi"
+#: ptcomp/ltcomp.c:268
+msgid "Termtype parameter expected"
+msgstr "Tarvitaan kohdetyyppi"
 
-#: ptcomp/ltcomp.c:288
-msgid "strange lumptype"
-msgstr "outo könttityyppi"
+#: ptcomp/ltcomp.c:282
+msgid "Strange lumptype"
+msgstr "Outo könttityyppi"
 
-#: ptcomp/ltcomp.c:322
-msgid "strange eventtype"
-msgstr "outo tapahtumatyyppi"
+#: ptcomp/ltcomp.c:316
+msgid "Strange eventtype"
+msgstr "Outo tapahtumatyyppi"
 
-#: ptcomp/ltcomp.c:332
-msgid "eventtype expected after WaitFor"
+#: ptcomp/ltcomp.c:324
+msgid "Eventtype expected after WaitFor"
 msgstr "WaitFor-sanan jälkeen pitää olla tapahtumatyyppi"
 
-#: ptcomp/parm.c:49
-msgid "string parameter expected"
-msgstr "tarvitaan merkkijonoparametri"
+#: ptcomp/parm.c:57 ptcomp/parm.c:66
+#, c-format
+msgid "String is too long (max %d characters)"
+msgstr "Merkkijono on liian pitkä (raja %d merkkiä)"
 
-#: ptcomp/parm.c:59
-msgid "character parameter expected"
-msgstr "tarvitaan merkkiparametri"
+#: ptcomp/parm.c:69 ptcomp/parm.c:93 ptcomp/parm.c:176
+msgid "String parameter expected.  Try --fake-strings"
+msgstr "Tarvitaan merkkijonoparametri.  Kokeile valitsinta --fake-strings"
 
-#: ptcomp/parm.c:68
-msgid "integer parameter expected"
-msgstr "tarvitaan kokonaislukuparametri"
+#: ptcomp/parm.c:72 ptcomp/parm.c:96
+msgid "String parameter expected"
+msgstr "Tarvitaan merkkijonoparametri"
 
-#: ptcomp/parm.c:77
-msgid "floating-point parameter expected"
-msgstr "tarvitaan desimaalilukuparametri"
+#: ptcomp/parm.c:120
+#, c-format
+msgid "Invalid escape sequence `\\%c'"
+msgstr "Virheellinen kenoviivakoodi: \\%c"
 
-#: ptcomp/parm.c:86
-msgid "time parameter expected"
-msgstr "tarvitaan aikaparametri"
+#: ptcomp/parm.c:165 ptcomp/parm.c:174
+msgid "Must be exactly one character"
+msgstr "Pitää olla tasan yksi merkki"
 
-#: ptcomp/parm.c:95
-msgid "speed parameter expected"
-msgstr "tarvitaan nopeusparametri"
+#: ptcomp/parm.c:179
+msgid "Character parameter expected"
+msgstr "Tarvitaan merkkiparametri"
 
-#: ptcomp/parm.c:104
-msgid "arc parameter expected"
-msgstr "tarvitaan kulmaparametri"
+#: ptcomp/parm.c:190
+msgid "Integer parameter expected"
+msgstr "Tarvitaan kokonaislukuparametri"
 
-#: ptcomp/parm.c:155
-msgid "strange timing unit"
-msgstr "outo aikayksikkö"
+# Jos "floating-point parameter" olisi "desimaaliluku", mikä olisi
+# "hexadecimal floating-point number"?  (Tuleva C9X sallii semmoisetkin.)
+#: ptcomp/parm.c:200
+msgid "Floating-point parameter expected"
+msgstr "Tarvitaan liukulukuparametri"
 
-#: ptcomp/parm.c:176
-msgid "strange speed unit"
-msgstr "outo nopeusyksikkö"
+#: ptcomp/parm.c:210
+msgid "Time parameter expected"
+msgstr "Tarvitaan aikaparametri"
 
-#: ptcomp/parm.c:206
-msgid "strange arc unit"
-msgstr "outo kulmayksikkö"
+#: ptcomp/parm.c:220
+msgid "Speed parameter expected"
+msgstr "Tarvitaan nopeusparametri"
 
-#: ptcomp/phasecomp.c:76
-msgid "name expected after PhaseTable"
+#: ptcomp/parm.c:230
+msgid "Arc parameter expected"
+msgstr "Tarvitaan kulmaparametri"
+
+#: ptcomp/parm.c:273
+msgid "Strange timing unit"
+msgstr "Outo aikayksikkö"
+
+#: ptcomp/parm.c:294
+msgid "Strange speed unit"
+msgstr "Outo nopeusyksikkö"
+
+#: ptcomp/parm.c:307
+#, c-format
+msgid "Obsolete arc syntax `%s'; use `0deg'"
+msgstr "Vanha kaarisyntaksi \"%s\"; käytä muotoa \"0deg\""
+
+#: ptcomp/parm.c:310
+#, c-format
+msgid "Obsolete arc syntax `%s'; use `pi/%d'"
+msgstr "Vanha kaarisyntaksi \"%s\"; käytä muotoa \"pi/%d\""
+
+#: ptcomp/parm.c:329
+msgid "Strange arc unit"
+msgstr "Outo kulmayksikkö"
+
+#. one parameter, name
+#: ptcomp/phasecomp.c:74
+msgid "Name expected after PhaseTable"
 msgstr "PhaseTable-sanan jälkeen pitää olla nimi"
 
-#: ptcomp/phasecomp.c:221
+#: ptcomp/phasecomp.c:97
+msgid "Name expected after Phase"
+msgstr "Phase-sanan jälkeen pitää olla nimi"
+
+#: ptcomp/phasecomp.c:223
 #, c-format
 msgid "%5d phase tables\n"
 msgstr "%5d tilataulukkoa (PHASES)\n"
 
 #: ptcomp/phasecomp.c:243
-msgid "phase table name parameter expected"
-msgstr "tarvitaan tilataulukon nimi"
+msgid "Phase table name parameter expected"
+msgstr "Tarvitaan tilataulukon nimi"
 
 #: ptcomp/phasecomp.c:246
-msgid "phase table name unrecognised"
-msgstr "tätä tilataulukkoa ei ole määritelty"
+#, c-format
+msgid "Phase table name `%s' unrecognised"
+msgstr "Tilataulukkoa \"%s\" ei ole määritelty"
 
 #: ptcomp/phasecomp.c:256
-msgid "you need to specify a phasetable first"
-msgstr "valitse ensin taulukko, johon tämä tila kuuluu"
+msgid "You need to specify a phasetable first"
+msgstr "Valitse ensin taulukko, johon tämä tila kuuluu"
 
-#: ptcomp/phasecomp.c:258
-msgid "phase name parameter expected"
-msgstr "tarvitaan tilan nimi"
+#: ptcomp/phasecomp.c:257
+msgid "Phase name parameter expected"
+msgstr "Tarvitaan tilan nimi"
 
-#: ptcomp/phasecomp.c:262
-msgid "phase name unrecognised"
-msgstr "tätä tilaa ei ole määritelty"
+#: ptcomp/phasecomp.c:261
+#, c-format
+msgid "Phase name `%s' unrecognised"
+msgstr "Tilaa \"%s\" ei ole määritelty"
 
-#: ptcomp/protocomp.c:88
-msgid "name expected after Proto"
+#. Proto -!- NAME [ID:INTEGER]
+#: ptcomp/protocomp.c:89
+msgid "Name expected after Proto"
 msgstr "Proto-sanan jälkeen pitää olla nimi"
 
-#: ptcomp/protocomp.c:243
+#: ptcomp/protocomp.c:184
+msgid "FastShoot is obsolete; use Nasty"
+msgstr "FastShoot on vanha nimi; käytä sanaa Nasty"
+
+#: ptcomp/protocomp.c:265
 #, c-format
 msgid "%5d protos: sorting"
 msgstr "%5d protoa (PROTOS): lajittelen"
 
-#: ptcomp/protocomp.c:246
+#: ptcomp/protocomp.c:268
 msgid ", writing"
 msgstr ", tallennan"
 
-#: ptcomp/protocomp.c:250
+#: ptcomp/protocomp.c:275
 #, c-format
 msgid "warning: proto %s (%d) has no phasetable\n"
 msgstr "varoitus: protolla %s (%d) ei ole tilataulukkoa\n"
 
-#: ptcomp/protocomp.c:263
-msgid "proto name parameter expected"
-msgstr "tarvitaan proton nimi"
+#: ptcomp/protocomp.c:288
+msgid "Proto name parameter expected"
+msgstr "Tarvitaan proton nimi"
 
-#: ptcomp/protocomp.c:269
-msgid "proto name unrecognised"
-msgstr "tätä protoa ei ole määritelty"
-
-#: ptcomp/protocomp.c:281
+#: ptcomp/protocomp.c:294
 #, c-format
-msgid "ID %d not unique (clashes with %s)\n"
-msgstr "ID %d on jo käytössä (%s)\n"
+msgid "Proto name `%s' unrecognised"
+msgstr "Protoa \"%s\" ei ole määritelty"
+
+#: ptcomp/protocomp.c:305
+#, c-format
+msgid "ID %d not unique (clashes with %s)"
+msgstr "ID %d on jo käytössä (%s)"
 
 #: ptcomp/ptcomp.c:101
+msgid "Syntax error"
+msgstr "Syntaksivirhe"
+
+#: ptcomp/ptcomp.c:109
 #, c-format
 msgid ""
-"Usage: %s -d DIRECTORY\n"
+"Usage: %s -o WADFILE\n"
+"   or: %s -d DIRECTORY\n"
 "Compile .pt files to various lumps used by DUMB.  Ptcomp reads .pt source\n"
-"from standard input, and creates the following files in DIRECTORY:\n"
-"PHASES.lump, PROTOS.lump, GETTABLE.lump, LINETYPE.lump, SECTTYPE.lump,\n"
-"SOUNDS.lump, ANIMTEX.lump and LEVINFO.lump.\n"
+"from standard input, and creates the following lumps: PHASES, PROTOS,\n"
+"GETTABLE, LINETYPE, SECTTYPE, SOUNDS, ANIMTEX and LEVINFO.  It saves them\n"
+"either in WADFILE or as *.lump files in DIRECTORY.\n"
 "\n"
 msgstr ""
-"Käyttö: %s -d HAKEMISTO\n"
-"Kääntää .pt-tiedostoja kaikenlaisiksi DUMB:n käyttämiksi könteiksi. Ptcomp\n"
-"lukee .pt-lähdekoodia vakiosyötteestä ja tekee HAKEMISTOON seuraavat "
-"tiedostot:\n"
-"PHASES.lump, PROTOS.lump, GETTABLE.lump, LINETYPE.lump, SECTTYPE.lump,\n"
-"SOUNDS.lump, ANIMTEX.lump ja LEVINFO.lump.\n"
+"Käyttö: %s -o WAD-TIEDOSTO\n"
+"   tai: %s -d HAKEMISTO\n"
+"Kääntää .pt-tiedostoja kaikenlaisiksi DUMB:n käyttämiksi\n"
+"könteiksi. Ptcomp lukee .pt-lähdekoodia vakiosyötteestä ja tekee\n"
+"seuraavat köntit: PHASES, PROTOS, GETTABLE, LINETYPE, SECTTYPE,\n"
+"SOUNDS, ANIMTEX ja LEVINFO.  Se tallentaa ne joko WAD-TIEDOSTOON tai\n"
+"*.lump-tiedostoiksi HAKEMISTOON.\n"
 "\n"
 
-#: ptcomp/ptcomp.c:107
+#: ptcomp/ptcomp.c:118
 msgid ""
-"  -d, --output-directory=DIRECTORY  write the output files to DIRECTORY\n"
+"  -o, --output-wad=WADFILE          create WADFILE containing the lumps\n"
+"  -d, --output-directory=DIRECTORY  write *.lump files in DIRECTORY\n"
+"      --fake-strings                translate name tokens to strings\n"
+"                                    where needed\n"
 "      --help                        display this help and exit\n"
 "      --version                     output version information and exit\n"
 "\n"
 msgstr ""
-"  -d, --output-directory=HAKEMISTO  tallenna tulostiedostot HAKEMISTOON\n"
+"  -o, --output-wad=WAD-TIEDOSTO     luo WAD-TIEDOSTO ja kokoa köntit siihen\n"
+"  -d, --output-directory=HAKEMISTO  tallenna *.lump-tiedostoiksi "
+"HAKEMISTOON\n"
+"      --fake-strings                tulkitse merkkijonojen paikalla olevat\n"
+"                                    nimet merkkijonoiksi\n"
 "      --help                        näytä tämä ohje ja lopeta\n"
 "      --version                     näytä versiotiedot ja lopeta\n"
 "\n"
 
-#: ptcomp/ptcomp.c:146 tool/dark2trans.c:73 tool/mkdfnt.c:180
+#: ptcomp/ptcomp.c:158 tool/dark2trans.c:73 tool/mkdfnt.c:180
 #: tool/mknulmap.c:112 tool/mkpnames.c:101
 #, c-format
 msgid "%s: Deprecated usage.  Assuming you meant:\n"
 msgstr "%s: Vanhentunut käyttötapa. Tee mieluummin näin:\n"
 
 #. invalid option
-#: ptcomp/ptcomp.c:171 ptcomp/ptcomp.c:178 test/fixed_bm.c:94
+#: ptcomp/ptcomp.c:191 ptcomp/ptcomp.c:200 test/fixed_bm.c:94
 #: test/ldltest.c:249 tool/dark2trans.c:187 tool/mkdfnt.c:145
 #: tool/mknulmap.c:216 tool/mkpnames.c:169 tool/ppmtodumb.c:249
-#: xwad/xproto.c:215 xwad/xwad.c:190
+#: xwad/xproto.c:153 xwad/xwad.c:190
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Lisätietoja saat komennolla \"%s --help\".\n"
 
-#: ptcomp/ptcomp.c:177
+#: ptcomp/ptcomp.c:198
 #, c-format
-msgid "%s: You must use `-o DIRECTORY'\n"
-msgstr "%s: Määrää kohdehakemisto valitsimella -o\n"
+msgid "%s: You must use `-d DIRECTORY' or `-o WADFILE'\n"
+msgstr ""
+"%s: Määrää tallennusmuoto valitsimella \"-d HAKEMISTO\" tai \"-o "
+"WAD-TIEDOSTO\"\n"
 
-#: ptcomp/ptcomp.c:193 tool/mkpnames.c:408
+#: ptcomp/ptcomp.c:214 tool/mkpnames.c:408
 msgid "stdin"
-msgstr "standardisyöte"
+msgstr "vakiosyöte"
 
-#: ptcomp/ptcomp.c:194
+#: ptcomp/ptcomp.c:215
 #, c-format
 msgid "%s: compiling...\n"
 msgstr "%s: käännän...\n"
 
-#: ptcomp/ptcomp.c:198
-#, c-format
-msgid "%s: writing...\n"
-msgstr "%s: tallennan...\n"
-
-#: ptcomp/soundcomp.c:64
-msgid "name expected after SoundType"
+#. one parameter: name
+#: ptcomp/soundcomp.c:62
+msgid "Name expected after SoundType"
 msgstr "SoundType-sanan jälkeen pitää olla nimi"
 
-#: ptcomp/soundcomp.c:81
-msgid "too many sound redirects"
-msgstr "liikaa sijaisääniä"
+#: ptcomp/soundcomp.c:80
+#, c-format
+msgid "Too many sound redirects (max %d)"
+msgstr "Liikaa sijaisääniä (raja %d)"
 
-#: ptcomp/soundcomp.c:94
+#: ptcomp/soundcomp.c:93
 #, c-format
 msgid "%5d sounds\n"
 msgstr "%5d ääntä (SOUNDS)\n"
 
-#: ptcomp/soundcomp.c:105
-msgid "sound name parameter expected"
-msgstr "tarvitaan äänen nimi"
+#: ptcomp/soundcomp.c:103
+msgid "Sound name parameter expected"
+msgstr "Tarvitaan äänen nimi"
 
-#: ptcomp/soundcomp.c:122
-msgid "soundtype redefined"
-msgstr "ääni on jo määritelty"
-
-#: ptcomp/token.c:134
+#: ptcomp/soundcomp.c:120
 #, c-format
-msgid "syntax error near token `%s'\n"
-msgstr "virhe kohdan \"%s\" lähellä\n"
+msgid "Soundtype `%s' redefined"
+msgstr "Ääni \"%s\" on jo määritelty"
 
-#: ptcomp/token.c:144
-msgid "fatal error\n"
-msgstr "vakava virhe\n"
+#. this will save grief later
+#: ptcomp/token.c:60
+msgid "NUL characters are not allowed"
+msgstr "NUL-merkkejä ei saa olla"
+
+#: ptcomp/token.c:132 ptcomp/token.c:156
+msgid "Unexpected EOF"
+msgstr "Odottamaton EOF"
+
+#: ptcomp/token.c:155
+msgid "In string which begins here:"
+msgstr "Jonossa joka alkaa täältä:"
+
+#: ptcomp/token.c:188
+msgid "Line number is too large"
+msgstr "Rivinumero on liian suuri"
+
+#: ptcomp/token.c:190
+msgid "Line number expected"
+msgstr "Rivinumero puuttuu"
+
+#: ptcomp/token.c:200
+msgid "`\"' expected before filename"
+msgstr "'\"' tarvitaan ennen tiedoston nimeä"
+
+#: ptcomp/token.c:205
+msgid "`\"' expected after filename"
+msgstr "'\"' tarvitaan tiedoston nimen jälkeen"
+
+#: ptcomp/token.c:238
+msgid "Warning: "
+msgstr "Varoitus: "
+
+#: ptcomp/token.c:257
+msgid "End of file.\n"
+msgstr "Tiedosto loppui.\n"
+
+#: ptcomp/token.c:260
+msgid "Token was a newline.\n"
+msgstr "Rivi loppui.\n"
+
+#: ptcomp/token.c:264
+msgid "Token was a long string.\n"
+msgstr ""
+
+#: ptcomp/token.c:268
+#, c-format
+msgid "Token was: %s\n"
+msgstr ""
 
 #. strtol() couldn't parse it at all, or there is some garbage
 #. * after it.  Note that str may be empty, in which case
@@ -3157,12 +3417,12 @@ msgstr "%s: Voit muuntaa vain yhden merkin kerrallaan.\n"
 msgid "%s: You must use `--character=C'.\n"
 msgstr "%s: Määrää muunnettava merkki valitsimella \"--character=C\".\n"
 
-#: tool/mkdfnt.c:245 xwad/xproto.c:237 xwad/xwad.c:212
+#: tool/mkdfnt.c:245 xwad/xproto.c:178 xwad/xwad.c:212
 #, c-format
 msgid "Can't open display %s"
 msgstr "Ei voi avata näyttöä %s"
 
-#: tool/mkdfnt.c:245 xwad/xproto.c:238 xwad/xwad.c:212
+#: tool/mkdfnt.c:245 xwad/xproto.c:179 xwad/xwad.c:212
 msgid "<default>"
 msgstr "<oletus>"
 
@@ -3572,6 +3832,10 @@ msgstr "Peruuta"
 msgid "Preview"
 msgstr "Esikatselu"
 
+#: xwad/timewait.c:91
+msgid "Out of memory in XInternalConnectionNumbers"
+msgstr "Muisti loppui XInternalConnectionNumbers-kutsussa"
+
 #: xwad/xproctls.c:98
 msgid "RotState:"
 msgstr "Pyöritys:"
@@ -3632,7 +3896,12 @@ msgstr "Räjähdys"
 msgid "ID:"
 msgstr "ID:"
 
-#: xwad/xproto.c:122
+#: xwad/xproto.c:128 xwad/xproto.c:164 xwad/xwad.c:165 xwad/xwad.c:198
+#, c-format
+msgid "%s: internal limit on wad files exceeded\n"
+msgstr "%s: enemmän wad-tiedostoja kuin ohjelma jaksaa käsitellä\n"
+
+#: xwad/xproto.c:347
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [WADFILE]...\n"
@@ -3643,7 +3912,7 @@ msgstr ""
 "Katsele protothingejä X11:ssä.\n"
 "\n"
 
-#: xwad/xproto.c:125
+#: xwad/xproto.c:350
 msgid ""
 "  -w, --load-wad=FILE    load FILE as a WAD.  WADFILE argument does the "
 "same.\n"
@@ -3665,7 +3934,7 @@ msgstr ""
 "      --version            näytä versiotiedot ja lopeta\n"
 "\n"
 
-#: xwad/xproto.c:133
+#: xwad/xproto.c:358
 msgid ""
 "If no WADFILE nor --load-wad=FILE arguments are given, XProtoThing\n"
 "loads `doom2.wad'.\n"
@@ -3674,16 +3943,11 @@ msgstr ""
 "Jos et anna WAD-TIEDOSTO- etkä --load-wad=TIEDOSTO-argumentteja,\n"
 "XProtoThing lataa doom2.wad:n.\n"
 
-#: xwad/xproto.c:190 xwad/xproto.c:223 xwad/xwad.c:165 xwad/xwad.c:198
-#, c-format
-msgid "%s: internal limit on wad files exceeded\n"
-msgstr "%s: enemmän wad-tiedostoja kuin ohjelma jaksaa käsitellä\n"
-
-#: xwad/xproto.c:427
+#: xwad/xproto.c:478
 msgid "no PROTOS lump in wad"
 msgstr "ei PROTOS-könttiä wadissa"
 
-#: xwad/xproto.c:430
+#: xwad/xproto.c:485
 msgid "no protos"
 msgstr "ei protoja"
 
@@ -3976,3 +4240,6 @@ msgstr "Yläkuvio"
 #: xwad/xwadctls.c:681
 msgid "L-Texture"
 msgstr "Alakuvio"
+
+#~ msgid "syntax error near token `%s'\n"
+#~ msgstr "virhe kohdan \"%s\" lähellä\n"

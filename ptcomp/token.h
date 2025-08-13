@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * ptcomp/token.h: Reading tokens from the source file.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,12 +28,31 @@
 void begin_file(FILE *, const char *name);
 void end_file(void);
 
+/* There are four kind of tokens:
+ * - eof: NULL
+ * - newline: "\n"
+ * - string: "\"text with backslashes (\\\\) and quotes (\\\")\""
+ * - name: "symbol", "42"
+ */
+
+enum TokenClass {
+   TOKENCL_EOF,
+   TOKENCL_NEWLINE,
+   TOKENCL_STRING,
+   TOKENCL_NAME
+};
+enum TokenClass class_of_token(const char *);
+
 const char *next_token(void);
 void unget_token(void);
 
 void print_error_prefix(void);
-void synerr(const char *detail) __attribute__((noreturn));
-void err(const char *detail) __attribute__((noreturn));
+void warn(const char *format, ...)
+     __attribute__((format(printf, 1, 2)));
+void synerr(const char *format, ...)
+     __attribute__((format(printf, 1, 2), noreturn));
+void err(const char *format, ...)
+     __attribute__((format(printf, 1, 2), noreturn));
 
 #endif
 

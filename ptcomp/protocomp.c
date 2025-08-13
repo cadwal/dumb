@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * ptcomp/protocomp.c: Proto compiler.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,6 +30,7 @@
 
 #include "libdumbutil/safem.h"
 #include "libdumb/prothingstruct.h"
+#include "libdumb/protoinwad.h"
 
 #include "token.h"
 #include "globals.h"
@@ -36,10 +38,11 @@
 #include "gettcomp.h"
 #include "phasecomp.h"
 #include "protocomp.h"
+#include "soundcomp.h"
 
 typedef struct {
    ProtoThing pt;
-   char name[NAMELEN];
+   char *name;
 } ProtoThingRec;
 
 static int nprotos = 0, maxprotos = 0;
@@ -74,33 +77,33 @@ protocomp(void)
    p = protos + (nprotos++);
    memset(p, 0, sizeof(ProtoThingRec));
    p->pt.hits = -1;
-   p->pt.artitype = -1;
    p->pt.shootnum = 1;
    p->pt.flags |= PT_INF_MASS;
    p->pt.speed = FIXED_ONE;
    p->pt.see_arc = (FIXED_PI - FIXED_PI / 4);
    p->pt.aim_arc = (FIXED_PI / 4);
+   p->pt.spawnmax = 5;
    p->pt.become1 = -1;
    p->pt.become2 = -1;
-   /* two parameters, name and id */
-   s = next_token();
-   if (s == NULL || *s == '\n')
-      synerr(_("name expected after Proto"));
-   strncpy(p->name, s, NAMELEN - 1);
+   /* Proto -!- NAME [ID:INTEGER] */
+   p->name = safe_strdup(parm_name(_("Name expected after Proto")));
    tpr = find_ph_tbl(p->name);
    if (tpr)
       set_phid(p, tpr);
    s = next_token();
-   if (s == NULL || *s == '\n')
-      p->pt.id = top_assigned_proto_id++;
-   else
+   if (s != NULL && isdigit(s[0]))
       chkuniqueid(p->pt.id = atoi(s));
+   else {
+      unget_token();
+      p->pt.id = top_assigned_proto_id++;
+   }
    /* now info for this proto */
    while (1) {
       s = next_token();
       if (s == NULL)
 	 return;
-      else if (*s == '\n');
+      else if (*s == '\n')
+	 ;
       else if (!strcasecmp(s, "Phases"))
 	 set_phid(p, tpr = parm_ph_tbl());
       else if (!strcasecmp(s, "SigDetect"))
@@ -129,6 +132,8 @@ protocomp(void)
 	 p->pt.spawn1 = parm_proto();
       else if (!strcasecmp(s, "Spawn2"))
 	 p->pt.spawn2 = parm_proto();
+      else if (!strcasecmp(s, "SpawnMax"))
+	 p->pt.spawnmax = parm_num();
       else if (!strcasecmp(s, "Becomes"))
 	 p->pt.become1 = parm_proto();
       else if (!strcasecmp(s, "Become2"))
@@ -153,8 +158,8 @@ protocomp(void)
 	 p->pt.hits = parm_num();
       else if (!strcasecmp(s, "Shooter"))
 	 p->pt.flags |= PT_SHOOTER;
-      else if(!strcasecmp(s,"Mine")) 
-	 p->pt.flags|=PT_MINE;
+      else if (!strcasecmp(s, "Mine")) 
+	 p->pt.flags |= PT_MINE;
       else if (!strcasecmp(s, "Beastie"))
 	 p->pt.flags |= PT_BEASTIE | PT_TARGET;
       else if (!strcasecmp(s, "Explosive"))
@@ -163,22 +168,23 @@ protocomp(void)
 	 p->pt.flags |= PT_EXPLOSIVE;
       else if (!strcasecmp(s, "ZCenter"))
 	 p->pt.flags |= PT_ZCENTER;
-      else if (!strcasecmp(s, "PHANTOM"))
+      else if (!strcasecmp(s, "Phantom"))
 	 p->pt.flags |= PT_PHANTOM;
-      else if (!strcasecmp(s, "SKIRTCLIFFS"))
+      else if (!strcasecmp(s, "SkirtCliffs"))
 	 p->pt.flags |= PT_SKIRT_CLIFFS;
-      else if (!strcasecmp(s, "CANFLY"))
+      else if (!strcasecmp(s, "CanFly"))
 	 p->pt.flags |= PT_CAN_FLY;
       else if (!strcasecmp(s, "Flying"))
 	 p->pt.flags |= PT_CAN_FLY;
-      else if (!strcasecmp(s, "PINVIS"))
+      else if (!strcasecmp(s, "PInvis"))
 	 p->pt.flags |= PT_PINVIS;
-      else if (!strcasecmp(s, "BULLETKLUDGE"))
+      else if (!strcasecmp(s, "BulletKludge"))
 	 p->pt.flags |= PT_BULLET_KLUDGE;
-      else if (!strcasecmp(s, "FASTSHOOT"))
+      else if (!strcasecmp(s, "FastShoot")) {
+	 warn(_("FastShoot is obsolete; use Nasty"));
 	 p->pt.flags |= PT_NASTY;
-      else if (!strcasecmp(s, "Nasty"))
-	 p->pt.flags |= PT_FAST_SHOOTER;
+      } else if (!strcasecmp(s, "Nasty"))
+	 p->pt.flags |= PT_NASTY;
       else if (!strcasecmp(s, "Hanging"))
 	 p->pt.flags |= PT_HANGING;
       else if (!strcasecmp(s, "StuckDown"))
@@ -228,16 +234,32 @@ protocomp(void)
 	 p->pt.radius = parm_num() << 11;
 	 p->pt.height = parm_num() << 12;
       } else if (!strcasecmp(s, "Gets")) {
-	 p->pt.artitype = parm_gett();
-	 p->pt.artinum = parm_num();
-      } else
+	 ProtoThing_Gets *artip;
+	 p->pt.gets = (ProtoThing_Gets *)
+	    realloc(p->pt.gets, ++(p->pt.ngets) * sizeof(ProtoThing_Gets));
+	 artip = &p->pt.gets[p->pt.ngets-1];
+	 artip->artitype = parm_gett();
+	 artip->artinum = parm_num();
+	 if (parm_keyword_opt("Maximum"))
+	    artip->artimax = parm_num();
+	 else
+	    artip->artimax = 0;	/* means use default from Gettable */
+      } else if (!strcasecmp(s, "PickupSound"))
+	 p->pt.pickup_sound = parm_sound();
+      else if (!strcasecmp(s, "FirstPickupMessage"))
+	 p->pt.firstpickupmsg = parm_strdup();
+      else if (!strcasecmp(s, "PickupMessage"))
+	 p->pt.pickupmsg = parm_strdup();
+      else if (!strcasecmp(s, "IgnoreMessage"))
+	 p->pt.ignoremsg = parm_strdup();
+      else
 	 break;
-   }
+   } /* while (1) */
    unget_token();
 }
 
 void
-wrprotos(FILE *fout)
+wrprotos(WADWR *wout)
 {
    int i;
    printf(_("%5d protos: sorting"), nprotos);
@@ -245,11 +267,16 @@ wrprotos(FILE *fout)
    qsort(protos, nprotos, sizeof(ProtoThingRec), ptcmp);
    printf(_(", writing"));
    fflush(stdout);
+   wadwr_lump(wout, "PROTOS");
    for (i = 0; i < nprotos; i++) {
+      void *block;
+      size_t blocklen;
       if (protos[i].pt.phase_id < 1)
 	 printf(_("warning: proto %s (%d) has no phasetable\n"),
 		protos[i].name, (int) (protos[i].pt.id));
-      fwrite(&protos[i].pt, sizeof(ProtoThing), 1, fout);
+      block = encode_protoinwad(&protos[i].pt, &blocklen);
+      wadwr_write(wout, block, blocklen);
+      safe_free(block);
    }
    printf("\n");
 }
@@ -258,15 +285,13 @@ int
 parm_proto(void)
 {
    int i;
-   const char *s = next_token();
-   if (s == NULL || *s == '\n')
-      synerr(_("proto name parameter expected"));
+   const char *s = parm_name(_("Proto name parameter expected"));
    if (isdigit(*s))
       return atoi(s);
    for (i = 0; i < nprotos; i++)
       if (!strcasecmp(protos[i].name, s))
 	 return protos[i].pt.id;
-   synerr(_("proto name unrecognised"));
+   err(_("Proto name `%s' unrecognised"), s);
    return -1;
 }
 
@@ -276,19 +301,19 @@ chkuniqueid(int id)
 {
    int i;
    for (i = nprotos - 2; i >= 0; i--)
-      if (protos[i].pt.id == id) {
-	 print_error_prefix();
-	 printf(_("ID %d not unique (clashes with %s)\n"),
-		id, protos[i].name);
-	 exit(2);
-      }
+      if (protos[i].pt.id == id)
+	 err(_("ID %d not unique (clashes with %s)"),
+	     id, protos[i].name);
 }
 
 static void
 set_phid(ProtoThingRec *p, ThingPhaseRec *tpr)
 {
+   int i;
    p->pt.phase_id = tpr->tp->id;
-   memcpy(p->pt.signals, tpr->signals, sizeof(short) * NUM_THINGSIGS);
+   /* can't use memcpy: the types differ */
+   for (i = 0; i < NUM_THINGSIGS; i++)
+      p->pt.signals[i] = tpr->signals[i];
 }
 
 static int

@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumbutil/dumb-nls.h: _(str) and N_(str) with or without ENABLE_NLS.
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

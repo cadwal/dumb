@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(libdumb/dsound.h)
 AC_CONFIG_AUX_DIR(aux)
-AM_INIT_AUTOMAKE(dumb, 0.13.6)
+AM_INIT_AUTOMAKE(dumb, 0.13.7)
 AM_CONFIG_HEADER(config.h)
 
 # $datadir is usually '${prefix}/share'.  Expand it once.  This does
@@ -66,7 +66,6 @@ AC_PROG_CC
 DUMB_MSG_REQUIRE_YES(GCC, [GCC])
 dnl GCC always supports -c -o
 AC_PROG_CXX
-AC_PROG_CXXCPP
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AC_PROG_INSTALL
@@ -82,6 +81,8 @@ AC_C_INLINE
 AC_C_BIGENDIAN
 DUMB_C_ATTR_REGPARM
 AC_TYPE_SIZE_T
+dnl If we are cross-compiling, pretend the sizes are 0.
+dnl This causes DUMB to use the generic fbrerend function.
 AC_CHECK_SIZEOF(int, 0)
 AC_CHECK_SIZEOF(long, 0)
 AC_MSG_CHECKING(which fbrerend to use)
@@ -125,10 +126,9 @@ AC_SUBST(CXX_HACK_CC)
 dnl --- Internationalization.
 ALL_LINGUAS="fi"
 AM_GNU_GETTEXT
-AC_OUTPUT_COMMANDS([sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in >po/Makefile])
 AC_DEFINE_UNQUOTED(LOCALEDIR, "${dumb_expanded_datadir}/locale")
 
-dnl --- Checks for libraries.
+dnl --- X
 AC_PATH_X
 AC_PATH_XTRA
 AM_CONDITIONAL(DUMB_CONFIG_X, test -z "$no_x")
@@ -143,27 +143,42 @@ else
   x_ldadd=""
   AC_MSG_WARN([X not found; programs \`xdumb', \`mkdfnt', \`XWad' and \`XProtoThing' will not be built])
 fi
-DUMB_PPL_LDADD=""
-AC_CHECK_LIB(ppm, ppm_readppm, dumb_have_libppm=yes, dumb_have_libppm=no,
-  -lpgm -lpbm)
-test "$dumb_have_libppm" = "yes" && DUMB_PPM_LDADD="-lppm -lpgm -lpbm"
-if test "$dumb_have_libppm" = "no"; then
-  AC_CHECK_LIB(netpbm, ppm_readppm, dumb_have_libppm=yes)
-  test "$dumb_have_libppm" = "yes" && DUMB_PPM_LDADD="-lnetpbm"
+
+dnl --- Netpbm library.
+dumb_ppm_h=""
+DUMB_PPM_LDADD=""
+dumb_have_libppm=no
+AC_CHECK_HEADER(ppm.h, [dumb_ppm_h="<ppm.h>"],
+  [AC_CHECK_HEADER(gr/ppm.h, [dumb_ppm_h="<gr/ppm.h>"])])
+if test -n "$dumb_ppm_h"; then
+  AC_DEFINE_UNQUOTED(DUMB_CONFIG_PPM_H, $dumb_ppm_h)
+  AC_CHECK_LIB(ppm, ppm_readppm, dumb_have_libppm=yes, dumb_have_libppm=no,
+    -lpgm -lpbm)
+  test "$dumb_have_libppm" = "yes" && DUMB_PPM_LDADD="-lppm -lpgm -lpbm"
+  if test "$dumb_have_libppm" = "no"; then
+    AC_CHECK_LIB(netpbm, ppm_readppm, dumb_have_libppm=yes)
+    test "$dumb_have_libppm" = "yes" && DUMB_PPM_LDADD="-lnetpbm"
+  fi
 fi
 if test "$dumb_have_libppm" = "no"; then
   AC_MSG_WARN([ppm_readppm() not found; programs \`dark2trans' and \`ppmtodumb' will not be built])
 fi
 AM_CONDITIONAL(DUMB_CONFIG_LIBPPM, test "$dumb_have_libppm" = "yes")
 AC_SUBST(DUMB_PPM_LDADD)
+
+dnl --- Math library.
 AC_CHECK_LIB(m, sin, ,
   [AC_MSG_ERROR([DUMB requires the math library])])
+
+dnl --- AAlib.
 DUMB_CHECK_HDR_LIB_YESNO(aalib.h, aa, aa_renderpalette, [-lncurses $x_ldadd],
   dumb_have_aalib)
 AM_CONDITIONAL(DUMB_CONFIG_AALIB, test "$dumb_have_aalib" = "yes")
 if test "$dumb_have_aalib" = "no"; then
   AC_MSG_WARN([AA-lib not found; program \`aadumb' will not be built])
 fi
+
+dnl --- GGI library.
 DUMB_GGI_SOURCES=""
 DUMB_CHECK_HDR_LIB([ggi/ggi.h], [ggi], [ggiParseMode], [],
   [DUMB_CHECK_IFDEF([ggi/ggi.h], [GII_PBUTTON_PRIMARY],
@@ -177,12 +192,16 @@ DUMB_CHECK_HDR_LIB([ggi/ggi.h], [ggi], [ggiParseMode], [],
   [AC_MSG_WARN([GGI not found; program \`ggidumb' will not be built])])
 AC_SUBST(DUMB_GGI_SOURCES)
 AM_CONDITIONAL(DUMB_CONFIG_GGI, [test -n "$DUMB_GGI_SOURCES"])
+
+dnl --- SVGAlib.
 DUMB_CHECK_HDR_LIB_YESNO(vga.h, vga, vga_setmode, [],
  dumb_have_svgalib)
 AM_CONDITIONAL(DUMB_CONFIG_SVGALIB, test "$dumb_have_svgalib" = "yes")
 if test "$dumb_have_svgalib" = "no"; then
   AC_MSG_WARN([SVGAlib not found; program \`ldumb' will not be built])
 fi
+
+dnl --- Allegro.
 DUMB_CHECK_HDR_LIB_YESNO(allegro.h, alleg, allegro_init, [],
  dumb_have_allegro)
 AM_CONDITIONAL(DUMB_CONFIG_DOS, test "$dumb_have_allegro" = "yes")
@@ -367,7 +386,7 @@ if test -z "$DUMB_CONFIG_HERETIC_WAD"; then
 else
   AC_MSG_RESULT($DUMB_CONFIG_HERETIC_WAD)
   AC_DEFINE_UNQUOTED(DUMB_CONFIG_HERETIC_DIR,
-                     "`dirname ${DUMB_CONFIG_DOOM_WAD}`")
+                     "`dirname ${DUMB_CONFIG_HERETIC_WAD}`")
 fi
 AC_SUBST(DUMB_CONFIG_HERETIC_WAD)
 AM_CONDITIONAL(DUMB_CONFIG_HERETIC, test -n "${DUMB_CONFIG_HERETIC_WAD}")
@@ -414,13 +433,13 @@ DUMB_TEST_MULTICHOICE(DUMB_CONFIG_SOUND, sound, oss, OSS,
   AC_CHECK_HEADER(linux/soundcard.h,
     DUMB_CONFIG_SOUND="linux"
     DUMB_CONFIG_SOUND_LDADD=""))
-DUMB_TEST_MULTICHOICE(DUMB_SOUND, sound, mme, MME,
+DUMB_TEST_MULTICHOICE(DUMB_CONFIG_SOUND, sound, mme, MME,
   DUMB_CONFIG_SOUND="mme"
   DUMB_CONFIG_SOUND_LDADD="-lmme",
   DUMB_CHECK_HDR_LIB(mme/mme_api.h, mme, waveOutGetNumDevs, [],
     DUMB_CONFIG_SOUND="mme"
     DUMB_CONFIG_SOUND_LDADD="-lmme", []))
-DUMB_TEST_MULTICHOICE(DUMB_SOUND, sound, allegro, ALLEGRO,
+DUMB_TEST_MULTICHOICE(DUMB_CONFIG_SOUND, sound, allegro, ALLEGRO,
   DUMB_CONFIG_SOUND="dos"
   DUMB_CONFIG_SOUND_LDADD="-lalleg",
   AC_CHECK_HEADER(allegro.h,

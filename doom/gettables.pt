@@ -6,398 +6,401 @@
 /* YMoveOnly saves time in update_things() (josh) */
 #define StickToFloor  Mass 1000 YMoveOnly
 
-#define PowerUpQty  300
+#define PowerUpQty  3000
 #define PowerUpTimeout  Decay 1
 
-// IDEA: (use 'parm_speed' instead of assuming ticks)
-//
-//  #define PowerUpQty  1
-//  #define PowerUpTimeout  Timeout 30sec
-
-#define PowerUp  Special
-
-#define GhostWhoWalks    3
-#define DamageProtection 4
-
-#define SlimeProtection  6
-#define SuperStrength    5
-#define SuperSight       7
-
+/* IDEA: (use 'parm_speed' instead of assuming ticks)
+ *
+ *  #define PowerUpQty  1
+ *  #define PowerUpTimeout  Timeout 30sec
+ */
 
 /* Health and Armour */
 
 Gettable Health
-  Icon BON1A0 RevAnim D Timing 150msec
+  Icon "BON1A0" RevAnim "D" Timing 150msec
   IconPos 8 6
-  Special 1
-  Collect 200
-  PickupSound DSITEMUP
-//  GotThe Message HEALTH
+  Special GETT_SPC_HEALTH
+  Initial 100
+  DefaultMaximum 100
 
 Gettable Armour
-  Icon BON2A0 RevAnim D Timing 150msec
+  Icon "BON2A0" RevAnim "D" Timing 150msec
   IconPos 32 8
-  Collect 200
-  PickupSound DSITEMUP
-//  GotThe Message ARMOUR
+  Special GETT_SPC_ARMOUR
+  DefaultMaximum 100
 
 Gettable Bullet
-  Icon CLIPA0
+  Icon "CLIPA0"
   IconPos -8 8
-  Collect 100
+  DefaultMaximum 100 WithBackpack 200
   Initial 50
-  PickupSound DSITEMUP
-//  GotThe Message BULLETS
 
 Gettable Shell
-  Icon SHELA0
+  Icon "SHELA0"
   IconPos -32 10
-  Collect 50
-  PickupSound DSITEMUP
-//  GotThe Message SHELLS
+  DefaultMaximum 50 WithBackpack 100
 
 Gettable Rocket
-  Icon ROCKA0
+  Icon "ROCKA0"
   IconPos -56 4
-  Collect 50
-  PickupSound DSITEMUP
-//  GotThe Message ROCKETS
+  DefaultMaximum 50 WithBackpack 100
 
 Gettable Cell
-  Icon CELLA0
+  Icon "CELLA0"
   IconPos -76 8
-  Collect 400
-  PickupSound DSITEMUP
-//  GotThe Message CELLS
+  DefaultMaximum 400 WithBackpack 800
 
 Gettable Backpack
-  Special 8
-  GotThe Message BACKBACK_FULL_OF_AMMO
-  PickupSound DSITEMUP
+  DefaultMaximum 1
+  Special GETT_SPC_BACKPACK
 
 Gettable Allmap
-  Collect 1
-  Special 9
-  GotThe Message ALL_MAP
-  PickupSound DSGETPOW
+  DefaultMaximum 1
+  Special GETT_SPC_ALLMAP
+  OneMapOnly
 
 
 /* now the actual proto entries */
 
 Proto BlueBonus 2014
-  Sprite BON1
+  Sprite "BON1"
   Phases Cycle4
   Size 16 16
   StickToFloor
-  Gets Health 1
+  PickupSound DSITEMUP
+  Gets Health 1 Maximum 200
 
 Proto GreenBonus 2015
-  Sprite BON2
+  Sprite "BON2"
   Phases Cycle4
   Size 16 16
   StickToFloor
-  Gets Armour 1
+  PickupSound DSITEMUP
+  Gets Armour 1 Maximum 200
 
 Proto GreenArmour 2018
-  Sprite ARM1
+  Sprite "ARM1"
   Phases Repeat2
   Size 31 16
   StickToFloor
-  Gets Armour 100
+  PickupMessage N_("Picked up body armour.")
+  PickupSound DSITEMUP
+  Gets Armour 100 Maximum 100
 
 Proto BlueArmour 2019
-  Sprite ARM2
+  Sprite "ARM2"
   Phases Repeat2
   Size 31 16
   StickToFloor
-  Gets Armour 200
+  PickupMessage N_("You found the mega armour!")
+  PickupSound DSITEMUP
+  Gets Armour 200 Maximum 200
 
 Proto Stimpak 2011
-  Sprite STIM
+  Sprite "STIM"
   Phases Mundane
   Size 32 16
   StickToFloor
+  PickupMessage N_("Picked up a stimpak.")
+  PickupSound DSITEMUP
   Gets Health 10
 
 Proto Medikit 2012
-  Sprite MEDI
+  Sprite "MEDI"
   Phases Mundane
   Size 24 20
   StickToFloor
+  PickupMessage N_("Picked up a medikit.")
+  PickupSound DSITEMUP
   Gets Health 25
 
 Proto Soulsphere 2013
-  Sprite SOUL
+  Sprite "SOUL"
   Phases Cycle4
   Size 24 20
   StickToFloor
-  Gets Health 100
+  PickupSound DSITEMUP
+  Gets Health 100 Maximum 200
 
 Proto Megasphere 83
-  Sprite MEGA
+  Sprite "MEGA"
   Phases Cycle4
   Size 24 20
   StickToFloor
-  Gets Armour 200
-  Gets Health 200
+  PickupMessage N_("Megasphere!")
+  PickupSound DSITEMUP
+  Gets Armour 200 Maximum 200
+  Gets Health 200 Maximum 200
 
 
 /* Ammunition */
 
 Proto Bullets 2007
-  Sprite CLIP
+  Sprite "CLIP"
   Phases Mundane
   Size 9 11
-  Gets Bullet 20
   StickToFloor
+  PickupSound DSITEMUP
+  Gets Bullet 20
 
 Proto Shells 2008
-  Sprite SHEL
+  Sprite "SHEL"
   Phases Mundane
   Size 15 7
-  Gets Shell 4
   StickToFloor
+  PickupSound DSITEMUP
+  Gets Shell 4
 
 Proto Rocket 2010
-  Sprite ROCK
+  Sprite "ROCK"
   Phases Mundane
   Size 12 27
-  Gets Rocket 1
   StickToFloor
+  PickupSound DSITEMUP
+  Gets Rocket 1
 
 Proto Cell 2047
-  Sprite CELL
+  Sprite "CELL"
   Phases Mundane
   Size 17 12
-  Gets Cell 20
   StickToFloor
+  PickupSound DSITEMUP
+  Gets Cell 20
 
 Proto BoxBullets 2048
-  Sprite AMMO
+  Sprite "AMMO"
   Phases Mundane
   Size 28 16
-  Gets Bullet 50
   StickToFloor
+  PickupSound DSITEMUP
+  Gets Bullet 50
 
 Proto BoxShells 2049
-  Sprite SBOX
+  Sprite "SBOX"
   Phases Mundane
   Size 32 12
-  Gets Shell 25
   StickToFloor
+  PickupSound DSITEMUP
+  Gets Shell 25
 
 Proto BoxRockets 2046
-  Sprite BROK
+  Sprite "BROK"
   Phases Mundane
   Size 54 21
-  Gets Rocket 5
   StickToFloor
+  PickupSound DSITEMUP
+  Gets Rocket 5
 
 Proto CellPack 17
-  Sprite CELP
+  Sprite "CELP"
   Phases Mundane
   Size 32 21
-  Gets Cell 100
   StickToFloor
+  PickupSound DSITEMUP
+  Gets Cell 100
 
 
 /* Equipment (once-only pickup) */
 
 Proto Backpack 8
-  Sprite BPAK
+  Sprite "BPAK"
   Phases Mundane
   Size 22 29
+  StickToFloor
+  PickupMessage N_("You found a backpack full of ammo!")
+  PickupSound DSITEMUP
+  Gets Backpack 1
   Gets Bullet 10
   Gets Shell 4
   Gets Rocket 1
   Gets Cell 20
-  Gets Backpack 1
-  StickToFloor
 
 Proto Allmap 2026
-  Sprite PMAP
+  Sprite "PMAP"
   Phases Blink4
   Size 28 27
-  Gets Allmap 1
   StickToFloor
+  PickupMessage N_("Computer area map!")
+  PickupSound DSGETPOW
+  Gets Allmap 1
 
 
 /* Keys */
 
 Gettable RedKey
-  Icon RKEYA0
-  IconPos 8 40 Anim B Timing 400msec
-  Collect 1
+  Icon "RKEYA0"
+  IconPos 8 40 Anim "B" Timing 400msec
+  DefaultMaximum 1
   KeyType 1
-  Local
-  GotThe Message RED_KEY
-  PickupSound DSITEMUP
+  OneMapOnly
 
 Gettable BlueKey
-  Icon BKEYA0
-  IconPos 28 40 Anim B Timing 400msec
-  Collect 1
+  Icon "BKEYA0"
+  IconPos 28 40 Anim "B" Timing 400msec
+  DefaultMaximum 1
   KeyType 2
-  Local
-  GotThe Message BLUE_KEY
-  PickupSound DSITEMUP
+  OneMapOnly
 
 Gettable YellowKey
-  Icon YKEYA0
-  IconPos 48 40 Anim B Timing 400msec
-  Collect 1
+  Icon "YKEYA0"
+  IconPos 48 40 Anim "B" Timing 400msec
+  DefaultMaximum 1
   KeyType 3
-  Local
-  GotThe Message YELLOW_KEY
-  PickupSound DSITEMUP
+  OneMapOnly
 
 Gettable RedSkull
-  Icon RSKUA0
-  IconPos 8 40 Anim B Timing 400msec
-  Collect 1
+  Icon "RSKUA0"
+  IconPos 8 40 Anim "B" Timing 400msec
+  DefaultMaximum 1
   KeyType 1
-  Local
-  GotThe Message RED_SKULL_KEY
-  PickupSound DSITEMUP
+  OneMapOnly
 
 Gettable BlueSkull
-  Icon BSKUA0
-  IconPos 28 40 Anim B Timing 400msec
-  Collect 1
+  Icon "BSKUA0"
+  IconPos 28 40 Anim "B" Timing 400msec
+  DefaultMaximum 1
   KeyType 2
-  Local
-  GotThe Message BLUE_SKULL_KEY
-  PickupSound DSITEMUP
+  OneMapOnly
 
 Gettable YellowSkull
-  Icon YSKUA0
-  IconPos 48 40 Anim B Timing 400msec
-  Collect 1
+  Icon "YSKUA0"
+  IconPos 48 40 Anim "B" Timing 400msec
+  DefaultMaximum 1
   KeyType 3
-  Local
-  GotThe Message YELLOW_SKULL_KEY
-  PickupSound DSITEMUP
+  OneMapOnly
 
 
 Proto RedKey 13
-  Sprite RKEY
+  Sprite "RKEY"
   Phases Blink2
   Size 14 16
   StickToFloor
+  PickupMessage N_("You got the red key!")
+  IgnoreMessage N_("You already have that key.")
+  PickupSound DSITEMUP
   Gets RedKey 1
 
 Proto BlueKey 5
-  Sprite BKEY
+  Sprite "BKEY"
   Phases Blink2
   Size 14 16
   StickToFloor
+  PickupMessage N_("You got the blue key!")
+  IgnoreMessage N_("You already have that key.")
+  PickupSound DSITEMUP
   Gets BlueKey 1
 
 Proto YellowKey 6
-  Sprite YKEY
+  Sprite "YKEY"
   Phases Blink2
   Size 14 16
   StickToFloor
+  PickupMessage N_("You got the yellow key!")
+  IgnoreMessage N_("You already have that key.")
+  PickupSound DSITEMUP
   Gets YellowKey 1
 
 Proto RedSkull 38
-  Sprite RSKU
+  Sprite "RSKU"
   Phases Blink2
   Size 14 16
   StickToFloor
+  PickupMessage N_("You got the red skull key!")
+  IgnoreMessage N_("You already have that key.")
+  PickupSound DSITEMUP
   Gets RedSkull 1
 
 Proto BlueSkull 40
-  Sprite BSKU
+  Sprite "BSKU"
   Phases Blink2
   Size 14 16
   StickToFloor
+  PickupMessage N_("You got the blue skull key!")
+  IgnoreMessage N_("You already have that key.")
+  PickupSound DSITEMUP
   Gets BlueSkull 1
 
 Proto YellowSkull 39
-  Sprite YSKU
+  Sprite "YSKU"
   Phases Blink2
   Size 14 16
   StickToFloor
+  PickupMessage N_("You got the yellow skull key!")
+  IgnoreMessage N_("You already have that key.")
+  PickupSound DSITEMUP
   Gets YellowSkull 1
 
 
 /* Power-ups */
 
 Gettable Suit
-  Icon SUITA0
+  Icon "SUITA0"
   IconPos -8 40
-  Collect PowerUpQty
-  GotThe Message RADIATION_SUIT
-  PowerUp SlimeProtection
+  DefaultMaximum PowerUpQty
+  Special GETT_SPC_SLIMEPROTECTION
   PowerUpTimeout
-  PickupSound DSGETPOW
 
 Gettable Invincibility
-  Icon PINVA0 Anim D Timing 100msec
+  Icon "PINVA0" Anim "D" Timing 100msec
   IconPos 114 6
-  Collect PowerUpQty
-  GotThe Message INVINCIBILITY___OH_MY_GOD
-  PowerUp DamageProtection
+  DefaultMaximum PowerUpQty
+  Special GETT_SPC_DAMAGEPROTECTION
   PowerUpTimeout
-  PickupSound DSGETPOW
 
 Gettable Invisibility
-  Icon PINSA0 Anim D Timing 100msec
+  Icon "PINSA0" Anim "D" Timing 100msec
   IconPos 148 6
-  Collect PowerUpQty
-  GotThe Message INVISIBILITY
-  PowerUp GhostWhoWalks
+  DefaultMaximum PowerUpQty
+  Special GETT_SPC_INVISIBILITY
   PowerUpTimeout
-  PickupSound DSGETPOW
 
 Gettable Goggles
-  Icon PVISA0 Anim B Timing 400msec
+  Icon "PVISA0" Anim "B" Timing 400msec
   IconPos 184 12
-  Collect PowerUpQty
-  GotThe Message LIGHT_AMPLIFICATION_GOGGLES
-  PowerUp SuperSight
+  DefaultMaximum PowerUpQty
+  Special GETT_SPC_SUPERSIGHT
   PowerUpTimeout
-  PickupSound DSGETPOW
 
 
 Proto Invincibility 2022
-  Sprite PINV
+  Sprite "PINV"
   Phases Cycle4
   Size 24 20
   StickToFloor
+  PickupMessage N_("Invincibility... Oh my God!")
+  PickupSound DSGETPOW
   Gets Invincibility PowerUpQty
 
 Proto Invisibility 2024
-  Sprite PINS
+  Sprite "PINS"
   Phases Cycle4
   Size 24 20
   StickToFloor
+  /* TRANS: This is a NetHack reference.  */
+  FirstPickupMessage N_("Suddenly you can't see yourself.")
+  PickupSound DSGETPOW
   Gets Invisibility PowerUpQty
 
 Proto Suit 2025
-  Sprite SUIT
+  Sprite "SUIT"
   Phases Mundane
   Size 24 45
   StickToFloor
+  PickupMessage N_("Radiation shielding suit!")
+  PickupSound DSGETPOW
   Gets Suit PowerUpQty
 
 Proto Goggles 2045
-  Sprite PVIS
+  Sprite "PVIS"
   Phases Blink2
   Size 28 8
   StickToFloor
+  FirstPickupMessage N_("You got the light amplification goggles!")
+  PickupSound DSGETPOW
   Gets Goggles PowerUpQty
 
 
 #undef StickToFloor
 #undef PowerUpQty
 #undef PowerUpTimeout
-#undef PowerUp
-
-#undef SlimeProtection
-#undef SuperStrength
-#undef Invincibility
-#undef Invisibility
-#undef SuperSight
-

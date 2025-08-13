@@ -1,8 +1,8 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumbutil/safeio.c: mmap() emulation, file operations and path search.
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,11 +101,23 @@ safe_munmap(const char *name, const void *ptr, size_t len)
 void
 safe_read(const char *name, int fd, void *buf, size_t len)
 {
-   int r = read(fd, buf, len);
-   if (r != len)
-      logprintf(LOG_FATAL, 'S', _("%s: short read (%d<%lu): %s"),
-		name ? name : "?\?\?",
-		r, (unsigned long) len, strerror(errno));
+   if (!name)
+      name = _("<unknown file>");
+   /* Signals may interrupt read(), so call it as many times as necessary.  */
+   while (len > 0) {
+      ssize_t got = read(fd, buf, len);
+      if (got == -1) {
+	 if (errno != EINTR)
+	    logprintf(LOG_FATAL, 'S', "%s: %s", name, strerror(errno));
+      } else if (got == 0) {
+	 logprintf(LOG_FATAL, 'S', _("%s: unexpected EOF"), name);
+      } else {
+	 /* It may not be necessary to cast GOT to size_t,
+	    but it doesn't hurt. */
+	 len -= (size_t) got;
+	 buf = (void *) ((char *) buf + (size_t) got);
+      }
+   }
 }
 
 int

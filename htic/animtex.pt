@@ -4,14 +4,15 @@
 /* switches */
 
 SwitchTexture SW1
-  Texture SW1OFF
-  Texture SW1ON
+  Texture "SW1OFF"
+  Texture "SW1ON"
 
 SwitchTexture SW2
-  Texture SW2OFF
-  Texture SW2ON
+  Texture "SW2OFF"
+  Texture "SW2ON"
 
 /* animated walls */
+/* ptcomp really wants these names without quotes.  Perhaps that's a bug?  */
 
 AnimTexture LAVAFL%d Parm 1 To 3
 AnimTexture WATRWAL%d Parm 1 To 3

@@ -116,6 +116,7 @@ save_conf(const ConfModule *confmod, const char *fn, int dirt)
    FILE *fout = fopen(fn, "w");  /* text */
    if (!fout)
       return 1;
+   /* TRANS Each line must begin with a semicolon. */
    fprintf(fout, _("; %s\n; this file was created automatically, but you can"
 		   " modify it if you want\n"),
 	   fn);

@@ -71,9 +71,7 @@ animcomp(int is_sw)
    p->maxtbl = ALLOC_BLK;
    p->tbl = (AnimTexTable *) safe_malloc(p->maxtbl * sizeof(AnimRec));
    /* one parameter, name */
-   s = next_token();
-   if (s == NULL || *s == '\n')
-      synerr(_("name expected after AnimTex"));
+   s = parm_name(_("Name expected after AnimTex"));
    strncpy(p->name, s, NAMELEN - 1);
    /*logprintf(LOG_DEBUG, 'P', "anim: <%s> %d %d",
       p->name, anims-p, ALLOC_BLK); */
@@ -82,7 +80,8 @@ animcomp(int is_sw)
       s = next_token();
       if (s == NULL)
 	 return;
-      else if (*s == '\n');
+      else if (*s == '\n')
+	 ;
       else if (!strcasecmp(s, "Flat"))
 	 is_flat = 1;
       else if (!strcasecmp(s, "Parm"))
@@ -93,9 +92,9 @@ animcomp(int is_sw)
 	 else
 	    defdur = parm_time();
       } else if (!strcasecmp(s, "To")) {
-	 int i, n = 1 + parm_num() - parm;
+	 int i, to = parm_num(), n = 1 + to - parm;
 	 if (n <= 0)
-	    synerr(_("To must exceed Parm"));
+	    err(_("To (%d) must exceed Parm (%d)"), to, parm);
 	 free(p->tbl);
 	 p->tbl = (AnimTexTable *) safe_calloc(n, sizeof(AnimTexTable));
 	 p->maxtbl = p->ntbl = n;
@@ -139,16 +138,17 @@ animcomp(int is_sw)
 }
 
 void
-wranims(FILE *fout)
+wranims(WADWR *wout)
 {
    int i;
    printf(_("%5d animtexes\n"), nanims);
+   wadwr_lump(wout, "ANIMTEX");
    for (i = 0; i < nanims; i++) {
       int j;
       /*printf(_("         %s: %d textures\n"),anims[i].name,anims[i].ntbl); */
       for (j = 0; j < anims[i].ntbl; j++)
 	 anims[i].tbl[j].seqlen = anims[i].ntbl;
-      fwrite(anims[i].tbl, sizeof(AnimTexTable), anims[i].ntbl, fout);
+      wadwr_write(wout, anims[i].tbl, anims[i].ntbl * sizeof(AnimTexTable));
    }
 }
 

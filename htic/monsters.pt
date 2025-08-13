@@ -23,37 +23,37 @@ SoundType PLRDTH*
 
 PhaseTable DeadPlayer
   Default Duration RespawnRate
-  Phase INIT P Goto INIT
-  Phase ANIM O SigReAnimate
-  Phase -    N
-  Phase -    M
-  Phase -    L
-  Phase -    K
-  Phase -    J
-  Phase -    I
-  Phase -    A Become
+  Phase INIT "P" Goto INIT
+  Phase ANIM "O" SigReAnimate
+  Phase -    "N"
+  Phase -    "M"
+  Phase -    "L"
+  Phase -    "K"
+  Phase -    "J"
+  Phase -    "I"
+  Phase -    "A" Become
 
 Proto DeadPlayer
-  Sprite PLAY
+  Sprite "PLAY"
   Size 40 16
   Mass 1000 YMoveOnly
   Becomes 1
 
 PhaseTable ExPlayer
   Default Duration RespawnRate
-  Phase INIT Y Goto INIT
-  Phase ANIM X SigReanimate
-  Phase -    W
-  Phase -    V
-  Phase -    U
-  Phase -    T
-  Phase -    S
-  Phase -    R
-  Phase -    Q
-  Phase -    A Become
+  Phase INIT "Y" Goto INIT
+  Phase ANIM "X" SigReanimate
+  Phase -    "W"
+  Phase -    "V"
+  Phase -    "U"
+  Phase -    "T"
+  Phase -    "S"
+  Phase -    "R"
+  Phase -    "Q"
+  Phase -    "A" Become
 
 Proto ExPlayer
-  Sprite PLAY
+  Sprite "PLAY"
   Size 40 16
   Mass 1000 YMoveOnly
   Becomes 1
@@ -62,43 +62,43 @@ SoundType DSPLPAIN Chance 3
 
 PhaseTable Player
   Default Duration NormalRate
-  Phase INIT    A
-  Phase -	B
-  Phase -	C
-  Phase -	D   Goto INIT
+  Phase INIT    "A"
+  Phase -	"B"
+  Phase -	"C"
+  Phase -	"D"   Goto INIT
 
   /* player shooting needs to be like this because the actual shooting
      is done asychronously by a bogothing */
-  Phase SHOOT   F   Glow SigShoot
-  Phase -	E   Duration OuchRate Goto INIT
+  Phase SHOOT   "F"   Glow SigShoot
+  Phase -	"E"   Duration OuchRate Goto INIT
 
-  Phase OUCH    G   SigOuch Sound PLRPAI Duration OuchRate Goto INIT
+  Phase OUCH    "G"   SigOuch Sound PLRPAI Duration OuchRate Goto INIT
 
-  Phase WINDED  H   SigStunned Sound PLROOF Goto INIT
+  Phase WINDED  "H"   SigStunned Sound PLROOF Goto INIT
 
   Default NoSigs Duration DieRate
-  Phase DIE     I   SigDie Sound PLRDTH*
-  Phase -	J
-  Phase -	K
-  Phase -	L
-  Phase -	M
-  Phase -	N
-  Phase -	O
-  Phase -	P   Become
+  Phase DIE     "I"   SigDie Sound PLRDTH*
+  Phase -	"J"
+  Phase -	"K"
+  Phase -	"L"
+  Phase -	"M"
+  Phase -	"N"
+  Phase -	"O"
+  Phase -	"P"   Become
 
-  Phase EXPLODE Q   SigExplode Sound PLRDTH*
-  Phase -	R
-  Phase -	S
-  Phase -	T
-  Phase -	U
-  Phase -	V
-  Phase -	W
-  Phase -	X
-  Phase -	Y   Become2
+  Phase EXPLODE "Q"   SigExplode Sound PLRDTH*
+  Phase -	"R"
+  Phase -	"S"
+  Phase -	"T"
+  Phase -	"U"
+  Phase -	"V"
+  Phase -	"W"
+  Phase -	"X"
+  Phase -	"Y"   Become2
 
 Proto Player 1
   Phases Player
-  Sprite PLAY
+  Sprite "PLAY"
   Size 32 56
   Mass 100
   Hits 80
@@ -107,7 +107,7 @@ Proto Player 1
   Become2 ExPlayer
 Proto Player2 2
   Phases Player
-  Sprite PLAY
+  Sprite "PLAY"
   Size 32 56
   Mass 100
   Hits 80
@@ -116,7 +116,7 @@ Proto Player2 2
   Become2 ExPlayer
 Proto Player3 3
   Phases Player
-  Sprite PLAY
+  Sprite "PLAY"
   Size 32 56
   Mass 100
   Hits 80
@@ -125,7 +125,7 @@ Proto Player3 3
   Become2 ExPlayer
 Proto Player4 4
   Phases Player
-  Sprite PLAY
+  Sprite "PLAY"
   Size 32 56
   Mass 100
   Hits 80
@@ -137,41 +137,41 @@ Proto Player4 4
 /* Imp */
 
 PhaseTable DeadImp
-  Phase DEAD    L      Goto DEAD
+  Phase DEAD    "L"      Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN L      SigReanimate
-  Phase -       K
-  Phase -       J
-  Phase -       I
-  Phase -       H      Become
+  Phase RESPAWN "L"      SigReanimate
+  Phase -       "K"
+  Phase -       "J"
+  Phase -       "I"
+  Phase -       "H"      Become
 
 
 PhaseTable ExImp
-  Phase DEAD    Z      Goto DEAD
+  Phase DEAD    "Z"      Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN Z      SigReanimate
-  Phase -       Y
-  Phase -       X
-  Phase -       W
-  Phase -       V
-  Phase -       U
-  Phase -       T
-  Phase -       S      Become
+  Phase RESPAWN "Z"      SigReanimate
+  Phase -       "Y"
+  Phase -       "X"
+  Phase -       "W"
+  Phase -       "V"
+  Phase -       "U"
+  Phase -       "T"
+  Phase -       "S"      Become
 
 Proto DeadImp
-  Sprite IMPX
+  Sprite "IMPX"
   Size 40 16
   Mass 100
   Becomes 66
 
 Proto ExImp
-  Sprite IMPX
+  Sprite "IMPX"
   Size 40 16
   Mass 200
   Becomes 66
@@ -185,46 +185,46 @@ SoundType IMPPAI Bend 6 Chance 3
 PhaseTable Imp
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound IMPSIT
+  Phase SIGHT   "A"       SigDetect Sound IMPSIT
 
-  Phase MOVE    A
-  Phase -       B       Strategy
-  Phase -       C	Strategy
-  Phase -       B	Strategy Goto MOVE
+  Phase MOVE    "A"
+  Phase -       "B"       Strategy
+  Phase -       "C"	Strategy
+  Phase -       "B"	Strategy Goto MOVE
 
-  Phase SHOOT   D       Glow
-  Phase -       E       Glow Shoot Sound IMPAT
-  Phase -       F       Glow Goto MOVE
+  Phase SHOOT   "D"       Glow
+  Phase -       "E"       Glow Shoot Sound IMPAT
+  Phase -       "F"       Glow Goto MOVE
 
-  Phase FIGHT   D       SigFight Glow
-  Phase -       E       Glow Melee Sound IMPAT
-  Phase -       F       Glow Goto MOVE
+  Phase FIGHT   "D"       SigFight Glow
+  Phase -       "E"       Glow Melee Sound IMPAT
+  Phase -       "F"       Glow Goto MOVE
 
-  Phase OUCH    G       SigOuch Sound IMPPAI Duration OuchRate Goto MOVE
+  Phase OUCH    "G"       SigOuch Sound IMPPAI Duration OuchRate Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     H       SigDie Sound IMPDTH
-  Phase -       I
-  Phase -       J
-  Phase -       K
-  Phase -       L       Become
+  Phase DIE     "H"       SigDie Sound IMPDTH
+  Phase -       "I"
+  Phase -       "J"
+  Phase -       "K"
+  Phase -       "L"       Become
 
   Default Duration ExplodeRate
   Default Glow
-  Phase BOOM    S       SigExplode
-  Phase -       T	Sound RIPSLOP
-  Phase -       U
-  Phase -       V
-  Phase -       W
-  Phase -       X
-  Phase -       Y
-  Phase -       Z       Become2
+  Phase BOOM    "S"       SigExplode
+  Phase -       "T"	Sound RIPSLOP
+  Phase -       "U"
+  Phase -       "V"
+  Phase -       "W"
+  Phase -       "X"
+  Phase -       "Y"
+  Phase -       "Z"       Become2
 
 Proto Imp 66
-  Sprite IMPX
+  Sprite "IMPX"
   Size 50 35
   Hits 6
   Mass 100
@@ -237,7 +237,7 @@ Proto Imp 66
 
 Proto ImpLeader 5
   Phases Imp
-  Sprite IMPX
+  Sprite "IMPX"
   Size 50 35
   Hits 6
   Mass 100
@@ -253,21 +253,21 @@ Proto ImpLeader 5
 /* Sabreclaw */
 
 PhaseTable DeadSabreclaw
-  Phase DEAD    O      Goto DEAD
+  Phase DEAD    "O"      Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN O      SigReanimate
-  Phase -       N
-  Phase -       M
-  Phase -       L
-  Phase -       K
-  Phase -       J
-  Phase -       I      Become
+  Phase RESPAWN "O"      SigReanimate
+  Phase -       "N"
+  Phase -       "M"
+  Phase -       "L"
+  Phase -       "K"
+  Phase -       "J"
+  Phase -       "I"      Become
 
 Proto DeadSabreclaw
-  Sprite CLNK
+  Sprite "CLNK"
   Size 51 16
   Mass 100
   Becomes 90
@@ -277,33 +277,33 @@ SoundType CLKACT Chance -20
 PhaseTable Sabreclaw
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound CLKSIT
+  Phase SIGHT   "A"       SigDetect Sound CLKSIT
 
-  Phase MOVE    A       Strategy Sound CLKACT
-  Phase -       B       Strategy
-  Phase -       C	Strategy
-  Phase -       D	Strategy Goto MOVE
+  Phase MOVE    "A"       Strategy Sound CLKACT
+  Phase -       "B"       Strategy
+  Phase -       "C"	Strategy
+  Phase -       "D"	Strategy Goto MOVE
 
-  Phase FIGHT   E       SigFight
-  Phase -       F       Melee Sound CLKATK
-  Phase -       G       Goto MOVE
+  Phase FIGHT   "E"       SigFight
+  Phase -       "F"       Melee Sound CLKATK
+  Phase -       "G"       Goto MOVE
 
-  Phase OUCH    H       SigOuch Sound CLKPAI Duration OuchRate Goto MOVE
+  Phase OUCH    "H"       SigOuch Sound CLKPAI Duration OuchRate Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     I       SigDie Sound CLKDTH
-  Phase -       J
-  Phase -       K
-  Phase -       L
-  Phase -       M
-  Phase -       N
-  Phase -       O       Become
+  Phase DIE     "I"       SigDie Sound CLKDTH
+  Phase -       "J"
+  Phase -       "K"
+  Phase -       "L"
+  Phase -       "M"
+  Phase -       "N"
+  Phase -       "O"       Become
 
 Proto Sabreclaw 90
-  Sprite CLNK
+  Sprite "CLNK"
   Size 47 67
   Hits 15
   Mass 100
@@ -317,16 +317,16 @@ Proto Sabreclaw 90
 
 PhaseTable MummySpirit
   Default Duration 300msec
-  Phase - Q Duration 600msec
-  Phase - R
-  Phase - S
-  Phase - T
-  Phase - U Spawn2
-  Phase - V
-  Phase - W Destroy
+  Phase - "Q" Duration 600msec
+  Phase - "R"
+  Phase - "S"
+  Phase - "T"
+  Phase - "U" Spawn2
+  Phase - "V"
+  Phase - "W" Destroy
 
 Proto MummySpirit
-  Sprite MUMM
+  Sprite "MUMM"
   Mass 1000 YMoveOnly
   Speed 20/sec
   Phantom ZCenter FloatsUp
@@ -334,29 +334,29 @@ Proto MummySpirit
 
 Proto MummyLeaderSpirit
   Phases MummySpirit
-  Sprite MUMM
+  Sprite "MUMM"
   Mass 1000 YMoveOnly
   Speed 30/sec
   Phantom ZCenter FloatsUp
   Spawn2 HeftyWandAmmo
 
 PhaseTable DeadMummy
-  Phase DEAD    P      Goto DEAD
+  Phase DEAD    "P"      Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN P      SigReanimate
-  Phase -       O
-  Phase -       N
-  Phase -       M
-  Phase -       L
-  Phase -       K
-  Phase -       J
-  Phase -       I      Become
+  Phase RESPAWN "P"      SigReanimate
+  Phase -       "O"
+  Phase -       "N"
+  Phase -       "M"
+  Phase -       "L"
+  Phase -       "K"
+  Phase -       "J"
+  Phase -       "I"      Become
 
 Proto DeadMummy
-  Sprite MUMM
+  Sprite "MUMM"
   Size 40 16
   Mass 100
   Becomes 46 /* reanimated Mummy becomes MEAN */
@@ -370,48 +370,48 @@ SoundType MUMPAI Bend 6 Chance 3
 PhaseTable Mummy
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound MUMSIT
+  Phase SIGHT   "A"       SigDetect Sound MUMSIT
 
-  Phase MOVE    A
-  Phase -       B       Strategy
-  Phase -       C
-  Phase -       D	Strategy Goto MOVE
+  Phase MOVE    "A"
+  Phase -       "B"       Strategy
+  Phase -       "C"
+  Phase -       "D"	Strategy Goto MOVE
 
-  Phase FIGHT   E       SigFight
-  Phase -       F       Melee Sound MUMAT
-  Phase -       G       Goto MOVE
+  Phase FIGHT   "E"       SigFight
+  Phase -       "F"       Melee Sound MUMAT
+  Phase -       "G"       Goto MOVE
 
-  Phase OUCH    H       SigOuch Sound MUMPAI Duration OuchRate Goto MOVE
+  Phase OUCH    "H"       SigOuch Sound MUMPAI Duration OuchRate Goto MOVE
 
   Default Duration 400msec
-  Phase SHOOT   X       Glow
-  Phase -       Y       Glow Shoot Sound MUMAT /* right sound? */ Goto MOVE
+  Phase SHOOT   "X"       Glow
+  Phase -       "Y"       Glow Shoot Sound MUMAT /* right sound? */ Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     I       SigDie Sound MUMDTH
-  Phase -       J	Spawn2
-  Phase -       K
-  Phase -       L
-  Phase -       M
-  Phase -       N
-  Phase -       O
-  Phase -       P       Become
-  Phase ALTDIE  I       Sound MUMDTH
-  Phase -       J
-  Phase -       K
-  Phase -       L
-  Phase -       M
-  Phase -       N
-  Phase -       O
-  Phase -       P       Destroy
+  Phase DIE     "I"       SigDie Sound MUMDTH
+  Phase -       "J"	Spawn2
+  Phase -       "K"
+  Phase -       "L"
+  Phase -       "M"
+  Phase -       "N"
+  Phase -       "O"
+  Phase -       "P"       Become
+  Phase ALTDIE  "I"       Sound MUMDTH
+  Phase -       "J"
+  Phase -       "K"
+  Phase -       "L"
+  Phase -       "M"
+  Phase -       "N"
+  Phase -       "O"
+  Phase -       "P"       Destroy
 
 
 Proto Mummy 68
   Phases Mummy
-  Sprite MUMM
+  Sprite "MUMM"
   Size 40 64
   Hits 10
   Mass 100
@@ -424,7 +424,7 @@ Proto Mummy 68
 
 Proto GhostMummy 69
   Phases Mummy
-  Sprite MUMM
+  Sprite "MUMM"
   Size 40 64
   Hits 15
   Pinvis
@@ -438,7 +438,7 @@ Proto GhostMummy 69
 
 Proto MummyLeader 45
   Phases Mummy
-  Sprite MUMM
+  Sprite "MUMM"
   Size 40 64
   Hits 30
   Mass 100
@@ -452,7 +452,7 @@ Proto MummyLeader 45
 
 Proto GhostMummyLeader 46
   Phases Mummy
-  Sprite MUMM
+  Sprite "MUMM"
   Size 40 64
   Hits 40
   Pinvis
@@ -469,21 +469,21 @@ Proto GhostMummyLeader 46
 /* Chaos Knights */
 
 PhaseTable DeadKnight
-  Phase DEAD    O      Goto DEAD
+  Phase DEAD    "O"      Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN O      SigReanimate
-  Phase -       N
-  Phase -       M
-  Phase -       L
-  Phase -       K
-  Phase -       J
-  Phase -       I      Become
+  Phase RESPAWN "O"      SigReanimate
+  Phase -       "N"
+  Phase -       "M"
+  Phase -       "L"
+  Phase -       "K"
+  Phase -       "J"
+  Phase -       "I"      Become
 
 Proto DeadKnight
-  Sprite KNIG
+  Sprite "KNIG"
   Size 40 16
   Mass 100
   Becomes 64
@@ -492,37 +492,37 @@ SoundType KGTPAI Bend 6 Chance 3
 
 PhaseTable Knight
   Default Duration NormalRate
-  Phase INIT	A	Idle Goto INIT
+  Phase INIT	"A"	Idle Goto INIT
 
-  Phase SIGHT   A	SigDetect Sound KGTSIT
+  Phase SIGHT   "A"	SigDetect Sound KGTSIT
 
-  Phase MOVE    A	Strategy
-  Phase -	B
-  Phase -	C	Strategy
-  Phase -	D	Goto MOVE
+  Phase MOVE    "A"	Strategy
+  Phase -	"B"
+  Phase -	"C"	Strategy
+  Phase -	"D"	Goto MOVE
 
-  Phase SHOOT	E	SigShoot Sound KGTATK
-  Phase -	F	Shoot
-  Phase -	G	Goto MOVE
+  Phase SHOOT	"E"	SigShoot Sound KGTATK
+  Phase -	"F"	Shoot
+  Phase -	"G"	Goto MOVE
 
-  Phase FIGHT   E	SigFight Sound KGTAT2
-  Phase -	F	Melee
-  Phase -	G	Goto MOVE
+  Phase FIGHT   "E"	SigFight Sound KGTAT2
+  Phase -	"F"	Melee
+  Phase -	"G"	Goto MOVE
 
-  Phase OUCH	H	SigOuch Duration OuchRate Sound KGTPAI Goto MOVE
+  Phase OUCH	"H"	SigOuch Duration OuchRate Sound KGTPAI Goto MOVE
 
   Default NoSigs Duration DieRate
-  Phase DIE	I	SigDie Sound KGTDTH
-  Phase -	J	Spawn2
-  Phase -	K
-  Phase -	L
-  Phase -	M
-  Phase -	N
-  Phase -	O	Become
+  Phase DIE	"I"	SigDie Sound KGTDTH
+  Phase -	"J"	Spawn2
+  Phase -	"K"
+  Phase -	"L"
+  Phase -	"M"
+  Phase -	"N"
+  Phase -	"O"	Become
 
 
 Proto Knight 64
-  Sprite KNIG
+  Sprite "KNIG"
   Size 40 80
   Hits 30
   Mass 100
@@ -534,7 +534,7 @@ Proto Knight 64
   Speed 20
 
 Proto GhostKnight 65
-  Sprite KNIG
+  Sprite "KNIG"
   Phases Knight
   Size 40 80
   Hits 40
@@ -549,45 +549,45 @@ Proto GhostKnight 65
 /* WereDragon */
 
 PhaseTable DeadWereDragon
-  Phase DEAD    Z      Goto DEAD
+  Phase DEAD    "Z"      Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN Z      SigReanimate
-  Phase -       Y
-  Phase -       X
-  Phase -       W
-  Phase -       V
-  Phase -       U
-  Phase -       T
-  Phase -       S
-  Phase -       R
-  Phase -       G      Become
+  Phase RESPAWN "Z"      SigReanimate
+  Phase -       "Y"
+  Phase -       "X"
+  Phase -       "W"
+  Phase -       "V"
+  Phase -       "U"
+  Phase -       "T"
+  Phase -       "S"
+  Phase -       "R"
+  Phase -       "G"      Become
 
 Proto DeadWereDragon
-  Sprite BEAS
+  Sprite "BEAS"
   Size 80 16
   Mass 200
   Becomes 70
 
 PhaseTable ExWereDragon
-  Phase DEAD    Q      Goto DEAD
+  Phase DEAD    "Q"      Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN Q      SigReanimate
-  Phase -       P
-  Phase -       O
-  Phase -       N
-  Phase -       M
-  Phase -       L
-  Phase -       K
-  Phase -       J      Become
+  Phase RESPAWN "Q"      SigReanimate
+  Phase -       "P"
+  Phase -       "O"
+  Phase -       "N"
+  Phase -       "M"
+  Phase -       "L"
+  Phase -       "K"
+  Phase -       "J"      Become
 
 Proto ExWereDragon
-  Sprite BEAS
+  Sprite "BEAS"
   Size 80 16
   Mass 200
   Becomes 70
@@ -597,48 +597,48 @@ SoundType BSTACT Chance -10
 
 PhaseTable WereDragon
   Default Duration NormalRate
-  Phase INIT	A	Idle Goto INIT
+  Phase INIT	"A"	Idle Goto INIT
 
-  Phase SIGHT   A	SigDetect Sound BSTSIT
+  Phase SIGHT   "A"	SigDetect Sound BSTSIT
 
-  Phase MOVE    A	Strategy Sound BSTACT
-  Phase -	B
-  Phase -	C	Strategy
-  Phase -	D
-  Phase -	E	Strategy
-  Phase -	F	Goto MOVE
+  Phase MOVE    "A"	Strategy Sound BSTACT
+  Phase -	"B"
+  Phase -	"C"	Strategy
+  Phase -	"D"
+  Phase -	"E"	Strategy
+  Phase -	"F"	Goto MOVE
 
-  Phase SHOOT	H	Duration 200msec SigShoot Sound BSTATK
-  Phase -	I	Duration 150msec
-  Phase -	I	Duration 200msec Shoot
-  Phase -	H	Duration 200msec Goto MOVE
+  Phase SHOOT	"H"	Duration 200msec SigShoot Sound BSTATK
+  Phase -	"I"	Duration 150msec
+  Phase -	"I"	Duration 200msec Shoot
+  Phase -	"H"	Duration 200msec Goto MOVE
 
-  Phase OUCH	G	SigOuch Duration OuchRate Sound BSTPAI Goto MOVE
+  Phase OUCH	"G"	SigOuch Duration OuchRate Sound BSTPAI Goto MOVE
 
   Default NoSigs Duration DieRate
-  Phase DIE	G	SigDie Sound BSTDTH
-  Phase -	R	
-  Phase -	S
-  Phase -	T
-  Phase -	U
-  Phase -	V
-  Phase -	W
-  Phase -	X
-  Phase -	Y
-  Phase -	Z	Become
+  Phase DIE	"G"	SigDie Sound BSTDTH
+  Phase -	"R"	
+  Phase -	"S"
+  Phase -	"T"
+  Phase -	"U"
+  Phase -	"V"
+  Phase -	"W"
+  Phase -	"X"
+  Phase -	"Y"
+  Phase -	"Z"	Become
 
-  Phase EXPLODE	J	SigExplode Sound BSTDTH
-  Phase -	K	
-  Phase -	L
-  Phase -	M
-  Phase -	N
-  Phase -	O	
-  Phase -	P
-  Phase -	Q	Become2
+  Phase EXPLODE	"J"	SigExplode Sound BSTDTH
+  Phase -	"K"	
+  Phase -	"L"
+  Phase -	"M"
+  Phase -	"N"
+  Phase -	"O"	
+  Phase -	"P"
+  Phase -	"Q"	Become2
 
 
 Proto WereDragon 70
-  Sprite BEAS
+  Sprite "BEAS"
   Size 67 87
   Hits 20
   Mass 200
@@ -652,30 +652,30 @@ Proto WereDragon 70
 /* Maulotaur (9) */
 
 PhaseTable DeadMaulotaur
-  Phase DEAD    O      Goto DEAD
+  Phase DEAD    "O"      Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN T      SigReanimate
-  Phase -       S
-  Phase -       R
-  Phase -       Q
-  Phase -       P
-  Phase -       O
-  Phase -       N
-  Phase -       M
-  Phase -       L
-  Phase -       K
-  Phase -       J
-  Phase -       I
-  Phase -       H
-  Phase -       G
-  Phase -       F
-  Phase -       E      Become
+  Phase RESPAWN "T"      SigReanimate
+  Phase -       "S"
+  Phase -       "R"
+  Phase -       "Q"
+  Phase -       "P"
+  Phase -       "O"
+  Phase -       "N"
+  Phase -       "M"
+  Phase -       "L"
+  Phase -       "K"
+  Phase -       "J"
+  Phase -       "I"
+  Phase -       "H"
+  Phase -       "G"
+  Phase -       "F"
+  Phase -       "E"      Become
 
 Proto DeadMaulotaur
-  Sprite MNTR
+  Sprite "MNTR"
   Size 128 32
   Mass 200
   Becomes 9
@@ -685,56 +685,56 @@ SoundType MINACT Chance -10
 
 PhaseTable Maulotaur
   Default Duration NormalRate
-  Phase INIT	A	Idle Goto INIT
+  Phase INIT	"A"	Idle Goto INIT
 
-  Phase SIGHT   A	SigDetect Sound MINSIT
+  Phase SIGHT   "A"	SigDetect Sound MINSIT
 
-  Phase MOVE    A	Strategy
-  Phase -	B	Sound MINACT
-  Phase -	C	Strategy
-  Phase -	D	Goto MOVE
+  Phase MOVE    "A"	Strategy
+  Phase -	"B"	Sound MINACT
+  Phase -	"C"	Strategy
+  Phase -	"D"	Goto MOVE
 
-  Phase FIGHT	Y	SigFight Sound MINAT1
-  Phase -	Z	Melee Goto MOVE
+  Phase FIGHT	"Y"	SigFight Sound MINAT1
+  Phase -	"Z"	Melee Goto MOVE
 
-  Phase CHARGE	U	Charge Melee
-  Phase -	U	Charge Melee
-  Phase -	U	Charge Melee
-  Phase -	U	Charge Melee
-  Phase -	U	Charge Melee
-  Phase -	U	Charge Melee
-  Phase -	U	Charge Melee Goto MOVE
+  Phase CHARGE	"U"	Charge Melee
+  Phase -	"U"	Charge Melee
+  Phase -	"U"	Charge Melee
+  Phase -	"U"	Charge Melee
+  Phase -	"U"	Charge Melee
+  Phase -	"U"	Charge Melee
+  Phase -	"U"	Charge Melee Goto MOVE
 
   /* a couple of chance to bail make maulotaur's missile attack rarer */ 
-  Phase SHOOT	V	SigShoot RSkip Goto CHARGE
-  Phase -	V	RSkip Goto CHARGE
+  Phase SHOOT	"V"	SigShoot RSkip Goto CHARGE
+  Phase -	"V"	RSkip Goto CHARGE
   /* now really do the attack */
-  Phase -	W	Sound MINAT3
-  Phase -	X	Shoot
-  Phase -	W	Goto MOVE
+  Phase -	"W"	Sound MINAT3
+  Phase -	"X"	Shoot
+  Phase -	"W"	Goto MOVE
 
-  Phase OUCH	E	SigOuch Duration OuchRate Sound MINPAI Goto MOVE
+  Phase OUCH	"E"	SigOuch Duration OuchRate Sound MINPAI Goto MOVE
 
   Default NoSigs Duration DieRate
-  Phase DIE	E	SigDie
-  Phase -	F
-  Phase -	G	Sound MINDTH
-  Phase -	H
-  Phase -	I
-  Phase -	J
-  Phase -	K
-  Phase -	L
-  Phase -	M
-  Phase -	O
-  Phase -	P
-  Phase -	Q
-  Phase -	R
-  Phase -	S
-  Phase -	T	Become
+  Phase DIE	"E"	SigDie
+  Phase -	"F"
+  Phase -	"G"	Sound MINDTH
+  Phase -	"H"
+  Phase -	"I"
+  Phase -	"J"
+  Phase -	"K"
+  Phase -	"L"
+  Phase -	"M"
+  Phase -	"O"
+  Phase -	"P"
+  Phase -	"Q"
+  Phase -	"R"
+  Phase -	"S"
+  Phase -	"T"	Become
 
 
 Proto Maulotaur 9
-  Sprite MNTR
+  Sprite "MNTR"
   Size 90 128
   Hits 100
   Mass 200
@@ -749,26 +749,26 @@ Proto Maulotaur 9
 
 PhaseTable GrowPod
   Default Duration 80msec
-  Phase INIT	G
-  Phase -	H	Sound NEWPOD
-  Phase -	I
-  Phase -	J
-  Phase -	K
-  Phase -	L
-  Phase -	M
-  Phase -	N
-  Phase -	O
-  Phase -	P	Become
+  Phase INIT	"G"
+  Phase -	"H"	Sound NEWPOD
+  Phase -	"I"
+  Phase -	"J"
+  Phase -	"K"
+  Phase -	"L"
+  Phase -	"M"
+  Phase -	"N"
+  Phase -	"O"
+  Phase -	"P"	Become
 
 Proto GrowPod
-  Sprite PPOD
+  Sprite "PPOD"
   Size 30 30
   Becomes 2035
   Blocking
 
 PhaseTable DeadPod
-  Phase INIT	A	RndDuration 20sec
-  Phase -	A	Become
+  Phase INIT	"A"	RndDuration 20sec
+  Phase -	"A"	Become
 
 Proto DeadPod
   Phantom
@@ -776,19 +776,19 @@ Proto DeadPod
 
 PhaseTable Pod
   Default Duration NormalRate  
-  Phase	INIT	A	Goto INIT
+  Phase	INIT	"A"	Goto INIT
 
-  Phase OUCH    B	SigOuch Goto INIT
+  Phase OUCH    "B"	SigOuch Goto INIT
 
   Default Duration ExplodeRate NoSigs
-  Phase	BOOM	B	SigDie
-  Phase	-	C       Sound PODEXP Explode
-  Phase	-	D
-  Phase	-	E
-  Phase	-	F	Become
+  Phase	BOOM	"B"	SigDie
+  Phase	-	"C"       Sound PODEXP Explode
+  Phase	-	"D"
+  Phase	-	"E"
+  Phase	-	"F"	Become
 
 Proto Pod 2035
-  Sprite PPOD
+  Sprite "PPOD"
   Size 45 38
   Hits 8
   Mass 70
@@ -799,22 +799,22 @@ Proto Pod 2035
 /* Dark Disciple */
 
 PhaseTable DeadDisciple
-  Phase DEAD    M      Goto DEAD
+  Phase DEAD    "M"      Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN M      SigReanimate
-  Phase -       L
-  Phase -       K
-  Phase -       J
-  Phase -       I
-  Phase -       H
-  Phase -       G
-  Phase -       F      Become
+  Phase RESPAWN "M"      SigReanimate
+  Phase -       "L"
+  Phase -       "K"
+  Phase -       "J"
+  Phase -       "I"
+  Phase -       "H"
+  Phase -       "G"
+  Phase -       "F"      Become
 
 Proto DeadDisciple
-  Sprite WZRD
+  Sprite "WZRD"
   Size 40 16
   Mass 100
   Becomes 15
@@ -825,32 +825,32 @@ SoundType WIZACT Bend 4 Chance -30
 PhaseTable Disciple
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound WIZSIT
+  Phase SIGHT   "A"       SigDetect Sound WIZSIT
 
-  Phase MOVE    A	Strategy
-  Phase -       B       Goto MOVE Sound WIZACT
+  Phase MOVE    "A"	Strategy
+  Phase -       "B"       Goto MOVE Sound WIZACT
 
-  Phase SHOOT   C       SigShoot Glow
-  Phase -       D       Glow Shoot Sound WIZATK Goto MOVE
+  Phase SHOOT   "C"       SigShoot Glow
+  Phase -       "D"       Glow Shoot Sound WIZATK Goto MOVE
 
-  Phase OUCH    E       SigOuch Sound WIZPAI Duration OuchRate Goto MOVE
+  Phase OUCH    "E"       SigOuch Sound WIZPAI Duration OuchRate Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     F       SigDie Sound WIZDTH
-  Phase -       G
-  Phase -       H
-  Phase -       I
-  Phase -       J
-  Phase -       K
-  Phase -       L
-  Phase -       M       Become
+  Phase DIE     "F"       SigDie Sound WIZDTH
+  Phase -       "G"
+  Phase -       "H"
+  Phase -       "I"
+  Phase -       "J"
+  Phase -       "K"
+  Phase -       "L"
+  Phase -       "M"       Become
 
 
 Proto Disciple 15
-  Sprite WZRD
+  Sprite "WZRD"
   Size 40 64
   Hits 20
   Mass 100

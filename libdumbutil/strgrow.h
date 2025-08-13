@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumbutil/strgrow.h: Buffer for a growing string
- * Copyright (C) 1998 by Kalle Olavi Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,16 +24,35 @@
 
 #include <stddef.h>
 
+/* struct strgrow is a buffer where characters can be added one at a
+   time.  The string is at all times readable via the str member, but
+   not automatically null-terminated -- you can add the terminator
+   with strgrow_grow() if you need it.
+
+   An efficient way of using strgrow is to have one strgrow object
+   where strings are built one at a time.  When a string is complete,
+   call strgrow_strdup_clear() to add the null terminator, strdup it
+   and clear the buffer.  This way, only one optimal-size malloc() is
+   needed for most strings.  */
+
 struct strgrow
 {
-   char *str;
+   /* public: */
+   char *str;			/* not automatically null-terminated */
+   /* private: */
    size_t current, max;
 };
 
+/* Constructor */
 void strgrow_init(struct strgrow *);
+/* Destructor */
 void strgrow_fini(struct strgrow *);
+/* Add a character to the end (may be '\0') */
 void strgrow_grow(struct strgrow *, char);
+/* Clear the buffer but leave it allocated */
 void strgrow_clear(struct strgrow *);
+/* Add '\0', strdup and clear */
+char *strgrow_strdup_clear(struct strgrow *);
 
 #endif /* LIBDUMBUTIL_STRGROW_H */
 

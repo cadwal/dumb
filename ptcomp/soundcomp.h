@@ -22,11 +22,11 @@
 #ifndef SOUNDCOMP_H
 #define SOUNDCOMP_H
 
-#include <stdio.h>
+#include "libdumbwad/wadwr.h"
 
 void init_soundcomp(void);
 void soundcomp(void);
-void wrsounds(FILE *fout);
+void wrsounds(WADWR *w);
 
 int parm_sound(void);
 

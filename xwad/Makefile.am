@@ -17,7 +17,7 @@ xwadmap.h
 
 XProtoThing_SOURCES = xproto.c choose.c colour.c controls.c disphash.c	\
 xproctls.c xtexture.c xproto.h choose.h colour.h controls.h disphash.h	\
-xtexture.h
+timewait.c timewait.h xtexture.h
 
 XProtoThing_LDADD = $(LDADD) $(DUMB_CONFIG_SOUND_LDADD)
 

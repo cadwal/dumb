@@ -116,6 +116,7 @@ typedef struct _LevData {
    int player[MAXPLAYERS];
    int plwep[MAXPLAYERS];
    int plflags[MAXPLAYERS];
+   /* plinfo_len, plinfo and plbkup are mostly handled by gettable.c */
    int plinfo_len;
    int *plinfo[MAXPLAYERS], *plbkup[MAXPLAYERS];
    Ticks map_ticks;
@@ -156,7 +157,7 @@ void reset_level(LevData *data);
 void free_levlumptype(LevData *data, MapLumpType mlt);
 
 int get_plinfo_len(void);
-void init_plinfo(int *pli);
+void init_plinfo(LevData *ld, int pl);
 
 void init_player(LevData *ld, int plnum, int thnum);
 

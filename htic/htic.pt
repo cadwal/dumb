@@ -5,19 +5,23 @@
  **  The beginnings of some proto table entries for heretic
  **/
 
+#define HERETIC 1	/* for some files in ../doom/ */
+
+#include <dumb/dumbdefs.pt>
+
 #define StickToFloor Mass 1000 YMoveOnly
 
-#include <generic.pt>
-#include <gettables.pt>
-#include <keys.pt>
-#include <missiles.pt>
-#include <weapons.pt>
-#include <monsters.pt>
-#include <furniture.pt>
-#include <doom/linetypes.pt>
-#include <doom/sectortypes.pt>
-#include <animtex.pt>
-#include <levels.pt>
-#include <ambient.pt>
+#include "generic.pt"
+#include "gettables.pt"
+#include "keys.pt"
+#include "missiles.pt"
+#include "weapons.pt"
+#include "monsters.pt"
+#include "furniture.pt"
+#include "../doom/linetypes.pt"
+#include "../doom/sectortypes.pt"
+#include "animtex.pt"
+#include "levels.pt"
+#include "ambient.pt"
 
 #include "../doom/camera.pt"

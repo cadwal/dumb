@@ -33,6 +33,14 @@
  * function.  */
 #define ATTR_REGPARM
 
+/* Define so that
+ *
+ * #include DUMB_CONFIG_PPM_H
+ *
+ * includes <ppm.h>, <gr/ppm.h> or some such.
+ * Needed by tool/dark2trans.c and tool/ppmtodumb.c.  */
+#undef DUMB_CONFIG_PPM_H
+
 /* Define if you have the XFree86 DGA extension.  This requires
  * <X11/extensions/xf86dga.h> and -lXxf86dga.  */
 #undef DUMB_CONFIG_XF86DGA

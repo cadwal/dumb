@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumb/prothingstruct.h: Format of PHASES and PROTOS lumps.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,6 +25,7 @@
 
 #include "libdumbutil/endiantypes.h"
 #include "libdumbutil/fixed.h"
+#include "libdumb/texture.h"
 
 typedef struct {
    LE_int16 id;		/* an identifier matched up with values in PT */
@@ -66,26 +68,49 @@ typedef enum {
    NUM_THINGSIGS, TS_NOSIG = -1
 } ThingSignal;
 
+/* When DUMB starts up, it converts the protos to the following
+   internal format.  This is necessary because get_sprite_table() in
+   prothing.c must compute the sprite table address from the
+   protothing address.  In DUMB versions prior to 0.13.7, all
+   protothings were in an array so get_sprite_table() could subtract
+   the array address from the protothing address and use the
+   difference as an index to the texture array.  But now the
+   protothings have variable size, so that doesn't work.  */
+
 typedef struct {
-   LE_int16 id;			/* id referred to by THINGS lump */
-   LE_int16 _spare1;
-   LE_int16 hits;
-   LE_int16 damage;	/* how much damage to do in melee, or when exploding */
-   LE_int32 /* fixed */ realmass, friction;
-   LE_int32 /* fixed */ radius, height;
-   LE_int32 sound;
-   LE_flags32 flags;
-   LE_int32 /* fixed */ speed;
-   LE_int32 /* fixed */ shootarc_h, shootarc_v, see_arc, aim_arc;
-   LE_int16 shootnum;
-   LE_int16 artitype;
-   LE_int16 artinum;
-   LE_int16 spawn1, spawn2;	/* prothing id to be spawned by TPH_SPAWN */
-   LE_int16 become1, become2;
-   LE_int16 bloodtype, _spare2;
-   LE_int16 phase_id;
-   LE_int16 signals[NUM_THINGSIGS];
+   int artitype;		/* type of gettable to give */
+   int artinum;			/* how many to give */
+   int artimax;			/* how many the player can have, 0=default */
+} ProtoThing_Gets;
+
+typedef struct {
+   int id;			/* id referred to by THINGS lump */
+   int hits;
+   int damage;   /* how much damage to do in melee, or when exploding */
+   fixed realmass, friction;
+   fixed radius, height;
+   int sound;
+   unsigned flags;
+   fixed speed;
+   fixed shootarc_h, shootarc_v, see_arc, aim_arc;
+   int shootnum;
+   int spawn1, spawn2;		/* prothing id to be spawned by TPH_SPAWN */
+   int spawnmax;
+   int become1, become2;
+   int bloodtype;
+   int phase_id;
+   int signals[NUM_THINGSIGS];
    char sprite[6];
+   Texture **sprites;		/* use via get_sprite_table() only! */
+   /* The rest of the members say what happens when the player tries
+      to pick this up.  */
+   int pickup_sound;
+   int ngets;			/* how many gettables this will give */
+   ProtoThing_Gets *gets;
+   /* These point to untranslated dynamically allocated strings.  */
+   char *firstpickupmsg;
+   char *pickupmsg;
+   char *ignoremsg;
 } ProtoThing;
 
 #define PT_EXPLOSIVE 0x001	/* explode on collision */
@@ -123,6 +148,9 @@ typedef struct {
 #define PT_STUCKDOWN 0x40000000 /* stuck to floor */
 
 #define PT_TAKESECTDMG PT_PLAYER /* for now, only players hurt by goo */
+
+/* ProtoThing_inwad_Gets and ProtoThing_inwad are now defined in
+   protoinwad.c.  */
 
 #endif
 

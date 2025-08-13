@@ -4,9 +4,9 @@
 
 
 PhaseTable Camera
-  Phase IDLE A Goto IDLE
+  Phase IDLE "A" Goto IDLE
 
-Proto Camera 8888
+Proto Camera PROTO_ID_CAMERA
   Size 1 1
   Mass 0
 /* Phantom */  /* Note: what we really want is collision with

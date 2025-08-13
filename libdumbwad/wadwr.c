@@ -1,8 +1,8 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumbwad/wadwr.c: Writing WAD files.
+ * Copyright (C) 1998-1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@schlick.anu.edu.au>
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,9 +50,7 @@ WADWR *
 wadwr_open(const char *fname, char wadtype)
 {
    WADWR *w;
-   w = (WADWR *) calloc(1, sizeof(WADWR));
-   if (w == NULL)
-      return w;
+   w = (WADWR *) safe_calloc(1, sizeof(WADWR));
    w->fname = safe_strdup(fname);
    w->type = tolower(wadtype);
    if (w->type == 'd')
@@ -72,37 +70,52 @@ wadwr_open(const char *fname, char wadtype)
 	 sigcpy(w->hdr.sig, "PWAD");
       w->maxdir = ALLOCBLK;
       w->dir = (WadDirEntry *) malloc(w->maxdir * sizeof(WadDirEntry));
-      if (fwrite(&w->hdr, sizeof(WadHeader), 1, w->f) != 1)
-	  logprintf(LOG_ERROR, 'W', _("%s: short write: %s"),
-		    w->fname, strerror(errno));
+      if (fwrite(&w->hdr, sizeof(WadHeader), 1, w->f) != 1) {
+	 w->error_flag = 1;
+	 logprintf(LOG_ERROR, 'W', _("%s: short write: %s"),
+		   w->fname, strerror(errno));
+      }
    }
    return w;
 }
 
-void
+int
 wadwr_close(WADWR *w)
 {
    if (w->type != 'd') {
       w->hdr.diroffset = aligned_pos(w);
       if (fwrite(w->dir, sizeof(WadDirEntry), w->hdr.nlumps, w->f)
-	  != w->hdr.nlumps)
-	  logprintf(LOG_ERROR, 'W', _("%s: short write: %s"),
-		    w->fname, strerror(errno));
-      if (fseek(w->f, 0, SEEK_SET) != 0)
+	  != w->hdr.nlumps) {
+	 w->error_flag = 1;
+	 logprintf(LOG_ERROR, 'W', _("%s: short write: %s"),
+		   w->fname, strerror(errno));
+      }
+      if (fseek(w->f, 0, SEEK_SET) != 0) {
+	 w->error_flag = 1;
 	 logprintf(LOG_ERROR, 'W', _("%s: can't rewind: %s"),
 		   w->fname, strerror(errno));
-      if (fwrite(&w->hdr, sizeof(WadHeader), 1, w->f) != 1)
-	  logprintf(LOG_ERROR, 'W', _("%s: short write: %s"),
-		    w->fname, strerror(errno));
+      }
+      if (fwrite(&w->hdr, sizeof(WadHeader), 1, w->f) != 1) {
+	 w->error_flag = 1;
+	 logprintf(LOG_ERROR, 'W', _("%s: short write: %s"),
+		   w->fname, strerror(errno));
+      }
    }
    if (w->f) {
-      if (fclose(w->f) != 0)
+      if (fclose(w->f) != 0) {
+	 w->error_flag = 1;
 	 logprintf(LOG_ERROR, 'W', "%s: %s", w->fname, strerror(errno));
+      }
    }
    if (w->dir)
       free(w->dir);
    free(w->fname);
-   free(w);
+
+   {
+      int error_flag = w->error_flag;
+      free(w);
+      return error_flag;
+   }
 }
 
 void
@@ -111,8 +124,10 @@ wadwr_lump(WADWR *w, const char *lumpname)
    if (w->type == 'd') {
       char buf[256];
       if (w->f != NULL) {
-	 if (fclose(w->f) != 0)
+	 if (fclose(w->f) != 0) {
+	    w->error_flag = 1;
 	    logprintf(LOG_ERROR, 'W', "%s: %s", w->fname, strerror(errno));
+	 }
       }
       strcpy(buf, w->fname);
       if (buf[strlen(buf) - 1] != '/')
@@ -121,14 +136,16 @@ wadwr_lump(WADWR *w, const char *lumpname)
       if (!strstr(buf, ".lump"))
 	 strcat(buf, ".lump");
       w->f = fopen(buf, "wb");
-      if (w->f == NULL)
+      if (w->f == NULL) {
+	 w->error_flag = 1;
 	 logprintf(LOG_ERROR, 'W', _("%s: can't open: %s"),
 		   buf, strerror(errno));
+      }
    } else {			/* not debug */
       if (w->hdr.nlumps >= w->maxdir) {
 	 w->maxdir += ALLOCBLK;
 	 w->dir = (WadDirEntry *) realloc(w->dir,
-					w->maxdir * sizeof(WadDirEntry));
+					  w->maxdir * sizeof(WadDirEntry));
       }
       w->current = w->dir + w->hdr.nlumps;
       w->hdr.nlumps++;
@@ -150,9 +167,11 @@ wadwr_write(WADWR *w, const void *lump, size_t len)
       /* This used to do fwrite(lump, len, 1, w->f) but that gave
        * false alarms about short writes when len was zero.  */
       /* FIXME: Does a short write set errno?  */
-      if (fwrite(lump, 1, len, w->f) != len)
+      if (fwrite(lump, 1, len, w->f) != len) {
+	 w->error_flag = 1;
 	 logprintf(LOG_ERROR, 'W', _("%s: short write: %s"),
 		   w->fname, strerror(errno));
+      }
    }
 }
 

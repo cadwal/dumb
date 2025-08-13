@@ -69,18 +69,16 @@ phasecomp(void)
    p->signals[TS_INIT] = 0;
    p->maxphases = ALLOC_BLK;
    p->tp = (ThingPhase *) safe_malloc(p->maxphases * sizeof(ThingPhase));
-   p->tpname = (char *) safe_malloc(p->maxphases * NAMELEN);
+   p->tpnames = (char **) safe_malloc(p->maxphases * sizeof(char *));
    /* one parameter, name */
-   s = next_token();
-   if (s == NULL || *s == '\n')
-      synerr(_("name expected after PhaseTable"));
-   strncpy(p->name, s, NAMELEN - 1);
+   p->name = safe_strdup(parm_name(_("Name expected after PhaseTable")));
    /* now the phase table */
    while (1) {
       s = next_token();
       if (s == NULL)
 	 return;
-      else if (*s == '\n');
+      else if (*s == '\n')
+	 ;
       else if (!strcasecmp(s, "Default"))
 	 tp = &def;
       else if (!strcasecmp(s, "Phase")) {
@@ -89,17 +87,21 @@ phasecomp(void)
 	    p->maxphases += ALLOC_BLK;
 	    p->tp = (ThingPhase *)
 	       safe_realloc(p->tp, p->maxphases * sizeof(ThingPhase));
-	    p->tpname = (char *)
-	       safe_realloc(p->tpname, p->maxphases * NAMELEN);
+	    p->tpnames = (char **)
+	       safe_realloc(p->tpnames, p->maxphases * sizeof(char *));
 	 }
 	 tp = p->tp + p->nphases;
 	 memcpy(tp, &def, sizeof(ThingPhase));
 	 def.id = 0;
-	 parm_str(p->tpname + p->nphases * NAMELEN, NAMELEN);
-	 p->nphases++;
-	 s = next_token();
-	 if (s != NULL)
-	    tp->spr_phase = *s;
+	 {
+	    const char *phasename = parm_name(_("Name expected after Phase"));
+	    if (!strcmp(phasename, "-")) {
+	       p->tpnames[p->nphases] = NULL;
+	    } else
+	       p->tpnames[p->nphases] = strdup(phasename);
+	    p->nphases++;
+	 }
+	 tp->spr_phase = parm_ch();
       } else if (!strcasecmp(s, "SigDetect"))
 	 p->signals[TS_DETECT] = p->nphases - 1;
       else if (!strcasecmp(s, "SigFight"))
@@ -209,18 +211,19 @@ phasecomp(void)
 	 break;
    }
    p->tp = (ThingPhase *) safe_realloc(p->tp, p->nphases * sizeof(ThingPhase));
-   p->tpname = (char *) safe_realloc(p->tpname, p->nphases * NAMELEN);
+   p->tpnames = (char **) safe_realloc(p->tpnames, p->nphases * sizeof(char *));
    p->maxphases = p->nphases;
    unget_token();
 }
 
 void
-wrphases(FILE *fout)
+wrphases(WADWR *wout)
 {
    int i;
    printf(_("%5d phase tables\n"), nphasetbls);
+   wadwr_lump(wout, "PHASES");
    for (i = 0; i < nphasetbls; i++)
-      fwrite(phases[i].tp, sizeof(ThingPhase), phases[i].nphases, fout);
+      wadwr_write(wout, phases[i].tp, phases[i].nphases * sizeof(ThingPhase));
 }
 
 
@@ -237,13 +240,10 @@ find_ph_tbl(const char *s)
 ThingPhaseRec *
 parm_ph_tbl(void)
 {
-   const char *s = next_token();
-   ThingPhaseRec *tpr;
-   if (s == NULL || *s == '\n')
-      synerr(_("phase table name parameter expected"));
-   tpr = find_ph_tbl(s);
+   const char *s = parm_name(_("Phase table name parameter expected"));
+   ThingPhaseRec *tpr = find_ph_tbl(s);
    if (!tpr)
-      synerr(_("phase table name unrecognised"));
+      err(_("Phase table name `%s' unrecognised"), s);
    return tpr;
 }
 
@@ -251,15 +251,14 @@ int
 parm_phase(ThingPhaseRec *p)
 {
    int i;
-   const char *s = next_token();
+   const char *s;
    if (p == NULL)
-      synerr(_("you need to specify a phasetable first"));
-   if (s == NULL || *s == '\n')
-      synerr(_("phase name parameter expected"));
+      err(_("You need to specify a phasetable first"));
+   s = parm_name(_("Phase name parameter expected"));
    for (i = 0; i < p->nphases; i++)
-      if (!strcasecmp(p->tpname + i * NAMELEN, s))
+      if (p->tpnames[i] != NULL && !strcasecmp(p->tpnames[i], s))
 	 return i;
-   synerr(_("phase name unrecognised"));
+   err(_("Phase name `%s' unrecognised"), s);
    return -1;
 }
 

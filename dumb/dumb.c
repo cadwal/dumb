@@ -21,14 +21,14 @@
 
 #include <config.h>
 
+#include <locale.h>
+#include <setjmp.h>
+#include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <time.h>
-#include <setjmp.h>
-#include <signal.h>
-#include <locale.h>
+#include <unistd.h>
 
 #include "libdumbutil/dumb-nls.h"
 
@@ -48,6 +48,7 @@
 #include "banner.h"
 #include "bogothing.h"
 #include "draw.h"
+#include "dumbdefs.pt"		/* for PROTO_ID_CAMERA */
 #include "fbrerend.h"
 #include "game.h"
 #include "gettable.h"
@@ -56,6 +57,7 @@
 #include "keymapconf.h"
 #include "levinfo.h"
 #include "linetype.h"
+#include "message.h"
 #include "net.h"
 #include "netplay.h"
 #include "render.h"
@@ -177,8 +179,6 @@ static LevData ld[1];
 static int width = 0, height = 0, vwidth = 0, vheight = 0, bpp = 0,
  xmul = 0, ymul = 0, xlace = 0, ylace = 0, rend2fb = 0, real_width = 0;
 
-static int banner = -1, wbanner = -1, bfont = -1;
-
 /* called by conf_args() if --version is given */
 void
 print_program_version(void)
@@ -188,7 +188,7 @@ print_program_version(void)
       { "1997-1998", "Josh Parsons" },
       { "1997-1998", "Marcus Sundberg" },
       { "1998", "Andrew Apted" },
-      { "1998", "Kalle O. Niemitalo" },
+      { "1998", "Kalle Niemitalo" },
       { "1998", "Ulf Axelsson" },
       { "1987-1998", "Free Software Foundation, Inc." },
       COPYRIGHT_END
@@ -197,24 +197,6 @@ print_program_version(void)
    print_copyrights(copyrights);
    printf(_("This program is free software; you may redistribute it under the terms of\n"
 	    "the GNU General Public License.  This program has absolutely no warranty.\n"));
-}
-
-static void
-do_gmsg(const char *s)
-{
-   add_to_banner(banner, NULL, width, 0);
-   add_str_to_banner(banner, bfont, s);
-}
-
-void
-gmsg(int pl, const char *s)
-{
-   if (pl < 0 && !slave)
-      do_gmsg(s);
-   if (pl == ld->localplayer)
-      do_gmsg(s);
-   else
-      send_message(pl, s);
 }
 
 static int want_new_lvl = 0, want_quit = 0;
@@ -256,7 +238,7 @@ do_preload(LevData *ld, int bpp)
    }
    logprintf(LOG_INFO, 'D', _("Preloading sprites"));
    for (i = 0; i < ldnthings(ld); i++) {
-      const ProtoThing *proto = ldthingd(ld)[i].proto;
+      ProtoThing *proto = ldthingd(ld)[i].proto;
       int j;
       if (proto == NULL || proto->sprite[0] == 0)
 	 continue;
@@ -307,7 +289,7 @@ main(int argc, char **argv)
    void *(*fbrerender) ();
 #endif
    int load_failed = 1;
-   Texture *txh = NULL;
+   Texture *tex_xhair = NULL;
 
    /* some default places to look for wads
       this will help make rpm installation easier */
@@ -520,8 +502,8 @@ main(int argc, char **argv)
 
    td = ldthingd(ld) + (follow = ld->player[ld->localplayer]);
 
-   if (cnf_third_person && find_protothing(8888) != NULL) {
-      camera = new_thing(ld, 8888, td->x, td->y, td->z);
+   if (cnf_third_person && find_protothing(PROTO_ID_CAMERA) != NULL) {
+      camera = new_thing(ld, PROTO_ID_CAMERA, td->x, td->y, td->z);
       camd = ldthingd(ld) + camera;
    } else {
       camd = td;
@@ -540,27 +522,9 @@ main(int argc, char **argv)
 
    init_gettables();
 
-   banner = init_banner(64, 0, width, 10);
-   wbanner = init_banner(height - 12, 0, width, 3);
-   if (have_lump("FONTB01"))
-      bfont = init_font("FONTB%02d", 64, '!' - 1);
-   else
-      bfont = init_font("STCFN%03d", 128, 0);
-   if (crowd && have_lump("DUMBLOGO"))
-      add_to_banner(banner, get_misc_texture("DUMBLOGO"), width, 64);
-   if (crowd && have_lump("WAFFLE")) {
-      LumpNum w = getlump("WAFFLE");
-      if (w == 0)
-	 goto skip;		/* This is needed for Digital Unix but not
-				   for Linux, weird! */
-      add_to_banner(wbanner, NULL, width, 0);
-      add_text_to_banner(wbanner, bfont,
-			 (const char *) load_lump(w),
-			 get_lump_len(w));
-   }
- skip:
+   init_message(width, height, crowd, ld, slave);
    if (cnf_xhair)
-      txh = get_font_texture(bfont, '+');
+      tex_xhair = get_xhair_texture();
 
    /*
     * if(testarg) {
@@ -620,10 +584,10 @@ main(int argc, char **argv)
 	    draw_gettables(ld, ld->localplayer, fbptr, width, height);
 	 if (tickspassed)
 	    update_banners(fbptr, tickspassed);
-	 if (txh)
-	    draw(fbptr, txh,
-		 (width - txh->width) / 2,
-		 (height - txh->height) / 2);
+	 if (tex_xhair)
+	    draw(fbptr, tex_xhair,
+		 (width - tex_xhair->width) / 2,
+		 (height - tex_xhair->height) / 2);
 	 if (crowd)
 	    draw_bogothings(ld, fbptr, width, height);
 	 if (!rend2fb)
@@ -670,7 +634,7 @@ main(int argc, char **argv)
 	    if (camera < 0) {
 		camd = td;
 	    } else {
-		camera = new_thing(ld, 8888, td->x, td->y, td->z);
+		camera = new_thing(ld, PROTO_ID_CAMERA, td->x, td->y, td->z);
 		camd = ldthingd(ld) + camera;
 	    }
 	    video_winstuff(ld->name, vwidth, vheight);
@@ -751,7 +715,7 @@ main(int argc, char **argv)
 		      _("Try running DUMB in a larger window."));
 	 }
 	 if (player_alive && td->hits <= 0) {
-	    gmsg(ld->localplayer, _("YOU DIED.  TOO BAD..."));
+	    game_message(ld->localplayer, _("YOU DIED.  TOO BAD..."));
 	    if (ld->plwep[ld->localplayer] >= 0)
 	       ldthingd(ld)[ld->plwep[ld->localplayer]].proto = NULL;
 	 }

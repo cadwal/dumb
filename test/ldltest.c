@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
- * test/ldltest.c: Test program for libdumblevel.
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ * test/ldltest.c: Test program for libdumbworldb (previously libdumblevel).
+ * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,7 +156,7 @@ static void
 print_version(void)
 {
    static const struct copyright copyrights[] = {
-      { "1998", "Kalle O. Niemitalo" },
+      { "1998", "Kalle Niemitalo" },
       COPYRIGHT_END
    };
    fputs("ldltest (DUMB) " VERSION "\n", stdout);

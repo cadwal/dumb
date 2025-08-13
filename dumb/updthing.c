@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/updthing.c: Updating things.  State machines.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,18 +22,21 @@
 
 #include <config.h>
 
-#include <stdarg.h>
-#include <stdlib.h>
-#include <math.h>
+#include <assert.h>
 #include <limits.h>
+#include <math.h>
+#include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "libdumbutil/dumb-nls.h"
 
 #include "libdumbutil/log.h"
 #include "libdumbutil/timer.h"
-#include "levdata.h"
+#include "libdumb/dsound.h"
+#include "game.h"
 #include "gettable.h"
+#include "levdata.h"
 #include "linetype.h"
 #include "things.h"
 
@@ -144,6 +148,46 @@ pyth_sq(fixed x, fixed y)
 }
 #define SQ(x) ((x)*(x))
 
+/* return 1 if did pick up */
+static int
+pickup_proto(LevData *ld, int pl, ProtoThing *proto)
+{
+   const ProtoThing_Gets *gets = proto->gets;
+   int i;
+   enum gettable_pickup total_pu = GETT_PU_NO_ERROR; /* default not used */
+
+   assert(proto->ngets > 0);
+
+   for (i = 0; i < proto->ngets; i++) {
+      enum gettable_pickup pu = pickup_gettable(ld, pl,
+						gets[i].artitype,
+						gets[i].artinum,
+						gets[i].artimax);
+      /* The backpack proto gives first the backpack gettable and then
+	 various ammo gettables.  These tests are set up so that only
+	 the first gettable can set total_pu = GETT_PU_YES_FIRST. */
+      if (i == 0)
+	 total_pu = pu;
+      else if (GETT_PU_YES(pu) && !GETT_PU_YES(total_pu))
+	 total_pu = GETT_PU_YES_MORE;
+   }
+   if (total_pu == GETT_PU_NO_HASMAX) {
+      if (proto->ignoremsg != NULL)
+	 game_message(pl, _(proto->ignoremsg));
+   }
+   if (!GETT_PU_YES(total_pu))
+      return 0;		/* intended to catch GETT_PU_NO_ERROR too */
+   /* now we know the player picked it up */
+   if (total_pu == GETT_PU_YES_FIRST && proto->firstpickupmsg != NULL)
+      game_message(pl, _(proto->firstpickupmsg));
+   else if (proto->pickupmsg != NULL)
+      game_message(pl, _(proto->pickupmsg));
+   /* sound */
+   if (proto->pickup_sound >= 0)
+      play_dsound(proto->pickup_sound, 0, 0, 0);
+   return 1;
+}
+
 void
 thing_chk_collide(LevData *ld, int thingnum)
 {
@@ -198,13 +242,14 @@ thing_chk_collide(LevData *ld, int thingnum)
 	 }
 	 /* are we a player running into a gettable */
 	 else if ((td->proto->flags & PT_PLAYER)
-		  && otd->proto->artitype >= 0) {
+		  && otd->proto->ngets > 0) {
 	    int pl = thing2player(ld, thingnum);
-	    if (pl >= 0)
-	       pickup_gettable(ld, pl,
-			       otd->proto->artitype,
-			       otd->proto->artinum);
-	    otd->proto = NULL;
+	    if (pl >= 0) {
+	       if (pickup_proto(ld, pl, otd->proto)) {
+		  /* did pick it up */
+		  otd->proto = NULL;
+	       }
+	    }
 	 }
 	 /* if object is blocking, stop */
 	 else if (otd->proto->flags & PT_BLOCKING) {

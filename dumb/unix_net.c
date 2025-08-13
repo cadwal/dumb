@@ -368,7 +368,7 @@ NetDriver netdriver[2] =
     udp_sendpkt,
     NULL, NULL,
     unix_gethostname},
-   {NULL}
+   {NULL,}
 };
 
 // Local Variables:

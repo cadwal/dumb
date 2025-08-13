@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumbutil/safem.c: "Safe" (checked) memory allocation.
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@schlick.anu.edu.au>
  * Copyright (C) 1994 by Chris Laurel
  *
@@ -70,14 +70,14 @@ safe_vcalloc(size_t size)
       logfatal('S', _("mmapping %lu zero bytes: %s"),
 	       (unsigned long) size, strerror(errno));
 #else  /* !MAP_ANONYMOUS */
-   static int fd = -1;
-   if (fd < 0) {
-      fd = open(DEV_ZERO, O_RDONLY);
-      if (fd < 0)
+   static int devzerofd = -1;
+   if (devzerofd < 0) {
+      devzerofd = open(DEV_ZERO, O_RDONLY);
+      if (devzerofd < 0)
 	 logfatal('S', "%s: %s", DEV_ZERO, strerror(errno));
    }
    p = mmap(NULL, size, PROT_READ | PROT_WRITE,
-	    MAP_PRIVATE | MAP_NORESERVE, fd, 0);
+	    MAP_PRIVATE | MAP_NORESERVE, devzerofd, 0);
    if (p == MAP_FAILED)
       logfatal('S', _("%s: mmapping %lu bytes: %s"),
 	       DEV_ZERO, (unsigned long) size, strerror(errno));
@@ -123,14 +123,25 @@ void *
 safe_malloc(size_t l)
 {
    void *p = malloc(l);
-   /* FIXME: If we're out of memory, does gettext() work?  Perhaps
-    * this string should be pretranslated and saved in a variable.  */
    /* malloc(0) is valid and may return NULL.  If it returns something
-    * else, the only things one can do with the returned value is
-    * realloc it or free it. */
-   if (p == NULL && l != 0)
+    * else, the only things one can do with the returned pointer is
+    * realloc it or free it.
+    *
+    * BTW, the C++ allocation new char[0] can't return NULL. */
+   if (p == NULL && l != 0) {
+      /* If we're out of memory, does gettext() work?  Perhaps this
+       * string should be pretranslated and saved in a variable.
+       *
+       * I asked Ulrich Drepper and he told me:
+       * 1) the current gettext implementation doesn't need more
+       *    memory for translation after it has loaded the catalog;
+       * 2) they are planning more complex schemes (compression?)
+       *    which might need more memory at runtime.  But even then,
+       *    gettext would just return the string untranslated if it
+       *    ran out of memory.  */
       logfatal('S', _("out of memory allocating %lu bytes"),
 	       (unsigned long) l);
+   }
    return p;
 }
 

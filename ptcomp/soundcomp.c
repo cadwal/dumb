@@ -59,9 +59,7 @@ soundcomp(void)
    const char *s;
    SoundRec *sr;
    /* one parameter: name */
-   s = next_token();
-   if (s == NULL || *s == '\n')
-      synerr(_("name expected after SoundType"));
+   s = parm_name(_("Name expected after SoundType"));
    sr = &sounds[new_sound(s)];
    sr->s.nredir=0;
    /* start filling in data */
@@ -69,7 +67,8 @@ soundcomp(void)
       s = next_token();
       if (s == NULL)
 	 return;
-      else if (*s == '\n');
+      else if (*s == '\n')
+	 ;
       else if (!strcasecmp(s, "Bend"))
 	 sr->s.bend_range = parm_num();
       else if (!strcasecmp(s, "BendConst"))
@@ -78,7 +77,7 @@ soundcomp(void)
 	 sr->s.chance = parm_num();
       else if (!strcasecmp(s, "Random") || !strcasecmp(s, "Redir")) {
 	 if (sr->s.nredir >= MAX_REDIR_SOUNDS)
-	    err(_("too many sound redirects"));
+	    err(_("Too many sound redirects (max %d)"), (int) MAX_REDIR_SOUNDS);
 	 sr->s.redir[sr->s.nredir] = parm_sound();
 	 sr->s.nredir++;
       } else
@@ -88,21 +87,20 @@ soundcomp(void)
 }
 
 void
-wrsounds(FILE *fout)
+wrsounds(WADWR *wout)
 {
    int i;
    printf(_("%5d sounds\n"), nsounds);
+   wadwr_lump(wout, "SOUNDS");
    for (i = 0; i < nsounds; i++)
-      fwrite(&sounds[i].s, sizeof(SoundEnt), 1, fout);
+      wadwr_write(wout, &sounds[i].s, sizeof(SoundEnt));
 }
 
 int
 parm_sound(void)
 {
    int i;
-   const char *s = next_token();
-   if (s == NULL || *s == '\n')
-      synerr(_("sound name parameter expected"));
+   const char *s = parm_name(_("Sound name parameter expected"));
    if (isdigit(*s))
       return atoi(s);
    for (i = 0; i < nsounds; i++)
@@ -119,7 +117,7 @@ new_sound(const char *name)
    int i;
    for (i = 0; i < nsounds; i++)
       if (!strcasecmp(sounds[i].name, name))
-	 err(_("soundtype redefined"));
+	 err(_("Soundtype `%s' redefined"), name);
    nsounds++;
    if (nsounds >= maxsounds) {
       maxsounds += ALLOC_BLK;

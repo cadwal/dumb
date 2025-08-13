@@ -1,0 +1,72 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * dumb/dumbdefs.pt: Definitions of DUMB features for use by all .pt scripts.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
+
+
+/* Internationalization */
+
+#ifndef N_
+#define N_(str) str
+#endif
+
+
+/* Gettable special codes */
+
+/* This marks the gettable as your health.  When you get damage, it's
+ * taken from your health.  If health goes to 0, you die.  */
+#define GETT_SPC_HEALTH			1
+
+/* This marks the gettable as your armour.  When you have armour, half
+ * of the damage you get is taken from it.  */
+#define GETT_SPC_ARMOUR			2
+
+/* If you have this gettable, you are invisible.  */
+#define GETT_SPC_INVISIBILITY		3
+
+/* If you have this gettable, you can't be hurt at all.  */
+#define GETT_SPC_DAMAGEPROTECTION	4
+
+/* If you have this gettable, the icky goo on the floor doesn't hurt
+ * you.  */
+#define GETT_SPC_SLIMEPROTECTION	6
+
+/* If you have this gettable, you see in the dark.  */
+#define GETT_SPC_SUPERSIGHT		7
+
+/* When you collect items, DUMB checks whether you have the backpack.
+ * If so, a different maximum may be used.  */
+#define GETT_SPC_BACKPACK		8
+
+/* When you have this gettable, the map shows you even the places you
+ * haven't visited yet. */
+#define GETT_SPC_ALLMAP			9
+
+
+/* ProtoThing IDs */
+
+#define PROTO_ID_CAMERA 8888
+
+
+/*
+ * Local variables:
+ * mode: c
+ * End:
+ */

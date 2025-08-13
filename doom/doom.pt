@@ -6,21 +6,22 @@
 /*  This is the thing prototype and phase and gettable data and linetype
  *  data for using Doom WAD files.
  *
- *  Compile it into PROTOS.lump and PHASES.lump and GETTABLE.lump and
- *  LINETYPE.lump and SOUNDS.lump with ptcomp and cpp
+ *  Compile it into d4d-pt.wad with cpp and ptcomp.
  */
 
-#include <generic.pt>
+#define DOOM 1
 
-#include <missiles.pt>
-#include <gettables.pt>
-#include <weapons.pt>
-#include <furnishings.pt>
-#include <monsters.pt>
-#include <linetypes.pt>
-#include <sectortypes.pt>
-#include <animtex.pt>
-#include <levels.pt>
+#include <dumb/dumbdefs.pt>
+#include "generic.pt"
 
-#include <camera.pt>
+#include "missiles.pt"
+#include "gettables.pt"
+#include "weapons.pt"
+#include "furnishings.pt"
+#include "monsters.pt"
+#include "linetypes.pt"
+#include "sectortypes.pt"
+#include "animtex.pt"
+#include "levels.pt"
 
+#include "camera.pt"

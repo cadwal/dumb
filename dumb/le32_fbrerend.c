@@ -81,7 +81,7 @@ fbrerender8(Pixel8 *fb,
 	 int xifactor = xfact - xlace, yifactor = yfact - ylace;
 	 for (j = 0; j < ysize; j++) {
 	    for (i = 0; i < xsize; i++) {
-	       register pixval = fb[i], m = i * xfact;
+	       register int pixval = fb[i], m = i * xfact;
 	       for (k = 0; k < xifactor; k++)
 		  for (l = 0; l < yifactor; l++) {
 		     rendfb[m + k + width * l] = pixval;
@@ -147,7 +147,7 @@ fbrerender16(Pixel16 *fb,
 	 int xifactor = xfact - xlace, yifactor = yfact - ylace;
 	 for (j = 0; j < ysize; j++) {
 	    for (i = 0; i < xsize; i++) {
-	       register pixval = fb[i], m = i * xfact;
+	       register int pixval = fb[i], m = i * xfact;
 	       for (k = 0; k < xifactor; k++)
 		  for (l = 0; l < yifactor; l++) {
 		     rendfb[m + k + width * l] = pixval;
@@ -184,7 +184,7 @@ fbrerender32(Pixel32 *fb,
 	 int rendinc = width * yfact;
 	 for (j = 0; j < ysize; j++) {
 	    for (i = 0; i < xsize; i++) {
-	       register mul = i * xfact;
+	       register int mul = i * xfact;
 #ifdef HAVE_MMX
 	       /* I have NOT TESTED THIS! -- josh */
 	       __asm__(
@@ -213,7 +213,7 @@ fbrerender32(Pixel32 *fb,
 	 int xifactor = xfact - xlace, yifactor = yfact - ylace;
 	 for (j = 0; j < ysize; j++) {
 	    for (i = 0; i < xsize; i++) {
-	       register pixval = fb[i], m = i * xfact;
+	       register int pixval = fb[i], m = i * xfact;
 	       for (k = 0; k < xifactor; k++)
 		  for (l = 0; l < yifactor; l++) {
 		     rendfb[m + k + width * l] = pixval;

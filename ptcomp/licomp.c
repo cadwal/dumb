@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * ptcomp/licomp.c: Level compiler.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,24 +63,22 @@ licomp(void)
    /* make new li */
    if (nlinfos >= maxlinfos - 1) {
       maxlinfos += ALLOC_BLK;
-      linfos = (LevInfoRec *) safe_realloc(linfos,
-					 sizeof(LevInfoRec) * maxlinfos);
+      linfos = (LevInfoRec *)
+	 safe_realloc(linfos, sizeof(LevInfoRec) * maxlinfos);
    }
    li = linfos + (nlinfos++);
    memset(li, 0, sizeof(LevInfoRec));
    li->l.secret = -1;
    li->l.next = -1;
    /* one parameter, name */
-   s = next_token();
-   if (s == NULL || *s == '\n')
-      synerr(_("name expected after Level"));
-   strncpy(li->l.name, s, 8);
+   parm_str(li->l.name, 8+1);
    /* now parse other keywords */
    while (1) {
       s = next_token();
       if (s == NULL)
 	 return;
-      else if (*s == '\n');
+      else if (*s == '\n')
+	 ;
       else if (!strcasecmp(s, "Music"))
 	 parm_str(li->l.music, 9);
       else if (!strcasecmp(s, "Sky"))
@@ -99,16 +98,17 @@ licomp(void)
 }
 
 void
-wrlinfos(FILE *fout)
+wrlinfos(WADWR *wout)
 {
    int i;
    printf(_("%5d levinfos\n"), nlinfos);
+   wadwr_lump(wout, "LEVINFO");
    for (i = 0; i < nlinfos; i++) {
+      if (linfos[i].next[0])
+	 linfos[i].l.next = linfos[i].l.secret = lookup_linfo(linfos[i].next);
       if (linfos[i].secret[0])
 	 linfos[i].l.secret = lookup_linfo(linfos[i].secret);
-      if (linfos[i].next[0])
-	 linfos[i].l.next = lookup_linfo(linfos[i].next);
-      fwrite(&linfos[i].l, sizeof(LevInfo), 1, fout);
+      wadwr_write(wout, &linfos[i].l, sizeof(LevInfo));
    }
 }
 

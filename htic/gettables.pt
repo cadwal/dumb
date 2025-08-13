@@ -3,107 +3,135 @@
  **  Gettables
  **/
 
+#define PowerUpQty  3000
+#define PowerUpTimeout  Decay 1
+
 Gettable Health
   Initial 100
-  Collect 200
-  Icon PTN1A0 Anim C Timing 200msec
+  DefaultMaximum 200
+  Icon "PTN1A0" Anim "C" Timing 200msec
   IconPos 8 8
-  PickupSound ITEMUP
-  Special 1
+  Special GETT_SPC_HEALTH
 
 
 Gettable WandCrystals
   Initial 50
-  Collect 100
-  Icon AMG2A0 Anim C Timing 230msec
+  DefaultMaximum 100
+  Icon "AMG2A0" Anim "C" Timing 230msec
   IconPos -8 8
-  PickupSound ITEMUP
 
 Gettable EtherealArrows
-  Collect 50
-  Icon AMC2A0 RevAnim C Timing 150msec
+  DefaultMaximum 50
+  Icon "AMC2A0" RevAnim "C" Timing 150msec
   IconPos -28 8
-  PickupSound ITEMUP
 
 Gettable ClawOrbs
-  Collect 200
-  Icon AMB1A0 Anim B Timing 150msec
+  DefaultMaximum 200
+  Icon "AMB1A0" Anim "B" Timing 150msec
   IconPos -50 8
-  PickupSound ITEMUP
+
 
 Gettable Torch
-  Collect 1
-  Icon TRCHA0 Anim C Timing 100msec
+  DefaultMaximum 1
+  Icon "TRCHA0" Anim "C" Timing 100msec
   IconPos 160 8
-  PickupSound ITEMUP
+  /* WhenUsed Gets ActiveTorch PowerUpQty
+     but ptcomp doesn't support that...
+     perhaps it should be done via a bogothing?
+     Using it would invoke the pick-up feature.  */
+
+Gettable ActiveTorch	/* this is not currently used */
+  /* FIXME: icon */
+  DefaultMaximum PowerUpQty
+  Special GETT_SPC_SUPERSIGHT
+  PowerUpTimeout
 
 
 /* now the protothings */
 
 Proto WimpyWandAmmo 10
-  Sprite AMG1
+  Sprite "AMG1"
   Phases Mundane
   Mass 1000 YMoveOnly Bouncy
   Size 16 16
   Gets WandCrystals 4
+  PickupSound ITEMUP
+  PickupMessage N_("wand crystal")
 
 Proto HeftyWandAmmo 12
-  Sprite AMG2
+  Sprite "AMG2"
   Phases Cycle3
   Mass 1000 YMoveOnly Bouncy
   Size 16 16
   Gets WandCrystals 10
+  PickupSound ITEMUP
+  PickupMessage N_("crystal geode")
 
 
 Proto WimpyBowAmmo 18
-  Sprite AMC1
+  Sprite "AMC1"
   Phases MundaneGlow
   Mass 1000 YMoveOnly Bouncy
   Size 16 16
   Gets EtherealArrows 4
+  PickupSound ITEMUP
+  PickupMessage N_("ethereal arrows")
 
 Proto HeftyBowAmmo 19
-  Sprite AMC2
+  Sprite "AMC2"
   Phases Cycle3
   Mass 1000 YMoveOnly
   Size 16 16
   Gets EtherealArrows 10
+  PickupSound ITEMUP
+  PickupMessage N_("quiver of ethereal arrows")
 
 
 Proto WimpyClawAmmo 54
-  Sprite AMB1
+  Sprite "AMB1"
   Phases Repeat3Glow
   Mass 1000 YMoveOnly Bouncy
   Size 16 16
   Gets ClawOrbs 20
+  PickupSound ITEMUP
+  PickupMessage N_("claw orb")
 
 Proto HeftyClawAmmo 55
-  Sprite AMB2
+  Sprite "AMB2"
   Phases Repeat3Glow
   Mass 1000 YMoveOnly
   Size 16 16
   Gets ClawOrbs 100
+  PickupSound ITEMUP
+  PickupMessage N_("power orb")	/* FIXME: is this right? */
 
 
 Proto CrystalVial 81
-  Sprite PTN1
+  Sprite "PTN1"
   Phases Repeat3
   Mass 1000 YMoveOnly Bouncy
   Size 16 16
   Gets Health 10
+  PickupSound ITEMUP
+  PickupMessage N_("crystal vial")
 
 Proto QuartzFlask 82
-  Sprite PTN2
+  Sprite "PTN2"
   Phases Repeat3
   Mass 1000 YMoveOnly Bouncy
   Size 16 16
   Gets Health 25
+  PickupSound ITEMUP
+  PickupMessage N_("quartz flask")
+
 
 Proto Torch 33
-  Sprite TRCH
+  Sprite "TRCH"
   Phases Cycle3Glow
   Mass 1000 YMoveOnly
   Size 16 16
   Gets Torch 1
+  PickupSound ITEMUP
 
-
+#undef PowerUpQty
+#undef PowerUpTimeout

@@ -2,7 +2,7 @@
  *
  * libdumb/mme_sound.c: Digital Unix MME sound driver.
  * Copyright (C) 1998 by Marcus Sundberg <e94_msu@e.kth.se>
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

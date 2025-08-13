@@ -137,22 +137,28 @@ add_text_to_banner(int banner, int font, const char *text, int len)
 	 add_to_banner(banner, NULL, 6, 0);
       else {
 	 Texture *t = get_font_texture(font, ch);
-	 int xo = 1, yo = 0;
-	 switch (ch) {
-	 case (','):
-	    yo = 1;
-	    break;
-	 case ('\''):
-	    yo = -t->height;
-	    break;
-	 case ('-'):
-	    yo = -t->height / 2 - 1;
-	    break;
+	 if (!t) {
+	    /* No such character.  Substitute a space.  */
+	    add_to_banner(banner, NULL, 6, 0);
+	 } else {
+	    int xo = 1, yo = 0;
+	    switch (ch) {
+	    case (','):
+	       yo = 1;
+	       break;
+	    case ('\''):
+	       yo = -t->height;
+	       break;
+	    case ('-'):
+	       yo = -t->height / 2 - 1;
+	       break;
+	    }
+	    add_to_banner(banner, t, xo, yo);
 	 }
-	 add_to_banner(banner, t, xo, yo);
       }
    }
 }
+
 void
 add_str_to_banner(int banner, int font, const char *text)
 {

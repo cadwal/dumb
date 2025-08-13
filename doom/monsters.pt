@@ -10,12 +10,12 @@
 #define ExplodeRate  120msec
 #define RespawnRate  300msec
 
-// IDEA: (for archvile when passing over a dead body)
+/* IDEA: (for archvile when passing over a dead body) */
 #define SigResurrect
 #define _Resurrect
 #define Resurrector
 
-// IDEA: (for 'oof' after falling off a cliff)
+/* IDEA: (for 'oof' after falling off a cliff) */
 #define SigStunned
 
 
@@ -23,32 +23,32 @@
 
 PhaseTable DeadPlayer
   Default Duration RespawnRate
-  Phase INIT N Goto INIT
-  Phase -    M SigReanimate
-  Phase -    L
-  Phase -    K
-  Phase -    J
-  Phase -    I
-  Phase -    H Become
+  Phase INIT "N" Goto INIT
+  Phase -    "M" SigReanimate
+  Phase -    "L"
+  Phase -    "K"
+  Phase -    "J"
+  Phase -    "I"
+  Phase -    "H" Become
 Proto DeadPlayer 10
-  Sprite PLAY
+  Sprite "PLAY"
   Size 40 16
   Mass 1000 YMoveOnly
   Becomes 1
 
 PhaseTable ExPlayer
   Default Duration RespawnRate
-  Phase INIT W Goto INIT
-  Phase -    V SigReanimate
-  Phase -    U
-  Phase -    T
-  Phase -    S
-  Phase -    R
-  Phase -    Q
-  Phase -    P
-  Phase -    O Become
+  Phase INIT "W" Goto INIT
+  Phase -    "V" SigReanimate
+  Phase -    "U"
+  Phase -    "T"
+  Phase -    "S"
+  Phase -    "R"
+  Phase -    "Q"
+  Phase -    "P"
+  Phase -    "O" Become
 Proto ExPlayer 12
-  Sprite PLAY
+  Sprite "PLAY"
   Size 40 16
   Mass 1000 YMoveOnly
   Becomes 1
@@ -57,44 +57,44 @@ SoundType DSPLPAIN Chance 3
 
 PhaseTable Player
   Default Duration NormalRate
-  Phase INIT    A
-  Phase -	B
-  Phase -	C
-  Phase -	D   Goto INIT
+  Phase INIT    "A"
+  Phase -	"B"
+  Phase -	"C"
+  Phase -	"D"   Goto INIT
 
   /* player shooting needs to be like this because the actual shooting
      is done asychronously by a bogothing */
-  Phase SHOOT   F   Glow SigShoot
-  Phase -	E   Duration OuchRate Goto INIT
+  Phase SHOOT   "F"   Glow SigShoot
+  Phase -	"E"   Duration OuchRate Goto INIT
 
-  Phase OUCH    G   NoSigs SigOuch Sound DSPLPAIN Duration OuchRate Goto INIT
+  Phase OUCH    "G"   NoSigs SigOuch Sound DSPLPAIN Duration OuchRate Goto INIT
 
-  Phase WINDED  A   SigStunned Sound DSOOF Goto INIT
+  Phase WINDED  "A"   SigStunned Sound DSOOF Goto INIT
 
   Default NoSigs Duration DieRate
-  Phase DIE     H   SigDie Sound DSPLDETH
-  Phase -	I
-  Phase -	J
-  Phase -	K
-  Phase -	L
-  Phase -	M
-  Phase -	N
-  Phase -	A   Become
+  Phase DIE     "H"   SigDie Sound DSPLDETH
+  Phase -	"I"
+  Phase -	"J"
+  Phase -	"K"
+  Phase -	"L"
+  Phase -	"M"
+  Phase -	"N"
+  Phase -	"A"   Become
 
-  Phase EXPLODE O   SigExplode Sound DSPDIEHI
-  Phase -	P
-  Phase -	Q
-  Phase -	R
-  Phase -	S
-  Phase -	T
-  Phase -	U
-  Phase -	V
-  Phase -	W
-  Phase -	A   Become2
+  Phase EXPLODE "O"   SigExplode Sound DSPDIEHI
+  Phase -	"P"
+  Phase -	"Q"
+  Phase -	"R"
+  Phase -	"S"
+  Phase -	"T"
+  Phase -	"U"
+  Phase -	"V"
+  Phase -	"W"
+  Phase -	"A"   Become2
 
 Proto Player 1
   Phases Player
-  Sprite PLAY
+  Sprite "PLAY"
   Size 32 56
   Mass 100
   Hits 80
@@ -104,7 +104,7 @@ Proto Player 1
   Become2 ExPlayer
 Proto Player2 2
   Phases Player
-  Sprite PLAY
+  Sprite "PLAY"
   Size 32 56
   Mass 100
   Hits 80
@@ -114,7 +114,7 @@ Proto Player2 2
   Become2 ExPlayer
 Proto Player3 3
   Phases Player
-  Sprite PLAY
+  Sprite "PLAY"
   Size 32 56
   Mass 100
   Hits 80
@@ -124,7 +124,7 @@ Proto Player3 3
   Become2 ExPlayer
 Proto Player4 4
   Phases Player
-  Sprite PLAY
+  Sprite "PLAY"
   Size 32 56
   Mass 100
   Hits 80
@@ -141,41 +141,41 @@ Proto TeleSpot 14
 /* Imp */
 
 PhaseTable DeadImp
-  Phase DEAD    M      Goto DEAD
+  Phase DEAD    "M"      Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN M      SigReanimate
-  Phase -       L
-  Phase -       K
-  Phase -       J
-  Phase -       I      Become
+  Phase RESPAWN "M"      SigReanimate
+  Phase -       "L"
+  Phase -       "K"
+  Phase -       "J"
+  Phase -       "I"      Become
 
 
 PhaseTable ExImp
-  Phase DEAD    U      Goto DEAD
+  Phase DEAD    "U"      Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN U      SigReanimate
-  Phase -       T
-  Phase -       S
-  Phase -       R
-  Phase -       Q
-  Phase -       P
-  Phase -       O
-  Phase -       N      Become
+  Phase RESPAWN "U"      SigReanimate
+  Phase -       "T"
+  Phase -       "S"
+  Phase -       "R"
+  Phase -       "Q"
+  Phase -       "P"
+  Phase -       "O"
+  Phase -       "N"      Become
 
 Proto DeadImp 20
-  Sprite TROO
+  Sprite "TROO"
   Size 40 16
   Mass 100
   Becomes 3001
 
 Proto ExImp
-  Sprite TROO
+  Sprite "TROO"
   Size 40 16
   Mass 200
   Becomes 3001
@@ -194,47 +194,47 @@ SoundType DSBGACT Bend 6 Chance -10
 PhaseTable Imp
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound DSBGSIT*
+  Phase SIGHT   "A"       SigDetect Sound DSBGSIT*
 
-  Phase MOVE    A
-  Phase -       B       Strategy
-  Phase -       C
-  Phase -       D       Strategy Sound DSBGACT Goto MOVE
+  Phase MOVE    "A"
+  Phase -       "B"       Strategy
+  Phase -       "C"
+  Phase -       "D"       Strategy Sound DSBGACT Goto MOVE
 
-  Phase SHOOT   E       SigShoot
-  Phase -       F       Glow
-  Phase -       G       Shoot Sound DSFIRSHT Glow Goto MOVE
+  Phase SHOOT   "E"       SigShoot
+  Phase -       "F"       Glow
+  Phase -       "G"       Shoot Sound DSFIRSHT Glow Goto MOVE
 
-  Phase FIGHT   E       SigFight Sound DSCLAW
-  Phase -       F
-  Phase -       G       Melee Goto MOVE
+  Phase FIGHT   "E"       SigFight Sound DSCLAW
+  Phase -       "F"
+  Phase -       "G"       Melee Goto MOVE
 
-  Phase OUCH    H       SigOuch Sound DSDMPAIN Duration OuchRate Goto MOVE
+  Phase OUCH    "H"       SigOuch Sound DSDMPAIN Duration OuchRate Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     H       SigDie Sound DSBGDTH*
-  Phase -       I
-  Phase -       J
-  Phase -       K
-  Phase -       L
-  Phase -       M       Become
+  Phase DIE     "H"       SigDie Sound DSBGDTH*
+  Phase -       "I"
+  Phase -       "J"
+  Phase -       "K"
+  Phase -       "L"
+  Phase -       "M"       Become
 
   Default Duration ExplodeRate
   Default Glow
-  Phase BOOM    N       SigExplode
-  Phase -       O	Sound DSSLOP
-  Phase -       P
-  Phase -       Q
-  Phase -       R
-  Phase -       S
-  Phase -       T
-  Phase -       U       Become2
+  Phase BOOM    "N"       SigExplode
+  Phase -       "O"	Sound DSSLOP
+  Phase -       "P"
+  Phase -       "Q"
+  Phase -       "R"
+  Phase -       "S"
+  Phase -       "T"
+  Phase -       "U"       Become2
 
 Proto Imp 3001
-  Sprite TROO
+  Sprite "TROO"
   Size 40 56
   Hits 6
   Mass 100
@@ -250,55 +250,55 @@ Proto Imp 3001
 /* Zombies */
 
 PhaseTable DeadZombie
-  Phase DEAD    L       Goto DEAD
+  Phase DEAD    "L"       Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN L       SigReanimate
-  Phase -       K
-  Phase -       J
-  Phase -       I
-  Phase -       H
-  Phase -       G       Become
+  Phase RESPAWN "L"       SigReanimate
+  Phase -       "K"
+  Phase -       "J"
+  Phase -       "I"
+  Phase -       "H"
+  Phase -       "G"       Become
 
 PhaseTable ExZombie
-  Phase DEAD    U       Goto DEAD
+  Phase DEAD    "U"       Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN U       SigReanimate
-  Phase -       T
-  Phase -       S
-  Phase -       R
-  Phase -       Q
-  Phase -       P
-  Phase -       O
-  Phase -       N
-  Phase -       M       Become
+  Phase RESPAWN "U"       SigReanimate
+  Phase -       "T"
+  Phase -       "S"
+  Phase -       "R"
+  Phase -       "Q"
+  Phase -       "P"
+  Phase -       "O"
+  Phase -       "N"
+  Phase -       "M"       Become
 
 Proto DeadZombie 18
-  Sprite POSS
+  Sprite "POSS"
   Size 40 16
   Mass 100
   Becomes 3004
 
 Proto ExZombie
-  Sprite POSS
+  Sprite "POSS"
   Size 40 16
   Mass 200
   Becomes 3004
 
 Proto DeadZombieSarg 19
-  Sprite SPOS
+  Sprite "SPOS"
   Phases DeadZombie
   Size 40 16
   Mass 100
   Becomes 9
 
 Proto ExZombieSarg
-  Sprite SPOS
+  Sprite "SPOS"
   Phases ExZombie
   Size 20 16
   Mass 200
@@ -321,81 +321,81 @@ SoundType DSPOSACT Bend 6 Chance -10
 PhaseTable Zombie
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound DSPOSIT*
+  Phase SIGHT   "A"       SigDetect Sound DSPOSIT*
 
-  Phase MOVE    A
-  Phase -       B       Strategy
-  Phase -       C
-  Phase -       D       Strategy Sound DSPOSACT Goto MOVE
+  Phase MOVE    "A"
+  Phase -       "B"       Strategy
+  Phase -       "C"
+  Phase -       "D"       Strategy Sound DSPOSACT Goto MOVE
 
-  Phase SHOOT   E       SigShoot Sound DSPISTOL
-  Phase -       F       Shoot Glow Goto MOVE
+  Phase SHOOT   "E"       SigShoot Sound DSPISTOL
+  Phase -       "F"       Shoot Glow Goto MOVE
 
-  Phase OUCH    G       SigOuch Sound DSPOPAIN Duration OuchRate Goto MOVE
+  Phase OUCH    "G"       SigOuch Sound DSPOPAIN Duration OuchRate Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     G       SigDie Sound DSPODTH*
-  Phase -       H
-  Phase -       I	Spawn2
-  Phase -       J
-  Phase -       K
-  Phase -       L       Become
+  Phase DIE     "G"       SigDie Sound DSPODTH*
+  Phase -       "H"
+  Phase -       "I"	Spawn2
+  Phase -       "J"
+  Phase -       "K"
+  Phase -       "L"       Become
 
   Default Duration ExplodeRate
   Default Glow
-  Phase BOOM    M       SigExplode Sound DSSLOP
-  Phase -       N
-  Phase -       O
-  Phase -       P
-  Phase -       Q
-  Phase -       R
-  Phase -       S
-  Phase -       T
-  Phase -       U       Become2
+  Phase BOOM    "M"       SigExplode Sound DSSLOP
+  Phase -       "N"
+  Phase -       "O"
+  Phase -       "P"
+  Phase -       "Q"
+  Phase -       "R"
+  Phase -       "S"
+  Phase -       "T"
+  Phase -       "U"       Become2
 
 PhaseTable ZombieSarg
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound DSPOSIT*
+  Phase SIGHT   "A"       SigDetect Sound DSPOSIT*
 
-  Phase MOVE    A
-  Phase -       B       Strategy
-  Phase -       C
-  Phase -       D       Strategy Sound DSPOSACT Goto MOVE
+  Phase MOVE    "A"
+  Phase -       "B"       Strategy
+  Phase -       "C"
+  Phase -       "D"       Strategy Sound DSPOSACT Goto MOVE
 
-  Phase SHOOT   E       SigShoot
-  Phase -       F       Shoot Sound DSSHOTGN Glow Goto MOVE
+  Phase SHOOT   "E"       SigShoot
+  Phase -       "F"       Shoot Sound DSSHOTGN Glow Goto MOVE
 
-  Phase OUCH    G       SigOuch Sound DSPOPAIN Duration OuchRate Goto MOVE
+  Phase OUCH    "G"       SigOuch Sound DSPOPAIN Duration OuchRate Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     G       SigDie Sound DSPODTH*
-  Phase -       H
-  Phase -       I	Spawn2
-  Phase -       J
-  Phase -       K
-  Phase -       L       Become
+  Phase DIE     "G"       SigDie Sound DSPODTH*
+  Phase -       "H"
+  Phase -       "I"	Spawn2
+  Phase -       "J"
+  Phase -       "K"
+  Phase -       "L"       Become
 
   Default Duration ExplodeRate
   Default Glow
-  Phase BOOM    M       SigExplode Sound DSSLOP
-  Phase -       N
-  Phase -       O
-  Phase -       P
-  Phase -       Q
-  Phase -       R
-  Phase -       S
-  Phase -       T
-  Phase -       U       Become2
+  Phase BOOM    "M"       SigExplode Sound DSSLOP
+  Phase -       "N"
+  Phase -       "O"
+  Phase -       "P"
+  Phase -       "Q"
+  Phase -       "R"
+  Phase -       "S"
+  Phase -       "T"
+  Phase -       "U"       Become2
 
 Proto Zombie 3004
-  Sprite POSS
+  Sprite "POSS"
   Size 40 56
   Hits 3
   Mass 100
@@ -408,14 +408,14 @@ Proto Zombie 3004
   Speed 20
 
 Proto ZombieSarg 9
-  Sprite SPOS
+  Sprite "SPOS"
   Size 40 56
   Hits 6
   Mass 100
   Beastie Blocking SkirtCliffs Shooter
   Splat BloodSplat
   Shoots Bullet
-  ShootMany 6 24
+  ShootMany 6 1pi/24
   Becomes DeadZombieSarg
   Become2 ExZombieSarg
   Spawn2 Shotgun
@@ -424,40 +424,40 @@ Proto ZombieSarg 9
 /* Chaingun guy */
 
 PhaseTable DeadChaingunGuy
-  Phase DEAD    N       Goto DEAD
+  Phase DEAD    "N"       Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN N       SigReanimate
-  Phase -       M
-  Phase -       L
-  Phase -       K
-  Phase -       J
-  Phase -       I
-  Phase -       H       Become
+  Phase RESPAWN "N"       SigReanimate
+  Phase -       "M"
+  Phase -       "L"
+  Phase -       "K"
+  Phase -       "J"
+  Phase -       "I"
+  Phase -       "H"       Become
 
 PhaseTable ExChaingunGuy
-  Phase DEAD    T       Goto DEAD
+  Phase DEAD    "T"       Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN T       SigReanimate
-  Phase -       S
-  Phase -       R
-  Phase -       Q
-  Phase -       P
-  Phase -       O       Become
+  Phase RESPAWN "T"       SigReanimate
+  Phase -       "S"
+  Phase -       "R"
+  Phase -       "Q"
+  Phase -       "P"
+  Phase -       "O"       Become
 
 Proto DeadChaingunGuy
-  Sprite CPOS
+  Sprite "CPOS"
   Size 40 16
   Mass 100
   Becomes 65
 
 Proto ExChaingunGuy
-  Sprite CPOS
+  Sprite "CPOS"
   Size 40 16
   Mass 200
   Becomes 65
@@ -466,52 +466,52 @@ Proto ExChaingunGuy
 PhaseTable ChaingunGuy
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound DSPOSIT*
+  Phase SIGHT   "A"       SigDetect Sound DSPOSIT*
 
-  Phase MOVE    A
-  Phase -       B       Strategy Sound DSPOSACT
-  Phase -       C
-  Phase -       D       Strategy Goto MOVE
+  Phase MOVE    "A"
+  Phase -       "B"       Strategy Sound DSPOSACT
+  Phase -       "C"
+  Phase -       "D"       Strategy Goto MOVE
 
-  Phase SHOOT   E       SigShoot
+  Phase SHOOT   "E"       SigShoot
   /* just to make him even faster and more annoying! :) */
-  Phase -       F       Shoot Glow Sound DSPISTOL
-  Phase -       F       Shoot Glow Sound DSPISTOL
-  Phase -       F       Shoot Glow Sound DSPISTOL
-  Phase -       F       Shoot Glow Sound DSPISTOL Goto MOVE
+  Phase -       "F"       Shoot Glow Sound DSPISTOL
+  Phase -       "F"       Shoot Glow Sound DSPISTOL
+  Phase -       "F"       Shoot Glow Sound DSPISTOL
+  Phase -       "F"       Shoot Glow Sound DSPISTOL Goto MOVE
 
-  Phase OUCH    G       SigOuch Sound DSPOPAIN Duration OuchRate Goto MOVE
+  Phase OUCH    "G"       SigOuch Sound DSPOPAIN Duration OuchRate Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     H       SigDie Sound DSPODTH*
-  Phase -       I
-  Phase -       J
-  Phase -       K       Spawn2
-  Phase -       L
-  Phase -       M
-  Phase -       N       Become
+  Phase DIE     "H"       SigDie Sound DSPODTH*
+  Phase -       "I"
+  Phase -       "J"
+  Phase -       "K"       Spawn2
+  Phase -       "L"
+  Phase -       "M"
+  Phase -       "N"       Become
 
   Default Duration ExplodeRate
   Default Glow
-  Phase BOOM    O       SigExplode Sound DSSLOP
-  Phase -       P
-  Phase -       Q
-  Phase -       R
-  Phase -       S
-  Phase -       T       Become2
+  Phase BOOM    "O"       SigExplode Sound DSSLOP
+  Phase -       "P"
+  Phase -       "Q"
+  Phase -       "R"
+  Phase -       "S"
+  Phase -       "T"       Become2
 
 Proto ChaingunGuy 65
-  Sprite CPOS
+  Sprite "CPOS"
   Size 40 56
   Hits 10
   Mass 120
-  Beastie Blocking SkirtCliffs Shooter FastShoot
+  Beastie Blocking SkirtCliffs Shooter Nasty
   Splat BloodSplat
   Shoots Bullet
-  ShootMany 1 24
+  ShootMany 1 1pi/24
   Becomes DeadChaingunGuy
   Become2 ExChaingunGuy
   Spawn2 Chaingun
@@ -521,26 +521,26 @@ Proto ChaingunGuy 65
 /* Demon and spectre */
 
 PhaseTable DeadDemon
-  Phase DEAD    N       Goto DEAD
+  Phase DEAD    "N"       Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN N       SigReanimate
-  Phase -       M
-  Phase -       L
-  Phase -       K
-  Phase -       J
-  Phase -       I       Become
+  Phase RESPAWN "N"       SigReanimate
+  Phase -       "M"
+  Phase -       "L"
+  Phase -       "K"
+  Phase -       "J"
+  Phase -       "I"       Become
 
 Proto DeadDemon 21
-  Sprite SARG
+  Sprite "SARG"
   Size 42 16
   Mass 120
   Becomes 3002
 
 Proto DeadSpectre
-  Sprite SARG
+  Sprite "SARG"
   Phases DeadDemon
   Size 42 16
   Mass 120
@@ -553,37 +553,37 @@ SoundType DSDMACT Bend 6 Chance -16
 PhaseTable Demon
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A	SigDetect Sound DSSGTSIT
+  Phase SIGHT   "A"	SigDetect Sound DSSGTSIT
 
-  Phase MOVE    A
-  Phase -       B       Strategy
-  Phase -       C       Strategy
-  Phase -       D       Strategy Goto MOVE Sound DSDMACT
+  Phase MOVE    "A"
+  Phase -       "B"       Strategy
+  Phase -       "C"       Strategy
+  Phase -       "D"       Strategy Goto MOVE Sound DSDMACT
 
   Default Duration 250msec
-  Phase FIGHT   E       SigFight
-  Phase -       F	Melee Sound DSSGTATK
-  Phase -       G
-  Phase -       E
-  Phase -       F	Melee Sound DSSGTATK
-  Phase -       G
-  Phase -	E	Goto MOVE
+  Phase FIGHT   "E"       SigFight
+  Phase -       "F"	Melee Sound DSSGTATK
+  Phase -       "G"
+  Phase -       "E"
+  Phase -       "F"	Melee Sound DSSGTATK
+  Phase -       "G"
+  Phase -	"E"	Goto MOVE
 
-  Phase OUCH    H       SigOuch Sound DSDMPAIN Goto MOVE
+  Phase OUCH    "H"       SigOuch Sound DSDMPAIN Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     I       SigDie
-  Phase -       J
-  Phase -       K	Sound DSSGTDTH
-  Phase -       L
-  Phase -       M
-  Phase -       N       Become
+  Phase DIE     "I"       SigDie
+  Phase -       "J"
+  Phase -       "K"	Sound DSSGTDTH
+  Phase -       "L"
+  Phase -       "M"
+  Phase -       "N"       Become
 
 Proto Demon 3002
-  Sprite SARG
+  Sprite "SARG"
   Size 50 56
   Hits 15
   Mass 120
@@ -594,7 +594,7 @@ Proto Demon 3002
   Speed 28
 
 Proto Spectre 58
-  Sprite SARG
+  Sprite "SARG"
   Phases Demon
   Size 50 56
   Hits 15
@@ -609,20 +609,20 @@ Proto Spectre 58
 /* Cacodemon */
 
 PhaseTable DeadCacodemon
-  Phase DEAD    L       Goto DEAD
+  Phase DEAD    "L"       Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN L       SigReanimate
-  Phase -       K
-  Phase -       J
-  Phase -       I
-  Phase -       H
-  Phase -       G       Become
+  Phase RESPAWN "L"       SigReanimate
+  Phase -       "K"
+  Phase -       "J"
+  Phase -       "I"
+  Phase -       "H"
+  Phase -       "G"       Become
 
 Proto DeadCacodemon 22
-  Sprite HEAD
+  Sprite "HEAD"
   Size 63 24
   Mass 200
   Becomes 3005
@@ -630,35 +630,35 @@ Proto DeadCacodemon 22
 PhaseTable Cacodemon
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound DSCACSIT
+  Phase SIGHT   "A"       SigDetect Sound DSCACSIT
 
-  Phase MOVE    A
-  Phase -       A       Strategy
-  Phase -       A
-  Phase -       A       Strategy Sound DSDMACT Goto MOVE
+  Phase MOVE    "A"
+  Phase -       "A"       Strategy
+  Phase -       "A"
+  Phase -       "A"       Strategy Sound DSDMACT Goto MOVE
 
-  Phase SHOOT   B       SigShoot
-  Phase -       C
-  Phase -       D
-  Phase -       E       Shoot Sound DSFIRSHT Glow Goto MOVE
+  Phase SHOOT   "B"       SigShoot
+  Phase -       "C"
+  Phase -       "D"
+  Phase -       "E"       Shoot Sound DSFIRSHT Glow Goto MOVE
 
-  Phase OUCH    F       SigOuch Sound DSDMPAIN Duration OuchRate Goto MOVE
+  Phase OUCH    "F"       SigOuch Sound DSDMPAIN Duration OuchRate Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
 
-  Phase DIE     F       SigDie
-  Phase -       G
-  Phase -       H	Sound DSCACDTH
-  Phase -       I
-  Phase -       J
-  Phase -       K
-  Phase -       L       Become
+  Phase DIE     "F"       SigDie
+  Phase -       "G"
+  Phase -       "H"	Sound DSCACDTH
+  Phase -       "I"
+  Phase -       "J"
+  Phase -       "K"
+  Phase -       "L"       Become
 
 Proto Cacodemon 3005
-  Sprite HEAD
+  Sprite "HEAD"
   Size 63 64
   Hits 40
   Mass 100
@@ -671,27 +671,27 @@ Proto Cacodemon 3005
 /* Baron and Hell-knight */
 
 PhaseTable DeadBaron
-  Phase DEAD    O       Goto DEAD
+  Phase DEAD    "O"       Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN O       SigReanimate
-  Phase -       N
-  Phase -       M
-  Phase -       L
-  Phase -       K
-  Phase -       J
-  Phase -       I       Become
+  Phase RESPAWN "O"       SigReanimate
+  Phase -       "N"
+  Phase -       "M"
+  Phase -       "L"
+  Phase -       "K"
+  Phase -       "J"
+  Phase -       "I"       Become
 
 Proto DeadBaron
-  Sprite BOSS
+  Sprite "BOSS"
   Size 64 20
   Mass 140
   Becomes 3003
 
 Proto DeadHellKnight
-  Sprite BOS2
+  Sprite "BOS2"
   Phases DeadBaron
   Size 64 20
   Mass 120
@@ -700,37 +700,37 @@ Proto DeadHellKnight
 PhaseTable Baron
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound DSBRSSIT
+  Phase SIGHT   "A"       SigDetect Sound DSBRSSIT
 
-  Phase MOVE    A
-  Phase -       B       Strategy
-  Phase -       C
-  Phase -       D       Strategy Sound DSDMACT Goto MOVE
+  Phase MOVE    "A"
+  Phase -       "B"       Strategy
+  Phase -       "C"
+  Phase -       "D"       Strategy Sound DSDMACT Goto MOVE
 
-  Phase SHOOT   E       SigShoot
-  Phase -       F
-  Phase -       G       Shoot Glow Sound DSFIRSHT Goto MOVE
+  Phase SHOOT   "E"       SigShoot
+  Phase -       "F"
+  Phase -       "G"       Shoot Glow Sound DSFIRSHT Goto MOVE
 
-  Phase FIGHT   E       SigFight
-  Phase -       F
-  Phase -       G       Melee Sound DSCLAW Goto Move
+  Phase FIGHT   "E"       SigFight
+  Phase -       "F"
+  Phase -       "G"       Melee Sound DSCLAW Goto Move
 
-  Phase OUCH    H       SigOuch Sound DSDMPAIN Goto MOVE
+  Phase OUCH    "H"       SigOuch Sound DSDMPAIN Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     I       SigDie Sound DSBRSDTH
-  Phase -       J
-  Phase -       K
-  Phase -       L
-  Phase -       M
-  Phase -       N
-  Phase -       O       Become
+  Phase DIE     "I"       SigDie Sound DSBRSDTH
+  Phase -       "J"
+  Phase -       "K"
+  Phase -       "L"
+  Phase -       "M"
+  Phase -       "N"
+  Phase -       "O"       Become
 
 Proto Baron 3003
-  Sprite BOSS
+  Sprite "BOSS"
   Size 64 64
   Hits 100
   Mass 140
@@ -742,7 +742,7 @@ Proto Baron 3003
   Speed 19
 
 Proto HellKnight 69
-  Sprite BOS2
+  Sprite "BOS2"
   Phases Baron
   Size 64 64
   Hits 50
@@ -757,18 +757,18 @@ Proto HellKnight 69
 /* Revenant */
 
 PhaseTable DeadRevenant
-  Phase DEAD    Q       Goto DEAD
+  Phase DEAD    "Q"       Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN N       SigReanimate
-  Phase -       O
-  Phase -       P
-  Phase -       Q       Become
+  Phase RESPAWN "N"       SigReanimate
+  Phase -       "O"
+  Phase -       "P"
+  Phase -       "Q"       Become
 
 Proto DeadRevenant
-  Sprite SKEL
+  Sprite "SKEL"
   Size 40 20
   Mass 100
   Becomes 66
@@ -784,37 +784,37 @@ SoundType DSSKFGT*
 PhaseTable Revenant
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound DSSKESIT
+  Phase SIGHT   "A"       SigDetect Sound DSSKESIT
 
-  Phase MOVE    A
-  Phase -       B       Strategy
-  Phase -       C       Strategy
-  Phase -       D       Strategy
-  Phase -       E       Strategy
-  Phase -       F       Strategy Sound DSSKEACT Goto MOVE
+  Phase MOVE    "A"
+  Phase -       "B"       Strategy
+  Phase -       "C"       Strategy
+  Phase -       "D"       Strategy
+  Phase -       "E"       Strategy
+  Phase -       "F"       Strategy Sound DSSKEACT Goto MOVE
 
-  Phase FIGHT   G       SigFight Sound DSSKFGT*
-  Phase -       H
-  Phase -       I       Melee Goto MOVE
+  Phase FIGHT   "G"       SigFight Sound DSSKFGT*
+  Phase -       "H"
+  Phase -       "I"       Melee Goto MOVE
 
-  Phase SHOOT   J       SigShoot Duration 500msec Sound DSFIRSHT
-  Phase -       K       Shoot Glow Goto MOVE
+  Phase SHOOT   "J"       SigShoot Duration 500msec Sound DSFIRSHT
+  Phase -       "K"       Shoot Glow Goto MOVE
 
   Default Duration OuchRate
-  Phase OUCH    L       SigOuch Sound DSDMPAIN Goto MOVE
+  Phase OUCH    "L"       SigOuch Sound DSDMPAIN Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     M       SigDie Sound DSSKEDTH
-  Phase -       N
-  Phase -       O
-  Phase -       P
-  Phase -       Q       Become
+  Phase DIE     "M"       SigDie Sound DSSKEDTH
+  Phase -       "N"
+  Phase -       "O"
+  Phase -       "P"
+  Phase -       "Q"       Become
 
 Proto Revenant 66
-  Sprite SKEL
+  Sprite "SKEL"
   Size 40 60
   Hits 50
   Mass 100
@@ -827,25 +827,25 @@ Proto Revenant 66
 /* Mancubus */
 
 PhaseTable DeadMancubus
-  Phase DEAD    T       Goto DEAD
+  Phase DEAD    "T"       Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN T       SigReanimate
-  Phase -       S
-  Phase -       R
-  Phase -       Q
-  Phase -       P
-  Phase -       O
-  Phase -       N
-  Phase -       M
-  Phase -       L
-  Phase -       K
-  Phase -       J       Become
+  Phase RESPAWN "T"       SigReanimate
+  Phase -       "S"
+  Phase -       "R"
+  Phase -       "Q"
+  Phase -       "P"
+  Phase -       "O"
+  Phase -       "N"
+  Phase -       "M"
+  Phase -       "L"
+  Phase -       "K"
+  Phase -       "J"       Become
 
 Proto DeadMancubus 8567
-  Sprite FATT
+  Sprite "FATT"
   Size 50 20
   Mass 200
   Becomes 67
@@ -854,40 +854,40 @@ Proto DeadMancubus 8567
 PhaseTable Mancubus
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound DSMANSIT
+  Phase SIGHT   "A"       SigDetect Sound DSMANSIT
 
-  Phase MOVE    A
-  Phase -       B       Strategy
-  Phase -       C
-  Phase -       D       Strategy
-  Phase -       E
-  Phase -       F       Strategy Goto MOVE
+  Phase MOVE    "A"
+  Phase -       "B"       Strategy
+  Phase -       "C"
+  Phase -       "D"       Strategy
+  Phase -       "E"
+  Phase -       "F"       Strategy Goto MOVE
 
-  Phase SHOOT   G       SigShoot Sound DSMANATK
-  Phase -       H
-  Phase -       I       Shoot Glow Goto MOVE
+  Phase SHOOT   "G"       SigShoot Sound DSMANATK
+  Phase -       "H"
+  Phase -       "I"       Shoot Glow Goto MOVE
 
   Default Duration OuchRate
-  Phase OUCH    J       SigOuch Sound DSMNPAIN Goto MOVE
+  Phase OUCH    "J"       SigOuch Sound DSMNPAIN Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     J       SigDie Sound DSMANDTH
-  Phase -       K
-  Phase -       L
-  Phase -       M
-  Phase -       N
-  Phase -       O
-  Phase -       P
-  Phase -       P
-  Phase -       R
-  Phase -       S
-  Phase -       T       Become
+  Phase DIE     "J"       SigDie Sound DSMANDTH
+  Phase -       "K"
+  Phase -       "L"
+  Phase -       "M"
+  Phase -       "N"
+  Phase -       "O"
+  Phase -       "P"
+  Phase -       "P"
+  Phase -       "R"
+  Phase -       "S"
+  Phase -       "T"       Become
 
 Proto Mancubus 67
-  Sprite FATT
+  Sprite "FATT"
   Size 72 64
   Hits 75
   Mass 200
@@ -902,25 +902,25 @@ Proto Mancubus 67
 /* Archvile */
 
 PhaseTable DeadArchVile
-  Phase DEAD    Z       Goto DEAD
+  Phase DEAD    "Z"       Goto DEAD
 
 /*  Archviles probably shouldn't resurrect each other...
  *
  *  Default NoSigs
  *
- *  Phase RESPAWN Z       SigReanimate
- *  Phase -       Y
- *  Phase -       X
- *  Phase -       W
- *  Phase -       V
- *  Phase -       U
- *  Phase -       T
- *  Phase -       S
- *  Phase -       R      Become
+ *  Phase RESPAWN "Z"       SigReanimate
+ *  Phase -       "Y"
+ *  Phase -       "X"
+ *  Phase -       "W"
+ *  Phase -       "V"
+ *  Phase -       "U"
+ *  Phase -       "T"
+ *  Phase -       "S"
+ *  Phase -       "R"      Become
  */
 
 Proto DeadArchVile 8564
-  Sprite VILE
+  Sprite "VILE"
   Size 40 20
   Mass 100
   Becomes 64
@@ -931,49 +931,49 @@ SoundType DSVILACT Chance -10
 PhaseTable ArchVile
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound DSVILSIT
+  Phase SIGHT   "A"       SigDetect Sound DSVILSIT
 
-  Phase MOVE    A
-  Phase -       B       Strategy
-  Phase -       C       Strategy
-  Phase -       D       Strategy
-  Phase -       E       Strategy
-  Phase -       F       Strategy Sound DSVILACT Goto MOVE
+  Phase MOVE    "A"
+  Phase -       "B"       Strategy
+  Phase -       "C"       Strategy
+  Phase -       "D"       Strategy
+  Phase -       "E"       Strategy
+  Phase -       "F"       Strategy Sound DSVILACT Goto MOVE
 
-  Phase SHOOT   G       SigShoot Sound DSVILATK
-  Phase -       H       Glow
-  Phase -       I       Glow
-  Phase -       J       Glow
-  Phase -       K       Glow
-  Phase -       L       Glow
-  Phase -       M       Glow
-  Phase -       N       Glow
-  Phase -       O       Glow
-  Phase -       P       Glow Shoot Goto MOVE
+  Phase SHOOT   "G"       SigShoot Sound DSVILATK
+  Phase -       "H"       Glow
+  Phase -       "I"       Glow
+  Phase -       "J"       Glow
+  Phase -       "K"       Glow
+  Phase -       "L"       Glow
+  Phase -       "M"       Glow
+  Phase -       "N"       Glow
+  Phase -       "O"       Glow
+  Phase -       "P"       Glow Shoot Goto MOVE
 
   Default Duration OuchRate
-  Phase OUCH    Q       SigOuch Sound DSVIPAIN Goto MOVE
+  Phase OUCH    "Q"       SigOuch Sound DSVIPAIN Goto MOVE
 
   Default Duration 300msec
-  Phase RESURRECT [     Glow SigResurrect
-  Phase -         \     Glow _Resurrect Sound DSVILSIT Goto MOVE
+  Phase RESURRECT "["     Glow SigResurrect
+  Phase -         "\\"    Glow _Resurrect Sound DSVILSIT Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     R       SigDie Sound DSVILDTH
-  Phase -       S
-  Phase -       T
-  Phase -       U
-  Phase -       V
-  Phase -       W
-  Phase -       X
-  Phase -       Y
-  Phase -       Z       Become
+  Phase DIE     "R"       SigDie Sound DSVILDTH
+  Phase -       "S"
+  Phase -       "T"
+  Phase -       "U"
+  Phase -       "V"
+  Phase -       "W"
+  Phase -       "X"
+  Phase -       "Y"
+  Phase -       "Z"       Become
 
 Proto ArchVile 64
-  Sprite VILE
+  Sprite "VILE"
   Size 40 60
   Hits 75
   Mass 100
@@ -991,48 +991,48 @@ PhaseTable LostSoul
   Default Duration NormalRate
   Default Glow
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound DSSKLATK
+  Phase SIGHT   "A"       SigDetect Sound DSSKLATK
 
-  Phase MOVE    A
-  Phase -	B	Strategy       
-  Phase -       A
-  Phase -       B	Strategy Goto MOVE
+  Phase MOVE    "A"
+  Phase -	"B"	Strategy       
+  Phase -       "A"
+  Phase -       "B"	Strategy Goto MOVE
 
   Default Duration 50msec
-  Phase FIGHT   C       Sound DSSKLATK SigFight
-  Phase -	D	Melee
-  Phase -	C	Duration 100msec Goto MOVE
+  Phase FIGHT   "C"       Sound DSSKLATK SigFight
+  Phase -	"D"	Melee
+  Phase -	"C"	Duration 100msec Goto MOVE
 
-  Phase SHOOT	C	SigShoot 
-  Phase	-	C	Charge Melee
-  Phase	-	D	Melee
-  Phase	-	D	Charge Melee
-  Phase	-	C	Melee
-  Phase	-	C	Charge Melee
-  Phase	-	D	Melee
-  Phase -       D       Melee Goto MOVE
+  Phase SHOOT	"C"	SigShoot 
+  Phase	-	"C"	Charge Melee
+  Phase	-	"D"	Melee
+  Phase	-	"D"	Charge Melee
+  Phase	-	"C"	Melee
+  Phase	-	"C"	Charge Melee
+  Phase	-	"D"	Melee
+  Phase -       "D"       Melee Goto MOVE
 
 
   Default Duration OuchRate
-  Phase OUCH    E       Sound DSDMPAIN Goto MOVE
+  Phase OUCH    "E"       Sound DSDMPAIN Goto MOVE
 
   Default Duration ExplodeRate
   Default NoSigs
-  Phase DIE     E       SigDie Sound DSSKLDTH
-  Phase -       F
-  Phase -       G
-  Phase -       H
-  Phase -       I	Explode
-  Phase -       J
-  Phase -       K       Destroy
+  Phase DIE     "E"       SigDie Sound DSSKLDTH
+  Phase -       "F"
+  Phase -       "G"
+  Phase -       "H"
+  Phase -       "I"	Explode
+  Phase -       "J"
+  Phase -       "K"       Destroy
 
 Proto LostSoul 3006
-  Sprite SKUL
+  Sprite "SKUL"
   Size 32 32
   Mass 50
-  Beastie Blocking CanFly FastShoot
+  Beastie Blocking CanFly Nasty
   Hits 10
   Damage 5
   Speed 24
@@ -1043,35 +1043,35 @@ Proto LostSoul 3006
 PhaseTable PainElemental
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound DSPESIT
+  Phase SIGHT   "A"       SigDetect Sound DSPESIT
 
-  Phase MOVE    A
-  Phase -       B       Strategy
-  Phase -       C
-  Phase -       B       Strategy Goto MOVE
+  Phase MOVE    "A"
+  Phase -       "B"       Strategy
+  Phase -       "C"
+  Phase -       "B"       Strategy Goto MOVE
 
-  Phase SHOOT   D       SigShoot
-  Phase -       E       Glow
-  Phase -       F       Glow Shoot Goto MOVE
+  Phase SHOOT   "D"       SigShoot
+  Phase -       "E"       Glow
+  Phase -       "F"       Glow Shoot Goto MOVE
 
-  Phase FIGHT   G       SigFight
-  Phase -       H       Melee Sound DSSKEPCH Goto MOVE
+  Phase FIGHT   "G"       SigFight
+  Phase -       "H"       Melee Sound DSSKEPCH Goto MOVE
 
   Default Duration OuchRate
-  Phase OUCH    I       SigOuch Sound DSPEPAIN Goto MOVE
+  Phase OUCH    "I"       SigOuch Sound DSPEPAIN Goto MOVE
 
   Default Duration ExplodeRate
   Default NoSigs
-  Phase DIE     I       SigDie Sound DSPEDTH
-  Phase -       J
-  Phase -       K
-  Phase -       L
-  Phase -       M       Destroy
+  Phase DIE     "I"       SigDie Sound DSPEDTH
+  Phase -       "J"
+  Phase -       "K"
+  Phase -       "L"
+  Phase -       "M"       Destroy
 
 Proto PainElemental 71
-  Sprite PAIN
+  Sprite "PAIN"
   Size 62 64
   Mass 140
   Beastie Blocking CanFly
@@ -1083,24 +1083,24 @@ Proto PainElemental 71
 /* Spiderdemon */
 
 PhaseTable DeadSpiderdemon
-  Phase DEAD    S       Goto DEAD
+  Phase DEAD    "S"       Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN S       SigReanimate
-  Phase -       R
-  Phase -       Q
-  Phase -       P
-  Phase -       O
-  Phase -       N
-  Phase -       M
-  Phase -       L
-  Phase -       K
-  Phase -       J       Become
+  Phase RESPAWN "S"       SigReanimate
+  Phase -       "R"
+  Phase -       "Q"
+  Phase -       "P"
+  Phase -       "O"
+  Phase -       "N"
+  Phase -       "M"
+  Phase -       "L"
+  Phase -       "K"
+  Phase -       "J"       Become
 
 Proto DeadSpiderdemon 8507
-  Sprite SPID
+  Sprite "SPID"
   Size 100 30
   Mass 200
   Becomes 7
@@ -1109,49 +1109,49 @@ Proto DeadSpiderdemon 8507
 PhaseTable Spiderdemon
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound DSSPISIT
+  Phase SIGHT   "A"       SigDetect Sound DSSPISIT
 
-  Phase MOVE    A
-  Phase -       B       Strategy
-  Phase -       C
-  Phase -       D       Strategy
-  Phase -       E
-  Phase -       F       Strategy Sound DSMETAL Goto MOVE
+  Phase MOVE    "A"
+  Phase -       "B"       Strategy
+  Phase -       "C"
+  Phase -       "D"       Strategy
+  Phase -       "E"
+  Phase -       "F"       Strategy Sound DSMETAL Goto MOVE
 
   Default Duration 100msec
-  Phase SHOOT   G       Sound DSPISTOL SigShoot
-  Phase -       H       Sound DSPISTOL Shoot Glow
-  Phase -       G       Sound DSPISTOL
-  Phase -       H       Sound DSPISTOL Shoot Glow
-  Phase -       G       Sound DSPISTOL
-  Phase -       H       Sound DSPISTOL Shoot Glow Goto MOVE
+  Phase SHOOT   "G"       Sound DSPISTOL SigShoot
+  Phase -       "H"       Sound DSPISTOL Shoot Glow
+  Phase -       "G"       Sound DSPISTOL
+  Phase -       "H"       Sound DSPISTOL Shoot Glow
+  Phase -       "G"       Sound DSPISTOL
+  Phase -       "H"       Sound DSPISTOL Shoot Glow Goto MOVE
 
-  Phase OUCH    I       SigOuch Duration OuchRate Goto MOVE
+  Phase OUCH    "I"       SigOuch Duration OuchRate Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     J       SigDie Sound DSSPIDTH
-  Phase -       K
-  Phase -       L
-  Phase -       M
-  Phase -       N
-  Phase -       O
-  Phase -       P
-  Phase -       Q
-  Phase -       R
-  Phase -       S       Become
+  Phase DIE     "J"       SigDie Sound DSSPIDTH
+  Phase -       "K"
+  Phase -       "L"
+  Phase -       "M"
+  Phase -       "N"
+  Phase -       "O"
+  Phase -       "P"
+  Phase -       "Q"
+  Phase -       "R"
+  Phase -       "S"       Become
 
 Proto Spiderdemon 7
-  Sprite SPID
+  Sprite "SPID"
   Size 200 64
   Hits 300
   Mass 200
   Beastie Blocking SkirtCliffs
-  Shooter FastShoot
+  Shooter Nasty
   Shoots Bullet
-  ShootMany 3 60
+  ShootMany 3 pi/60
   Becomes DeadSpiderdemon
   Speed 18
 
@@ -1159,21 +1159,21 @@ Proto Spiderdemon 7
 /* Arachnotron */
 
 PhaseTable DeadArachnotron
-  Phase DEAD    P       Goto DEAD
+  Phase DEAD    "P"       Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN P       SigReanimate
-  Phase -       O
-  Phase -       N
-  Phase -       M
-  Phase -       L
-  Phase -       K
-  Phase -       J       Become
+  Phase RESPAWN "P"       SigReanimate
+  Phase -       "O"
+  Phase -       "N"
+  Phase -       "M"
+  Phase -       "L"
+  Phase -       "K"
+  Phase -       "J"       Become
 
 Proto DeadArachnotron
-  Sprite BSPI
+  Sprite "BSPI"
   Size 80 24
   Mass 140
   Becomes 68
@@ -1182,63 +1182,63 @@ Proto DeadArachnotron
 PhaseTable Arachnotron
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound DSBSPSIT
+  Phase SIGHT   "A"       SigDetect Sound DSBSPSIT
 
-  Phase MOVE    A
-  Phase -       B       Strategy
-  Phase -       C	Sound DSBSPWLK
-  Phase -       D       Strategy
-  Phase -       E
-  Phase -       F       Strategy Sound DSBSPWLK Goto MOVE
+  Phase MOVE    "A"
+  Phase -       "B"       Strategy
+  Phase -       "C"	Sound DSBSPWLK
+  Phase -       "D"       Strategy
+  Phase -       "E"
+  Phase -       "F"       Strategy Sound DSBSPWLK Goto MOVE
 
-  Phase SHOOT   G       Glow SigShoot
-  Phase -       H       Glow Shoot Sound DSPLASMA Goto MOVE
+  Phase SHOOT   "G"       Glow SigShoot
+  Phase -       "H"       Glow Shoot Sound DSPLASMA Goto MOVE
 
-  Phase OUCH    I       SigOuch Duration OuchRate Goto MOVE Sound DSDMPAIN
+  Phase OUCH    "I"       SigOuch Duration OuchRate Goto MOVE Sound DSDMPAIN
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     I       SigDie
-  Phase -       J
-  Phase -       K	Sound DSBSPDTH
-  Phase -       L
-  Phase -       M
-  Phase -       N
-  Phase -       O
-  Phase -       P       Become
+  Phase DIE     "I"       SigDie
+  Phase -       "J"
+  Phase -       "K"	Sound DSBSPDTH
+  Phase -       "L"
+  Phase -       "M"
+  Phase -       "N"
+  Phase -       "O"
+  Phase -       "P"       Become
 
  Proto Arachnotron 68
-   Sprite BSPI
+   Sprite "BSPI"
    Size 80 56
    Hits 50
    Mass 140
    Beastie Blocking SkirtCliffs
-   Shoots AracFireBall ImmuneToSuch FastShoot
+   Shoots AracFireBall ImmuneToSuch Nasty
    Becomes DeadArachnotron
    Speed 25
 
 /* The dreaded Cyberdemon */
 
 PhaseTable DeadCyberdemon
-  Phase DEAD    P       Goto DEAD
+  Phase DEAD    "P"       Goto DEAD
 
   Default Duration RespawnRate
   Default NoSigs
 
-  Phase RESPAWN P       SigReanimate
-  Phase -       O
-  Phase -       N
-  Phase -       M
-  Phase -       L
-  Phase -       K
-  Phase -       J
-  Phase -       I
-  Phase -       H       Become
+  Phase RESPAWN "P"       SigReanimate
+  Phase -       "O"
+  Phase -       "N"
+  Phase -       "M"
+  Phase -       "L"
+  Phase -       "K"
+  Phase -       "J"
+  Phase -       "I"
+  Phase -       "H"       Become
 
 Proto DeadCyberdemon
-  Sprite CYBR
+  Sprite "CYBR"
   Size 80 20
   Mass 300
   Becomes 16
@@ -1246,41 +1246,41 @@ Proto DeadCyberdemon
 PhaseTable Cyberdemon
   Default Duration NormalRate
 
-  Phase IDLE    A       Idle Goto IDLE
+  Phase IDLE    "A"       Idle Goto IDLE
 
-  Phase SIGHT   A       SigDetect Sound DSCYBSIT
+  Phase SIGHT   "A"       SigDetect Sound DSCYBSIT
 
-  Phase MOVE    A
-  Phase -       B       Strategy Sound DSHOOF
-  Phase -       C
-  Phase -       D       Strategy Sound DSHOOF Goto MOVE
+  Phase MOVE    "A"
+  Phase -       "B"       Strategy Sound DSHOOF
+  Phase -       "C"
+  Phase -       "D"       Strategy Sound DSHOOF Goto MOVE
 
-  Phase SHOOT   E       SigShoot Duration 300msec
-  Phase -       F       Shoot Glow Sound DSRLAUNC Goto MOVE
+  Phase SHOOT   "E"       SigShoot Duration 300msec
+  Phase -       "F"       Shoot Glow Sound DSRLAUNC Goto MOVE
 
   Default Duration OuchRate
-  Phase OUCH    G       SigOuch Sound DSDMPAIN Goto MOVE
+  Phase OUCH    "G"       SigOuch Sound DSDMPAIN Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
   Default Glow
 
-  Phase DIE     H       SigDie
-  Phase -       I	Sound DSCYBDTH
-  Phase -       J
-  Phase -       K
-  Phase -       L
-  Phase -       M
-  Phase -       N
-  Phase -       O
-  Phase -       P       Become
+  Phase DIE     "H"       SigDie
+  Phase -       "I"	Sound DSCYBDTH
+  Phase -       "J"
+  Phase -       "K"
+  Phase -       "L"
+  Phase -       "M"
+  Phase -       "N"
+  Phase -       "O"
+  Phase -       "P"       Become
 
 Proto Cyberdemon 16
-  Sprite CYBR
+  Sprite "CYBR"
   Size 80 72
   Hits 500
   Mass 300
-  Beastie Blocking SkirtCliffs FastShoot
+  Beastie Blocking SkirtCliffs Nasty
   Shoots ClassicMissile
   Becomes DeadCyberdemon
   Speed 20
@@ -1290,21 +1290,21 @@ Proto Cyberdemon 16
 PhaseTable Barrel
   Default Duration NormalRate
 
-  Phase IDLE    A
-  Phase -       B       Goto IDLE
+  Phase IDLE    "A"
+  Phase -       "B"       Goto IDLE
 
   Default Duration 250msec
   Default NoSigs
-  Default Sprite BEXP
+  Default Sprite "BEXP"
 
-  Phase BOOM    A       SigDie
-  Phase -       B       Sound DSBAREXP
-  Phase -       C       Glow Explode
-  Phase -       D       Glow
-  Phase -       E       Glow Destroy
+  Phase BOOM    "A"       SigDie
+  Phase -       "B"       Sound DSBAREXP
+  Phase -       "C"       Glow Explode
+  Phase -       "D"       Glow
+  Phase -       "E"       Glow Destroy
 
 Proto Barrel 2035
-  Sprite BAR1
+  Sprite "BAR1"
   Size 23 32
   Mass 125
   Hits 5

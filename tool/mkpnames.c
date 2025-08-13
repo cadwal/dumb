@@ -177,7 +177,7 @@ print_help(FILE *dest)
 	   _("Usage: %s [-d] -p PNAMES -t TEXTURES [SOURCE]\n"
 	     "Compiles metatexture information from SOURCE to PNAMES and TEXTURES lumps\n"
 	     "used by DUMB.  SOURCE defaults to standard input.\n"
-	     "\n"), argv0, argv0);
+	     "\n"), argv0);
    fputs(_("  -d, --debug                     print debugging info\n"
 	   "  -p, --output-pnames=PNAMES      write the pnames lump to the file PNAMES\n"
 	   "  -t, --output-textures=TEXTURES  write the textures lump to the file TEXTURES\n"

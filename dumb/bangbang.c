@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/bangbang.c: Shooting and hurling.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,11 +34,6 @@
 #include "libdumbutil/fixed.h"
 #include "things.h"
 
-/* max number of objects that anything is allowed to spawn at one time
-   w/ thing_hurl.  should be configurable on a per object basis, but
-   that would mean modifying wad structures */
-#define MAX_SPAWNCOUNT 5
-
 int
 thing_hurl(LevData *ld, int thnum, int mtype, fixed a, fixed elev,
 	   fixed arc, int num, int para)
@@ -46,7 +42,7 @@ thing_hurl(LevData *ld, int thnum, int mtype, fixed a, fixed elev,
    int missile = -1, i;
    fixed ofs = -arc / 2, step = 0;
    /* check that we aren't overspawning */
-   if (td->spawncount >= MAX_SPAWNCOUNT) {
+   if (td->spawncount >= td->proto->spawnmax) {
       logprintf(LOG_DEBUG, 'O', "spawncount exceeded for %d", thnum);
       return -1;
    };
@@ -60,10 +56,11 @@ thing_hurl(LevData *ld, int thnum, int mtype, fixed a, fixed elev,
       missile = new_thing(ld, mtype, td->x, td->y, td->z + SHOOT_HEIGHT(td));
       md = ldthingd(ld) + missile;
       if (td->owner >= 0)
-	 md->owner = td->owner;
+	 md->owner = td->owner;	/* FIXME: interactions with spawncount? */
       else
 	 md->owner = thnum;
-      if(md->owner>=0) ldthingd(ld)[md->owner].spawncount++;
+      if (md->owner >= 0)
+	 ldthingd(ld)[md->owner].spawncount++;
       /* work out angle to shoot it */
       md->angle = a + td->angle;
       if (!para)

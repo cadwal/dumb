@@ -186,7 +186,7 @@ init_video(int *_width, int *_height, int *_bpp, int *_real_width)
       logprintf(LOG_INFO, 'V',
        _("init_video in copying mode linearlen=%d pagelen=%d npages=%d"),
 		linearlen, pagelen, npages);
-      pagev = safe_malloc(pagelen);
+      pagev = (unsigned char *) safe_malloc(pagelen);
    } else {
       int i;
       logprintf(LOG_INFO, 'V',

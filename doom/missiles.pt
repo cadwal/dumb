@@ -15,17 +15,17 @@ PhaseTable FireBall
   Default Duration GlowRate
   Default Glow
 
-  Phase INIT    A
-  Phase -       B Goto INIT
+  Phase INIT    "A"
+  Phase -       "B" Goto INIT
 
   Default Duration ExplodeRate
   Default NoSigs
-  Phase EXPLODE C Explode  SigExplode Sound DSFIRXPL
-  Phase -       D
-  Phase -       E Destroy
+  Phase EXPLODE "C" Explode  SigExplode Sound DSFIRXPL
+  Phase -       "D"
+  Phase -       "E" Destroy
 
 Proto ImpFireBall 8004
-  Sprite BAL1
+  Sprite "BAL1"
   Phases FireBall
   Damage 6
   Size 16 16
@@ -35,7 +35,7 @@ Proto ImpFireBall 8004
   Speed 64
 
 Proto CacoFireBall 8005
-  Sprite BAL2
+  Sprite "BAL2"
   Phases FireBall
   Damage 10
   Size 16 16
@@ -45,7 +45,7 @@ Proto CacoFireBall 8005
   Speed 96
 
 Proto BaronFireBall 8006
-  Sprite BAL7
+  Sprite "BAL7"
   Phases FireBall
   Damage 20
   Size 19 16
@@ -61,16 +61,16 @@ PhaseTable ClassicMissile
   Default Duration GlowRate
   Default Glow
 
-  Phase INIT    A Goto INIT
+  Phase INIT    "A" Goto INIT
 
   Default Duration ExplodeRate
   Default NoSigs
-  Phase EXPLODE B Explode  SigExplode Sound DSRXPLOD
-  Phase -       C
-  Phase -       D Destroy
+  Phase EXPLODE "B" Explode  SigExplode Sound DSRXPLOD
+  Phase -       "C"
+  Phase -       "D" Destroy
 
 Proto ClassicMissile 8016
-  Sprite MISL
+  Sprite "MISL"
   Size 10 10
   Damage 25 Hits 1
   Mass 0
@@ -83,11 +83,11 @@ Proto ClassicMissile 8016
 PhaseTable Smoke
   Default Duration GlowRate
 
-  Phase - C Glow
-  Phase - D Destroy
+  Phase - "C" Glow
+  Phase - "D" Destroy
 
 Proto Smoke
-  Sprite PUFF
+  Sprite "PUFF"
   Mass 1000 YMoveOnly
   ZCenter Phantom FloatsUp
 
@@ -96,19 +96,19 @@ PhaseTable Missile
   Default Duration 70msec
   Default Glow
 
-  Phase INIT    A RSpawn2
-  Phase -       A RSpawn2 HeatSeek
-  Phase -       A RSpawn2
-  Phase -       A RSpawn2 HeatSeek Goto INIT
+  Phase INIT    "A" RSpawn2
+  Phase -       "A" RSpawn2 HeatSeek
+  Phase -       "A" RSpawn2
+  Phase -       "A" RSpawn2 HeatSeek Goto INIT
 
   Default Duration ExplodeRate
   Default NoSigs
-  Phase EXPLODE B Explode  SigExplode Sound DSRXPLOD
-  Phase -       C
-  Phase -       D Destroy
+  Phase EXPLODE "B" Explode  SigExplode Sound DSRXPLOD
+  Phase -       "C"
+  Phase -       "D" Destroy
 
 Proto Missile 8001
-  Sprite MISL
+  Sprite "MISL"
   Size 10 10
   Damage 25 Hits 6
   Mass 0
@@ -121,19 +121,19 @@ PhaseTable SkelFireBall
   Default Duration GlowRate
   Default Glow
 
-  Phase INIT    A HeatSeek
-  Phase -       B HeatSeek Goto INIT
+  Phase INIT    "A" HeatSeek
+  Phase -       "B" HeatSeek Goto INIT
 
   Default Duration ExplodeRate
-  Default Sprite FBXP
+  Default Sprite "FBXP"
   Default NoSigs
 
-  Phase EXPLODE A Explode  SigExplode
-  Phase -       B
-  Phase -       C Destroy
+  Phase EXPLODE "A" Explode  SigExplode
+  Phase -       "B"
+  Phase -       "C" Destroy
 
 Proto SkelFireBall 8002
-  Sprite FATB
+  Sprite "FATB"
   Damage 15
   Size 18 18
   Explosive EnergyBall ZCenter BulletProof EnergyProof
@@ -144,19 +144,19 @@ PhaseTable MancFireBall
   Default Duration GlowRate
   Default Glow
 
-  Phase INIT    A
-  Phase -       B Goto INIT
+  Phase INIT    "A"
+  Phase -       "B" Goto INIT
 
   Default Duration ExplodeRate
-  Default Sprite MISL
+  Default Sprite "MISL"
   Default NoSigs
 
-  Phase EXPLODE B Explode  SigExplode
-  Phase -       C
-  Phase -       D Destroy
+  Phase EXPLODE "B" Explode  SigExplode
+  Phase -       "C"
+  Phase -       "D" Destroy
 
 Proto MancFireBall 8007
-  Sprite MANF
+  Sprite "MANF"
   Damage 15
   Size 18 18
   Explosive EnergyBall ZCenter BulletProof EnergyProof
@@ -169,21 +169,21 @@ PhaseTable AracFireBall
   Default Duration GlowRate
   Default Glow
 
-  Phase INIT    A
-  Phase -       B Goto INIT
+  Phase INIT    "A"
+  Phase -       "B" Goto INIT
 
   Default Duration ExplodeRate
-  Default Sprite APBX
+  Default Sprite "APBX"
   Default NoSigs
 
-  Phase EXPLODE A Explode  SigExplode
-  Phase -       B
-  Phase -       C
-  Phase -       D
-  Phase -       E Destroy
+  Phase EXPLODE "A" Explode  SigExplode
+  Phase -       "B"
+  Phase -       "C"
+  Phase -       "D"
+  Phase -       "E" Destroy
 
 Proto AracFireBall 8068
-  Sprite APLS
+  Sprite "APLS"
   Damage 8
   Size 15 15
   Explosive EnergyBall ZCenter BulletProof EnergyProof
@@ -196,20 +196,20 @@ PhaseTable PlasmaBall
   Default Duration GlowRate
   Default Glow
 
-  Phase INIT    A
-  Phase -       B Goto INIT
+  Phase INIT    "A"
+  Phase -       "B" Goto INIT
 
   Default Duration ExplodeRate
-  Default Sprite PLSE
+  Default Sprite "PLSE"
   Default NoSigs
 
-  Phase EXPLODE A Explode  SigExplode
-  Phase -       B
-  Phase -       C
-  Phase -       D Destroy
+  Phase EXPLODE "A" Explode  SigExplode
+  Phase -       "B"
+  Phase -       "C"
+  Phase -       "D" Destroy
 
 Proto PlasmaBall 8204
-  Sprite PLSS
+  Sprite "PLSS"
   Damage 5
   Size 12 12
   Explosive EnergyBall ZCenter BulletProof EnergyProof
@@ -221,22 +221,22 @@ PhaseTable BFGBall
   Default Duration GlowRate
   Default Glow
 
-  Phase INIT    A
-  Phase -       B Goto INIT
+  Phase INIT    "A"
+  Phase -       "B" Goto INIT
 
   Default Duration 350msec
-  Default Sprite BFE1
+  Default Sprite "BFE1"
   Default NoSigs
 
-  Phase EXPLODE A Explode  SigExplode BFGEffect
-  Phase -       B
-  Phase -       C
-  Phase -       D
-  Phase -       E
-  Phase -       F Destroy
+  Phase EXPLODE "A" Explode  SigExplode BFGEffect
+  Phase -       "B"
+  Phase -       "C"
+  Phase -       "D"
+  Phase -       "E"
+  Phase -       "F" Destroy
 
 Proto BFGBall 8206
-  Sprite BFS1
+  Sprite "BFS1"
   Damage 50
   Size 15 15
   Explosive EnergyBall ZCenter BulletProof EnergyProof
@@ -246,13 +246,13 @@ Proto BFGBall 8206
 
 PhaseTable Bullet
   Default Duration 100msec
-  Phase 0 A Glow Melee
-  Phase 1 B Glow
-  Phase 2 C
-  Phase 3 D Destroy
+  Phase 0 "A" Glow Melee
+  Phase 1 "B" Glow
+  Phase 2 "C"
+  Phase 3 "D" Destroy
 
 Proto Bullet 9001
-  Sprite PUFF
+  Sprite "PUFF"
   Mass 1000 YMoveOnly
   Phantom BulletKludge BulletAttack ZCenter
   FloatsUp Speed 10
@@ -261,12 +261,12 @@ Proto Bullet 9001
 
 PhaseTable BloodSplat
   Default Duration 100msec
-  Phase 0 A Melee
-  Phase 1 B
-  Phase 2 C Destroy
+  Phase 0 "A" Melee
+  Phase 1 "B"
+  Phase 2 "C" Destroy
 
 Proto BloodSplat 9002
-  Sprite BLUD
+  Sprite "BLUD"
   Phantom ZCenter BulletAttack
   Damage 1
 
@@ -275,23 +275,23 @@ PhaseTable TeleportFog
   Default Duration 200msec
   Default Glow
 
-  Phase TELEPORT J
-  Phase -        G
-  Phase -        D
+  Phase TELEPORT "J"
+  Phase -        "G"
+  Phase -        "D"
 
-  Phase -        A Sound DSTELEPT
-  Phase -        B
-  Phase -        C
-  Phase -        D
-  Phase -        E
-  Phase -        F
-  Phase -        G
-  Phase -        H
-  Phase -        I
-  Phase -        J Destroy
+  Phase -        "A" Sound DSTELEPT
+  Phase -        "B"
+  Phase -        "C"
+  Phase -        "D"
+  Phase -        "E"
+  Phase -        "F"
+  Phase -        "G"
+  Phase -        "H"
+  Phase -        "I"
+  Phase -        "J" Destroy
 
 Proto TeleportFog 9014
-  Sprite TFOG
+  Sprite "TFOG"
   Phantom ZCenter
 
 
@@ -299,17 +299,17 @@ PhaseTable VileFire
   Default Duration 200msec
   Default Glow
 
-  Phase BURN    A
-  Phase -       B
-  Phase -       C
-  Phase -       D Melee
-  Phase -       E
-  Phase -       F
-  Phase -       G
-  Phase -       H Destroy
+  Phase BURN    "A"
+  Phase -       "B"
+  Phase -       "C"
+  Phase -       "D" Melee
+  Phase -       "E"
+  Phase -       "F"
+  Phase -       "G"
+  Phase -       "H" Destroy
 
 Proto VileFire 8064
-  Sprite FIRE
+  Sprite "FIRE"
   Phantom ZCenter BulletAttack
   Damage 25
 

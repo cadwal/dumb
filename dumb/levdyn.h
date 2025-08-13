@@ -74,7 +74,7 @@ LD_DYNDECL(Sector);
 
 #define MAX_SPARE_THINGS 64
 typedef struct {
-   const ProtoThing *proto;
+   ProtoThing *proto;
    const ThingPhase *phase_tbl;
    fixed x, y, z;
    fixed angle, elev;

@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * ptcomp/phasecomp.c: PhaseTable compiler.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,21 +23,21 @@
 #ifndef PHASECOMP_H
 #define PHASECOMP_H
 
-#include <stdio.h>
+#include "libdumbwad/wadwr.h"
 
 #include "libdumb/prothingstruct.h"
 
 typedef struct {
    ThingPhase *tp;
-   char *tpname;
-   char name[NAMELEN];
+   char **tpnames;
+   char *name;
    int nphases, maxphases;
    LE_int16 signals[NUM_THINGSIGS];
 } ThingPhaseRec;
 
 void init_phasecomp(void);
 void phasecomp(void);
-void wrphases(FILE *fout);
+void wrphases(WADWR *w);
 
 ThingPhaseRec *find_ph_tbl(const char *s);
 ThingPhaseRec *parm_ph_tbl(void);

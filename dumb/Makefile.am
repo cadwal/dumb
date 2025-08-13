@@ -49,13 +49,15 @@ bin_PROGRAMS = $(aalib_bin_programs) $(dummy_bin_programs)	\
 $(ggi_bin_programs) $(svgalib_bin_programs) $(x_bin_programs)	\
 $(dos_bin_programs)
 
+pkginclude_HEADERS = dumbdefs.pt
+
 core_sources = dumb.c animtex.c animtex.h bangbang.c banner.c banner.h	\
 bogothing.c bogothing.h dyncode.c dyncode.h game.c game.h gettable.c	\
 gettable.h levdata.c levdata.h levdyn.c levdyn.h levinfo.c levinfo.h	\
-linetype.c linetype.h netio.c netio.h netplay.c netplay.h termtype.c	\
-thinghit.c thingm.c things.c things.h updmap.c updmap.h updthing.c	\
-useitem.c ctlkey.c ctlkey.h keymap.c keymap.h keymapconf.c		\
-keymapconf.h $(DUMB_FBREREND_SOURCES) fbrerend.h			\
+linetype.c linetype.h message.c message.h netio.c netio.h netplay.c	\
+netplay.h termtype.c thinghit.c thingm.c things.c things.h updmap.c	\
+updmap.h updthing.c useitem.c ctlkey.c ctlkey.h keymap.c keymap.h	\
+keymapconf.c keymapconf.h $(DUMB_FBREREND_SOURCES) fbrerend.h		\
 $(DUMB_RENDER_SOURCES) render.h renderc.h rendcore.h rendflat.h		\
 rendsl.h rendsl86.h rendcommon.c draw.c draw.h $(DUMB_NETWORK_SOURCES)	\
 net.h input.h video.h

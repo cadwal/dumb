@@ -1,2 +1,5 @@
 Makefile
 Makefile.in
+dumb-pt.info
+stamp-vti
+version.texi

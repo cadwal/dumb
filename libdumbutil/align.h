@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumbutil/align.h: Data alignment for WADs and such.
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,10 @@
 #ifndef LIBDUMBUTIL_ALIGN_H
 #define LIBDUMBUTIL_ALIGN_H
 
-#define ALIGN_LUMP      8	/* all lumps */
-#define ALIGN_TEXTURE1  8	/* entries in TEXTURE{1,2} lumps */
+#define ALIGN_LUMP            8 /* all lumps */
+#define ALIGN_TEXTURE1        8 /* entries in TEXTURE{1,2} lumps */
+#define ALIGN_PROTOTHING      8 /* ProtoThing_inwad blocks */
+#define ALIGN_PROTOTHING_GETS 8 /* ProtoThing_inwad_Gets blocks */
 
 /* rounds up to next aligned position */
 #define ALIGN(x,alignment) \

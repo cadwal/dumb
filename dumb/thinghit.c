@@ -360,8 +360,8 @@ thing_hit_wall(LevData *ld, int thing, int wall, int isback, WallHitType t)
 	 } else {
 	    /* act on all tagged sectors */
 	    int j, tag = ldline(ld)[wall].tag;
-	    for (j = 0; j < ldnsectors(ld); j++)
-	       if (ldsector(ld)[j].tag == tag)
+	    for (j = 0; j < ldnsectors(ld); j++) {
+	       if (ldsector(ld)[j].tag == tag) {
 		  /* DONUT_OUTER: perform on donut instead of tagged */
 		  if (lta->flags & LTA_DONUT_OUTER) {
 		     int k = find_donut_sector(ld, j);
@@ -369,6 +369,8 @@ thing_hit_wall(LevData *ld, int thing, int wall, int isback, WallHitType t)
 			perform_lta(ld, lta, k, model);
 		  } else
 		     perform_lta(ld, lta, j, model);
+	       }
+	    }
 	 }
 	 break;
 

@@ -1,5 +1,5 @@
 "char cl" parameters to logprintf().
-These correspond to DUMB 0.12.2.
+These correspond to DUMB 0.12.2, perhaps even to 0.13.6.
 
 'B': Banner
 dumb/banner.c
@@ -91,3 +91,6 @@ dumb/x11_video.c
 libdumbwad/loadlump.c
 libdumbwad/wadio.c
 tool/wadtool.c
+
+'X': X Window System
+xproto/timer.c

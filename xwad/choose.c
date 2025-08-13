@@ -220,15 +220,16 @@ chksize(ChooseInst *ci)
 static void
 choosedhf(XEvent *ev, AppInst *inst, void *info)
 {
+   ChooseInst *chinst = (ChooseInst *) info;
    switch (ev->type) {
    case (ButtonPress):
       /* button event */
-      butsel(info, ev->xbutton.y, inst);
+      butsel(chinst, ev->xbutton.y, inst);
       break;
    case (KeyPress):
       {
 	 KeySym key = XLookupKeysym(&ev->xkey, 0);
-	 choose_keycmd(info, key, inst);
+	 choose_keycmd(chinst, key, inst);
       }
       break;
    case (EnterNotify):
@@ -237,11 +238,12 @@ choosedhf(XEvent *ev, AppInst *inst, void *info)
       /* crossev_cseti(info,&ev->xcrossing,inst); */
       break;
    case (ConfigureNotify):
-      chksize(info);
+      chksize(chinst);
       break;
    case (Expose):
       /* need to redraw */
-      redraw(info, inst, ev->xexpose.y, ev->xexpose.y + ev->xexpose.height);
+      redraw(chinst, inst,
+	     ev->xexpose.y, ev->xexpose.y + ev->xexpose.height);
       break;
    }
 }
@@ -324,18 +326,19 @@ sb_motion(ChooseInst *ci, int y)
 static void
 scrolldhf(XEvent *ev, AppInst *inst, void *info)
 {
+   ChooseInst *chinst = (ChooseInst *) info;
    switch (ev->type) {
    case (ButtonPress):
       /* button event */
-      sb_button(info, ev->xbutton.y);
+      sb_button(chinst, ev->xbutton.y);
       break;
    case (MotionNotify):
       /* pointer motion event */
-      sb_motion(info, ev->xmotion.y);
+      sb_motion(chinst, ev->xmotion.y);
       break;
    case (Expose):
       /* need to redraw */
-      draw_sb(info);
+      draw_sb(chinst);
       break;
    }
 }

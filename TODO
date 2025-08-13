@@ -9,18 +9,17 @@ fix wall collision checks
 activation
 aim to monster nearest to screen center, not necessarily closest to player
 allow each level to specify its own LEVINFO, PROTOS and PHASES
-allow objects to award multiple gettables (eg. MegaSphere)
-armor should absorb damage
 center DUMB logo vertically (just look at aadumb)
 check that inventory items work
 compile as C++ on little-endian machines too
 continuous sounds for moving sectors
-documentation in Texinfo or something
 end-level statistics (secret%, kill%, collect%, hit%)
-finish off heretic protos (done?)
+finish off heretic protos
+FONTINFO lump for specifying character offsets and coding system
 gamma control from keyboard
 get rid of alarm(), use select() instead
 get rid of all arbitrary limits
+gettables which give other gettables (like health) when used
 Guile scripts in wads
 implement invincibility, light goggles, etc....
 implement sectortypes (partially done)
@@ -36,7 +35,7 @@ runtime fallback to read() if mmap() fails (possible with Hurd)
 sector shouldn't give damage while player is in air
 snapshot.ppm when BPP=1 (8 bits)
 sound shouldn't get through closed doors
-special shooting
+special shooting (and GETT_SPC_ALLSPECIAL for Heretic's tome of power)
 support PPM_PACKCOLORS
 turning inertia control
 "Uff!" when the hero runs against a wall or falls
@@ -57,14 +56,11 @@ conf: don't forget aadumb settings with xdumb -S, etc.
 conf: dynamic enumerations (like for AA-lib fonts)
 conf: halt on bogus parameters to enumerated switches
 conf: support floating-point entries (for aadumb --vid-gamma)
-conf: use libargp?
+conf: use argp? (from glibc-2.1)
 Doom: automate 666 effect
-Doom: backpack should double carrying capacity
-Doom: don't get Health>100% with medikits and stimpaks
 Doom: doors should crush corpses to bloodsplats
 Doom: imps should not be able to kill each other with fireballs (ImmuneToSuch)
 Doom: make player pick up things farther away (like armor in E1M2)
-Doom: monsters should be immune to radiation
 Doom: rising staircases should be slower
 Doom: spheres & suit shouldn't expire so fast
 Doom: staircase doesn't work in E1M8
@@ -85,7 +81,6 @@ net: games that anyone can join
 net: rewrite protocol completely, using libdumbworldb observers
 net: multicast
 net: register a port number from IANA (port 7777 is already "cbt")
-ptcomp: output a WAD
 render: allow using the same sprites for things and icons
 render: BPP should always mean Bits Per Pixel
 render: mipmapping
@@ -105,5 +100,5 @@ X11: KeymapNotify
 X11: set icon in program, not in window manager config
 X11: turn autorepeat off when window has focus and XKB isn't available
 X11: use timestamps from keyboard events
-XProtoThing: dumps core when stepping past end of TFOG
+XProtoThing: dumps core when stepping past end of Doom's TFOG
 XWad: preview window, could even be a full game

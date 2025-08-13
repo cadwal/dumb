@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * tool/xproto.c: XProtoThing, a program for viewing ProtoThings.
- * Copyright (C) 1998, 1999 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,13 +22,21 @@
 
 #include <config.h>
 
+#ifndef HAVE_SELECT
+/* Since you don't have select(), we'll
+ * have to longjmp() out of SIGALRM.  */
+# define USE_LONGJMP
+#endif
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <limits.h>
-#include <signal.h>
-#include <setjmp.h>
+#ifdef USE_LONGJMP
+# include <signal.h>
+# include <setjmp.h>
+#endif /* USE_LONGJMP */
 #include <locale.h>
 
 #include <sys/time.h>
@@ -45,12 +53,16 @@
 #include "libdumbutil/log.h"
 #include "libdumbwad/wadio.h"
 #include "libdumb/dsound.h"
+#include "libdumb/protoinwad.h"
 #include "libdumb/sound.h"
 
 #include "xproto.h"
 #include "colour.h"
 #include "disphash.h"
 #include "xtexture.h"
+#ifndef USE_LONGJMP
+# include "timewait.h"
+#endif
 
 static XFontStruct *font, *lilfont, *chofont;
 
@@ -61,94 +73,20 @@ static int sound_flag = 1;
 
 #define RCOUNT 3
 
+#ifdef USE_LONGJMP
 static jmp_buf alarm_jb;
+#endif
 
 /* argv[0] saved near the beginning of main() */
 static const char *argv0;
 
+int main(int argc, char **argv);
+#ifdef USE_LONGJMP
+static RETSIGTYPE sigalarm_handler(int);
+#endif
+static void tick(void);
 static void print_help(FILE *dest);
 static void print_version(void);
-
-RETSIGTYPE
-sigalarm_handler(int i)
-{
-   int need_redraw = 0;
-   static int rcount = RCOUNT;
-   /* sound */
-   poll_sound();
-   /* rotate */
-   if (inst->rotate) {
-      rcount--;
-      if (rcount <= 0) {
-	 inst->currot++;
-	 if (inst->currot > 7)
-	    inst->currot = 0;
-	 need_redraw = 1;
-	 rcount = RCOUNT;
-      }
-   }
-   /* animate */
-   if (inst->animate) {
-      inst->phcount -= 7;
-      if (inst->phcount <= 0) {
-	 int oldph = inst->curphase;
-	 if (CURPHASE.flags & (TPH_DESTROY | TPH_BECOME | TPH_BECOME2)) {
-	    inst->animate = 0;
-	    need_redraw = 2;
-	 } else
-	    xproto_enter_phase(inst, CURPHASE.next);
-	 if (inst->curphase != oldph)
-	    need_redraw = 2;
-      }
-   }
-   /* do redraws */
-   if (need_redraw == 2)
-      xproto_redraw(inst);
-   else if (need_redraw == 1) {
-      XClearArea(dpy, inst->wdisp, 0, 0, 0, 0, False);
-      redraw_wdisp(inst);
-      rdoutp_cseti(&inst->dispctls, inst);
-   }
-   /* done */
-   /* FIXME: This isn't safe -- XNextEvent() may have been updating a
-    * critical variable.  */
-   longjmp(alarm_jb, 1);
-}
-
-static void
-print_help(FILE *dest)
-{
-   fprintf(dest,
-	   _("Usage: %s [OPTION]... [WADFILE]...\n"
-	     "Interactively view ProtoThings in X11.\n"
-	     "\n"), argv0);
-   fputs(_("  -w, --load-wad=FILE    load FILE as a WAD.  WADFILE argument does the same.\n"
-	   "  -s, --no-sound         don't try to play sounds\n"
-	   "  -d, --display=DISPLAY  use X display DISPLAY\n"
-	   "  -l, --log-to=FILE      save messages to FILE\n"
-	   "  -v, --verbose          log to the screen\n"
-	   "      --help             display this help and exit\n"
-	   "      --version          output version information and exit\n"
-	   "\n"), dest);
-   fputs(_("If no WADFILE nor --load-wad=FILE arguments are given, XProtoThing\n"
-	   "loads `doom2.wad'.\n"
-	   "\n"), dest);
-   print_bugaddr_message(dest);
-}
-
-static void
-print_version(void)
-{
-   static const struct copyright copyrights[] = {
-      { "1998", "Josh Parsons" },
-      COPYRIGHT_END
-   };
-   fputs("XProtoThing (DUMB) " VERSION "\n", stdout);
-   print_copyrights(copyrights);
-   fputs(_("This program is free software; you may redistribute it under the terms of\n"
-	   "the GNU General Public License.  This program has absolutely no warranty.\n"),
-	 stdout);
-}
 
 #define MAX_WADS 16
 
@@ -214,6 +152,9 @@ main(int argc, char **argv)
       case '?':			/* invalid option */
 	 fprintf(stderr, _("Try `%s --help' for more information.\n"), argv0);
 	 exit(DUMB_EXIT_INVALID_ARGS);
+      default:
+	 /* getopt_long() returned an impossible value.  */
+	 abort();
       }	/* switch */
    } /* for ever */
 
@@ -263,13 +204,16 @@ main(int argc, char **argv)
    /* init windows & map */
    init_textures();
    init_prothings();
-   init_sound(11025);
-   init_dsound();
+   if (sound_flag) {
+      init_sound(11025);		/* TODO: make configurable */
+      init_dsound();
+   }
    init_instance(inst);
 
    /* main loop */
    while (!inst->want_quit) {
       XEvent ev;
+#ifdef USE_LONGJMP
       setjmp(alarm_jb);
       /*if(inst->rotate||inst->animate) */  {
 	 /* Hook the signal before triggering it. */
@@ -282,19 +226,34 @@ main(int argc, char **argv)
 	    sigaddset(&sigs, SIGALRM);
 	    sigprocmask(SIG_UNBLOCK, &sigs, NULL);
 	 }
-#ifdef HAVE_SETITIMER
+# ifdef HAVE_SETITIMER
 	 {
 	    struct itimerval itv;
 	    memset(&itv, 0, sizeof(itv));
 	    itv.it_value.tv_usec = 100000; /* 1/10 of a second */
 	    setitimer(ITIMER_REAL, &itv, NULL);
 	 }
-#else  /* !HAVE_SETITIMER */
-	 alarm(1);
-#endif /* !HAVE_SETITIMER */
+# else  /* !HAVE_SETITIMER */
+	 alarm(1);		/* 1 second */
+# endif /* !HAVE_SETITIMER */
       }
       XNextEvent(dpy, &ev);
       alarm(0);
+#else  /* !USE_LONGJMP */
+      static struct timeval previous_tick = { 0, 0 };
+      struct timeval next_tick = previous_tick;
+      next_tick.tv_usec += 1000000/5;
+      if (next_tick.tv_usec > 1000000) {
+	 next_tick.tv_usec -= 1000000;
+	 next_tick.tv_sec  += 1;
+      }
+      while (!xnextevent_before(dpy, &ev, &next_tick)) {
+	 tick();
+	 /* Don't just assign previous_tick=next_tick;  */
+	 gettimeofday(&previous_tick, NULL);
+	 XSync(dpy, False);
+      }
+#endif /* !USE_LONGJMP */
       /* if there are any notifies lurking, we want the latest */
       if (ev.type == MotionNotify)
 	 while (XCheckWindowEvent(dpy, ev.xmotion.window,
@@ -303,12 +262,15 @@ main(int argc, char **argv)
       dispatch(&ev);
    }
 
+
    /* close windows, free map */
    free_instance(inst);
    reset_prothings();
    reset_textures();
-   reset_dsound();
-   reset_sound();
+   if (sound_flag) {
+      reset_dsound();
+      reset_sound();
+   }
 
    /* close Xlib */
    reset_choosers();
@@ -322,6 +284,95 @@ main(int argc, char **argv)
    /* done */
    log_exit();
    return 0;
+}
+
+#ifdef USE_LONGJMP
+
+static RETSIGTYPE
+sigalarm_handler(int i)
+{
+   tick();
+   longjmp(alarm_jb, 1);
+}
+
+#endif /* !USE_LONGJMP */
+
+static void
+tick(void)
+{
+   int need_redraw = 0;
+   static int rcount = RCOUNT;
+   /* sound */
+   if (sound_flag)
+      poll_sound();
+   /* rotate */
+   if (inst->rotate) {
+      rcount--;
+      if (rcount <= 0) {
+	 inst->currot++;
+	 if (inst->currot > 7)
+	    inst->currot = 0;
+	 need_redraw = 1;
+	 rcount = RCOUNT;
+      }
+   }
+   /* animate */
+   if (inst->animate) {
+      inst->phcount -= 7;
+      if (inst->phcount <= 0) {
+	 int oldph = inst->curphase;
+	 if (CURPHASE.flags & (TPH_DESTROY | TPH_BECOME | TPH_BECOME2)) {
+	    inst->animate = 0;
+	    need_redraw = 2;
+	 } else
+	    xproto_enter_phase(inst, CURPHASE.next);
+	 if (inst->curphase != oldph)
+	    need_redraw = 2;
+      }
+   }
+   /* do redraws */
+   if (need_redraw == 2)
+      xproto_redraw(inst);
+   else if (need_redraw == 1) {
+      XClearArea(dpy, inst->wdisp, 0, 0, 0, 0, False);
+      redraw_wdisp(inst);
+      rdoutp_cseti(&inst->dispctls, inst);
+   }
+}
+
+static void
+print_help(FILE *dest)
+{
+   fprintf(dest,
+	   _("Usage: %s [OPTION]... [WADFILE]...\n"
+	     "Interactively view ProtoThings in X11.\n"
+	     "\n"), argv0);
+   fputs(_("  -w, --load-wad=FILE    load FILE as a WAD.  WADFILE argument does the same.\n"
+	   "  -s, --no-sound         don't try to play sounds\n"
+	   "  -d, --display=DISPLAY  use X display DISPLAY\n"
+	   "  -l, --log-to=FILE      save messages to FILE\n"
+	   "  -v, --verbose          log to the screen\n"
+	   "      --help             display this help and exit\n"
+	   "      --version          output version information and exit\n"
+	   "\n"), dest);
+   fputs(_("If no WADFILE nor --load-wad=FILE arguments are given, XProtoThing\n"
+	   "loads `doom2.wad'.\n"
+	   "\n"), dest);
+   print_bugaddr_message(dest);
+}
+
+static void
+print_version(void)
+{
+   static const struct copyright copyrights[] = {
+      { "1998", "Josh Parsons" },
+      COPYRIGHT_END
+   };
+   fputs("XProtoThing (DUMB) " VERSION "\n", stdout);
+   print_copyrights(copyrights);
+   fputs(_("This program is free software; you may redistribute it under the terms of\n"
+	   "the GNU General Public License.  This program has absolutely no warranty.\n"),
+	 stdout);
 }
 
 void
@@ -425,10 +476,13 @@ init_instance(XPInstance *inst)
    inst->protos_ln = getlump("PROTOS");
    if (!LUMPNUM_OK(inst->protos_ln))
       logfatal('M', _("no PROTOS lump in wad"));
-   inst->nprotos = get_lump_len(inst->protos_ln) / sizeof(ProtoThing);
+   inst->nprotos = decode_protoinwad_array(&inst->protos,
+					   ((const ProtoThing_inwad *)
+					    load_lump(inst->protos_ln)),
+					   get_lump_len(inst->protos_ln));
+   free_lump(inst->protos_ln);
    if (inst->nprotos < 1)
       logfatal('M', _("no protos"));
-   inst->protos = (const ProtoThing *) load_lump(inst->protos_ln);
 
    /* create frame & map viewer */
    inst->frame = XCreateSimpleWindow(dpy, root, 0, 0,

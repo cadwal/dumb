@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * xwad/xwad.c: The level editor.
- * Copyright (C) 1998, 1999 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify

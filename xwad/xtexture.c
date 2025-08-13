@@ -36,19 +36,19 @@
 #define c_class class
 #endif
 
-#define rotate(Pixel) \
-   for(x=0;x<t->width;x++) { \
-      Pixel *tx=t->texels; \
-      tx+=(t->width-x-1)<<t->log2height; \
-      for(y=t->height-1;y>=0;y--,tx++) \
-	 XPutPixel(image,x,y,*tx==-1?0:*tx); \
+#define ROTATE(Pixel_t)					\
+   for (x = 0; x < t->width; x++) {			\
+      Pixel_t *tx = t->texels;				\
+      tx += (t->width - x - 1) << t->log2height;	\
+      for (y = t->height - 1; y >= 0; y--, tx++)	\
+	 XPutPixel(image, x, y, (*tx == -1) ? 0 : *tx);	\
    }
-#define mirror(Pixel) \
-   for(x=0;x<t->width;x++) { \
-      Pixel *tx=t->texels; \
-      tx+=x<<t->log2height; \
-      for(y=t->height-1;y>=0;y--,tx++) \
-	 XPutPixel(image,x,y,*tx==-1?0:*tx); \
+#define MIRROR(Pixel_t)					\
+   for (x = 0; x < t->width; x++) {			\
+      Pixel_t *tx = t->texels;				\
+      tx += x << t->log2height;				\
+      for (y = t->height - 1; y >= 0; y--, tx++)	\
+	 XPutPixel(image, x, y, (*tx == -1) ? 0 : *tx);	\
    }
 
 static Display *cmdpy = NULL;
@@ -117,30 +117,30 @@ xtexture(Display *dpy, Drawable d, Texture *t, int do_mirror)
       image = XCreateImage(dpy,
 			   visual,
 			   depth,
-			 ZPixmap, 0, malloc(bypp * t->height * t->width),
+			   ZPixmap, 0, malloc(bypp * t->height * t->width),
 			   t->width, t->height,
 			   8, bypp * t->width);
       if (do_mirror)
 	 switch (bypp) {
 	 case (1):
-	    mirror(signed char);
+	    MIRROR(signed char);
 	    break;
 	 case (2):
-	    mirror(signed short);
+	    MIRROR(signed short);
 	    break;
 	 case (4):
-	    mirror(signed int);
+	    MIRROR(signed int);
 	    break;
       } else
 	 switch (bypp) {
 	 case (1):
-	    rotate(signed char);
+	    ROTATE(signed char);
 	    break;
 	 case (2):
-	    rotate(signed short);
+	    ROTATE(signed short);
 	    break;
 	 case (4):
-	    rotate(signed int);
+	    ROTATE(signed int);
 	    break;
 	 }
       t->xpix[do_mirror] = XCreatePixmap(dpy, d, t->width, t->height, depth);

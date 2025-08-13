@@ -2,7 +2,7 @@
  *
  * tool/mkdfnt.c: Convert X11 fonts to DUMB format.
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -251,7 +251,7 @@ main(int argc, char **argv)
    gc = XCreateGC(dpy, pix, 0, NULL);
    font = XLoadQueryFont(dpy, fontname);
    if (font == NULL) {
-      fprintf(stderr, _("%s: font `%s' does not exist\n"), fontname);
+      fprintf(stderr, _("%s: font `%s' does not exist\n"), argv0, fontname);
       exit(DUMB_EXIT_FOPEN_FAIL);
    }
    XSetFont(dpy, gc, font->fid);

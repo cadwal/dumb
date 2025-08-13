@@ -8,7 +8,7 @@
    Shoots is the missile proto
    Ammo is the gettable to use up
    Gun tells DUMB to shoot rather than hurl
-   GotThe Message <string> should make it say "You got the shotgun!"
+   PickupMessage <string> should make it say "You got the shotgun!"
    or whatever.
    Timing is the number of ticks that should pass between each use
    Sound is a sound to make when used
@@ -24,129 +24,129 @@
 
 PhaseTable Fist
   Default Duration 100msec
-  Default Sprite PUNG
+  Default Sprite "PUNG"
 
-  Phase IDLE    A  Goto IDLE
+  Phase IDLE    "A"  Goto IDLE
 
   Default NoSigs
-  Phase PUNCH   A  SigShoot Sound DSPUNCH
-  Phase -       B
-  Phase -       C
-  Phase -       D  Melee
-  Phase -       C
-  Phase -       B  Goto IDLE
+  Phase PUNCH   "A"  SigShoot Sound DSPUNCH
+  Phase -       "B"
+  Phase -       "C"
+  Phase -       "D"  Melee
+  Phase -       "C"
+  Phase -       "B"  Goto IDLE
 
 
 PhaseTable HeldChainsaw
   Default Duration 200msec
 
-  Phase IDLE    C
-  Phase -       D
-  Phase -       C
-  Phase -       D
-  Phase -       C
-  Phase -       D  _ContSound DSSAWIDL Goto IDLE
+  Phase IDLE    "C"
+  Phase -       "D"
+  Phase -       "C"
+  Phase -       "D"
+  Phase -       "C"
+  Phase -       "D"  _ContSound DSSAWIDL Goto IDLE
 
   Default NoSigs Duration 320msec
-  Phase SAW     A  SigShoot Melee Sound DSSAWFUL
-  Phase -       B  Melee
-  Phase -       A  Melee /* enough time for DSSAWFUL to play? */
-  Phase -       B  Melee
-  Phase -       A  Duration 10msec Sigs Goto IDLE
+  Phase SAW     "A"  SigShoot Melee Sound DSSAWFUL
+  Phase -       "B"  Melee
+  Phase -       "A"  Melee /* enough time for DSSAWFUL to play? */
+  Phase -       "B"  Melee
+  Phase -       "A"  Duration 10msec Sigs Goto IDLE
 
 
 PhaseTable HeldPistol
   Default Duration 120msec
 
-  Phase IDLE    A  Goto IDLE
+  Phase IDLE    "A"  Goto IDLE
 
   Default NoSigs
-  Phase SHOOT   B  SigShoot Shoot Sound DSPISTOL _OverlaySprite(PISFA0)
-  Phase -       C
-  Phase -       D
-  Phase -       E
-  Phase -       D  Goto IDLE
+  Phase SHOOT   "B"  SigShoot Shoot Sound DSPISTOL _OverlaySprite("PISFA0")
+  Phase -       "C"
+  Phase -       "D"
+  Phase -       "E"
+  Phase -       "D"  Goto IDLE
 
 
 PhaseTable HeldShotgun
   Default Duration 200msec
 
-  Phase IDLE    A  Goto IDLE
+  Phase IDLE    "A"  Goto IDLE
 
   Default NoSigs
-  Phase SHOOT   A  SigShoot Sound DSSHOTGN _OverlaySprite(SHTFA0)
-  Phase -       A  Shoot _OverlaySprite(SHTFB0)
-  Phase -       B
-  Phase -       C  Sound DSSGCOCK
-  Phase -       D
-  Phase -       C
-  Phase -       B  Goto IDLE
+  Phase SHOOT   "A"  SigShoot Sound DSSHOTGN _OverlaySprite("SHTFA0")
+  Phase -       "A"  Shoot _OverlaySprite("SHTFB0")
+  Phase -       "B"
+  Phase -       "C"  Sound DSSGCOCK
+  Phase -       "D"
+  Phase -       "C"
+  Phase -       "B"  Goto IDLE
 
 
 PhaseTable HeldSuperShotgun
   Default Duration 200msec
 
-  Phase IDLE    A  Goto IDLE
+  Phase IDLE    "A"  Goto IDLE
 
   Default NoSigs
-  Phase SHOOT   A  SigShoot Sound DSDSHTGN _OverlaySprite(SHT2I0)
-  Phase -       A  Shoot _OverlaySprite(SHT2J0)
-  Phase -       B
-  Phase -       C
-  Phase -       D  Sound DSSGCOCK
-  Phase -       E
-  Phase -       F
-  Phase -       G
-  Phase -       H  Goto IDLE
+  Phase SHOOT   "A"  SigShoot Sound DSDSHTGN _OverlaySprite("SHT2I0")
+  Phase -       "A"  Shoot _OverlaySprite("SHT2J0")
+  Phase -       "B"
+  Phase -       "C"
+  Phase -       "D"  Sound DSSGCOCK
+  Phase -       "E"
+  Phase -       "F"
+  Phase -       "G"
+  Phase -       "H"  Goto IDLE
 
 
 PhaseTable HeldChaingun
   Default Duration 150msec
 
-  Phase IDLE    A  Goto IDLE
+  Phase IDLE    "A"  Goto IDLE
 
-  Phase SHOOT   B  NoSigs Shoot _OverlaySprite(CHGFB0) Sound DSPISTOL SigShoot
-  Phase -       A  Shoot _OverlaySprite(CHGFA0) Sound DSPISTOL Goto IDLE
+  Phase SHOOT   "B"  NoSigs Shoot _OverlaySprite("CHGFB0") Sound DSPISTOL SigShoot
+  Phase -       "A"  Shoot _OverlaySprite("CHGFA0") Sound DSPISTOL Goto IDLE
 
 
 PhaseTable HeldRocketLauncher
   Default Duration 200msec
 
-  Phase IDLE    A  Goto IDLE
+  Phase IDLE    "A"  Goto IDLE
 
   Default Duration 60msec
   Default NoSigs
-  Phase SHOOT   A  _OverlaySprite(MISFA0) SigShoot
-  Phase -       A  _OverlaySprite(MISFB0)
-  Phase -       A  _OverlaySprite(MISFC0) Sound DSRLAUNC
-  Phase -       A  _OverlaySprite(MISFD0) Shoot
-  Phase -       B  Duration 500msec Goto IDLE
+  Phase SHOOT   "A"  _OverlaySprite("MISFA0") SigShoot
+  Phase -       "A"  _OverlaySprite("MISFB0")
+  Phase -       "A"  _OverlaySprite("MISFC0") Sound DSRLAUNC
+  Phase -       "A"  _OverlaySprite("MISFD0") Shoot
+  Phase -       "B"  Duration 500msec Goto IDLE
 
 
 PhaseTable HeldPlasmaRifle
   Default Duration 40msec
 
-  Phase IDLE    A  Goto IDLE
+  Phase IDLE    "A"  Goto IDLE
 
-  Phase SHOOT   A  NoSigs Sprite PLSF Sound DSPLASMA SigShoot
-  Phase -       B  NoSigs Sprite PLSF Shoot
-  Phase -       B  Duration 50msec Sprite PLSF
+  Phase SHOOT   "A"  NoSigs Sprite "PLSF" Sound DSPLASMA SigShoot
+  Phase -       "B"  NoSigs Sprite "PLSF" Shoot
+  Phase -       "B"  Duration 50msec Sprite "PLSF"
 
-  Phase COCK    B  NoSigs Duration 300msec Goto IDLE
+  Phase COCK    "B"  NoSigs Duration 300msec Goto IDLE
 
 
 PhaseTable HeldBFG
   Default Duration 350msec
 
-  Phase IDLE    A  Goto IDLE
+  Phase IDLE    "A"  Goto IDLE
 
   Default NoSigs
-  Phase SHOOT   B  Duration 200msec SigShoot
-  Phase -       B  _OverlaySprite(BFGFA0) Sound DSBFG
-  Phase -       B  _OverlaySprite(BFGFB0)
-  Phase -       C  Shoot
-  Phase -       B
-  Phase -       A  Duration 500msec Goto IDLE
+  Phase SHOOT   "B"  Duration 200msec SigShoot
+  Phase -       "B"  _OverlaySprite("BFGFA0") Sound DSBFG
+  Phase -       "B"  _OverlaySprite("BFGFB0")
+  Phase -       "C"  Shoot
+  Phase -       "B"
+  Phase -       "A"  Duration 500msec Goto IDLE
 
 
 /* protos for weapon bogus-objects(tm) */
@@ -157,7 +157,7 @@ PhaseTable HeldBFG
    drawn onto the players view after the renderer has finished. */
 
 Proto Fist 991
-  Sprite PUNG
+  Sprite "PUNG"
   AimArc 45deg
   Size 32 56
   Bogus
@@ -166,7 +166,7 @@ Proto Fist 991
 
 Proto BerserkFist
   Phases Fist
-  Sprite PUNG
+  Sprite "PUNG"
   AimArc 45deg
   Size 32 56
   Bogus
@@ -174,7 +174,7 @@ Proto BerserkFist
   Damage 20
 
 Proto HeldChainsaw
-  Sprite SAWG
+  Sprite "SAWG"
   AimArc 45deg
   Size 32 56
   Bogus
@@ -182,7 +182,7 @@ Proto HeldChainsaw
   Damage 2 TurnWhenHitting
 
 Proto HeldPistol
-  Sprite PISG
+  Sprite "PISG"
   AimArc 10deg
   Size 32 56
   Bogus Shooter
@@ -190,7 +190,7 @@ Proto HeldPistol
   Shoots Bullet
 
 Proto HeldShotgun
-  Sprite SHTG
+  Sprite "SHTG"
   AimArc 10deg
   Size 32 56
   Bogus Shooter
@@ -199,7 +199,7 @@ Proto HeldShotgun
   ShootMany 6 5deg
 
 Proto HeldChaingun
-  Sprite CHGG
+  Sprite "CHGG"
   AimArc 10deg
   Size 32 56
   Bogus Shooter
@@ -208,7 +208,7 @@ Proto HeldChaingun
   ShootMany 1 10deg
 
 Proto HeldSuperShotgun
-  Sprite SHT2
+  Sprite "SHT2"
   AimArc 10deg
   Size 32 56
   Bogus Shooter
@@ -217,7 +217,7 @@ Proto HeldSuperShotgun
   ShootMany 10 15deg 15deg
 
 Proto HeldPlasmaRifle
-  Sprite PLSG
+  Sprite "PLSG"
   AimArc 10deg
   Size 32 56
   Bogus
@@ -225,7 +225,7 @@ Proto HeldPlasmaRifle
   Shoots PlasmaBall
 
 Proto HeldBFG
-  Sprite BFGG
+  Sprite "BFGG"
   AimArc 20deg
   Size 32 56
   Bogus
@@ -233,14 +233,14 @@ Proto HeldBFG
   Shoots BFGBall
 
 Proto HeldRocketLauncher
-  Sprite MISG
+  Sprite "MISG"
   AimArc 10deg
   Size 32 56
   Bogus
   Shoots Missile
 
 Proto HeldChainsaw
-  Sprite SAWG
+  Sprite "SAWG"
   AimArc 45deg
   Size 32 56
   Bogus
@@ -252,170 +252,160 @@ Proto HeldChainsaw
 
 Gettable Fist
   Initial 1
-  Collect 1
-  UseNum 0
+  DefaultMaximum 1
   WepSel
   WeaponNumber 1
   Bogotype Fist
 
 Gettable Berserk
-  Icon PSTRA0
+  Icon "PSTRA0"
   IconPos 80 6
   Initial 0
-  Collect 1
-  Local
-  UseNum 0
+  DefaultMaximum 1
+  OneMapOnly
   WepSel
   WeaponNumber 1
   ReplaceWeapon Fist
   Bogotype BerserkFist
-  GotThe Message BESERK_STRENGTH___CHARGE
-  PickupSound DSGETPOW
 
 Gettable Chainsaw
   Initial 0
-  Collect 1
-  UseNum 0
+  DefaultMaximum 1
   WepSel
   WeaponNumber 1
   ReplaceWeapon Fist
   Bogotype HeldChainsaw
-  GotThe Message CHAINSAW..._FIND_SOME_MEAT!
-  PickupSound DSWPNUP
 
 Gettable Pistol
   Initial 1
-  Collect 1
+  DefaultMaximum 1
   WepSel
   WeaponNumber 2
   Bogotype HeldPistol
-  Ammo Bullet
-  GotThe Message PISTOL
-  PickupSound DSWPNUP
+  Ammo Bullet 1
 
 Gettable Shotgun
-  Collect 1
+  DefaultMaximum 1
   WepSel
   WeaponNumber 3
   Bogotype HeldShotgun
-  Ammo Shell
-  AddAmmo 6
-  GotThe Message SHOTGUN
-  PickupSound DSWPNUP
+  Ammo Shell 1
 
 Gettable SuperShotgun
-  Collect 1
+  DefaultMaximum 1
   WepSel
   WeaponNumber 3
   Bogotype HeldSuperShotgun
-  UseNum 2
-  Ammo Shell
-  AddAmmo 6
-  GotThe Message SUPER_SHOTGUN
-  PickupSound DSWPNUP
+  Ammo Shell 2
 
 Gettable Chaingun
-  Collect 1
+  DefaultMaximum 1
   WepSel
   WeaponNumber 4
   Bogotype HeldChaingun
-  Ammo Bullet
-  AddAmmo 20
-  GotThe Message CHAINGUN
-  PickupSound DSWPNUP
+  Ammo Bullet 1
 
 Gettable RocketLauncher
-  Collect 1
+  DefaultMaximum 1
   WepSel
   WeaponNumber 5
   Bogotype HeldRocketLauncher
-  Ammo Rocket
-  AddAmmo 2
-  UseNum 1
-  GotThe Message ROCKET_LAUNCHER
-  PickupSound DSWPNUP
+  Ammo Rocket 1
 
 Gettable PlasmaRifle
-  Collect 1
+  DefaultMaximum 1
   WepSel
   WeaponNumber 6
   Bogotype HeldPlasmaRifle
-  Ammo Cell
-  AddAmmo 40
-  UseNum 1
-  GotThe Message PLASMA_RIFLE
-  PickupSound DSWPNUP
+  Ammo Cell 1
 
 Gettable BFG
-  Collect 1
+  DefaultMaximum 1
   WepSel
   WeaponNumber 7
   Bogotype HeldBFG
-  Ammo Cell
-  AddAmmo 100
-  UseNum 40
-  GotThe Message BFG___OH_YES
-  PickupSound DSWPNUP
+  Ammo Cell 40
 
 /* now the actual proto entries */
 
 Proto Chainsaw 2005
-  Sprite CSAW
+  Sprite "CSAW"
   Phases Mundane
   Size 62 24
-  Gets Chainsaw 1
   StickToFloor
+  PickupMessage N_("You got the chainsaw... Find some meat!")
+  PickupSound DSWPNUP
+  Gets Chainsaw 1
 
 Proto Berserk 2023
-  Sprite PSTR
+  Sprite "PSTR"
   Phases Mundane
   Size 32 20
   StickToFloor
+  PickupMessage N_("You smell blood!")
+  PickupSound DSGETPOW
   Gets Health 100
-  Gets Berserk 1 /* from weapons.pt */
+  Gets Berserk 1
 
 Proto Shotgun 2001
-  Sprite SHOT
+  Sprite "SHOT"
   Phases Mundane
   Size 62 12
-  Gets ShotGun 1
   StickToFloor
+  PickupMessage N_("You got the shotgun!")
+  PickupSound DSWPNUP
+  Gets ShotGun 1
+  Gets Shell 6
 
 Proto SuperShotgun 82
-  Sprite SGN2
+  Sprite "SGN2"
   Phases Mundane
   Size 56 12
-  Gets SuperShotgun 1
   StickToFloor
+  PickupMessage N_("You got the super shotgun!")
+  PickupSound DSWPNUP
+  Gets SuperShotgun 1
+  Gets Shell 6
 
 Proto Chaingun 2002
-  Sprite MGUN
+  Sprite "MGUN"
   Phases Mundane
   Size 54 16
-  Gets Chaingun 1
   StickToFloor
+  PickupMessage N_("You got the chaingun!")
+  PickupSound DSWPNUP
+  Gets Chaingun 1
+  Gets Bullet 20
 
 Proto RocketLauncher 2003
-  Sprite LAUN
+  Sprite "LAUN"
   Phases Mundane
   Size 62 16
-  Gets RocketLauncher 1
   StickToFloor
+  PickupMessage N_("You got the rocket launcher!")
+  PickupSound DSWPNUP
+  Gets RocketLauncher 1
+  Gets Rocket 2
 
 Proto PlasmaRifle 2004
-  Sprite PLAS
+  Sprite "PLAS"
   Phases Mundane
   Size 54 16
-  Gets PlasmaRifle 1
   StickToFloor
+  PickupMessage N_("You got the plasma rifle!")
+  PickupSound DSWPNUP
+  Gets PlasmaRifle 1
+  Gets Cell 40
 
 Proto BFG9000 2006
-  Sprite BFUG
+  Sprite "BFUG"
   Phases Mundane
   Size 61 36
-  Gets BFG 1
   StickToFloor
-
+  PickupMessage N_("You got the BFG!")
+  PickupSound DSWPNUP
+  Gets BFG 1
+  Gets Cell 100
 
 #undef StickToFloor
 #undef _OverlaySprite

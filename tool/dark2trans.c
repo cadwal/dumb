@@ -1,8 +1,8 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * tool/dark2trans.c: Converts dark pixels to #000001 which means transparent.
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +29,10 @@
 
 #ifdef __cplusplus
 extern "C" {
-# include <ppm.h>
+# include DUMB_CONFIG_PPM_H
 }
 #else
-# include <ppm.h>
+# include DUMB_CONFIG_PPM_H
 #endif
 
 #include "libdumbutil/dumb-nls.h"

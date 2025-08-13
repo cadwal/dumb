@@ -1,8 +1,8 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * ptcomp/ptcomp.c: Compiler for .pt files.
+ * Copyright (C) 1998,1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
- * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@
 #include "libdumbutil/exitcode.h"
 #include "libdumbutil/log.h"
 #include "libdumbutil/safem.h"
+#include "libdumbwad/wadwr.h"
 
 #include "token.h"
 #include "globals.h"
@@ -53,9 +54,15 @@
 
 static void show_help(FILE *dest);
 static void show_version(void);
+static int save_ptlumps_in_dir(const char *outputdir);
+static int save_ptlumps_in_wad(const char *wadfname);
+static void save_ptlumps_in_wadwr(WADWR *w);
 
 /* initialized at the beginning of main() */
 static const char *argv0;
+
+/* declared in globals.h */
+int fake_strings_flag = 0;
 
 void
 ptcomp(void)
@@ -64,7 +71,8 @@ ptcomp(void)
       const char *s = next_token();
       if (s == NULL)
 	 break;
-      else if (*s == '\n');
+      else if (*s == '\n')
+	 ;
       else if (!strcasecmp(s, "Proto"))
 	 protocomp();
       else if (!strcasecmp(s, "PhaseTable"))
@@ -90,7 +98,7 @@ ptcomp(void)
       else if (!strcasecmp(s, "DefaultSpeed"))
 	 change_default_speed();
       else
-	 synerr(NULL);
+	 synerr(_("Syntax error"));
    }
 }
 
@@ -98,16 +106,22 @@ static void
 show_help(FILE *dest)
 {
    fprintf(dest,
-	   _("Usage: %s -d DIRECTORY\n"
-	     "Compile .pt files to various lumps used by DUMB.  Ptcomp reads .pt source\n"
-	     "from standard input, and creates the following files in DIRECTORY:\n"
-	     "PHASES.lump, PROTOS.lump, GETTABLE.lump, LINETYPE.lump, SECTTYPE.lump,\n"
-	     "SOUNDS.lump, ANIMTEX.lump and LEVINFO.lump.\n"
-	     "\n"), argv0);
-   fputs(_("  -d, --output-directory=DIRECTORY  write the output files to DIRECTORY\n"
-	   "      --help                        display this help and exit\n"
-	   "      --version                     output version information and exit\n"
-	   "\n"), dest);
+ _("Usage: %s -o WADFILE\n"
+   "   or: %s -d DIRECTORY\n"
+   "Compile .pt files to various lumps used by DUMB.  Ptcomp reads .pt source\n"
+   "from standard input, and creates the following lumps: PHASES, PROTOS,\n"
+   "GETTABLE, LINETYPE, SECTTYPE, SOUNDS, ANIMTEX and LEVINFO.  It saves them\n"
+   "either in WADFILE or as *.lump files in DIRECTORY.\n"
+   "\n"),
+	   argv0, argv0);
+   fputs(
+ _("  -o, --output-wad=WADFILE          create WADFILE containing the lumps\n"
+   "  -d, --output-directory=DIRECTORY  write *.lump files in DIRECTORY\n"
+   "      --fake-strings                translate name tokens to strings\n"
+   "                                    where needed\n"
+   "      --help                        display this help and exit\n"
+   "      --version                     output version information and exit\n"
+   "\n"), dest);
    print_bugaddr_message(dest);
 }
 
@@ -116,7 +130,7 @@ show_version(void)
 {
    static const struct copyright copyrights[] = {
       { "1997-1998", "Josh Parsons" },
-      { "1998", "Kalle O. Niemitalo" },
+      { "1998-1999", "Kalle Niemitalo" },
       COPYRIGHT_END
    };
    printf("ptcomp (DUMB) " VERSION "\n");
@@ -128,10 +142,8 @@ show_version(void)
 int
 main(int argc, char **argv)
 {
-   FILE *fout;
-   char *foutname;
-   const char *dir = NULL;
-   int errors = 0;
+   const char *outputdir = NULL;
+   const char *wadfname = NULL;
    argv0 = argv[0];
 #ifdef ENABLE_NLS
    setlocale(LC_ALL, "");
@@ -142,29 +154,37 @@ main(int argc, char **argv)
     * isn't an option, treat it as the output directory name.  */
    if (argc == 2
        && argv[1][0] != '-') {
-      dir = argv[1];
+      outputdir = argv[1];
       fprintf(stderr, _("%s: Deprecated usage.  Assuming you meant:\n"),
 	      argv0);
-      fprintf(stderr, "%s -o %s\n", argv0, dir);
+      fprintf(stderr, "%s --output-directory=%s\n", argv0, outputdir);
    } else {
       static const struct option long_options[] = {
+	 { "output-wad", required_argument, NULL, 'o' },
 	 { "output-directory", required_argument, NULL, 'd' },
+	 { "fake-strings", no_argument, NULL, 'f' }, /* no -f */
 	 { "help", no_argument, NULL, 'h' }, /* no -h */
 	 { "version", no_argument, NULL, 'V' }, /* no -V */
 	 { NULL, 0, NULL, '\0' }
       };
       for (;;) {
-	 int c = getopt_long(argc, argv, "d:", long_options, NULL);
+	 int c = getopt_long(argc, argv, "o:d:", long_options, NULL);
 	 if (c == -1)
 	    break;
 	 switch (c) {
-	 case 'd':			/* -d, --output-directory */
-	    dir = optarg;
+	 case 'o':		/* -o, --output-wad=WADFILE */
+	    wadfname = optarg;
 	    break;
-	 case 'h':			/*     --help */
+	 case 'd':		/* -d, --output-directory=DIRECTORY */
+	    outputdir = optarg;
+	    break;
+	 case 'f':		/*     --fake-strings */
+	    fake_strings_flag = 1;
+	    break;
+	 case 'h':		/*     --help */
 	    show_help(stdout);
 	    exit(EXIT_SUCCESS);
-	 case 'V':			/*     --version */
+	 case 'V':		/*     --version */
 	    show_version();
 	    exit(EXIT_SUCCESS);
 	 case '?':		/* invalid option */
@@ -173,15 +193,16 @@ main(int argc, char **argv)
 	    exit(DUMB_EXIT_INVALID_ARGS);
 	 } /* switch */
       }	/* for ever */
-      if (!dir) {
-	 fprintf(stderr, _("%s: You must use `-o DIRECTORY'\n"), argv0);
+      if (!outputdir && !wadfname) {
+	 fprintf(stderr,
+		 _("%s: You must use `-d DIRECTORY' or `-o WADFILE'\n"),
+		 argv0);
 	 fprintf(stderr, _("Try `%s --help' for more information.\n"),
 		 argv0);
 	 exit(DUMB_EXIT_INVALID_ARGS);
       }
    } /* incompatibility mode */
    log_stdout();		/* for error messages from safem */
-   foutname = (char *) safe_malloc(strlen(dir) + strlen("/LINETYPE.lump") + 1);
    init_animcomp();
    init_gettcomp();
    init_licomp();
@@ -194,65 +215,52 @@ main(int argc, char **argv)
    printf(_("%s: compiling...\n"), argv0);
    ptcomp();
    end_file();
+   
+   {
+      int error_flag = 0;
 
-   printf(_("%s: writing...\n"), argv0);
-   fout = fopen(strcat(strcpy(foutname, dir), "/PHASES.lump"), "wb");
-   if (!fout)
-      perror(foutname), errors++;
-   else {
-      wrphases(fout);
-      fclose(fout);
+      /* Undocumented feature: -d and -o can be used together.
+       * This hasn't been tested, though... */
+      if (outputdir != NULL)
+	 error_flag |= save_ptlumps_in_dir(outputdir);
+      if (wadfname != NULL)
+	 error_flag |= save_ptlumps_in_wad(wadfname);
+
+      return error_flag ? EXIT_FAILURE : EXIT_SUCCESS;
    }
-   fout = fopen(strcat(strcpy(foutname, dir), "/PROTOS.lump"), "wb");
-   if (!fout)
-      perror(foutname), errors++;
-   else {
-      wrprotos(fout);
-      fclose(fout);
-   }
-   fout = fopen(strcat(strcpy(foutname, dir), "/GETTABLE.lump"), "wb");
-   if (!fout)
-      perror(foutname), errors++;
-   else {
-      wrgetts(fout);
-      fclose(fout);
-   }
-   fout = fopen(strcat(strcpy(foutname, dir), "/LINETYPE.lump"), "wb");
-   if (!fout)
-      perror(foutname), errors++;
-   else {
-      wrlts(fout);
-      fclose(fout);
-   }
-   fout = fopen(strcat(strcpy(foutname, dir), "/SECTTYPE.lump"), "wb");
-   if (!fout)
-      perror(foutname), errors++;
-   else {
-      wrsts(fout);
-      fclose(fout);
-   }
-   fout = fopen(strcat(strcpy(foutname, dir), "/SOUNDS.lump"), "wb");
-   if (!fout)
-      perror(foutname), errors++;
-   else {
-      wrsounds(fout);
-      fclose(fout);
-   }
-   fout = fopen(strcat(strcpy(foutname, dir), "/ANIMTEX.lump"), "wb");
-   if (!fout)
-      perror(foutname), errors++;
-   else {
-      wranims(fout);
-      fclose(fout);
-   }
-   fout = fopen(strcat(strcpy(foutname, dir), "/LEVINFO.lump"), "wb");
-   if (!fout)
-      perror(foutname), errors++;
-   else {
-      wrlinfos(fout);
-      fclose(fout);
-   }
-   return errors ? EXIT_FAILURE : EXIT_SUCCESS;
+}
+
+static int
+save_ptlumps_in_dir(const char *outputdir)
+{
+   WADWR *wadwr = wadwr_open(outputdir, 'd');
+   if (!wadwr)
+      return 1;
+   save_ptlumps_in_wadwr(wadwr);
+   return wadwr_close(wadwr);
+}
+
+static int
+save_ptlumps_in_wad(const char *wadfname)
+{
+   WADWR *wadwr = wadwr_open(wadfname, 'p');
+   if (!wadwr)
+      return 1;
+   save_ptlumps_in_wadwr(wadwr);
+   return wadwr_close(wadwr);
+}
+
+static void
+save_ptlumps_in_wadwr(WADWR *w)
+{
+   wrphases(w);
+   wrprotos(w);
+   wrgetts(w);
+   wrlts(w);
+   wrsts(w);
+   wrsounds(w);
+   wranims(w);
+   wrlinfos(w);
 }
 
 // Local Variables:

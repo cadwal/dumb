@@ -254,7 +254,7 @@ send_sync(int ack, int ticks)
       ack ? "ack" : "sync",
       ticks); */
    if (ack) {
-      static last_ack = 0;
+      static int last_ack = 0;
       if (cnf_async)
 	 return;
       if (ticks - last_ack < cnf_ack_to / MSEC_PER_TICK)

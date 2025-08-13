@@ -22,6 +22,8 @@
 #ifndef WADIO_H
 #define WADIO_H
 
+#include "libdumbutil/log.h"	/* LOG_FATAL used in #define load_lump() */
+
 void reset_wad(void);
 void init_iwad(const char *fname, const char *const *path);
 void init_pwad(const char *fname, const char *const *path);

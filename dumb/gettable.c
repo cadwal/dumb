@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/gettable.c: Gettables.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,6 +22,7 @@
 
 #include <config.h>
 
+#include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -34,42 +36,69 @@
 #include "libdumb/dsound.h"
 #include "banner.h"
 #include "draw.h"
-#include "game.h"
+#include "dumbdefs.pt"		/* for GETT_SPC_* */
 #include "gettable.h"
 #include "levdata.h"
 #include "things.h"
 
-static LumpNum ln = BAD_LUMPNUM;
+static LumpNum gettable_ln = BAD_LUMPNUM;
 static int ngetts = 0;
-static const Gettable *gett = NULL;
+static const Gettable **gett = NULL;
 static Texture ***gettxt = NULL;
 
-#define NUMICONS(gk) (gett[gk].iconanim? \
-		      (1+gett[gk].iconanim-gett[gk].iconname[4]): \
+#define NUMICONS(gk) (gett[gk]->iconanim? \
+		      (1+gett[gk]->iconanim-gett[gk]->iconname[4]): \
 		      1)
-#define ANIMWAIT(gk) (gett[gk].timing+1)
+#define ANIMWAIT(gk) (gett[gk]->timing+1)
 #define GTEXTURE(gk) get_gktex(ld,gk)
 
-#define PLEXTRA 2
-#define PLINFOK(pl) (ld->plinfo[pl]!=NULL)
-#define PLCOUNT(pl) (ld->plinfo[pl]+PLEXTRA)
-#define PLSEL(pl) (ld->plinfo[pl])
+/* Values of n in ld->plinfo[pl][n] */
+enum {
+   PLINFOPOS_WEAPONIND,
+   PLINFOPOS_ITEMIND,		/* must be PLINFOPOS_WEAPONNUM+1 */
+   PLINFOPOS_BACKPACK,
+   PLINFOPOS_GETTCOUNTS		/* must be last */
+};
 
+#define PLINFO_OK(pl) (ld->plinfo[pl]!=NULL)
+#define PLINFO_SEL(pl,type) (ld->plinfo[pl][PLINFOPOS_WEAPONIND+(type)])
+#define PLINFO_BACKPACK(pl) (ld->plinfo[pl][PLINFOPOS_BACKPACK])
+/* we don't have PLINFO_GETTCOUNT; use getcount() instead! */
+
+/* in fact this should be overridden for both const and non-const
+   LevData *, and return const or non-const int *.  */
 static int *
-getcount(LevData *ld, int pl, int type)
+getcount(const LevData *ld, int pl, int type)
 {
-   switch ((int) (gett[type].special)) {
-   case (1):
+   assert(type >= 0 && type < ngetts);
+   switch ((int) (gett[type]->special)) {
+   case GETT_SPC_HEALTH:
       return &(ldthingd(ld)[ld->player[pl]].hits);
-   case (2):
+   case GETT_SPC_ARMOUR:
       return &(ldthingd(ld)[ld->player[pl]].armour);
-   case (3):
+   case GETT_SPC_INVISIBILITY:
       return &(ldthingd(ld)[ld->player[pl]].tmpinv);
-   case (4):
+   case GETT_SPC_DAMAGEPROTECTION:
       return &(ldthingd(ld)[ld->player[pl]].tmpgod);
+   case GETT_SPC_BACKPACK:
+      /* The above were kept in the generic thing structure, but this
+       * one is specific to the player.  */
+      return &PLINFO_BACKPACK(pl);
    }
-   return PLCOUNT(pl) + type;
+   return &(ld->plinfo[pl][PLINFOPOS_GETTCOUNTS+type]);
 }
+
+/* Return the current maximum of gettable TYPE, depending on whether
+ * player PL has the backpack.  */
+static int
+gettmax(LevData *ld, int pl, int type)
+{
+   if (PLINFO_BACKPACK(pl) > 0)
+      return gett[type]->backpackmax;
+   else
+      return gett[type]->defaultmax;
+}
+
 static Texture *
 get_gktex(LevData *ld, int gk)
 {
@@ -78,7 +107,7 @@ get_gktex(LevData *ld, int gk)
       return NULL;
    ni = NUMICONS(gk);
    i = ld->map_ticks / ANIMWAIT(gk);
-   if (gett[gk].flags & GK_REVANIM) {
+   if (gett[gk]->flags & GK_REVANIM) {
       i %= 2 * (ni - 1);
       if (i < ni)
 	 return gettxt[gk][i];
@@ -88,25 +117,48 @@ get_gktex(LevData *ld, int gk)
       return gettxt[gk][i % ni];
 }
 
+/* Scan the memory area beginning at DATA and having length LENGTH for
+   gettables.  Return the number of gettables.  If PTRS is not NULL,
+   save the addresses of gettables there.  */
+static int
+scan_gettables(const void *data, size_t length, const Gettable **ptrs)
+{
+   int count = 0;
+   while (length > 0) {
+      size_t blk_length = ((const Gettable *) data)->block_length;
+      if (blk_length < sizeof(Gettable) || blk_length > length) {
+	 logprintf(LOG_ERROR, 'G', _("Gettable block chain corrupted"));
+	 return count;
+      }
+      if (ptrs)
+	 ptrs[count] = (const Gettable *) data;
+      count++;
+      data = ((const char *) data) + blk_length;
+      length -= blk_length;	/* cannot underflow */
+   }
+   return count;
+}
+
 int
 get_plinfo_len(void)
 {
    if (ngetts == 0)
       init_gettables();
-   return ngetts + PLEXTRA;
+   return PLINFOPOS_GETTCOUNTS + ngetts;
 }
 
 void
-init_plinfo(int *pli)
+init_plinfo(LevData *ld, int pl)
 {
+   /* This is called by init_player() in levdata.c which callocs the
+      data.  Therefore we don't have to zero any fields.  */
    int i;
-   const Gettable *gt = gett;
-   if (ngetts == 0)
-      init_gettables();
-   for (i = 0; i < PLEXTRA; i++)
-      pli[i] = -1;
-   for (i = 0; i < ngetts; i++, gt++)
-      pli[i + PLEXTRA] = gt->initial;
+   PLINFO_SEL(pl, 0) = -1;
+   PLINFO_SEL(pl, 1) = -1;
+   
+   /* ok, then fill up the rest */
+   for (i = 0; i < ngetts; i++)
+      *getcount(ld, pl, i) = gett[i]->initial;
 }
 
 static void
@@ -132,7 +184,7 @@ set_bogot(LevData *ld, int pl, const Gettable *gt)
 void
 rotate_selection(LevData *ld, int pl, int type, int dir)
 {
-   int i = PLSEL(pl)[type];
+   int i = PLINFO_SEL(pl, type);
    int loops = -1;
    while (1) {
       i += dir;
@@ -147,85 +199,82 @@ rotate_selection(LevData *ld, int pl, int type, int dir)
       else if (i < 0)
 	 i = ngetts - 1;
       /* check selectable */
-      if (type == 0 && !(gett[i].flags & GK_WEPSELECT))
+      if (type == 0 && !(gett[i]->flags & GK_WEPSELECT))
 	 continue;
-      if (type == 1 && !(gett[i].flags & GK_SPESELECT))
+      if (type == 1 && !(gett[i]->flags & GK_SPESELECT))
 	 continue;
       /* check we have one */
-      if (PLCOUNT(pl)[i] < 1)
+      if (*getcount(ld, pl, i) < 1)
 	 continue;
-      if (gett[i].bulletkind >= 0 && PLCOUNT(pl)[gett[i].bulletkind] < 1)
+      if (gett[i]->ammotype >= 0
+	  && *getcount(ld, pl, gett[i]->ammotype) < 1)
 	 continue;
       /* a strange loop, but it works */
       break;
    }
-   PLSEL(pl)[type] = i;
+   PLINFO_SEL(pl, type) = i;
    if (i >= 0)
-      set_bogot(ld, pl, gett + PLSEL(pl)[type]);
+      set_bogot(ld, pl, gett[PLINFO_SEL(pl, type)]);
 }
 
 void
 use_selection(int type, LevData *ld, int pl)
 {
-   const Gettable *gt = gett + PLSEL(pl)[type];
-   int *cd = PLCOUNT(pl) + PLSEL(pl)[type];
-   int *cb = PLCOUNT(pl) + PLSEL(pl)[type];
-   if (PLSEL(pl)[type] < 0) {
+   const Gettable *gt = gett[PLINFO_SEL(pl, type)];
+   int *itemptr, *ammoptr;
+   if (PLINFO_SEL(pl, type) < 0) {
       rotate_selection(ld, pl, type, +1);
       return;
    }
-   if (gt->bulletkind >= 0)
-      cb = PLCOUNT(pl) + gt->bulletkind;
-   if (cd[0] < 1 || cb[0] < gt->usenum) {
+   itemptr = getcount(ld, pl, PLINFO_SEL(pl, type));
+   if (gt->ammotype >= 0)
+      ammoptr = getcount(ld, pl, gt->ammotype);
+   else
+      ammoptr = itemptr;
+   if (*itemptr < 1 || *ammoptr < gt->ammocount) {
       rotate_selection(ld, pl, type, +1);
       return;
    }
-   set_bogot(ld, pl, gett + PLSEL(pl)[type]);
-   cb[0] -= gt->usenum * use_item(ld, pl, gt);
-   if (cb[0] < 0)
-      cb[0] = 0;
-   if (gt->sound >= 0)
-      play_dsound(gt->sound, 0, 0, 0);
+   set_bogot(ld, pl, gett[PLINFO_SEL(pl, type)]);
+   *ammoptr -= gt->ammocount * use_item(ld, pl, gt);
+   if (*ammoptr < 0)
+      *ammoptr = 0;
+   if (gt->usesound >= 0)
+      play_dsound(gt->usesound, 0, 0, 0);
 }
 
 /* pickup */
 
-void
-pickup_gettable(LevData *ld, int pl, int type, int num)
+enum gettable_pickup
+pickup_gettable(LevData *ld, int pl, int type, int num, int max)
 {
-   const Gettable *gt = gett + type;
-   if (type < 0 || type >= ngetts)
+   if (type < 0 || type >= ngetts) {
       logprintf(LOG_ERROR, 'G', _("Strange gettable type=%d num=%d"),
 		type, num);
-   else {
-      int *cnt = getcount(ld, pl, type);
-      logprintf(LOG_DEBUG, 'G', "pickup_gettable: pl=%d type=%d num=%d",
-		pl, type, num);
-      /* sound */
-      if (gt->pickup_sound >= 0)
-	 play_dsound(gt->pickup_sound, 0, 0, 0);
-      /* send messages */
-      /* FIXME: GK_GOT_THE and GK_GOT_A aren't good for internationalization! */
-      if (*cnt == 0 && (gt->flags & GK_GOT_THE))
-	 game_message(pl, _("YOU GOT THE %s!"), gt->string);
-      else if (*cnt >= gt->collect && (gt->flags & GK_GOT_A)) {
-	 game_message(pl, _("THAT %s WOULD BE WASTED..."), gt->string);
-	 return;
-      } else if (gt->flags & GK_GOT_A)
-	 game_message(pl, _("GOT A %s."), gt->string);
-      /* do the pickup */
-      *cnt += num;
-      if (*cnt > gt->collect)
-	 *cnt = gt->collect;
-      if (gt->bulletkind >= 0 && gt->bulletadd > 0)
-	 pickup_gettable(ld, pl, gt->bulletkind, gt->bulletadd);
+      return GETT_PU_NO_ERROR;
+   } else {
+      int *cntp = getcount(ld, pl, type);
+      if (max == 0)
+	 max = gettmax(ld, pl, type);
+      logprintf(LOG_DEBUG, 'G', "pickup_gettable: pl=%d type=%d num=%d max=%d",
+		pl, type, num, max);
+      if (*cntp >= max)
+	 return GETT_PU_NO_HASMAX;
+      else {
+	 /* do the pickup */
+	 int oldcnt = *cntp;
+	 *cntp += num;
+	 if (*cntp > max)
+	    *cntp = max;
+	 return (oldcnt==0) ? GETT_PU_YES_FIRST : GETT_PU_YES_MORE;
+      }
    }
 }
 
 
 /* draw funcs */
 
-static count_font = -1;
+static int count_font = -1;
 
 static void
 init_cfont(void)
@@ -254,8 +303,8 @@ draw_gettables(LevData *ld, int pl,
 	       void *fb, int width, int height)
 {
    int i;
-   const Gettable *gt = gett;
-   for (i = 0; i < ngetts; i++, gt++) {
+   for (i = 0; i < ngetts; i++) {
+      const Gettable *gt = gett[i];
       int xo = gt->xo, yo = gt->yo;
       int cnt = *getcount(ld, pl, i);
       Texture *gtx = GTEXTURE(i);
@@ -264,20 +313,20 @@ draw_gettables(LevData *ld, int pl,
       if (xo < 0)
 	 xo += width - gtx->width;
       if (yo < 0)
-	 yo += height - gtx->height - (gt->collect > 1 ? 16 : 0);
+	 yo += height - gtx->height - (gettmax(ld, pl, i) > 1 ? 16 : 0);
       /* center icon */
       if (gt->flags & GK_XCENTERICON)
 	 xo -= gtx->width / 2;
       if (gt->flags & GK_YCENTERICON)
 	 yo -= gtx->height / 2;
       /* now draw icon */
-      if ((gt->flags & GK_WEPSELECT) && i == PLSEL(pl)[0])
+      if ((gt->flags & GK_WEPSELECT) && i == PLINFO_SEL(pl, 0))
 	 draw_outline(fb, gtx, xo, yo);
-      else if ((gt->flags & GK_SPESELECT) && i == PLSEL(pl)[1])
+      else if ((gt->flags & GK_SPESELECT) && i == PLINFO_SEL(pl, 1))
 	 draw_outline(fb, gtx, xo, yo);
       else
 	 draw(fb, gtx, xo, yo);
-      if (gt->collect > 1 && !gt->decay)
+      if (gettmax(ld, pl, i) > 1 && !gt->decay)
 	 draw_count(fb, cnt, xo, yo + gtx->height + 3);
    }
 }
@@ -289,10 +338,10 @@ update_gettables(LevData *ld, int ticks)
    int pl;
    for (pl = 0; pl < MAXPLAYERS; pl++) {
       int i;
-      const Gettable *gt = gett;
-      if (!PLINFOK(pl))
+      if (!PLINFO_OK(pl))
 	 continue;
-      for (i = 0; i < ngetts; i++, gt++) {
+      for (i = 0; i < ngetts; i++) {
+	 const Gettable *gt = gett[i];
 	 int *count = getcount(ld, pl, i);
 	 if (gt->decay && (*count > 0))
 	    *count -= ticks * gt->decay;
@@ -307,10 +356,10 @@ void
 cheat_gettables(LevData *ld, int pl)
 {
    int i;
-   const Gettable *gt = gett;
-   int *count = PLCOUNT(pl);
-   for (i = 0; i < ngetts; i++, gt++, count++)
-      *count = gt->collect;
+   /* Since the player is (probably) given the backpack in the
+    * process, we use the with-backpack maximum.  */
+   for (i = 0; i < ngetts; i++)
+      *getcount(ld, pl, i) = gett[i]->backpackmax;
 }
 
 /* reset locals */
@@ -320,13 +369,13 @@ reset_local_gettables(LevData *ld)
    int pl;
    for (pl = 0; pl < MAXPLAYERS; pl++) {
       int i;
-      const Gettable *gt = gett;
-      int *count = PLCOUNT(pl);
-      if (!PLINFOK(pl))
+      if (!PLINFO_OK(pl))
 	 continue;
-      for (i = 0; i < ngetts; i++, gt++, count++)
-	 if (gt->flags & GK_LOCAL)
-	    *count = gt->initial;
+      for (i = 0; i < ngetts; i++) {
+	 const Gettable *gt = gett[i];
+	 if (gt->flags & GK_ONEMAPONLY)
+	    *getcount(ld, pl, i) = gt->initial;
+      }
    }
 }
 
@@ -335,10 +384,9 @@ int
 gettable_chk_key(const LevData *ld, int pl, int keytype)
 {
    int i;
-   const Gettable *gt = gett;
-   int *count = PLCOUNT(pl);
-   for (i = 0; i < ngetts; i++, gt++, count++)
-      if (*count && gt->key == keytype)
+   for (i = 0; i < ngetts; i++)
+      if (*getcount(ld, pl, i) > 0
+	  && gett[i]->key == keytype)
 	 return 1;
    return 0;
 }
@@ -350,27 +398,33 @@ void
 init_gettables(void)
 {
    int i;
+   const void *gettable_data;
    /* if already inited, throw away old info first */
    if (ngetts > 0)
       reset_gettables();
    /* load lump and allocate GetDs */
    count_font = -1;
-   ln = lookup_lump("GETTABLE", NULL, NULL);
-   if (!LUMPNUM_OK(ln))
+   gettable_ln = lookup_lump("GETTABLE", NULL, NULL);
+   if (!LUMPNUM_OK(gettable_ln))
       return;
-   ngetts = get_lump_len(ln) / sizeof(Gettable);
+   gettable_data = load_lump(gettable_ln);
+   ngetts = scan_gettables(gettable_data, get_lump_len(gettable_ln),
+			   NULL);
    logprintf(LOG_INFO, 'G', _("init %d gettables"), ngetts);
-   gett = (Gettable *) load_lump(ln);
+   gett = (const Gettable **) safe_malloc(ngetts * sizeof(const Gettable *));
+   scan_gettables(gettable_data, get_lump_len(gettable_ln),
+		  gett);
    gettxt = (Texture ***) safe_calloc(sizeof(Texture **), ngetts);
    /* initialise */
    for (i = 0; i < ngetts; i++) {
       int j;
       char buf[10];
-      if (gett[i].iconname[0] && have_lump(gett[i].iconname)) {
+      const Gettable *gt = gett[i];
+      if (gt->iconname[0] && have_lump(gt->iconname)) {
 	 gettxt[i] = (Texture **) safe_calloc(sizeof(Texture *), NUMICONS(i));
-	 strcpy(buf, gett[i].iconname);
+	 strcpy(buf, gt->iconname);
 	 for (j = NUMICONS(i) - 1; j >= 0; j--) {
-	    buf[4] = gett[i].iconname[4] + j;
+	    buf[4] = gt->iconname[4] + j;
 	    gettxt[i][j] = get_misc_texture(buf);
 	 }
       }
@@ -380,8 +434,6 @@ init_gettables(void)
 void
 reset_gettables(void)
 {
-   if (LUMPNUM_OK(ln))
-      free_lump(ln);
    if (gettxt) {
       int i;
       for (i = 0; i < ngetts; i++)
@@ -389,9 +441,13 @@ reset_gettables(void)
 	    safe_free(gettxt[i]);
       safe_free(gettxt);
    }
+   safe_free(gett);
+   if (LUMPNUM_OK(gettable_ln))
+      free_lump(gettable_ln);
    ngetts = 0;
    gett = NULL;
    gettxt = NULL;
+   gettable_ln = BAD_LUMPNUM;
 }
 
 // Local Variables:

@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * ptcomp/ltcomp.c: LineType/SectorType compiler.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,15 +71,10 @@ ltcomp(int issect)
    char myname[NAMELEN];
    int stage = 0;
    /* two parameters, name and id */
-   s = next_token();
-   if (s == NULL || *s == '\n')
-      synerr(_("name expected after Line/SectorType"));
+   s = parm_name(_("Name expected after Line/SectorType"));
    strncpy(myname, s, NAMELEN - 1);
    myname[NAMELEN - 1] = 0;
-   s = next_token();
-   if (s == NULL || *s == '\n')
-      synerr(_("ID expected after Line/SectorType"));
-   id = atoi(s);
+   id = parm_num();
    /* allocate a sectortype */
    if (issect) {
       /* check allocation */
@@ -107,10 +103,8 @@ ltcomp(int issect)
    }
    /* check uniqueness */
    if (p->name[0]) {
-      print_error_prefix();
-      printf(_("ID %d (%s) not unique (clashes with %s)\n"),
-	     id, myname, p->name);
-      exit(2);
+      err(_("ID %d (%s) not unique (clashes with %s)"),
+	  id, myname, p->name);
    }
    strcpy(p->name, myname);
    /* start filling in data */
@@ -118,18 +112,15 @@ ltcomp(int issect)
       s = next_token();
       if (s == NULL)
 	 return;
-      else if (*s == '\n');
+      else if (*s == '\n')
+	 ;
       else if (!strcasecmp(s, "Action")) {
 	 lta = p->l.action + nactions++;
 	 if (nactions > MAX_LT_ACTIONS)
-	    err(_("too many actions"));
-	 s = next_token();
-	 if (s == NULL || *s == '\n')
-	    synerr(_("lumptype expected after Action"));
+	    err(_("Too many actions (max %d)"), (int) MAX_LT_ACTIONS);
+	 s = parm_name(_("Lumptype expected after Action"));
 	 lta->lumptype = atolumptype(s);
-	 s = next_token();
-	 if (s == NULL || *s == '\n')
-	    synerr(_("eventtype expected after Action"));
+	 s = parm_name(_("Eventtype expected after Action"));
 	 lta->eventtype = atoeventtype(s);
 	 lta->sound = lta->stopsound = -1;
 	 lta->speed[0] = default_speed;
@@ -168,21 +159,23 @@ ltcomp(int issect)
 }
 
 void
-wrlts(FILE *fout)
+wrlts(WADWR *wout)
 {
    int i;
    printf(_("%5d linetypes\n"), nlts);
+   wadwr_lump(wout, "LINETYPE");
    for (i = 0; i < nlts; i++)
-      fwrite(&lts[i].l, sizeof(LineType), 1, fout);
+      wadwr_write(wout, &lts[i].l, sizeof(LineType));
 }
 
 void
-wrsts(FILE *fout)
+wrsts(WADWR *wout)
 {
    int i;
    printf(_("%5d sectortypes\n"), nsts);
+   wadwr_lump(wout, "SECTTYPE");
    for (i = 0; i < nsts; i++)
-      fwrite(&sts[i].l, sizeof(LineType), 1, fout);
+      wadwr_write(wout, &sts[i].l, sizeof(LineType));
 }
 
 
@@ -190,7 +183,8 @@ static LT_TermType
 parm_termtype(void)
 {
    const char *s = next_token();
-   if (s == NULL || *s == '\n');
+   if (s == NULL || *s == '\n')
+      ;
    else if (!strcasecmp(s, "Floor"))
       return Floor;
    else if (!strcasecmp(s, "LowestFloor"))
@@ -271,7 +265,7 @@ parm_termtype(void)
       return NextLowestCeiling;
    /* none of the above */
    else
-      synerr(_("termtype parameter expected"));
+      synerr(_("Termtype parameter expected"));
    return 0;
 }
 
@@ -285,7 +279,7 @@ atolumptype(const char *s)
    else if (!strcasecmp(s, "Thing"))
       return ML_THING;
    else
-      synerr(_("strange lumptype"));
+      synerr(_("Strange lumptype"));
    return 0;
 }
 
@@ -319,7 +313,7 @@ atoeventtype(const char *s)
    else if (!strcasecmp(s, "NewLevel"))
       return ME_NEWLEVEL;
    else
-      synerr(_("strange eventtype"));
+      synerr(_("Strange eventtype"));
    return 0;
 }
 
@@ -327,9 +321,7 @@ static int
 ltacomp(const char *s, LT_Action *lta, int *stage)
 {
    if (!strcasecmp(s, "WaitFor")) {
-      s = next_token();
-      if (s == NULL || *s == '\n')
-	 synerr(_("eventtype expected after WaitFor"));
+      s = parm_name(_("Eventtype expected after WaitFor"));
       lta->waittype = atoeventtype(s);
    } else if (!strcasecmp(s, "Manual"))
       lta->flags |= LTA_MANUAL;

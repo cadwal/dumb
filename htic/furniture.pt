@@ -8,131 +8,131 @@
 Proto Barrel 44
   Phases Mundane
   Size 32 48
-  Sprite BARL
+  Sprite "BARL"
   Blocking
 
 Proto BlueKeyGizmo 94
   Phases Mundane
   Size 32 48
-  Sprite KGZB
+  Sprite "KGZB"
   Blocking
-  //Base KGZ1
+  /* Base KGZ1 */
 
 Proto GreenKeyGizmo 95
   Phases Mundane
   Size 32 48
-  Sprite KGZG
+  Sprite "KGZG"
   Blocking
-  //Base KGZ1
+  /* Base KGZ1 */
 
 Proto YellowKeyGizmo 96
   Phases Mundane
   Size 32 48
-  Sprite KGZY
+  Sprite "KGZY"
   Blocking
-  //Base KGZ1
+  /* Base KGZ1 */
 
 Proto Chandelier 28
   Phases ThreePhase
   Size 56 60
   Hanging
-  Sprite CHDL
+  Sprite "CHDL"
 
 Proto SerpentTorch 27
   Phases ThreePhase
   Size 32 48
   Blocking
-  Sprite SRTC
+  Sprite "SRTC"
 
 PhaseTable Brazier
   Default Duration 75msec Glow
-  Phase INIT A
-  Phase -    B
-  Phase -    C
-  Phase -    D
-  Phase -    E
-  Phase -    F
-  Phase -    G
-  Phase -    H Goto INIT
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C"
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G"
+  Phase -    "H" Goto INIT
 
 Proto Brazier 76
   Size 32 56
   Blocking
-  Sprite KFR1
+  Sprite "KFR1"
 
 Proto Moss1 48
   Phases Mundane
   Size 40 28
   Hanging
-  Sprite MOS1
+  Sprite "MOS1"
 
 Proto Moss2 49
   Phases Mundane
   Size 30 28
   Hanging
-  Sprite MOS2
+  Sprite "MOS2"
 
 Proto SkullHang35 26
   Hanging
   Phases Mundane
   Size 16 35
-  Sprite SKH4
+  Sprite "SKH4"
 
 Proto SkullHang45 25
   Hanging
   Phases Mundane
   Size 16 45
-  Sprite SKH3
+  Sprite "SKH3"
 
 Proto SkullHang60 24
   Hanging
   Phases Mundane
   Size 16 60
-  Sprite SKH2
+  Sprite "SKH2"
 
 Proto SkullHang70 17
   Hanging
   Phases Mundane
   Size 16 70
-  Sprite SKH1
+  Sprite "SKH1"
 
 Proto WallTorch 50
   Phases Blink3
   Size 10 48
-  Sprite WTRHA0
+  Sprite "WTRHA"	/* was "WTRHA0" */
   HangMiddle
 
 #ifndef NO_GLITTER
 PhaseTable RedGlitter
   Default Duration 120msec Glow
-  Phase INIT A
-  Phase -    B
-  Phase -    C
-  Phase -    D
-  Phase -    E  Destroy
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C"
+  Phase -    "D"
+  Phase -    "E"  Destroy
 
 PhaseTable BlueGlitter
   Default Duration 120msec Glow
-  Phase INIT F
-  Phase -    G
-  Phase -    H
-  Phase -    I
-  Phase -    J  Destroy
+  Phase INIT "F"
+  Phase -    "G"
+  Phase -    "H"
+  Phase -    "I"
+  Phase -    "J"  Destroy
 
 PhaseTable TeleportGlitter
-  Phase INIT A  Spawn  Duration 200msec
-  Phase -    A  Spawn2 Duration 200msec Goto INIT
+  Phase INIT "A"  Spawn  Duration 200msec
+  Phase -    "A"  Spawn2 Duration 200msec Goto INIT
 
 
 Proto RedGlitter
   Size 10 30
-  Sprite TGLT
+  Sprite "TGLT"
   FloatsUp Speed 19/sec
   Phantom Mass 10 YMoveOnly
 
 Proto BlueGlitter
   Size 10 30
-  Sprite TGLT
+  Sprite "TGLT"
   FloatsUp Speed 25/sec
   Phantom Mass 10 YMoveOnly
 
