@@ -14,7 +14,7 @@ Level E1M5  Music D_E1M5  Sky SKY1
 Level E1M6  Music D_E1M6  Sky SKY1     
 Level E1M7  Music D_E1M7  Sky SKY1     
 Level E1M8  Music D_E1M8  Sky SKY1  EndGame
-Level E1M9  Music D_E1M9  Sky SKY1  Next E1M4
+Level E1M9  Music D_E1M9  Sky SKY1  Next E1M4 Secret E1M4
 				  
 Level E2M1  Music D_E2M1  Sky SKY2  StartGame
 Level E2M2  Music D_E2M2  Sky SKY2   
@@ -24,7 +24,7 @@ Level E2M5  Music D_E2M5  Sky SKY2  Secret E2M9
 Level E2M6  Music D_E2M6  Sky SKY2   
 Level E2M7  Music D_E2M7  Sky SKY2   
 Level E2M8  Music D_E2M8  Sky SKY2  EndGame
-Level E2M9  Music D_E2M9  Sky SKY2  Next E2M6
+Level E2M9  Music D_E2M9  Sky SKY2  Next E2M6 Secret E2M6
 				  
 Level E3M1  Music D_E3M1  Sky SKY3  StartGame 
 Level E3M2  Music D_E3M2  Sky SKY3   
@@ -34,7 +34,7 @@ Level E3M5  Music D_E3M5  Sky SKY3
 Level E3M6  Music D_E3M6  Sky SKY3  Secret E3M9
 Level E3M7  Music D_E3M7  Sky SKY3   
 Level E3M8  Music D_E3M8  Sky SKY3  EndGame
-Level E3M9  Music D_E3M9  Sky SKY3  Next E3M7
+Level E3M9  Music D_E3M9  Sky SKY3  Next E3M7 Secret E3M7
 
 Level E4M1  Music D_E4M1  Sky SKY4  StartGame   
 Level E4M2  Music D_E4M2  Sky SKY4  Secret E4M9   
@@ -44,7 +44,7 @@ Level E4M5  Music D_E4M5  Sky SKY4
 Level E4M6  Music D_E4M6  Sky SKY4     
 Level E4M7  Music D_E4M7  Sky SKY4  
 Level E4M8  Music D_E4M8  Sky SKY4  EndGame
-Level E4M9  Music D_E4M9  Sky SKY4  Next E4M3
+Level E4M9  Music D_E4M9  Sky SKY4  Next E4M3 Secret E4M3
 
 
 /* Doom II levels */
@@ -83,5 +83,5 @@ Level MAP29  Music D_SHAWN3  Sky SKY3
 Level MAP30  Music D_OPENIN  Sky SKY3  EndGame
 
 Level MAP31  Music D_EVIL    Sky SKY3  Secret MAP32 Next MAP16
-Level MAP32  Music D_ULTIMA  Sky SKY3  Next MAP16
+Level MAP32  Music D_ULTIMA  Sky SKY3  Next MAP16 Secret MAP16
 

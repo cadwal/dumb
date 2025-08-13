@@ -37,7 +37,12 @@ typedef union {unsigned short i;unsigned char c[2];} EInt16;
 #ifdef WORDS_BIGENDIAN
 
 #ifndef __cplusplus
-#error "You need to compile DUMB with C++ to support big endian processors"
+/* Commented out because __cplusplus is not defined when preprocessing
+ * for dependencies.  And if someone tries to compile this without C++,
+ * there will be enough error messages even without the extra check.
+ *
+ * #error "You need to compile DUMB with C++ to support big endian processors"
+ */
 #else /* __cplusplus */
 
 #define IA(o) \

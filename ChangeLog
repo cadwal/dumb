@@ -1,3 +1,35 @@
+1998-04-02  Kalle Niemitalo  <tosi@stekt.oulu.fi>
+
+	* acinclude.m4 (DUMB_SCAN_LIBS): New macro.
+	* configure.in: Check AC_PATH_X and AC_PATH_XTRA before other
+	libraries.  Use -lncurses and x libraries when looking for aalib.
+	Look for socket() and gethostbyname() in special libraries.
+
+	* tool/ptcomp.c (parm_dbl): Change return type to double (was int).
+
+	* libdumbutil/endiantypes.h: Don't give an error message about
+	non-C++ compilation.  The compiler will do that.
+	* dumb/linux_video.c: Don't check if linux is defined.
+
+Thu Apr  2 00:33:19 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* dumb/updmap.c (unqueue_all_events): New function.
+	* dumb/dumb.c (main): Call unqueue_all_events() before loading
+	next level.
+
+	* dumb/dumb.c (game_want_newlvl): Rename parameter to secret.
+
+	* acinclude.m4 (DUMB_MSG_REQUIRE): Rewrite without "if !".
+
+	* configure.in: Remove initial #! /bin/bash (how did it ever get
+ 	there?)
+
+Wed Apr  1 16:52:42 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* doom/levels.pt (E1M9, E2M9, E3M9, E4M9, MAP32): Make the secret
+ 	exit (which doesn't really exist but can be taken with a cheat
+ 	key) lead back to the normal game just like the normal exit.
+
 Tue Mar 31 13:57:21 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
 
 	* dumb/dumb.c (main): Apply xmul patch from Marcus Sundberg:

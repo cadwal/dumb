@@ -98,6 +98,13 @@ dark2trans_CFLAGS = $(CFLAGS) $(ppm_cflags)
 
 # fixed_bm should not be optimized because that's cheating.
 fixed_bm_CFLAGS = 
+
+# Now here's a hack...
+# I use -MM instead of -M in MKDEP.  This way, I get the dependencies
+# built even on machines that don't have all the header files used on
+# other machines.  The resulting dependency lists won't include system
+# headers but their locations wouldn't be portable anyway.
+MKDEP = gcc -MM $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -165,7 +172,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = tar
+TAR = gtar
 GZIP = --best
 SOURCES = ptcomp.c wadtool.c mknulmap.c dark2trans.c ppmtodumb.c fixed_bm.c mkpnames.c mkdfnt.c
 OBJECTS = ptcomp.o wadtool.o mknulmap.o dark2trans.o ppmtodumb.o fixed_bm.o mkpnames.o mkdfnt.o
@@ -292,18 +299,18 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
-dark2trans.o dark2trans.lo: dark2trans.c ../config.h
-fixed_bm.o fixed_bm.lo: fixed_bm.c ../config.h ../libdumbutil/fixed.h
-mkdfnt.o mkdfnt.lo: mkdfnt.c ../config.h
-mknulmap.o mknulmap.lo: mknulmap.c ../config.h ../libdumbutil/safem.h \
+dark2trans.o dark2trans.lo: dark2trans.c
+fixed_bm.o fixed_bm.lo: fixed_bm.c ../libdumbutil/fixed.h
+mkdfnt.o mkdfnt.lo: mkdfnt.c
+mknulmap.o mknulmap.lo: mknulmap.c ../libdumbutil/safem.h \
 	../libdumbutil/log.h ../libdumbwad/wadwr.h \
 	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h
-mkpnames.o mkpnames.lo: mkpnames.c ../config.h \
-	../libdumbutil/endiantypes.h ../libdumbwad/wadstruct.h
-ppmtodumb.o ppmtodumb.lo: ppmtodumb.c ../config.h \
-	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h
-ptcomp.o ptcomp.lo: ptcomp.c ../config.h ../libdumbutil/timer.h \
-	../libdumbutil/log.h ../libdumbutil/safem.h ../libdumb/dsound.h \
+mkpnames.o mkpnames.lo: mkpnames.c ../libdumbutil/endiantypes.h \
+	../libdumbwad/wadstruct.h
+ppmtodumb.o ppmtodumb.lo: ppmtodumb.c ../libdumbwad/wadstruct.h \
+	../libdumbutil/endiantypes.h
+ptcomp.o ptcomp.lo: ptcomp.c ../libdumbutil/timer.h ../libdumbutil/log.h \
+	../libdumbutil/safem.h ../libdumb/dsound.h \
 	../libdumbutil/fixed.h ../libdumbutil/endiantypes.h \
 	../libdumb/view.h ../libdumb/animtexstruct.h \
 	../libdumb/gettablestruct.h ../libdumb/levinfostruct.h \

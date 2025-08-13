@@ -1,3 +1,12 @@
+* Changes in DUMB 0.12.beta2.
+
+** Distribution under GNU Library General Public License not allowed.
+
+We didn't have the right to allow it in the first place.  DUMB is a
+derived work of wt and must follow the wt license which is GPL.
+
+** DUMB builds on Solaris.
+
 * Changes in DUMB 0.12.beta1.
 
 ** New maintainer: Kalle Niemitalo <tosi@stekt.oulu.fi>.

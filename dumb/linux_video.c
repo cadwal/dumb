@@ -11,10 +11,6 @@
 
 #include "video.h"
 
-#ifndef linux
-#error Compiling linux_video.c for a non-linux system???
-#endif
-
 ConfItem video_conf[]={
    CONFI("max-pages",NULL,0,"maximum pages to use for flipping",3),
    CONFI("min-pages",NULL,0,"minimum pages to use for flipping",2),

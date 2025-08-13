@@ -21,6 +21,9 @@ int unqueue_event(LevData *ld,
 		  int entity,
 		  const void *key /* NULL means any key */ );
 
+/* called before loading next level */
+void unqueue_all_events(LevData *ld);
+
 MapEvent *find_active_event(LevData *ld,
 			    MapLumpType lumptype,
 			    MapEventType etype,

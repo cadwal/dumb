@@ -59,13 +59,13 @@ extra_sources = render8.c render16.c render32.c \
  generic_fbrerend.c le32_fbrerend.c le64_fbrerend.c \
  dummy_net.c unix_net.c
 
-aalib_ldadd = -laa
 dummy_ldadd = 
 ggi_ldadd = -lggi
 svgalib_ldadd = -lvga
 x_ldadd = $(X_LIBS) $(X_PRE_LIBS) \
  $(DUMB_DGA_LDADD) $(DUMB_XSHM_LDADD) $(DUMB_XKB_LDADD) \
  -lX11 $(X_EXTRA_LIBS)
+aalib_ldadd = -laa -lncurses $(x_ldadd)
 
 aadumb_SOURCES = aalib_video.c aalib_input.c $(keyname_sources) \
  $(core_sources)
@@ -90,7 +90,8 @@ EXTRA_xdumb_SOURCES = $(extra_sources)
 # Don't use srcdir or top_srcdir here!
 LDADD = $(render_objs) $(fbrerend_objs) $(network_objs) \
  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
- ../libdumbutil/libdumbutil.a $(DUMB_CONFIG_SOUND_LDADD)
+ ../libdumbutil/libdumbutil.a $(DUMB_CONFIG_SOUND_LDADD) \
+ $(DUMB_NETWORK_LDADD)
 
 dependencies = $(render_objs) $(fbrerend_objs) $(network_objs) \
  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \

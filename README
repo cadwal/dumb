@@ -9,16 +9,17 @@ All DUMB sources and binaries are distributed under the GNU General
 Public License (GPL).  You should receive a copy of the GNU License
 with the DUMB distribution; it is in the file COPYING.
 
-Software libraries derived from DUMB may be distributed under the
-terms of the GNU Library General Public License (LGPL) instead of the
-GPL, at the option of the library's copyright holder.  The LGPL is
-available from the Free Software Foundation (see COPYING for details).
-
 The DUMB sources are a derived work of "wt", by Chris Laurel et al.
 "wt" is also distributed under the GPL.  The parts of DUMB that are
 not derived from "wt" were written by Josh Parsons.  He holds
 copyright on them, and on DUMB as a whole.  Currently, DUMB is
 maintained by Kalle Niemitalo.
+
+Versions 0.06 to 0.12.beta1 of DUMB had a claim that you could
+distribute software libraries derived from DUMB under the GNU Library
+General Public License (LGPL) if you wanted.  This is not true.  "wt"
+is distributed under the GPL rather than the LGPL, and DUMB inherits
+its license.  We can't give you more rights than we self have.
 
 The upshot of this licensing system, for those unfamiliar with the
 GPL, is that you are able to freely redistribute both these sources
@@ -254,12 +255,13 @@ Some alternative keys have been defined primarily for use with AA-lib:
    	, or <: sidestep left,	   	. or >: sidestep right.
 
 These are letters so they can be used with Shift to move faster.
-However, the AA-lib driver doesn't yet support strafing with Meta.
+However, the AA-lib driver doesn't yet support strafing with Meta or
+firing with Control.
 
 Numbers outside the number pad should select weapons but currently
 they are used for various cheats and special functions:
 
-	1: warp to next level,
+	1: warp to next level (secret if possible),
 	2: all weapons, full ammo, all keys,
 	3: open the way out on boss levels (should be automated),
 	4: resurrect yourself,

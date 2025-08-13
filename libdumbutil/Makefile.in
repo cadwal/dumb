@@ -75,6 +75,12 @@ libdumbutil_a_SOURCES = confargs.c confeng.c conffile.c confhelp.c \
  fixed.c log.c safeio.c safem.c timer.c \
  confargs.h confdef.h confeng.h conffile.h confhelp.h \
  endiantypes.h fixed.h log.h safeio.h safem.h timer.h
+
+# The combination of GCC 2.7.2.1 and Linux libc 5.4.33 seems to have a
+# bug that messes up parameters when using both -pg and
+# __attribute__((regparm)).  So I have a special set of CFLAGS for
+# fixed.c.
+fixed_CFLAGS = -O2
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -101,7 +107,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = tar
+TAR = gtar
 GZIP = --best
 SOURCES = $(libdumbutil_a_SOURCES)
 OBJECTS = $(libdumbutil_a_OBJECTS)
@@ -253,6 +259,8 @@ maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
 
 INCLUDES += -I$(top_srcdir)
+fixed.o: fixed.c
+	$(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(fixed_CFLAGS) -c $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

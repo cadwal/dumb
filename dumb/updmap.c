@@ -225,6 +225,14 @@ int unqueue_event(LevData *ld,
    return j;
 }
 
+void
+unqueue_all_events(LevData *ld)
+{
+   int i;
+   for (i=0; i<MAXEVENTS; i++)
+      ld->event[i].type = ME_NONE;
+}
+
 MapEvent *find_active_event(LevData *ld,
 			    MapLumpType lumptype,
 			    MapEventType etype,
@@ -381,8 +389,6 @@ void sector_crush_thing(LevData *ld,int sector,int thing) {
    }
 }
 
-
-
-
-
-
+// Local Variables:
+// c-basic-offset: 3
+// End:

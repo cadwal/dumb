@@ -1,7 +1,6 @@
-#! /bin/bash
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(libdumb/texture.c)
-AM_INIT_AUTOMAKE(dumb, 0.12.beta1)
+AM_INIT_AUTOMAKE(dumb, 0.12.beta2)
 AM_CONFIG_HEADER(config.h)
 
 dnl --- Checks for programs.
@@ -15,12 +14,21 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 
 dnl --- Checks for libraries.
+AC_PATH_X
+AC_PATH_XTRA
+AM_CONDITIONAL(DUMB_CONFIG_X, test -z "$no_x")
+if test -z "$no_x"; then
+  # This variable is used in the aalib check.
+  x_ldadd="$X_LIBS $X_PRE_LIBS -lX11 $X_POST_LIBS"
+else
+  x_ldadd=""
+fi
 AC_CHECK_LIB(ppm, ppm_readppm, dumb_have_libppm=yes, dumb_have_libppm=no, 
   -lpgm -lpbm)
 AM_CONDITIONAL(DUMB_CONFIG_LIBPPM, test "$dumb_have_libppm" = "yes")
 AC_CHECK_LIB(m, sin, ,
   [AC_MSG_ERROR([DUMB requires the math library])])
-DUMB_CHECK_HDR_LIB_YESNO(aalib.h, aa, aa_renderpalette, [], 
+DUMB_CHECK_HDR_LIB_YESNO(aalib.h, aa, aa_renderpalette, [-lncurses $x_ldadd], 
  dumb_have_aalib)
 AM_CONDITIONAL(DUMB_CONFIG_AALIB, test "$dumb_have_aalib" = "yes")
 DUMB_CHECK_HDR_LIB_YESNO(ggi/libggi.h, ggi, ggiSetGraphMode, [], 
@@ -37,9 +45,6 @@ AC_HEADER_SYS_WAIT
 DUMB_MSG_REQUIRE_YES(ac_cv_header_sys_wait_h, [sys/wait.h])
 AC_HEADER_TIME
 DUMB_MSG_REQUIRE_YES(ac_cv_header_time, [ability to use time.h with sys/time.h])
-AC_PATH_X
-AC_PATH_XTRA
-AM_CONDITIONAL(DUMB_CONFIG_X, test -z "$no_x")
 AC_CHECK_HEADERS(fcntl.h limits.h sys/ioctl.h sys/time.h unistd.h)
 DUMB_MSG_REQUIRE_YES(ac_cv_header_fcntl_h, [fcntl.h])
 DUMB_MSG_REQUIRE_YES(ac_cv_header_limits_h, [limits.h])
@@ -52,10 +57,6 @@ AC_PROG_GCC_TRADITIONAL
 AC_C_CONST
 AC_C_INLINE
 AC_C_BIGENDIAN
-if test "$ac_cv_c_bigendian" = "yes"; then
-  DUMB_PROG_CXX_C
-  CC="$dumb_cv_prog_cxx_c"
-fi
 AC_TYPE_SIZE_T
 AC_CHECK_SIZEOF(int, 0)
 AC_CHECK_SIZEOF(long, 0)
@@ -135,7 +136,7 @@ AC_SUBST(DUMB_CONFIG_DOOM_WAD) DUMB_CONFIG_DOOM_WAD=""
 AC_ARG_WITH(doom-wad,
   [  --with-doom-wad=FILE    support playing DOOM levels],
 [if test -n "$withval" && test "$withval" != no; then
-  if test -r "$withval" && ! test -d "$withval"; then
+  if test -r "$withval" && test ! -d "$withval"; then
     DUMB_CONFIG_DOOM_WAD="$withval"
   else
     AC_MSG_ERROR([$withval doesn't exist or isn't readable])
@@ -268,17 +269,28 @@ AC_MSG_RESULT($dumb_sound_options)
 dnl --- Networking.
 dnl Because only Unix and dummy networking are supported,
 dnl I left out the force/disable options.
-dumb_network="dummy"
-DUMB_NETWORK_LDADD=""
+dumb_network=""
 AC_CHECK_HEADER(sys/socket.h,
-[# The system has socket.h.  Now check if socket() can be used without any
-# special libraries.  If not, try -lsocket.  If that doesn't help, cancel
-# networking.
-AC_CHECK_FUNC(socket, [dumb_network="unix"],
- [AC_CHECK_LIB(socket, socket, 
-   [dumb_network="unix" DUMB_NETWORK_LDADD="-lsocket"],
-   [AC_MSG_WARN([you have socket.h but no socket()])])])])
+[# The system has socket.h.
+# We need these functions:
+#   socket()            -lsocket
+#   gethostbyname()     -lnsl
+# First check for them without anything special and then try extra libraries.
+dumb_network="unix"
+DUMB_NETWORK_LDADD=""
+DUMB_SCAN_LIBS(socket, socket, 
+  [DUMB_NETWORK_LDADD="$DUMB_NETWORK_LDADD $library"],
+  [AC_MSG_WARN([you have socket.h but no socket()])
+   dumb_network=""])
+DUMB_SCAN_LIBS(gethostbyname, nsl,
+  [DUMB_NETWORK_LDADD="$DUMB_NETWORK_LDADD $library"],
+  [AC_MSG_WARN([you don't have gethostname()])
+   dumb_network=""])])
 AC_MSG_CHECKING(which network driver to use)
+if test -z "$dumb_network"; then
+  dumb_network="dummy"
+  DUMB_NETWORK_LDADD=""
+fi
 DUMB_NETWORK_SOURCES="${dumb_network}_net.c"
 AC_SUBST(DUMB_NETWORK_SOURCES)
 AC_SUBST(DUMB_NETWORK_LDADD) 
@@ -320,6 +332,18 @@ if test -n "$dumb_bpp_names"; then
 else
   AC_MSG_RESULT(nothing!)
   AC_MSG_WARN(No support included for framebuffers of any depth)
+fi
+
+dnl --- C++ compilation hack.
+dnl This must be last because it can mess up checks for library
+dnl functions.
+if test "$ac_cv_c_bigendian" = "yes"; then
+  DUMB_PROG_CXX_C
+  CC="$dumb_cv_prog_cxx_c"
+  # $CC is used for linking too and the -x c++ in it would cause the .o files
+  # to be interpreted as C++ too!  Override that.
+  # This assumes GCC but that's fine.
+  LDFLAGS="-x none $LDFLAGS"
 fi
 
 dnl --- Output.

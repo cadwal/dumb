@@ -1,3 +1,15 @@
+UPDATE: DUMB 0.12.beta2 does compile and link on Solaris.  But I
+haven't checked if it runs too because I didn't have a WAD handy...
+
+There's a bug in aalib.h of AA-lib 1.2 that prevents it from working
+when compiled as C++.  Line 186 of aalib.h:
+	typedef struct aa_hardwareparams aa_hardware_params;
+This must be changed to:
+	typedef struct aa_hardware_params aa_hardware_params;
+I have reported this to the authors.
+
+===== 0.12.beta1 stuff follows =====
+
 This version of DUMB has been changed a lot.  Files have been moved,
 added and removed.  Previously there was a single Makefile.in; now
 each directory has its own, generated from a Makefile.am written
@@ -30,6 +42,7 @@ These work fine:
 These work but not perfectly:
 - OSS/Free (bad clicks & distortion on SB Pro)
 - ldumb under GGI's SVGAlib emulation (mouse lags)
+- profiling (gcc -pg): GCC 2.7.2.1 bug; see libdumbutil/Makefile.am
 
 Totally untested:
 - 64-bit machines
@@ -41,7 +54,6 @@ Totally untested:
 
 Tested and failed:
 - DGA: seems to get a fatal signal, possibly related to --dumb-xmul failures
-- profiling (gcc -pg): messes the renderer up
 - --dumb-xmul 3 --dumb-ymul 1
 
 Things that definitely don't work:

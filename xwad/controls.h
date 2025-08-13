@@ -11,7 +11,8 @@ struct AppInstance;
 extern XFontStruct *ctlfont,*ctlfont1,*ctlfont2;
 void setctlfont(XFontStruct *f);*/
 
-#if defined(__GNUC__)&&defined(__i386__)
+/* disabled because of a GCC 2.7.2.1 bug with -pg */
+#if 0 && defined(__GNUC__)&&defined(__i386__)
 /* since many CTLACTIONs are just wrappers for one line of code,
    or a call to some other function, this saves a fair bit of space */
 #define CTLATTR __attribute__((regparm (2)))

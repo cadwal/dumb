@@ -154,9 +154,9 @@ gmsg(int pl,const char *s)
 static int want_new_lvl=0,want_quit=0;
 
 void
-game_want_newlvl(int x)
+game_want_newlvl(int secret)
 {
-   want_new_lvl=1+x;
+   want_new_lvl=1+secret;
 }
 
 void
@@ -476,6 +476,9 @@ skip:
 	 if(want_quit) break;
 
 	 if(want_new_lvl) {
+	    /* we don't want this level's doors to close in the next
+             * level...  */
+	    unqueue_all_events(ld);
 	    levinfo_next(ld,want_new_lvl>1);
 	    reset_local_gettables(ld);
 	    td=ldthingd(ld)+(follow=ld->player[ld->localplayer]);

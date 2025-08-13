@@ -248,7 +248,10 @@ int parm_num(void) {
    if(s==NULL||*s=='\n') synerr("integer parameter expected");
    return atoi(s);
 }
-int parm_dbl(void) {
+
+double
+parm_dbl(void)
+{
    const char *s=next_token();
    if(s==NULL||*s=='\n') synerr("floating-point parameter expected");
    return atof(s);

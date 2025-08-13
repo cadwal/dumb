@@ -93,9 +93,7 @@ dnl Usage:
 dnl DUMB_MSG_REQUIRE(testcmd, errmsg_if_false)
 
 AC_DEFUN(DUMB_MSG_REQUIRE,
-[if ! [$1]; then
-  AC_MSG_ERROR([$2])
-fi])
+[[$1] || AC_MSG_ERROR([$2])])
 
 dnl Usage:
 dnl DUMB_MSG_REQUIRE_YES(cachevariable, required_name)
@@ -137,6 +135,28 @@ dnl DUMB_CHECK_HDR_LIB_YESNO(headerfile, lib, libfunction, otherlibs,
 dnl                          yesnovar)
 AC_DEFUN(DUMB_CHECK_HDR_LIB_YESNO,
  [DUMB_CHECK_HDR_LIB([$1], [$2], [$3], [$4], [$5=yes], [$5=no])])
+
+dnl Usage:
+dnl DUMB_SCAN_LIBS(function, scanlist, foundaction, notfoundaction)
+dnl
+dnl When FOUNDACTION is taken, $library contains the name
+dnl of the library where the function was found, prepended with -l.  
+dnl Or $library may be empty if no extra libraries are needed.
+AC_DEFUN(DUMB_SCAN_LIBS,
+ [library=""
+  AC_CHECK_FUNC([$1],
+   [$3],
+   [for dumb_scan_libs_name in [$2]; do
+      AC_CHECK_LIB($dumb_scan_libs_name, [$1],
+       [library="-l$dumb_scan_libs_name"
+        break])
+    done;
+    if test -n "$library"; then
+      $3
+    else
+      $4
+    fi])])
+ 
 
 # Do all the work for Automake.  This macro actually does too much --
 # some checks are only needed if your package does certain things.
