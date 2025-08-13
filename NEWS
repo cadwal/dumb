@@ -1,3 +1,112 @@
+* Changes in DUMB 0.13.3.
+
+** --help and --version supported.
+
+All the programs in this package now recognize the GNU --help and
+--version options.
+
+Program `wadtool' recognizes each option only if it is spelled out in
+full and is the first argument.
+
+Programs `fixed_bm' (not installed), `ldltest' (not installed),
+`mkdfnt' (not installed), `ptcomp', `dark2trans', `mknulmap',
+`mkpnames', `ppmtodumb', `XProtoThing' and `XWad' use getopt_long(),
+so the usual GNU option parsing rules apply.
+
+The game executables `xdumb', `aadumb' etc. handle `--help' just like
+`-?'.  Thus `--help all' prints the list of all options.  The messages
+have been changed to recommend `--help' rather than `-?'.  The old
+option still works, though.
+
+*** XWad and XProtoThing no longer accept -w FILE FILE FILE...
+
+You must instead use -w FILE -w FILE -w FILE.  This is probably not a
+big deal, as these programs are supposed to be used interactively.
+
+These programs may be changed in the future to treat all non-option
+arguments as names of WAD files to load.
+
+*** fixed_bm SEED no longer works.
+
+You must instead use fixed_bm --seed=SEED.
+
+*** Most parameters to utilities should now be given as options.
+
+Here's a list of the changes:
+
+old: mknulmap FILENAME MAPNAME
+new: mknulmap [-m MAPNAME] -o FILENAME
+or:  mknulmap [--map=MAPNAME] --output-wad=FILENAME
+
+old: mkpnames SOURCE PNAMES TEXTURES
+new: mkpnames -p PNAMES -t TEXTURES [SOURCE]
+or:  mkpnames --output-pnames=PNAMES --output-textures=TEXTURES [SOURCE]
+
+old: ptcomp DIRECTORY
+new: ptcomp -d DIRECTORY
+or:  ptcomp --output-directory=DIRECTORY
+
+old: dark2trans BRIGHTNESS
+new: dark2trans -m BRIGHTNESS
+or:  dark2trans --min=BRIGHTNESS
+
+old: mkdfnt FONT C [FACTOR]
+new: mkdfnt [-f FONT] [-a FACTOR] -c C
+or:  mkdfnt [--font=FONT] [--anti-alias=FACTOR] --character=C
+
+These programs still accept the old syntax but warn if it is used.
+The old parsing mode is enabled if there is an appropriate number of
+parameters and none of them are options.  The --help texts don't
+mention this compatibility feature and it may disappear soon.
+
+** Exit code standardisation.
+
+The various little helper programs now exit with these codes:
+
+0 = success;
+
+1 = invalid data read from file;
+
+2 = invalid arguments, or a (usually user-specified) file/display/font
+    couldn't be opened;
+
+3 = more serious errors: out of memory, out of disk space, bad sector.
+
+Ptcomp doesn't yet follow this scheme, and there may be other
+discrepancies too.
+
+This custom scheme should probably be dropped in favor of
+<sysexits.h>.
+
+If you're running some system where EXIT_SUCCESS and EXIT_FAILURE
+aren't 0 and 1 (what are they on the Amiga?), the programs revert to
+returning EXIT_SUCCESS on success and EXIT_FAILURE otherwise.
+
+** Configuration changes.
+
+*** Several bugs in gettext 0.10.35 configuration scripts have been fixed.
+
+1. The configure script emitted nested messages when checking for
+gettext in -lintl.
+
+2. $INTLLIBS was never set.
+
+3. dcgettext() was never found in -lintl.
+
+4. The gettext programs were never linked with -lintl.
+
+5. Compilation failed on FreeBSD due to problems with memcpy().
+
+The docs/patches directory contains patches you can apply to the
+gettext sources.  The code in the intl directory has already been
+patched.
+
+Please note that the actual functions in the gettext library were not
+changed.  If you were able to compile gettext before, you shouldn't
+see any difference.
+
+There's one patch for po-mode.el, though.
+
 * Changes in DUMB 0.13.2.
 
 ** Enhanced monsters.

@@ -216,6 +216,8 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
+getopt.o: getopt.c ../config.h
+getopt1.o: getopt1.c ../config.h getopt.h
 
 info:
 dvi:

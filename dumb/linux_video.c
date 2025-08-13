@@ -44,6 +44,8 @@ ConfItem video_conf[] =
 #define MAX_PAGES (video_conf[0].intval)
 #define MIN_PAGES (video_conf[1].intval)
 
+const char video_dep_name[] = "ldumb"; /* for --version */
+
 static int linearlen = -1, curpage = 0, pagelen = 0, npages = 0;
 static unsigned char **page = NULL, *pagev = NULL;
 static int vgapage = 0;

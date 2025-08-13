@@ -15,13 +15,13 @@ endif
 bin_PROGRAMS = wadtool mknulmap mkpnames $(ppm_bin_programs)
 noinst_PROGRAMS = $(x_noinst_programs)
 
-x_ldadd = $(X_LIBS) $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS)
+x_ldadd = $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS)
 
 ppm_ldadd = -lppm -lpgm -lpbm
 
 # DUMB libraries are in the build tree, so don't use $(srcdir).
-LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
- ../libdumbutil/libdumbutil.a $(INTLLIBS)
+LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a			\
+../libdumbutil/libdumbutil.a ../libmissing/libmissing.a $(INTLLIBS)
 
 mkdfnt_LDADD = $(LDADD) $(x_ldadd)
 
@@ -31,4 +31,4 @@ dark2trans_LDADD = $(LDADD) $(ppm_ldadd)
 
 CC = $(CXX_HACK_CC)
 
-INCLUDES = -I$(top_srcdir) -I../intl
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/libmissing -I../intl

@@ -1,16 +1,36 @@
 						       -*- outline -*-
 
-Q1. DUMB compiles and installs fine but the executables are huge.
-Could you make the Makefile strip them?
+Q1. random() is declared in both stdlib.h and pbmplus.h.
 
-Q2. Why does it use -I. -I. -I.. -I.. -I../libmissing -I../intl
-when compiling?
+Q2. DUMB compiles and installs fine but the executables are huge.
+Could you make the Makefile strip them?
 
 Q3. Ppmtodumb dumps core.
 
 Q4. Where are the netpbm sources?
 
-* Q1. DUMB compiles and installs fine but the executables are huge.
+Q5. Why does it use -I. -I. -I.. -I.. -I../libmissing -I../intl
+when compiling?
+
+* Q1. random() is declared in both stdlib.h and pbmplus.h.
+
+If you have an ANSI C system, define SYSV in pbmplus.h.  This should
+make netpbm use rand() instead of random() and declare it as returning
+int, which seems to match the standard.  But defining SYSV also makes
+pbmplus.h #include <malloc.h>.  If your system doesn't have that,
+change the line to #include <stdlib.h> instead.
+
+If this didn't make it work, read on.
+
+The function is defined in the C library, so the declaration in
+stdlib.h should be correct.  Remove the one in pbmplus.h.
+
+To make sure netpbm itself uses the correct declaration, you could add
+an #include <stdlib.h> in pbmplus.h and recompile netpbm libraries and
+programs.  But if the conflicting types have identical sizes (like
+long and int on Intel x86 compatibles), this shouldn't be necessary.
+
+* Q2. DUMB compiles and installs fine but the executables are huge.
 Could you make the Makefile strip them?
 
 Use the install-strip target.
@@ -20,7 +40,20 @@ $ make install-strip
 The GNU Coding Standards say that executables shouldn't be stripped by
 default, and Automake makes it easy to follow that rule.
 
-* Q2. Why does it use -I. -I. -I.. -I.. -I../libmissing -I../intl
+* Q3. Ppmtodumb dumps core.
+
+A bad netpbm installation can cause this.  Are you sure the headers
+and the libraries are from the same version?
+
+* Q4. Where are the netpbm sources?
+
+Try these:
+
+ftp://samba.anu.edu.au/pub/dumb/source/netpbm-01MAR94-p1.tar.gz
+ftp://ftp.funet.fi/pub/graphics/packages/pbmplus/netpbm-1mar1994.tar.gz
+ftp://ftp.debian.org/pub/debian/dists/hamm/main/source/graphics/netpbm-free_19940301.2.orig.tar.gz
+
+* Q5. Why does it use -I. -I. -I.. -I.. -I../libmissing -I../intl
 when compiling?
 
 The first -I. isn't actually necessary but Automake puts it there.
@@ -38,15 +71,3 @@ lack.
 
 -I../intl is for libintl.h in GNU gettext.
 
-* Q3. Ppmtodumb dumps core.
-
-A bad netpbm installation can cause this.  Are you sure the headers
-and the libraries are from the same version?
-
-* Q4. Where are the netpbm sources?
-
-Try these:
-
-ftp://samba.anu.edu.au/pub/dumb/source/netpbm-01MAR94-p1.tar.gz
-ftp://ftp.funet.fi/pub/graphics/packages/pbmplus/netpbm-1mar1994.tar.gz
-ftp://ftp.debian.org/pub/debian/dists/hamm/main/source/graphics/netpbm-free_19940301.2.orig.tar.gz

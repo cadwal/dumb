@@ -2,6 +2,7 @@
  *
  * test/fixed_bm.c: Benchmark for fixed-point arithmetic.
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,18 +22,28 @@
 
 #include <config.h>
 
+#include <errno.h>
+#include <limits.h>
+#include <locale.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
-#include <locale.h>
 
 #include <sys/time.h>
 
 #include "libdumbutil/dumb-nls.h"
+#include "getopt.h"		/* ../libmissing/ */
 
+#include "libdumbutil/bugaddr.h"
+#include "libdumbutil/copyright.h"
+#include "libdumbutil/exitcode.h"
 #include "libdumbutil/fixed.h"
 
 static volatile loop;
+static const char *argv0;
+
+static int parse_int(const char *str);
+static void exit_invalid_args(void) __attribute__((noreturn));
 
 static RETSIGTYPE
 alrm(int dummy)
@@ -51,6 +62,37 @@ rtimer(void)
    it.it_interval.tv_sec = 0;
    setitimer(ITIMER_REAL, &it, NULL);
    signal(SIGALRM, alrm);
+}
+
+static int
+parse_int(const char *str)
+{
+   char *tail;
+   long value;
+   int strtol_errno;
+   errno = 0;
+   value = strtol(str, &tail, 0);
+   strtol_errno = errno;
+   if (tail == str || *tail != '\0') {
+      /* strtol() couldn't parse it at all, or there is some garbage
+       * after it.  Note that str may be empty, in which case
+       * *tail=='\0' but tail==str.  */
+      fprintf(stderr, _("%s: invalid integer `%s'\n"), argv0, str);
+      exit_invalid_args();
+   }
+   if (strtol_errno != 0
+       || value < INT_MIN || value > INT_MAX) {
+      fprintf(stderr, _("%s: integer `%s' is too large\n"), argv0, str);
+      exit_invalid_args();
+   }
+   return (int) value;		/* will fit */
+}
+
+static void
+exit_invalid_args(void)
+{
+   fprintf(stderr, _("Try `%s --help' for more information.\n"), argv0);
+   exit(DUMB_EXIT_INVALID_ARGS);
 }
 
 /* these reproduce the losses due to procedure calls with fixmul etc.
@@ -81,16 +123,64 @@ int
 main(int argc, char **argv)
 {
    unsigned int i;
+   static const struct option long_options[] =
+   {
+      { "seed", required_argument, NULL, 's' },
+      { "help", no_argument, NULL, 'h' }, /* no -h */
+      { "version", no_argument, NULL, 'V' }, /* no -V */
+      { NULL, 0, NULL, '\0' }
+   };
+   argv0 = argv[0];
+	 
 #ifdef ENABLE_NLS
    setlocale(LC_ALL, "");
    bindtextdomain(PACKAGE, LOCALEDIR);
    textdomain(PACKAGE);
 #endif /* ENABLE_NLS */
-   setvbuf(stdout, NULL, _IONBF, 0);
-   if (argc > 1) {
-      fputs(_("Seeding random number generator\n"), stdout);
-      srandom(atoi(argv[1]));
+
+   for (;;) {
+      int c = getopt_long(argc, argv, "s:", long_options, NULL);
+      if (c == -1)
+	 break;			/* end of options */
+      switch (c) {
+      case 's':			/* -s, --seed=INTEGER */
+	 srandom(parse_int(optarg));
+	 break;
+      case 'h':			/*     --help */
+	 printf(_("Usage: %s [--seed=INTEGER]\n"
+		  "Test how fast your machine can add, multiply and divide random numbers in\n"
+		  "fixed and floating point.\n"
+		  "\n"), argv0);
+	 fputs(_("  -s, --seed=INTEGER  seed for random number generator\n"
+		 "      --help          display this help and exit\n"
+		 "      --version       output version information and exit\n"
+		 "\n"), stdout);
+	 print_bugaddr_message(stdout);
+	 exit(EXIT_SUCCESS);
+      case 'V':			/*     --version */
+	 {
+	    static const struct copyright copyrights[] = {
+	       { "1998", "Josh Parsons" },
+	       { "1994", "Chris Laurel" },
+	       COPYRIGHT_END
+	    };
+	    printf("fixed_bm (DUMB) " VERSION "\n");
+	    print_copyrights(copyrights);
+	 }
+	 printf(_("This program is free software; you may redistribute it under the terms of\n"
+		  "the GNU General Public License.  This program has absolutely no warranty.\n"));
+	 exit(EXIT_SUCCESS);
+      case '?':			/* invalid option */
+	 exit_invalid_args();
+      }	/* switch */
+   } /* for ever */
+   
+   if (argc > optind) {
+      fprintf(stderr, _("%s: Non-option arguments are not allowed\n"), argv0);
+      exit_invalid_args();
    }
+
+   setvbuf(stdout, NULL, _IONBF, 0);
    /*
       printf("sizeof(long long)=%d sizeof(long)=%d, sizeof(int)=%d\n",
       sizeof(long long),sizeof(long),sizeof(int));
@@ -149,3 +239,7 @@ main(int argc, char **argv)
    putchar('\n');
    return 0;
 }
+
+// Local Variables:
+// c-basic-offset: 3
+// End:

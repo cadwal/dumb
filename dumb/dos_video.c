@@ -45,6 +45,8 @@ ConfItem video_conf[] =
 #define cnf_no_page_flip (video_conf[0].intval)
 #define cnf_use_vesa2 (video_conf[1].intval)
 
+const char video_dep_name[] = "dosdumb"; /* for --version */
+
 static void *fb = NULL;
 static BITMAP *bfb = NULL;
 static int col_bpp;

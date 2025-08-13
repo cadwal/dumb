@@ -63,6 +63,9 @@
 /* A standard place to look for HERETIC .WADs */
 #undef DUMB_CONFIG_HERETIC_PATH
 
+/* Define to enable libdumbworldb */
+#undef DUMB_CONFIG_LDWB
+
 @BOTTOM@
 
 /* DUMB always has <libintl.h> -- the included GNU gettext library

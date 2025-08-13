@@ -331,13 +331,19 @@ for am_file in <<$1>>; do
 done<<>>dnl>>)
 changequote([,]))])
 
-# Macro to add for using GNU gettext.
-# Ulrich Drepper <drepper@cygnus.com>, 1995.
-#
-# This file can be copied and used freely without restrictions.  It can
-# be used in projects which are not available under the GNU Public License
-# but which still want to provide support for the GNU gettext functionality.
-# Please note that the actual code is *not* freely available.
+# Define a conditional.
+
+AC_DEFUN(AM_CONDITIONAL,
+[AC_SUBST($1_TRUE)
+AC_SUBST($1_FALSE)
+if $2; then
+  $1_TRUE=
+  $1_FALSE='#'
+else
+  $1_TRUE='#'
+  $1_FALSE=
+fi])
+
 
 # serial 5
 
@@ -377,14 +383,16 @@ AC_DEFUN(AM_WITH_NLS,
 	    [AC_TRY_LINK([#include <libintl.h>], [return (int) gettext ("")],
 	       gt_cv_func_gettext_libc=yes, gt_cv_func_gettext_libc=no)])
 
+	   dnl TODO: rename gt_cv_func_gettext_libintl to
+	   dnl gt_tmp_func_gettext_libintl or something, as the value
+	   dnl in config.cache is never used.
+	   dnl (ac_cv_func_gettext_libintl takes care of the caching.)
 	   if test "$gt_cv_func_gettext_libc" != "yes"; then
 	     AC_CHECK_LIB(intl, bindtextdomain,
-	       [AC_CACHE_CHECK([for gettext in libintl],
-		 gt_cv_func_gettext_libintl,
-		 [AC_CHECK_LIB(intl, gettext,
-		  gt_cv_func_gettext_libintl=yes,
-		  gt_cv_func_gettext_libintl=no)],
-		 gt_cv_func_gettext_libintl=no)])
+	       [AC_CHECK_LIB(intl, gettext,
+		 gt_cv_func_gettext_libintl=yes INTLLIBS=-lintl,
+		 gt_cv_func_gettext_libintl=no)],
+	       gt_cv_func_gettext_libintl=no)
 	   fi
 
 	   if test "$gt_cv_func_gettext_libc" = "yes" \
@@ -393,6 +401,13 @@ AC_DEFUN(AM_WITH_NLS,
 	      AM_PATH_PROG_WITH_TEST(MSGFMT, msgfmt,
 		[test -z "`$ac_dir/$ac_word -h 2>&1 | grep 'dv '`"], no)dnl
 	      if test "$MSGFMT" != "no"; then
+		dnl Use $INTLLIBS when testing for dcgettext() and
+		dnl _nl_msg_cat_cntr.  Otherwise, they wouldn't be found
+		dnl if they were in -lintl.
+		gt_tmp_oldlibs="$LIBS"
+		LIBS="$INTLLIBS $LIBS"
+		dnl The macros here don't care of whether dcgettext()
+		dnl is defined but the program may.
 		AC_CHECK_FUNCS(dcgettext)
 		AC_PATH_PROG(GMSGFMT, gmsgfmt, $MSGFMT)
 		AM_PATH_PROG_WITH_TEST(XGETTEXT, xgettext,
@@ -404,6 +419,7 @@ AC_DEFUN(AM_WITH_NLS,
 		  [CATOBJEXT=.mo
 		   DATADIRNAME=lib])
 		INSTOBJEXT=.mo
+		LIBS="$gt_tmp_oldlibs"
 	      fi
 	    fi
 	])
@@ -541,8 +557,8 @@ AC_DEFUN(AM_GNU_GETTEXT,
 
    AC_CHECK_HEADERS([argz.h limits.h locale.h nl_types.h malloc.h string.h \
 unistd.h sys/param.h])
-   AC_CHECK_FUNCS([getcwd munmap putenv setenv setlocale strchr strcasecmp \
-strdup __argz_count __argz_stringify __argz_next])
+   AC_CHECK_FUNCS([getcwd memcpy munmap putenv setenv setlocale strchr \
+strcasecmp strdup __argz_count __argz_stringify __argz_next])
 
    if test "${ac_cv_func_stpcpy+set}" != "set"; then
      AC_CHECK_FUNCS(stpcpy)
@@ -647,13 +663,7 @@ strdup __argz_count __argz_stringify __argz_next])
 	< $srcdir/po/POTFILES.in > po/POTFILES
   ])
 
-# Search path for a program which passes the given test.
-# Ulrich Drepper <drepper@cygnus.com>, 1996.
-#
-# This file can be copied and used freely without restrictions.  It can
-# be used in projects which are not available under the GNU Public License
-# but which still want to provide support for the GNU gettext functionality.
-# Please note that the actual code is *not* freely available.
+
 
 # serial 1
 
@@ -695,13 +705,7 @@ fi
 AC_SUBST($1)dnl
 ])
 
-# Check whether LC_MESSAGES is available in <locale.h>.
-# Ulrich Drepper <drepper@cygnus.com>, 1995.
-#
-# This file can be copied and used freely without restrictions.  It can
-# be used in projects which are not available under the GNU Public License
-# but which still want to provide support for the GNU gettext functionality.
-# Please note that the actual code is *not* freely available.
+
 
 # serial 1
 
@@ -715,16 +719,4 @@ AC_DEFUN(AM_LC_MESSAGES,
     fi
   fi])
 
-# Define a conditional.
-
-AC_DEFUN(AM_CONDITIONAL,
-[AC_SUBST($1_TRUE)
-AC_SUBST($1_FALSE)
-if $2; then
-  $1_TRUE=
-  $1_FALSE='#'
-else
-  $1_TRUE='#'
-  $1_FALSE=
-fi])
 

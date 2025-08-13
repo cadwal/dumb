@@ -6,7 +6,7 @@ log-classes params.txt xrosella.xpm
 
 # GNU Emacs 20.2.2 automatically aligned the backslashes above!  Yow!
 
-SUBDIRS = dos maint
+SUBDIRS = dos maint patches
 
 # TODO: Install some documents.
 #

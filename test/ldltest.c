@@ -24,11 +24,13 @@
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <getopt.h>		/* from ../libmissing/ */
 #include <locale.h>
 
 #include "libdumbutil/dumb-nls.h"
+#include "getopt.h"		/* ../libmissing/ */
 
+#include "libdumbutil/bugaddr.h"
+#include "libdumbutil/copyright.h"
 #include "libdumbutil/log.h"
 #include "libdumbutil/safem.h"
 #include "libdumbwad/wadio.h"
@@ -80,6 +82,8 @@ struct op_node {
 };
 struct op_node *first_op = NULL, *last_op = NULL;
 
+static void print_help(void);
+static void print_version(void);
 static void parse_args(int argc, char **argv);
 static long parse_long(const char *s, const char *errmsg);
 static int parse_int(const char *s, const char *errmsg);
@@ -119,6 +123,47 @@ main(int argc, char **argv)
       dwdb_fini(&level);
    }
    return 0;
+}
+
+static void
+print_help(void)
+{
+   printf(_("Usage: %s [OPTION]... IWAD [PWAD]...\n"
+	    "Load a map and operate on it.\n"
+	    "\n"), progname);
+   printf(_("  Settings:\n"
+	    "  -m, --map=NAME             which map to load (default %s)\n"
+	    "      --difficulty=N         1=easy ... 5=hard (default all)\n"
+	    "      --verbose              explain what is being done\n"),
+	  mapname);
+   fputs(_( "  Operations:\n"
+	    "      --statistics           display statistics on the whole map\n"
+	    "      --sector-sides=SECTOR  list sides in SECTOR\n"
+	    "      --sector-things=SECTOR list things in SECTOR\n"
+	    "      --thing-sectors=THING  list sectors THING is in\n"
+	    "      --set-name=NAME        set the name of the map to NAME\n"
+	    "      --set-long-name=NAME   set the long name of the map to NAME\n"
+	    "      --output-doom=FILE     save the map to FILE in Doom format.\n"
+	    "                             .wad won't be appended automatically.\n"), stdout);
+   fputs(_( "  Other:\n"
+	    "      --help                 display this help and exit\n"
+	    "      --version              output version information and exit\n"
+	    "\n"), stdout);
+   print_bugaddr_message(stdout);
+}
+
+static void
+print_version(void)
+{
+   static const struct copyright copyrights[] = {
+      { "1998", "Kalle O. Niemitalo" },
+      COPYRIGHT_END
+   };
+   fputs("ldltest (DUMB) " VERSION "\n", stdout);
+   print_copyrights(copyrights);
+   fputs(_("This program is free software; you may redistribute it under the terms of\n"
+	   "the GNU General Public License.  This program has absolutely no warranty.\n"),
+	 stdout);
 }
 
 static void
@@ -194,35 +239,10 @@ parse_args(int argc, char **argv)
 	 queue_op(OP_OUTPUT_DOOM)->u.output_doom.filename = optarg;
 	 break;
       case 1:			/* --help */
-	 printf(_("Usage: %s [OPTION]... IWAD [PWAD]...\n"
-		  "Load a map and operate on it.\n"
-		  "\n"
-		  "  Settings:\n"
-		  "  -m, --map=NAME             which map to load (default %s)\n"
-		  "      --difficulty=N         1=easy ... 5=hard (default all)\n"
-		  "      --verbose              explain what is being done\n"
-		  "  Operations:\n"
-		  "      --statistics           display statistics on the whole map\n"
-		  "      --sector-sides=SECTOR  list sides in SECTOR\n"
-		  "      --sector-things=SECTOR list things in SECTOR\n"
-		  "      --thing-sectors=THING  list sectors THING is in\n"
-		  "      --set-name=NAME        set the name of the map to NAME\n"
-		  "      --set-long-name=NAME   set the long name of the map to NAME\n"
-		  "      --output-doom=FILE     save the map to FILE in Doom format.\n"
-		  "                             .wad won't be appended automatically.\n"
-		  "  Other:\n"
-		  "      --help                 display this help and exit\n"
-		  "      --version              print version information and exit\n"
-		  "\n"
-		  "Report bugs to tosi@stekt.oulu.fi.\n"),
-		progname, mapname);
+	 print_help();
 	 exit(EXIT_SUCCESS);
       case 2:			/* --version */
-	 fputs("ldltest (DUMB) " VERSION "\n", stdout);
-	 fputs(_("Copyright (C) 1998 Kalle O. Niemitalo.\n"
-		 "This program is free software; you may redistribute it under the terms of\n"
-		 "the GNU General Public License.  This program has absolutely no warranty.\n"),
-	       stdout);
+	 print_version();
 	 exit(EXIT_SUCCESS);
       case '?':
 	 /* getopt_long() printed the error message already */

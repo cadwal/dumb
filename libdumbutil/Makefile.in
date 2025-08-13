@@ -99,10 +99,11 @@ l = @l@
 
 noinst_LIBRARIES = libdumbutil.a
 
-common_sources = align.h confargs.c confargs.h confdef.h \
- confeng.c confeng.h conffile.c conffile.h confhelp.c confhelp.h \
- dumb-nls.h endiantypes.h fixed.c fixed.h log.c log.h safeio.c \
- safeio.h safem.c safem.h strgrow.c strgrow.h timer.h
+common_sources = align.h bugaddr.c bugaddr.h confargs.c confargs.h	\
+confdef.h confeng.c confeng.h conffile.c conffile.h confhelp.c		\
+confhelp.h copyright.c copyright.h dumb-nls.h endiantypes.h exitcode.h	\
+fixed.c fixed.h log.c log.h safeio.c safeio.h safem.c safem.h		\
+strgrow.c strgrow.h timer.h
 
 @DUMB_CONFIG_DOS_TRUE@libdumbutil_a_SOURCES = $(common_sources) dos_timer.c
 @DUMB_CONFIG_DOS_FALSE@libdumbutil_a_SOURCES = $(common_sources) timer.c
@@ -133,12 +134,14 @@ X_LIBS = @X_LIBS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_PRE_LIBS = @X_PRE_LIBS@
 libdumbutil_a_LIBADD = 
-@DUMB_CONFIG_DOS_TRUE@cond0libdumbutil_a_OBJECTS =  confargs.o confeng.o \
-@DUMB_CONFIG_DOS_TRUE@conffile.o confhelp.o fixed.o log.o safeio.o \
-@DUMB_CONFIG_DOS_TRUE@safem.o strgrow.o dos_timer.o
-@DUMB_CONFIG_DOS_FALSE@cond1libdumbutil_a_OBJECTS =  confargs.o \
-@DUMB_CONFIG_DOS_FALSE@confeng.o conffile.o confhelp.o fixed.o log.o \
-@DUMB_CONFIG_DOS_FALSE@safeio.o safem.o strgrow.o timer.o
+@DUMB_CONFIG_DOS_TRUE@cond0libdumbutil_a_OBJECTS =  bugaddr.o confargs.o \
+@DUMB_CONFIG_DOS_TRUE@confeng.o conffile.o confhelp.o copyright.o \
+@DUMB_CONFIG_DOS_TRUE@fixed.o log.o safeio.o safem.o strgrow.o \
+@DUMB_CONFIG_DOS_TRUE@dos_timer.o
+@DUMB_CONFIG_DOS_FALSE@cond1libdumbutil_a_OBJECTS =  bugaddr.o \
+@DUMB_CONFIG_DOS_FALSE@confargs.o confeng.o conffile.o confhelp.o \
+@DUMB_CONFIG_DOS_FALSE@copyright.o fixed.o log.o safeio.o safem.o \
+@DUMB_CONFIG_DOS_FALSE@strgrow.o timer.o
 libdumbutil_a_OBJECTS =  $(cond0libdumbutil_a_OBJECTS) \
 $(cond1libdumbutil_a_OBJECTS)
 AR = ar
@@ -236,6 +239,21 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
+bugaddr.o: bugaddr.c ../config.h dumb-nls.h bugaddr.h
+confargs.o: confargs.c ../config.h confargs.h confdef.h confeng.h \
+	confhelp.h
+confeng.o: confeng.c ../config.h dumb-nls.h confeng.h confdef.h
+conffile.o: conffile.c ../config.h dumb-nls.h conffile.h confdef.h \
+	confeng.h log.h strgrow.h safem.h
+confhelp.o: confhelp.c ../config.h dumb-nls.h bugaddr.h confhelp.h \
+	confdef.h confeng.h
+copyright.o: copyright.c ../config.h dumb-nls.h copyright.h
+fixed.o: fixed.c ../config.h fixed.h
+log.o: log.c ../config.h dumb-nls.h log.h safem.h
+safeio.o: safeio.c ../config.h dumb-nls.h log.h safeio.h safem.h
+safem.o: safem.c ../config.h dumb-nls.h log.h safem.h
+strgrow.o: strgrow.c ../config.h dumb-nls.h strgrow.h safem.h
+timer.o: timer.c ../config.h timer.h
 
 info:
 dvi:

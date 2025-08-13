@@ -38,7 +38,7 @@ pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
 
-top_builddir = ..
+top_builddir = ../..
 
 ACLOCAL = @ACLOCAL@
 AUTOCONF = @AUTOCONF@
@@ -98,32 +98,12 @@ USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 l = @l@
 
-@DUMB_CONFIG_DOOM_TRUE@pkgdata_DATA = doom4dum.wad
-@DUMB_CONFIG_DOOM_FALSE@pkgdata_DATA = 
-
-CLEANFILES = $(d4d_lumps) PLAYPAL.lump doom4dum.wad
-
-d4d_pt_lumps = ANIMTEX.lump GETTABLE.lump LEVINFO.lump LINETYPE.lump \
- PHASES.lump PROTOS.lump SECTTYPE.lump SOUNDS.lump
-d4d_lumps = $(d4d_pt_lumps) COLORM16.lump COLORM32.lump DUMBLOGO.lump
-# Keep doom.pt first in this list so $< works right.
-d4d_sources = doom.pt animtex.pt furnishings.pt generic.pt gettables.pt \
- levels.pt linetypes.pt missiles.pt monsters.pt sectortypes.pt weapons.pt
-
-# Always use the latest versions.  Use full filenames so targets can
-# depend on them and be rebuilt if the executables change.
-wadtool = ../tool/wadtool
-ppmtodumb = ../tool/ppmtodumb
-ptcomp = ../ptcomp/ptcomp
-
-pt_preprocess = $(CXXCPP) -x c-header -I$(srcdir)
-
-EXTRA_DIST = WAFFLE $(d4d_sources)
+EXTRA_DIST = aalib-1.2-add_.diff gettext-0.10.35-1-po-regexp.diff	\
+gettext-0.10.35-2-intllibs.diff gettext-0.10.35-3-memcpy.diff		\
+gettext-0.10.35-4-comments.diff
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
-CONFIG_HEADER = ../config.h
+CONFIG_HEADER = ../../config.h
 CONFIG_CLEAN_FILES = 
-DATA =  $(pkgdata_DATA)
-
 DIST_COMMON =  Makefile.am Makefile.in
 
 
@@ -131,42 +111,23 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP = --best
-all: Makefile $(DATA)
+all: Makefile
 
 .SUFFIXES:
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4)
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps doom/Makefile
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps docs/patches/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
-
-install-pkgdataDATA: $(pkgdata_DATA)
-	@$(NORMAL_INSTALL)
-	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
-	@list='$(pkgdata_DATA)'; for p in $$list; do \
-	  if test -f $(srcdir)/$$p; then \
-	    echo " $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(pkgdatadir)/$$p"; \
-	    $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(pkgdatadir)/$$p; \
-	  else if test -f $$p; then \
-	    echo " $(INSTALL_DATA) $$p $(DESTDIR)$(pkgdatadir)/$$p"; \
-	    $(INSTALL_DATA) $$p $(DESTDIR)$(pkgdatadir)/$$p; \
-	  fi; fi; \
-	done
-
-uninstall-pkgdataDATA:
-	@$(NORMAL_UNINSTALL)
-	list='$(pkgdata_DATA)'; for p in $$list; do \
-	  rm -f $(DESTDIR)$(pkgdatadir)/$$p; \
-	done
 tags: TAGS
 TAGS:
 
 
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 
-subdir = doom
+subdir = docs/patches
 
 distdir: $(DISTFILES)
 	@for file in $(DISTFILES); do \
@@ -183,18 +144,17 @@ installcheck:
 install-exec: 
 	@$(NORMAL_INSTALL)
 
-install-data: install-pkgdataDATA
+install-data: 
 	@$(NORMAL_INSTALL)
 
 install: install-exec install-data all
 	@:
 
-uninstall: uninstall-pkgdataDATA
+uninstall: 
 
 install-strip:
 	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' INSTALL_SCRIPT='$(INSTALL_PROGRAM)' install
 installdirs:
-	$(mkinstalldirs)  $(DATADIR)$(pkgdatadir)
 
 
 mostlyclean-generic:
@@ -222,42 +182,11 @@ maintainer-clean:  maintainer-clean-generic distclean
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
-.PHONY: uninstall-pkgdataDATA install-pkgdataDATA tags distdir info dvi \
-installcheck install-exec install-data install uninstall all \
-installdirs mostlyclean-generic distclean-generic clean-generic \
-maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+.PHONY: tags distdir info dvi installcheck install-exec install-data \
+install uninstall all installdirs mostlyclean-generic distclean-generic \
+clean-generic maintainer-clean-generic clean mostlyclean distclean \
+maintainer-clean
 
-# -x c-header is required because $(CXXCPP) is typically g++ -E which
-# assumes the .pt files are linker input and thus ignores them.  If
-# $(CXXCPP) is something else, -x c-header will cause it to fail.  In
-# that case, try this definition (which uses -lang-c++ because of //
-# comments and so requires GNU cpp):
-#
-# pt_preprocess = /lib/cpp -lang-c++ -I$(srcdir)
-#
-# If you need it, please report, so I can add a check in
-# ../configure.in or devise a trickier scheme.  (One idea would be to
-# create a temporary C++ file containing just #include <foo.pt> and
-# preprocess that.)
-
-PLAYPAL.lump: $(DUMB_CONFIG_DOOM_WAD) $(wadtool)
-	$(wadtool) -r $(DUMB_CONFIG_DOOM_WAD) -x PLAYPAL
-
-# ../docs/dumblogo.ppm is searched in VPATH and $< refers to it.
-DUMBLOGO.lump: ../docs/dumblogo.ppm PLAYPAL.lump $(ppmtodumb)
-	$(ppmtodumb) -p -M PLAYPAL.lump <$< >$@
-
-$(d4d_pt_lumps): $(d4d_sources) $(ptcomp)
-	$(pt_preprocess) -DDOOM $< | $(ptcomp) -d .
-
-COLORM16.lump: PLAYPAL.lump $(ppmtodumb)
-	$(ppmtodumb) -c -2 -M $< >$@
-
-COLORM32.lump: PLAYPAL.lump $(ppmtodumb)
-	$(ppmtodumb) -c -4 -M $< >$@
-
-doom4dum.wad: $(wadtool) $(d4d_lumps)
-	$(wadtool) -w $@ -f $(srcdir)/WAFFLE $(d4d_lumps)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

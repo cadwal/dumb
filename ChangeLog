@@ -1,4 +1,160 @@
+1998-10-21  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Released 0.13.3.
+
+	* ptcomp/ptcomp.c (main): Added cast to make C++ happy.
+
+	* README (Bugs in other software): Gettext bugs are no longer
+	being investigated.
+
+	* ptcomp/ptcomp.c (show_help): --output-directory is -d, not -o.
+	(main): Changed the deprecated-usage message too.
+
+	* tool/dark2trans.c, tool/mkdfnt.c, test/fixed_bm.c: #include
+	<errno.h>.
+
+	* docs/patches/Makefile.am: New file.
+	* configure.in (AC_OUTPUT): Added docs/patches/Makefile.
+
+	* docs/maint/indent.pro: Added -TXImage.
+
+	* Makefile.am, configure.in: Compile libdumbworldb only if
+	--enable-worldbase is given.
+	* acconfig.h: Added DUMB_CONFIG_LDWB.
+	* test/Makefile.am: Compile ldltest only if --enable-worldbase was
+	given.
+
+	* ptcomp/ptcomp.c (main): --output-directory is -d, not -o.
+	* doom/Makefile.am ($(d4d_pt_lumps)): Use -d.
+	* htic/Makefile.am ($(h4d_pt_lumps)): Use -d.
+
+1998-10-20  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* TODO: --help and --version are now supported!  Hooray!
+
+	* tool/mknulmap.c, tool/mkdfnt.c: Use getopt_long().
+
+1998-10-18  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* tool/dark2trans.c: Use getopt_long().
+
+	* docs/maint/contrib.html: Converted to HTML 4.0 and reformatted
+	with PSGML.
+
+	* docs/maint/source.html: Converted to HTML 4.0 Transitional and
+	reformatted with PSGML.
+
+1998-10-17  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* htic/Makefile.am ($(h4d_pt_lumps)): Added -o in ptcomp
+	invocation.
+	* doom/Makefile.am ($(d4d_pt_lumps)): Here too.
+
+	* ptcomp/ptcomp.c (main): Use getopt_long().
+
+	* xwad/xproto.c (silent): Renamed to sound_flag and inverted
+	sense.
+	(usage): Renamed to print_help() and mostly rewritten.
+	(print_version): New function.
+	(main): Use getopt_long().
+
+	* test/ldltest.c: #include "getopt.h", not <getopt.h>.
+
+	* libdumbutil/exitcode.h: New file.
+
+	* libdumbutil/bugaddr.c (program_bug_address): Replaced my address
+	with dumb-list.
+
+	* tool/Makefile.am (LDADD): Added ../libmissing/libmissing.a.
+	(INCLUDES): Added -I$(top_srcdir)/libmissing.
+	* xwad/Makefile.am (LDADD, INCLUDES): Here too.
+	* ptcomp/Makefile.am (LDADD, INCLUDES): Here too.
+	* dumb/Makefile.am (LDADD, INCLUDES): Here too.
+	* test/Makefile.am (LDADD): Added this variable.
+	(fixed_bm_LDADD, ldltest_LDADD): Use it.
+
+1998-10-16  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* tool/ppmtodumb.c (mkcmap): Removed parameter.  Use the global
+	variable directly.
+
+	* xwad/xwad.c (main): Use getopt_long().
+
+	* tool/wadtool.c (print_help, print_version): New functions.
+	(main): Check --help and --version.
+
+	* libdumbutil/bugaddr.c, libdumbutil/bugaddr.h: New files.
+	* libdumbutil/confhelp.c (conf_usage): Use them.
+	* ptcomp/ptcomp.c (show_help): Use them.
+	* test/fixed_bm.c (main): Use them.
+	* test/ldltest.c (print_help): Use them.
+	* tool/dark2trans.c (print_help): Use them.
+	* tool/mkdfnt.c (print_help): Use them.
+	* tool/mknulmap.c (print_help): Use them.
+	* tool/mkpnames.c (print_help): Use them.
+	* tool/ppmtodumb.c (print_help): Use them.
+
+	* tool/ppmtodumb.c: Rewrote argument parsing.
+	* tool/mkpnames.c: Rewrote argument parsing.  Check all file
+	operations.
+
+	* libdumbutil/copyright.h (struct copyright): Renamed owner to
+	holder.
+
+1998-10-09  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* tool/mknulmap.c (print_help, print_version): New functions.
+	(main): Use them.
+
+	* configure.in: Check for ggiParseMode() rather than ggiSetMode()
+	because older GGI versions had only the latter.
+
+	* tool/mkdfnt.c: Made all exit codes #defines.
+	(print_help, print_version): New functions.
+	(main): Use them.
+
+	* tool/dark2trans.c (print_help, print_version): New functions.
+	(main): Use them.
+
+	* test/ldltest.c (print_help, print_version): New functions.
+	(main): Use them.
+
+	* dumb/dumb.c (print_program_version): Use the new copyright
+	functions.
+
+	* ptcomp/ptcomp.c (main): Support --help and --version.
+	(show_help, show_version): New functions.
+
+	* libdumbutil/copyright.c, libdumbutil/copyright.h: New files.
+
+	* ptcomp/ptcomp.c (main): Remove arbitrary limit on directory name
+	length.
+
+1998-09-30  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* dumb/video.h, dumb/aalib_video.c, dumb/dos_video.c,
+	dumb/dummy_video.c, dumb/ggi_video.c, dumb/linux_video.c,
+	dumb/x11_video.c: Added video_dep_name.
+	* dumb/dumb.c (print_program_version): Use video_dep_name.  Added
+	fancy copyright list.
+
+1998-09-28  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* libdumbutil/confhelp.c (conf_usage): Recommend --help rather
+	than -?.
+	(conf_help, conf_usage): Change return type from void because they
+	always returned 1.
+	* libdumbutil/confargs.c (conf_args): Treat "--help" just like
+	"-?".  Parse "--version".  Return void.  Call exit() directly.
+	* dumb/dumb.c (main): Don't check conf_args() return value.
+
+1998-09-27  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* configure.in (Local Variables): Added info-lookup-mode.
+
 1998-08-30  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Released 0.13.2.
 
 	* Makefile.am ($(distdir).lsm): New target.
 	(RPMSPEC): Use $(srcdir).
@@ -61,7 +217,7 @@ Mon Aug 17 16:35:05 1998  Josh Parsons  <josh@coombs.anu.edu.au>
 	to match new PT_ and TPH_ flags
 	* ptcomp/soundcomp.c (new_sound): make sure that new SoundRec
 	is inited to all zeros with memset
-	
+
 1998-08-15  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
 
 	* dumb/dumb.c (main): conf_file is a pointer, not an array.
@@ -82,7 +238,7 @@ Thu Aug 13 00:19:27 1998  Josh Parsons  <josh@coombs.anu.edu.au>
 	independent
 	* htic/missiles.pt, htic/monsters.pt: implemented WereDragon,
 	Pod
-	
+
 1998-08-08  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
 
 	* dumb/ggi_video.c: Revision 1.6 from Andrew Apted.
@@ -108,9 +264,10 @@ Fri Aug  7 16:31:35 1998  Josh Parsons  <josh@coombs.anu.edu.au>
 	players get hurt by the Patented Doom Fluid
 	* dumb/thingm.c (do_strategy): monsters try to dodge out
 	of enemy's line of fire, miscellaneous fine tuning
-	
-	
+
 Wed Jul 22 03:06:11 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Released 0.13.1.
 
 	* libmissing/Makefile.am (INCLUDES): Added.
 
@@ -237,7 +394,7 @@ Sun Jun 28 16:48:14 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
 	* configure.in: Integrate dosdumb-0.13.0 from Ulf Axelsson.
 	* dumb/Makefile.am, libdumb/dos_sound.c, libdumbutil/Makefile.am:
  	Ditto.
-	
+
 	* configure.in (--disable-c): New option.
 
 Fri Jun 19 14:17:39 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
@@ -296,10 +453,12 @@ Sun Jun 14 19:43:20 1998  Josh Parsons <josh@coombs.anu.edu.au>
 
 	* configure.in: figure out appropriate built-in wadpath, 
 	stash real C compiler name in REALCC for libmissing
-	
+
 	* test/fixed_bm.c: include locale.h
-	
+
 Thu Jun 11 19:17:33 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Released 0.13.0.
 
 	* libdumbutil/align.h: New file.
 	* libdumbwad/wadwr.c: Renamed ALIGNMENT to ALIGN_LUMP and moved it
@@ -587,7 +746,6 @@ Sun May  3 16:28:10 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
 	* dumb/x11_video.c [!DUMB_CONFIG_XF86DGA]: Don't define page2ofs,
  	page2line, curpage.
 	(video_newframe) [!DUMB_CONFIG_XF86DGA]: Don't check curpage.
-
 
 Sat May  2 12:50:55 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
 

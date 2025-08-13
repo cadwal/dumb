@@ -98,9 +98,12 @@ USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 l = @l@
 
-SUBDIRS = libmissing libdumbutil libdumbwad libdumbworldb \
- libdumbrender libdumb intl \
- dumb xwad ptcomp tool doom htic test po docs
+@DUMB_CONFIG_LDWB_TRUE@LDWB_SUBDIR = libdumbworldb
+@DUMB_CONFIG_LDWB_FALSE@LDWB_SUBDIR = 
+
+SUBDIRS = libmissing libdumbutil libdumbwad $(LDWB_SUBDIR)		\
+libdumbrender libdumb intl dumb xwad ptcomp tool doom htic test po	\
+docs
 
 # stuff for making Red Hat style rpms
 RPMRELEASE = 1
@@ -123,6 +126,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP = --best
+DIST_SUBDIRS =  libmissing libdumbutil libdumbwad libdumbworldb \
+libdumbrender libdumb intl dumb xwad ptcomp tool doom htic test po docs
 all: all-recursive-am all-am
 
 .SUFFIXES:
@@ -269,7 +274,7 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
-	for subdir in $(SUBDIRS); do \
+	for subdir in $(DIST_SUBDIRS); do \
 	  test -d $(distdir)/$$subdir \
 	  || mkdir $(distdir)/$$subdir \
 	  || exit 1; \

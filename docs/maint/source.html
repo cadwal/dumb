@@ -1,238 +1,257 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+	"http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
-<head>
-<title>DUMB source HOWTO</title>
-<body>
+  <head>
+    <title>DUMB source HOWTO</title>
+  </head>
+  <body>
 
-<h1>DUMB source HOWTO</h1>
 
-This corresponds to DUMB 0.13.2.</p>
+    <h1>DUMB source HOWTO</h1>
 
-<ul>
-<li><a href="#dirs" name="TOCdirs">Directory structure</a>
-<li><a href="#mkver" name="TOCmkver">Updating the version number</a>
-<li><a href="#mkdir" name="TOCmkdir">Adding a new directory</a>
-<li><a href="#mkfile" name="TOCmkfile">Adding a new source file</a>
-</ul>
+    <p>This corresponds to DUMB 0.13.3.
 
-<h2><a href="#TOCdirs" name="dirs">Directory structure</a></h2>
+    <ul>
+      <li><a href="#dirs" name="TOCdirs">Directory structure</a>
+      <li><a href="#mkver" name="TOCmkver">Updating the version number</a>
+      <li><a href="#mkdir" name="TOCmkdir">Adding a new directory</a>
+      <li><a href="#mkfile" name="TOCmkfile">Adding a new source file</a>
+    </ul>
 
-There are some rules on how the directories are built.
 
-<ol>
-<li>Libraries are built before programs and other libraries that need
-    them.
-<li>Most important programs are built first so that <kbd>make
-    install</kbd> lets you play as soon as possible.
-</ol>
+    <h2><a href="#TOCdirs" name="dirs">Directory structure</a></h2>
 
-<p>Here's the list:
+    <p>There are some rules on how the directories are built.
 
-<dl>
+    <ol>
+      <li>Libraries are built before programs and other libraries that
+	need them.
+      <li>Most important programs are built first so that <kbd>make
+	  install</kbd> lets you play as soon as possible.
+    </ol>
 
-<dt>libmissing/
-<dd>Functions that may be missing from system libraries.
-
-<dt>libdumbutil/
-<dd>Various functions that DUMB uses but which could be used by other,
-    very different programs too.
-
-<dt>libdumbwad/
-<dd>Functions for reading and writing WAD files.
-
-<dt>libdumbworldb/
-<dd>The database of what exists in a level.  Doesn't include
-    functions for monster strategy, explosions or such.
-    (Partially implemented.)
-
-<dt>libdumbrender/
-<dd>(Not yet implemented.)
-
-<dt>libdumb/
-<dd>Random stuff that is needed by both DUMB and the utility programs
-    in the package.
-
-<dt>intl/
-<dd>The GNU gettext library.  There's nothing DUMB-specific here.  So
-    when a new version of gettext is released, you can delete this
-    directory and copy the one in the gettext package here.
-
-<dt>dumb/
-<dd>The game engine itself.
-
-<dt>xwad/
-<dd>Two programs that work under the X Window System.
+    <p>Here's the list:
 
     <dl>
 
-    <dt>XWad
-    <dd>A level editor.
+      <dt>libmissing/
+      <dd>Functions that may be missing from system libraries.
 
-    <dt>XProtoThing
-    <dd>A viewer for protothings.  Protothings define what the thing
-	type numbers mean.
+      <dt>libdumbutil/
+      <dd>Various functions that DUMB uses but which could be used by
+	other, very different programs too.
+
+      <dt>libdumbwad/
+      <dd>Functions for reading and writing WAD files.
+
+      <dt>libdumbworldb/
+      <dd>The database of what exists in a level.  Doesn't include
+	functions for monster strategy, explosions or such.
+	(Partially implemented.)
+
+      <dt>libdumbrender/
+      <dd>(Not yet implemented.)
+
+      <dt>libdumb/
+      <dd>Random stuff that is needed by both DUMB and the utility
+	programs in the package.
+
+      <dt>intl/
+      <dd>The GNU gettext library.  There's nothing DUMB-specific
+	here.  So when a new version of gettext is released, you can
+	delete this directory and copy the one in the gettext package
+	here.
+
+      <dt>dumb/
+      <dd>The game engine itself.
+
+      <dt>xwad/
+      <dd>Two programs that work under the X Window System.
+
+	<dl>
+
+	  <dt>XWad
+	  <dd>A level editor.
+
+	  <dt>XProtoThing
+	  <dd>A viewer for protothings.  Protothings define what the
+	    thing type numbers mean.
+
+	</dl>
+
+      <dt>ptcomp/
+      <dd>A program that compiles .pt source code to binary lumps that
+	can then be included in WADs.
+
+      <dt>tool/
+      <dd>Various small utility programs.
+
+	<dl>
+
+	  <dt>dark2trans
+	  <dd>A filter for ppm-format pictures.  Turns all "dark"
+	    pixels to R=0,G=0,B=1 which ppmtodumb recognizes as
+	    meaning transparent.  The darkness threshold is given as a
+	    parameter.
+
+	  <dt>mkdfnt
+	  <dd>Turns X11 fonts to pgm-format pictures which can in turn
+	    be converted to DUMB's format and put in WADs.
+
+	  <dt>mknulmap
+	  <dd>Generates a map containing just an empty room.
+
+	  <dt>mkpnames
+	  <dd>Compiles a textual listing to TEXTURE1 and PNAMES lumps.
+
+	  <dt>ppmtodumb
+	  <dd>Converts ppm-format pictures to the format DUMB uses.
+
+	  <dt>wadtool
+	  <dd>Copies, builds, extracts and concatenates WAD files.
+
+	</dl>
+
+      <dt>doom/
+      <dd>Sources for doom4dum.wad which lets you play Doom and Doom
+	II with DUMB.
+
+      <dt>htic/
+      <dd>Sources for htic4dum.wad which lets you play Heretic with
+	DUMB.
+
+      <dt>test/
+      <dd>Programs to check that the libraries work.
+
+	<dl>
+
+	  <dt>fixed_bm
+	  <dd>A fixed-point benchmark.  Tests how fast your CPU is.
+
+	  <dt>ldltest
+	  <dd>Command-line tests for libdumbworldb.  The library used
+	    to be called libdumblevel.  Hence the name.
+
+	</dl>
+
+      <dt>po/
+      <dd>Message catalogs for different languages.
+
+      <dt>docs/
+      <dd>The incomplete documentation.
+
+	<dl>
+
+	  <dt>dos/
+	  <dd>Documentation for the DOS port.
+
+	  <dt>maint/
+	  <dd>Documentation on maintaining DUMB.  This file is here.
+
+	</dl>
 
     </dl>
 
-<dt>ptcomp/
-<dd>A program that compiles .pt source code to binary lumps that can
-    then be included in WADs.
 
-<dt>tool/
-<dd>Various small utility programs.
+    <h2><a href="#TOCmkver" name="mkver">Updating the version number</a></h2>
 
-    <dl>
+    <p>These are the files that you should update when you change
+      DUMB's version number:
 
-    <dt>dark2trans
-    <dd>A filter for ppm-format pictures.  Turns all "dark" pixels to
-	R=0,G=0,B=1 which DUMB recognizes as meaning transparent.  The
-	darkness threshold is given as a parameter.
+    <ul>
+      <li>configure.in
+      <li>NEWS
+      <li>ChangeLog
+    </ul>
 
-    <dt>mkdfnt
-    <dd>Turns X11 fonts to pgm-format pictures which can in turn be
-	converted to DUMB's format and put in WADs.
+    <p>The version number is also mentioned in the following files but
+      in such a way that you don't have to change them if you feel
+      lazy:
 
-    <dt>mknulmap
-    <dd>Generates a map containing just an empty room.
+    <ul>
+      <li>README: "You should get a directory called something like
+	dumb-0.13.0"
+      <li>docs/configure.txt: "In the following, I'll call that
+	directory /cdrom/sources/dumb-0.12."
+      <li>docs/maint/contrib.html: "(it probably is, as
+	dumb-0.12.tar.gz was just 340k :)"
+    </ul>
 
-    <dt>mkpnames
-    <dd>Compiles a textual listing to TEXTURE1 and PNAMES lumps.
+    <p>After changing the version number in configure.in, run make in
+      the build directory.  The change will propagate to configure,
+      config.status and config.h and everything will be recompiled.
 
-    <dt>ppmtodumb
-    <dd>Converts ppm-format pictures to the format DUMB uses.
 
-    <dt>wadtool
-    <dd>Copies, builds, extracts and concatenates WAD files.
+    <h2><a href="#TOCmkdir" name="mkdir">Adding a new directory</a></h2>
 
-    </dl>
+    <p>Do the following in the source directory:
 
-<dt>doom/
-<dd>Sources for doom4dum.wad which lets you play Doom and Doom II with
-    DUMB.
+    <ol>
 
-<dt>htic/
-<dd>Sources for htic4dum.wad which lets you play Heretic with DUMB.
+      <li>Make directory foo.
 
-<dt>test/
-<dd>Programs to check that the libraries work.
+      <li>Create foo/Makefile.am.  It can be empty at this phase but I
+	prefer to put one line in it:
 
-    <dl>
+	<p><samp>## Process this file with automake to produce
+	    Makefile.in</samp></p>
 
-    <dt>fixed_bm
-    <dd>A fixed-point benchmark.  Tests how fast your CPU is.
+      <li>Add foo in the SUBDIRS definition in the main Makefile.am.
+	The order of the directories matters.  So if foo/Makefile.am
+	uses ptcomp, foo must come after ptcomp in the list.
 
-    <dt>ldltest
-    <dd>Command-line tests for libdumbworldb.  The library used to be
-        called libdumblevel.  Hence the name.
+      <li>Add foo/Makefile in the AC_OUTPUT statement in configure.in.
 
-    </dl>
+      <li>Run automake.  This generates foo/Makefile.in.
 
-<dt>po/
-<dd>Message catalogs for different languages.
+      <li>Run autoconf.  This updates the configure script.
 
-<dt>docs/
-<dd>The incomplete documentation.
+    </ol>
 
-    <dl>
+    <p>Then in the build directory:
 
-    <dt>dos/
-    <dd>Documentation for the DOS port.
+    <ol start=7>
 
-    <dt>maint/
-    <dd>Documentation on maintaining DUMB.  This file is here.
+      <li>Run <var>$srcdir</var>/configure with any options you need.  This
+	generates foo/Makefile.
 
-    </dl>
+	<p>Alternatively, you can run ./config.status --recheck.  This
+	  gives <var>$srcdir</var>/configure the same options you last
+	  gave it.  Then you must run ./config.status again, this time
+	  without options, because ./config.status --recheck gave
+	  <var>$srcdir</var>/configure the --no-create option which
+	  caused it to skip the Makefiles and only update
+	  config.status.
 
-</dl>
+      <li>Run make.  This will repeat some of these steps.  Don't
+	worry about that.
 
-<h2><a href="#TOCmkver" name="mkver">Updating the version number</a></h2>
+    </ol>
 
-These are the files that you should update when you change DUMB's
-version number:
+    <p>For experts only: If you feel particularly smart today, you can
+      analyze the Makefiles and find out which files to touch to avoid
+      the unnecessary and superfluous operations.  Then you could even
+      add a new target in Makefile.am to do all this.
 
-<ul>
-<li>configure.in
-<li>NEWS
-<li>ChangeLog
-</ul>
 
-<p>The version number is also mentioned in the following files but
-in such a way that you don't have to change them if you feel lazy:
-<ul>
-<li>README: "You should get a directory called something like
-    dumb-0.13.0"
-<li>docs/configure.txt: "In the following, I'll call that directory
-    /cdrom/sources/dumb-0.12."
-<li>docs/maint/contrib.html: "(it probably is, as dumb-0.12.tar.gz was
-    just 340k :)"
-</ul>
+    <h2><a href="#TOCmkfile" name="mkfile">Adding a new source file</a></h2>
 
-<p>After changing the version number in configure.in, run make in the
-build directory.  The change will propagate to configure,
-config.status and config.h and everything will be recompiled.
+    <p>Copy the boilerplate from docs/maint/template.c, or use
+      docs/maint/dumb-autoins.el which does this (and more)
+      automatically.
 
-<h2><a href="#TOCmkdir" name="mkdir">Adding a new directory</a></h2>
+    <p>Add the name of the file to SOURCES in the Makefile.am of that
+      directory.  Or if that isn't appropriate, add it to EXTRA_DIST
+      instead.
 
-Do the following in the source directory:</p>
+    <p>When finished with the directory, change to the root of the
+      build tree and run "<kbd>make update-po</kbd>".  This scans
+      files for translatable strings and updates po/*.po files.
 
-<ol>
 
-<li>Make directory foo.
-
-<li>Create foo/Makefile.am.  It can be empty at this phase but I
-    prefer to put one line in it:
-    <p><samp>## Process this file with automake to produce Makefile.in</samp></p>
-<li>Add foo in the SUBDIRS definition in the main
-    Makefile.am.  The order of the directories matters.  So if
-    foo/Makefile.am uses ptcomp, foo must come after ptcomp in the
-    list.
-
-<li>Add foo/Makefile in the AC_OUTPUT statement in
-    configure.in.
-
-<li>Run automake.  This generates foo/Makefile.in.
-
-<li>Run autoconf.  This updates the configure script.
-
-</ol>
-
-<p>Then in the build directory:</p>
-
-<ol start=7>
-
-<li>Run <var>$srcdir</var>/configure with any options you need.  This
-    generates foo/Makefile.
-
-    <p>Alternatively, you can run ./config.status --recheck.  This
-    gives <var>$srcdir</var>/configure the same options you last gave
-    it.  Then you must run ./config.status again, this time without
-    options, because ./config.status --recheck gave
-    <var>$srcdir</var>/configure the --no-create option which caused
-    it to skip the Makefiles and only update config.status.
-
-<li>Run make.  This will repeat some of these steps.  Don't
-    worry about that.
-
-</ol>
-
-<p>For experts only: If you feel particularly smart today, you can
-analyze the Makefiles and find out which files to touch to avoid the
-unnecessary and superfluous operations.  Then you could even add a new
-target in Makefile.am to do all this.
-
-<h2><a href="#TOCmkfile" name="mkfile">Adding a new source file</a></h2>
-
-Copy the boilerplate from docs/maint/template.c, or use
-docs/maint/dumb-autoins.el which does this (and more) automatically.
-
-<p>Add the name of the file to SOURCES in the Makefile.am of that
-directory.  Or if that isn't appropriate, add it to EXTRA_DIST
-instead.
-
-<p>When finished with the directory, change to the root of the build
-tree and run "<kbd>make update-po<kbd>".  This scans files for
-translatable strings and updates po/*.po files.
-
-<address>
-<a href="mailto:tosi@stekt.oulu.fi">Kalle O. Niemitalo</a>
-</address>
+    <address>
+      <a href="http://stekt.oulu.fi/~tosi/">Kalle O. Niemitalo</a>
+      <a href="mailto:tosi@stekt.oulu.fi">&lt;tosi@stekt.oulu.fi&gt;</a>
+    </address>
+  </body>
 </html>

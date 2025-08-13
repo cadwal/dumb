@@ -1,8 +1,14 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = libmissing libdumbutil libdumbwad libdumbworldb \
- libdumbrender libdumb intl \
- dumb xwad ptcomp tool doom htic test po docs
+if DUMB_CONFIG_LDWB
+LDWB_SUBDIR = libdumbworldb
+else
+LDWB_SUBDIR = 
+endif
+
+SUBDIRS = libmissing libdumbutil libdumbwad $(LDWB_SUBDIR)		\
+libdumbrender libdumb intl dumb xwad ptcomp tool doom htic test po	\
+docs
 
 # stuff for making Red Hat style rpms
 RPMRELEASE = 1

@@ -1,0 +1,117 @@
+This patch is not at all important.  It just makes the configure
+scripts a little smaller by omitting the comments which precede the
+gettext macros.  The comments inside the macros are preserved.
+
+This patch also adds "Local variables" sections in the gettext m4
+files.  This makes C-h C-i work properly if you edit the files with
+Emacs 20.
+
+
+To apply this in the gettext sources:
+
+# cd /usr/local/src/gettext-0.10.35
+(or wherever you have extracted the source tree)
+# patch -p1 </PATH/TO/gettext-0.10.35-4-comments.diff
+
+
+diff -Nurp gettext-0.10.35.kn.3/m4/ChangeLog gettext-0.10.35.kn.4/m4/ChangeLog
+--- gettext-0.10.35.kn.3/m4/ChangeLog	Wed Sep 23 18:20:10 1998
++++ gettext-0.10.35.kn.4/m4/ChangeLog	Wed Sep 23 18:28:33 1998
+@@ -9,6 +9,10 @@
+  	* gettext.m4 (AM_GNU_GETTEXT): Check whether memcpy() exists.
+  	Reported by Paul Thomas.
+ 
++	* gettext.m4, lcmessage.m4, progtest.m4: Added Local Variables
++	section.  Begin initial comments with two hashes rather than one,
++	so Automake doesn't put them in configure scripts.
++
+ 1998-04-30  Ulrich Drepper  <drepper@cygnus.com>
+ 
+ 	* gettext.m4: Add AC_OUTPUT_COMMANDS in AM_GNU_GETTEXT to rewrite
+diff -Nurp gettext-0.10.35.kn.3/m4/gettext.m4 gettext-0.10.35.kn.4/m4/gettext.m4
+--- gettext-0.10.35.kn.3/m4/gettext.m4	Wed Sep 23 18:18:45 1998
++++ gettext-0.10.35.kn.4/m4/gettext.m4	Wed Sep 23 18:26:06 1998
+@@ -1,10 +1,10 @@
+-# Macro to add for using GNU gettext.
+-# Ulrich Drepper <drepper@cygnus.com>, 1995.
+-#
+-# This file can be copied and used freely without restrictions.  It can
+-# be used in projects which are not available under the GNU Public License
+-# but which still want to provide support for the GNU gettext functionality.
+-# Please note that the actual code is *not* freely available.
++## Macro to add for using GNU gettext.
++## Ulrich Drepper <drepper@cygnus.com>, 1995.
++##
++## This file can be copied and used freely without restrictions.  It can
++## be used in projects which are not available under the GNU Public License
++## but which still want to provide support for the GNU gettext functionality.
++## Please note that the actual code is *not* freely available.
+ 
+ # serial 5
+ 
+@@ -323,3 +323,7 @@ strcasecmp strdup __argz_count __argz_st
+    sed -e "/^#/d" -e "/^\$/d" -e "s,.*,	$posrcprefix& \\\\," -e "\$s/\(.*\) \\\\/\1/" \
+ 	< $srcdir/po/POTFILES.in > po/POTFILES
+   ])
++
++## Local variables:
++## info-lookup-mode: autoconf-mode
++## End:
+diff -Nurp gettext-0.10.35.kn.3/m4/lcmessage.m4 gettext-0.10.35.kn.4/m4/lcmessage.m4
+--- gettext-0.10.35.kn.3/m4/lcmessage.m4	Mon Sep  8 15:33:12 1997
++++ gettext-0.10.35.kn.4/m4/lcmessage.m4	Wed Sep 23 18:26:26 1998
+@@ -1,10 +1,10 @@
+-# Check whether LC_MESSAGES is available in <locale.h>.
+-# Ulrich Drepper <drepper@cygnus.com>, 1995.
+-#
+-# This file can be copied and used freely without restrictions.  It can
+-# be used in projects which are not available under the GNU Public License
+-# but which still want to provide support for the GNU gettext functionality.
+-# Please note that the actual code is *not* freely available.
++## Check whether LC_MESSAGES is available in <locale.h>.
++## Ulrich Drepper <drepper@cygnus.com>, 1995.
++##
++## This file can be copied and used freely without restrictions.  It can
++## be used in projects which are not available under the GNU Public License
++## but which still want to provide support for the GNU gettext functionality.
++## Please note that the actual code is *not* freely available.
+ 
+ # serial 1
+ 
+@@ -17,3 +17,7 @@ AC_DEFUN(AM_LC_MESSAGES,
+       AC_DEFINE(HAVE_LC_MESSAGES)
+     fi
+   fi])
++
++## Local variables:
++## info-lookup-mode: autoconf-mode
++## End:
+diff -Nurp gettext-0.10.35.kn.3/m4/progtest.m4 gettext-0.10.35.kn.4/m4/progtest.m4
+--- gettext-0.10.35.kn.3/m4/progtest.m4	Mon Sep  8 15:33:31 1997
++++ gettext-0.10.35.kn.4/m4/progtest.m4	Wed Sep 23 18:27:07 1998
+@@ -1,10 +1,10 @@
+-# Search path for a program which passes the given test.
+-# Ulrich Drepper <drepper@cygnus.com>, 1996.
+-#
+-# This file can be copied and used freely without restrictions.  It can
+-# be used in projects which are not available under the GNU Public License
+-# but which still want to provide support for the GNU gettext functionality.
+-# Please note that the actual code is *not* freely available.
++## Search path for a program which passes the given test.
++## Ulrich Drepper <drepper@cygnus.com>, 1996.
++##
++## This file can be copied and used freely without restrictions.  It can
++## be used in projects which are not available under the GNU Public License
++## but which still want to provide support for the GNU gettext functionality.
++## Please note that the actual code is *not* freely available.
+ 
+ # serial 1
+ 
+@@ -45,3 +45,7 @@ else
+ fi
+ AC_SUBST($1)dnl
+ ])
++
++## Local variables:
++## info-lookup-mode: autoconf-mode
++## End:

@@ -36,6 +36,8 @@
 #include "libdumbutil/confargs.h"
 #include "libdumbutil/confeng.h"
 #include "libdumbutil/conffile.h"
+#include "libdumbutil/confhelp.h"
+#include "libdumbutil/copyright.h"
 #include "libdumbutil/log.h"
 #include "libdumbutil/safem.h"
 #include "libdumbutil/timer.h"
@@ -175,6 +177,26 @@ static int width = 0, height = 0, vwidth = 0, vheight = 0, bpp = 0,
 
 static int banner = -1, wbanner = -1, bfont = -1;
 
+/* called by conf_args() if --version is given */
+void
+print_program_version(void)
+{
+   static const struct copyright copyrights[] = {
+      { "1994", "Chris Laurel" },
+      { "1997-1998", "Josh Parsons" },
+      { "1997-1998", "Marcus Sundberg" },
+      { "1998", "Andrew Apted" },
+      { "1998", "Kalle O. Niemitalo" },
+      { "1998", "Ulf Axelsson" },
+      { "1987-1998", "Free Software Foundation, Inc." },
+      COPYRIGHT_END
+   };
+   printf("%s (DUMB) " VERSION "\n", video_dep_name);
+   print_copyrights(copyrights);
+   printf(_("This program is free software; you may redistribute it under the terms of\n"
+	    "the GNU General Public License.  This program has absolutely no warranty.\n"));
+}
+
 static void
 do_gmsg(const char *s)
 {
@@ -309,8 +331,7 @@ main(int argc, char **argv)
    conf_file = conf_file_name(".dumbrc");
 #endif
    load_failed = load_conf(dumbconf, conf_file);
-   if (conf_args(dumbconf, argc, argv))
-      return 1;
+   conf_args(dumbconf, argc, argv);
 
    /* Finished parsing the configuration.  The stdout log will
     * probably be opened again very soon.  */

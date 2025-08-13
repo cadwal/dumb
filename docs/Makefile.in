@@ -104,7 +104,7 @@ log-classes params.txt xrosella.xpm
 
 # GNU Emacs 20.2.2 automatically aligned the backslashes above!  Yow!
 
-SUBDIRS = dos maint
+SUBDIRS = dos maint patches
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 

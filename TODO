@@ -12,6 +12,7 @@ allow each level to specify its own LEVINFO, PROTOS and PHASES
 allow objects to award multiple gettables (eg. MegaSphere)
 armor should absorb damage
 center DUMB logo vertically (just look at aadumb)
+check that inventory items work
 compile as C++ on little-endian machines too
 continuous sounds for moving sectors
 documentation
@@ -23,14 +24,10 @@ get rid of all arbitrary limits
 Guile scripts in wads
 implement invincibility, light goggles, etc....
 implement sectortypes (partially done)
-inventory items (may already have some of the code for this?)
 jumping instead of levitation
 light areas should be lighter, dark ones darker (0=almost impossible to see)
-long options, including --help and --version in all programs
 make --dumb-xmul 3 --dumb-ymul 1 work
-make loops over things more efficient perhaps?  (in libdumbworldb)
 mapping
-monsters should be smarter
 move bpp-independent code to rendcommon.c
 moving vertices, sideways opening & hinged doors
 polymorphing to a monster (like in Nethack!)
@@ -41,7 +38,6 @@ snapshot.ppm when BPP=1 (8 bits)
 sound shouldn't get through closed doors
 special shooting
 support PPM_PACKCOLORS
-tunneling (in libdumbworldb)
 turning inertia control
 "Uff!" when the hero runs against a wall or falls
 use function keys for special commands, select weapons with numbers
@@ -79,6 +75,10 @@ hier: autoload a wad when an IWAD uses one of its textures?
 keymap: alternative keynames; recognize both Shift_L and Shift_R as Shift
 keymap: conditional entries like X11:KP_Up AA:8
 keymap: keymap_keyname_to_keycode()
+ldwb: make loops over things as efficient as possible
+ldwb: tunneling
+ldwb: rewrite in C++?
+log: replace perror() with something which works in a window too
 menu: configuration menus
 menu: confirm quitting
 menu: load/save/newgame

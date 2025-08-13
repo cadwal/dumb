@@ -2,6 +2,7 @@
  *
  * tool/xproto.c: XProtoThing, a program for viewing ProtoThings.
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,11 @@
 #include <X11/Xutil.h>
 
 #include "libdumbutil/dumb-nls.h"
+#include "getopt.h"		/* ../libmissing/ */
 
+#include "libdumbutil/bugaddr.h"
+#include "libdumbutil/copyright.h"
+#include "libdumbutil/exitcode.h"
 #include "libdumbutil/log.h"
 #include "libdumbwad/wadio.h"
 #include "libdumb/dsound.h"
@@ -51,11 +56,18 @@ static XFontStruct *font, *lilfont, *chofont;
 
 static XPInstance inst[1];
 
-static int silent = 0;
+/* 1 means sound is allowed.  Cleared by -s, --no-sound. */
+static int sound_flag = 1;
 
 #define RCOUNT 3
 
 static jmp_buf alarm_jb;
+
+/* argv[0] saved near the beginning of main() */
+static const char *argv0;
+
+static void print_help(FILE *dest);
+static void print_version(void);
 
 RETSIGTYPE
 sigalarm_handler(int i)
@@ -102,20 +114,36 @@ sigalarm_handler(int i)
 }
 
 static void
-usage(const char *name)
+print_help(FILE *dest)
 {
-   printf(_("Usage: %s [options]\n"
-	    "Where options are:\n"
-	    "\t-v\t\tVerbose: log to the screen.\n"
-	    "\t-s\t\tSilent: don't try to play sounds.\n"
-	    "\t-w <wadfile> [wadfile] [wadfile]...\n"
-	    "\t-l <logfile> [logfile] [logfile]...\n"
-	    "\t-d <display>\n"),
-	  name);
-   exit(1);
+   fprintf(dest,
+	   _("Usage: %s [OPTION]...\n"
+	     "Interactively view ProtoThings in X11.\n"
+	     "\n"), argv0);
+   fputs(_("  -w, --load-wad=FILE    load FILE as a WAD\n"
+	   "  -s, --no-sound         don't try to play sounds\n"
+	   "  -d, --display=DISPLAY  use X display DISPLAY\n"
+	   "  -l, --log-to=FILE      save messages to FILE\n"
+	   "  -v, --verbose          log to the screen\n"
+	   "      --help             display this help and exit\n"
+	   "      --version          output version information and exit\n"
+	   "\n"), dest);
+   print_bugaddr_message(dest);
 }
 
-#define usage() usage(argv[0])
+static void
+print_version(void)
+{
+   static const struct copyright copyrights[] = {
+      { "1998", "Josh Parsons" },
+      COPYRIGHT_END
+   };
+   fputs("XProtoThing (DUMB) " VERSION "\n", stdout);
+   print_copyrights(copyrights);
+   fputs(_("This program is free software; you may redistribute it under the terms of\n"
+	   "the GNU General Public License.  This program has absolutely no warranty.\n"),
+	 stdout);
+}
 
 #define MAX_WADS 16
 
@@ -124,8 +152,22 @@ main(int argc, char **argv)
 {
    int nwads = 0;
    const char *wadf[MAX_WADS];
-   int i, quiet = 1;
+   int verbose_flag = 0;
    char *dpyname = NULL;
+   static const struct option long_options[] =
+   {
+      { "load-wad", required_argument, NULL, 'w' },
+      /* The following option is not --silent or --quiet because GNU
+       * defines those to mean the opposite of --verbose.  */
+      { "no-sound", no_argument, NULL, 's' },
+      { "display", required_argument, NULL, 'd' },
+      { "log-to", required_argument, NULL, 'l' },
+      { "verbose", no_argument, NULL, 'v' },
+      { "help", no_argument, NULL, 'h' }, /* no -h */
+      { "version", no_argument, NULL, 'V' }, /* no -V */
+      { NULL, 0, NULL, '\0' }
+   };
+   argv0 = argv[0];
 
 #ifdef ENABLE_NLS
    setlocale(LC_ALL, "");
@@ -133,55 +175,45 @@ main(int argc, char **argv)
    textdomain(PACKAGE);
 #endif /* ENABLE_NLS */
 
-   /* scan args */
-   for (i = 1; i < argc; i++) {
-      char c;
-      if (argv[i][0] != '-')
-	 usage();
-      switch (c = argv[i][1]) {
-	 /* q = quiet */
-      case ('v'):
-	 quiet = 0;
+   for (;;) {
+      int c = getopt_long(argc, argv, "w:sd:l:v", long_options, NULL);
+      if (c == 1)
+	 break;			/* end of options */
+      switch (c) {
+      case 'w':			/* -w, --load-wad=FILE */
+	 if (nwads >= MAX_WADS) {
+	    fprintf(stderr, _("%s: internal limit on wad files exceeded\n"),
+		    argv0);
+	    exit(DUMB_EXIT_INTERNAL_LIMIT);
+	 } else
+	    wadf[nwads++] = optarg;
 	 break;
-      case ('s'):
-	 silent = 1;
+      case 's':			/* -s, --no-sound */
+	 sound_flag = 0;
 	 break;
-	 /* w = wad */
-      case ('w'):
-	 while (++i < argc) {
-	    if (argv[i][0] == '-') {
-	       i--;
-	       break;
-	    }
-	    if (nwads < MAX_WADS)
-	       wadf[nwads++] = argv[i];
-	 }
+      case 'd':			/* -d, --display=DISPLAY */
+	 dpyname = optarg;
 	 break;
-	 /* l = log */
-      case ('l'):
-	 while (++i < argc) {
-	    if (argv[i][0] == '-') {
-	       i--;
-	       break;
-	    }
-	    log_file(argv[i], LOG_ALL, NULL);
-	 }
+      case 'l':			/* -l, --log-to=FILE */
+	 log_file(optarg, LOG_ALL, NULL);
 	 break;
-	 /* d=display */
-      case ('d'):
-	 if (++i >= argc)
-	    usage();
-	 dpyname = argv[i];
+      case 'v':			/* -v, --verbose */
+	 verbose_flag = 1;
 	 break;
-	 /* ? = help */
-      case ('?'):
-      default:
-	 usage();
-      }
-   }
+      case 'h':			/*     --help */
+	 print_help(stdout);
+	 exit(EXIT_SUCCESS);
+      case 'V':			/*     --version */
+	 print_version();
+	 exit(EXIT_SUCCESS);
+      case '?':			/* invalid option */
+	 fprintf(stderr, _("Try `%s --help' for more information.\n"), argv0);
+	 exit(DUMB_EXIT_INVALID_ARGS);
+      }	/* switch */
+   } /* for ever */
 
    /* start logging */
-   if (!quiet) {
+   if (verbose_flag) {
       /*setlinebuf(stdout); *//* if stdout is a socket, we'll need this */
       log_stdout();
    }
@@ -202,7 +234,7 @@ main(int argc, char **argv)
 
    /* load wads */
    if (nwads > 0) {
-      i = 0;
+      int i = 0;
       init_iwad(wadf[i++], NULL);
       while (i < nwads)
 	 init_pwad(wadf[i++], NULL);
@@ -300,7 +332,7 @@ xproto_enter_phase(XPInstance *inst, int ph)
       ph = inst->curphase + 1;
    inst->curphase = ph;
    inst->phcount = CURPHASE.wait;
-   if (CURPHASE.sound >= 0 && !silent)
+   if (CURPHASE.sound >= 0 && sound_flag)
       play_dsound_local(CURPHASE.sound + CURPROTO.sound, 0, 0, 0);
 }
 

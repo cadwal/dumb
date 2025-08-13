@@ -1,48 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+	"http://www.w3.org/TR/REC-html40/strict.dtd">
 <html>
-<head>
-<title>Contributing to DUMB</title>
-<body>
-<h1>Contributing to DUMB</h1>
+  <head>
+    <title>Contributing to DUMB</title>
+  </head>
+  <body>
 
-If you modify DUMB, please send your changes to me at <a
-href="mailto:tosi@stekt.oulu.fi">&lt;tosi@stekt.oulu.fi&gt;</a>.  I'll
-then (try to) add them in the main distribution.
 
-<p>Of course, DUMB being free software, nothing prevents you from
-maintaining a version of your own and uploading it to FTP sites all
-over the world without telling me.  But let's try to cooperate.
+    <h1>Contributing to DUMB</h1>
 
-<h2>Requirements</h2>
+    <p>If you modify DUMB, please send your changes to me at
+      <a href="mailto:tosi@stekt.oulu.fi">&lt;tosi@stekt.oulu.fi&gt;</a>.
+      I'll then (try to) add them in the main distribution.
 
-Your changes must be distributable under the GNU General Public
-License.
+    <p>Of course, DUMB being free software, nothing prevents you from
+      maintaining a version of your own and uploading it to FTP sites
+      all over the world without telling me.  But let's try to
+      cooperate.
 
-<p>If you add new files or change much in existing files, please write
-a copyright notice at the beginning of the file.  I want many people
-to have copyrights to parts of DUMB.  Then no one alone can turn it to
-a propietary product.
 
-<p>The <a href="http://www.fsf.org/">Free Software Foundation</a> has
-another approach.  They ask people to transfer the copyrights to them.
-You can transfer the copyrights of your code to FSF if you want.  But
-not to me.
+    <h2>Requirements</h2>
 
-<h2>Recommendations</h2>
+    <p>Your changes must be distributable under the <a
+	href="http://www.gnu.org/copyleft/gpl.html">GNU General Public
+	License</a>.
 
-Please keep the *_SOURCES lists in Makefile.am in alphabetical order.
-That gives the person installing DUMB some hints on how much is still
-uncompiled.
+    <p>If you add new files or change much in existing files, please
+      write a copyright notice at the beginning of the file.  I want
+      many people to have copyrights to parts of DUMB.  Then no one
+      alone can turn it to a propietary product.
 
-<h2>C++ complications</h2>
+    <p>The <a href="http://www.gnu.org/fsf/fsf.html">Free Software
+	Foundation</a> has another approach.  They ask people to
+      transfer the copyrights to them.  You can transfer the
+      copyrights of your code to FSF if you want.  But not to me.
 
-Because DUMB is compiled as C++ on big-endian processors, the source
-code must be C++ compatible.
 
-<p>Do not define types inside a struct.  If the file is compiled as
-C++, the nested definition won't be visible outside the struct.  So,
-instead of this:
+    <h2>Recommendations</h2>
 
-<p><pre>struct op_node {
+    <p>Please keep the *_SOURCES lists in Makefile.am in alphabetical
+      order.  That gives the person installing DUMB some hints on how
+      much is still uncompiled.
+
+
+    <h2>C++ complications</h2>
+
+    <p>Because DUMB is compiled as C++ on big-endian processors, the
+    source code must be C++ compatible.
+
+    <p>Do not define types inside a struct.  If the file is compiled
+      as C++, the nested definition won't be visible outside the
+      struct.  So, instead of this:
+
+<pre>
+struct op_node {
    enum operation {
       OP_STATISTICS,
       OP_SECTOR_SIDES,
@@ -50,15 +61,16 @@ instead of this:
       OP_SET_NAME,
       OP_SET_LONGNAME
    } operation;
-   int sector;			/* for OP_SECTOR_SIDES */
-   const char *name;	/* for OP_OUTPUT_DOOM, OP_SET_NAME, OP_SET_LONGNAME */
+   int sector;          /* for OP_SECTOR_SIDES */
+   const char *name;    /* for OP_OUTPUT_DOOM, OP_SET_NAME, OP_SET_LONGNAME */
    struct op_node *next;
 };
 </pre>
 
-<p>do this:
+    <p>do this:
 
-<p><pre>enum operation {
+<pre>
+enum operation {
    OP_STATISTICS,
    OP_SECTOR_SIDES,
    OP_OUTPUT_DOOM,
@@ -67,52 +79,58 @@ instead of this:
 };
 struct op_node {
    enum operation operation;
-   int sector;			/* for OP_SECTOR_SIDES */
-   const char *name;	/* for OP_OUTPUT_DOOM, OP_SET_NAME, OP_SET_LONGNAME */
+   int sector;          /* for OP_SECTOR_SIDES */
+   const char *name;    /* for OP_OUTPUT_DOOM, OP_SET_NAME, OP_SET_LONGNAME */
    struct op_node *next;
 };
 </pre>
 
-<p>Using the identifier "<code>operation</code>" for both the member and
-the type works even in C++.
+    <p>Using the identifier "<code>operation</code>" for both the
+      member and the type works even in C++.
 
-<p>Do not use the C++ keywords as identifiers: asm, bool, catch,
-class, const_cast, delete, dynamic_cast, explicit, false, friend,
-inline, mutable, namespace, new, operator, overload, private,
-protected, public, reinterpret_cast, static_cast, template, this,
-throw, true, try, typeid, typename, using, virtual, wchar_t.
+    <p>Do not use the C++ keywords as identifiers: asm, bool, catch,
+      class, const_cast, delete, dynamic_cast, explicit, false,
+      friend, inline, mutable, namespace, new, operator, overload,
+      private, protected, public, reinterpret_cast, static_cast,
+      template, this, throw, true, try, typeid, typename, using,
+      virtual, wchar_t.
 
-<p>Don't use the C++ alternative operators: and, and_eq, bitor, compl,
-not, not_eq, or, or_eq, xor, xor_eq.
+    <p>Don't use the C++ alternative operators: and, and_eq, bitor,
+      compl, not, not_eq, or, or_eq, xor, xor_eq.
 
-<h2>File formats and email attachments</h2>
 
-I prefer unified-format diffs, as they are compact and easy to read.
-If you can't produce those, I can take other kind of diffs too.  If
-you don't have the diff program or the files are binary, you can send
-them as whole.
+    <h2>File formats and email attachments</h2>
 
-<p>Please compress your contribution with gzip unless it's trivial
-enough to be included verbatim in email.  If you don't have gzip, you
-can use zip.
+    <p>I prefer unified-format diffs, as they are compact and easy to
+      read.  If you can't produce those, I can take other kind of
+      diffs too.  If you don't have the diff program or the files are
+      binary, you can send them as whole.
 
-<p>If your contribution is less than 500k or so when compressed (it
-probably is, as dumb-0.12.tar.gz was just 340k :), you can send it to
-me as an email attachment without warning.  If it is bigger than that,
-please write to me first.
+    <p>Please compress your contribution with gzip unless it's trivial
+      enough to be included verbatim in email.  If you don't have
+      gzip, you can use zip.
 
-<p>I can decode MIME, BinHex and uuencode formats.
+    <p>If your contribution is less than 500k or so when compressed
+      (it probably is, as dumb-0.12.tar.gz was just 340k :), you can
+      send it to me as an email attachment without warning.  If it is
+      bigger than that, please write to me first.
 
-<h2>Consequences</h2>
+    <p>I can decode MIME, BinHex and uuencode formats.
 
-I will put your name and email address in some files in the DUMB
-package (probably AUTHORS, THANKS, NEWS and/or ChangeLog) and may
-mention them in postings to <a
-href="mailto:dumb-list@schlick.anu.edu.au">dumb-list</a> and <a
-href="news:comp.os.linux.announce">comp.os.linux.announce</a>.  If you
-don't want me to do that, please write so.
 
-<address>
-<a href="mailto:tosi@stekt.oulu.fi">Kalle O. Niemitalo</a>
-</address>
+    <h2>Consequences</h2>
+
+    <p>I will put your name and email address in some files in the
+      DUMB package (probably AUTHORS, THANKS, NEWS and/or ChangeLog)
+      and may mention them in postings to
+      <a href="mailto:dumb-list@schlick.anu.edu.au">dumb-list</a> and
+      <a href="news:comp.os.linux.announce">comp.os.linux.announce</a>.
+      If you don't want me to do that, please write so.
+
+
+    <address>
+      <a href="http://stekt.oulu.fi/~tosi/">Kalle O. Niemitalo</a>
+      <a href="mailto:tosi@stekt.oulu.fi">&lt;tosi@stekt.oulu.fi&gt;</a>
+    </address>
+  </body>
 </html>

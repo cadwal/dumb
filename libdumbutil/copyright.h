@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
- * libdumbutil/confhelp.h: Online help for configuration items.
- * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ * libdumbutil/copyright.h: Printing copyright info
+ * Copyright (C) 1998 by Kalle Olavi Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,24 +14,26 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
- * USA.
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111, USA.
  */
 
-#ifndef CONFHELP_H
-#define CONFHELP_H
+#ifndef LIBDUMBUTIL_COPYRIGHT_H
+#define LIBDUMBUTIL_COPYRIGHT_H
 
-#include "libdumbutil/confdef.h"
+struct copyright
+{
+   const char *years;
+   const char *holder;
+};
 
-void conf_help(const ConfModule conf[], const char *prog, const char *mod);
-void conf_usage(const ConfModule conf[], const char *prog, const char *err);
+#define COPYRIGHT_END { NULL, NULL }
 
-/* You must define this function.  It is called if --version is given.
- * If it returns, the program exits successfully.  */
-void print_program_version(void);
+void print_copyright(const struct copyright *info);
+void print_copyrights(const struct copyright info[]);
 
-#endif
+#endif /* LIBDUMBUTIL_COPYRIGHT_H */
 
 // Local Variables:
 // c-basic-offset: 3

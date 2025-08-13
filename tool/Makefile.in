@@ -106,13 +106,13 @@ l = @l@
 bin_PROGRAMS = wadtool mknulmap mkpnames $(ppm_bin_programs)
 noinst_PROGRAMS = $(x_noinst_programs)
 
-x_ldadd = $(X_LIBS) $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS)
+x_ldadd = $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS)
 
 ppm_ldadd = -lppm -lpgm -lpbm
 
 # DUMB libraries are in the build tree, so don't use $(srcdir).
-LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
- ../libdumbutil/libdumbutil.a $(INTLLIBS)
+LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a			\
+../libdumbutil/libdumbutil.a ../libmissing/libmissing.a $(INTLLIBS)
 
 mkdfnt_LDADD = $(LDADD) $(x_ldadd)
 
@@ -122,7 +122,7 @@ dark2trans_LDADD = $(LDADD) $(ppm_ldadd)
 
 CC = $(CXX_HACK_CC)
 
-INCLUDES = -I$(top_srcdir) -I../intl
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/libmissing -I../intl
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -141,34 +141,36 @@ wadtool_SOURCES = wadtool.c
 wadtool_OBJECTS =  wadtool.o
 wadtool_LDADD = $(LDADD)
 wadtool_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
-../libdumbutil/libdumbutil.a
+../libdumbutil/libdumbutil.a ../libmissing/libmissing.a
 wadtool_LDFLAGS = 
 mknulmap_SOURCES = mknulmap.c
 mknulmap_OBJECTS =  mknulmap.o
 mknulmap_LDADD = $(LDADD)
 mknulmap_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
-../libdumbutil/libdumbutil.a
+../libdumbutil/libdumbutil.a ../libmissing/libmissing.a
 mknulmap_LDFLAGS = 
 mkpnames_SOURCES = mkpnames.c
 mkpnames_OBJECTS =  mkpnames.o
 mkpnames_LDADD = $(LDADD)
 mkpnames_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
-../libdumbutil/libdumbutil.a
+../libdumbutil/libdumbutil.a ../libmissing/libmissing.a
 mkpnames_LDFLAGS = 
 dark2trans_SOURCES = dark2trans.c
 dark2trans_OBJECTS =  dark2trans.o
 dark2trans_DEPENDENCIES =  ../libdumb/libdumb.a \
-../libdumbwad/libdumbwad.a ../libdumbutil/libdumbutil.a
+../libdumbwad/libdumbwad.a ../libdumbutil/libdumbutil.a \
+../libmissing/libmissing.a
 dark2trans_LDFLAGS = 
 ppmtodumb_SOURCES = ppmtodumb.c
 ppmtodumb_OBJECTS =  ppmtodumb.o
 ppmtodumb_DEPENDENCIES =  ../libdumb/libdumb.a \
-../libdumbwad/libdumbwad.a ../libdumbutil/libdumbutil.a
+../libdumbwad/libdumbwad.a ../libdumbutil/libdumbutil.a \
+../libmissing/libmissing.a
 ppmtodumb_LDFLAGS = 
 mkdfnt_SOURCES = mkdfnt.c
 mkdfnt_OBJECTS =  mkdfnt.o
 mkdfnt_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
-../libdumbutil/libdumbutil.a
+../libdumbutil/libdumbutil.a ../libmissing/libmissing.a
 mkdfnt_LDFLAGS = 
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
@@ -308,6 +310,32 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
+dark2trans.o: dark2trans.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libmissing/getopt.h ../libdumbutil/bugaddr.h \
+	../libdumbutil/copyright.h ../libdumbutil/exitcode.h
+mkdfnt.o: mkdfnt.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libmissing/getopt.h ../libdumbutil/bugaddr.h \
+	../libdumbutil/copyright.h ../libdumbutil/exitcode.h
+mknulmap.o: mknulmap.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libmissing/getopt.h ../libdumbutil/bugaddr.h \
+	../libdumbutil/copyright.h ../libdumbutil/exitcode.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h \
+	../libdumbwad/wadwr.h ../libdumbwad/wadstruct.h \
+	../libdumbutil/endiantypes.h
+mkpnames.o: mkpnames.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libmissing/getopt.h ../libdumbutil/bugaddr.h \
+	../libdumbutil/copyright.h ../libdumbutil/endiantypes.h \
+	../libdumbutil/exitcode.h ../libdumbutil/align.h \
+	../libdumbwad/wadstruct.h
+ppmtodumb.o: ppmtodumb.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libmissing/getopt.h ../libdumbutil/bugaddr.h \
+	../libdumbutil/copyright.h ../libdumbutil/exitcode.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h
+wadtool.o: wadtool.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/bugaddr.h ../libdumbutil/copyright.h \
+	../libdumbutil/exitcode.h ../libdumbutil/log.h \
+	../libdumbwad/wadio.h ../libdumbwad/wadwr.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h
 
 info:
 dvi:

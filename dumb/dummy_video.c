@@ -33,6 +33,8 @@ ConfItem video_conf[] =
    CONFITEM_END
 };
 
+const char video_dep_name[] = "dummydumb"; /* for --version */
+
 static void *fb = NULL;
 
 void

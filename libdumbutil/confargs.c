@@ -29,7 +29,7 @@
 #include "confhelp.h"
 
 /* parse argument list in argc,argv using array of modules conf */
-int
+void
 conf_args(const ConfModule *conf, int argc, char **argv)
 {
    int i;
@@ -38,30 +38,39 @@ conf_args(const ConfModule *conf, int argc, char **argv)
       if (argv[i][0] != '-' || isdigit(argv[i][1])) {
 	 if (ci)
 	    set_conf(ci, argv[i], DIRT_ARGS);
+	 else {
+	    conf_usage(conf, argv[0], argv[i]);
+	    exit(EXIT_FAILURE);	/* parameter without option */
+	 }
+      } else if (!strcmp(argv[i], "--help") || argv[i][1] == '?') {
+	 if (argc > i + 1)
+	    conf_help(conf, argv[0], argv[i + 1]);
 	 else
-	    return conf_usage(conf, argv[0], argv[i]);
+	    conf_usage(conf, argv[0], NULL);
+	 exit(EXIT_SUCCESS);	/* help requested */
+      } else if (!strcmp(argv[i], "--version")) {
+	 print_program_version();
+	 exit(EXIT_SUCCESS);	/* version requested */
       } else if (argv[i][1] == '-') {
 	 ci = conf_lookup_longname(conf, argv[i] + 2);
-	 if (!ci)
-	    return conf_usage(conf, argv[0], argv[i]);
+	 if (!ci) {
+	    conf_usage(conf, argv[0], argv[i]);
+	    exit(EXIT_FAILURE);	/* invalid long option */
+	 }
 	 if (ci->type == CONF_TYPE_BOOL)
 	    set_conf(ci, NULL, DIRT_ARGS);
-      } else if (argv[i][1] == '?') {
-	 if (argc > i + 1)
-	    return conf_help(conf, argv[0], argv[i + 1]);
-	 else
-	    return conf_usage(conf, argv[0], NULL);
       } else {
 	 ci = conf_lookup_shortname(conf, argv[i][1]);
-	 if (!ci)
-	    return conf_usage(conf, argv[0], argv[i]);
+	 if (!ci) {
+	    conf_usage(conf, argv[0], argv[i]);
+	    exit(EXIT_FAILURE);	/* invalid short option */
+	 }
 	 if (argv[i][2])
 	    set_conf(ci, argv[i] + 2, DIRT_ARGS);
 	 else if (ci->type == CONF_TYPE_BOOL)
 	    set_conf(ci, NULL, DIRT_ARGS);
       }
    }
-   return 0;
 }
 
 // Local Variables:

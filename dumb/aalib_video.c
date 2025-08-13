@@ -90,6 +90,8 @@ ConfItem video_conf[] =
 #define cnf_font_extended (video_conf[15].intval)
 #define cnf_font_eight    (video_conf[16].intval)
 
+const char video_dep_name[] = "aadumb";	/* for --version */
+
 aa_context *aa_ctxt = NULL;
 #define aa aa_ctxt
 

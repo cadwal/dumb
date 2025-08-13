@@ -4,3 +4,10 @@ Then run configure like this:
 
 CC=i486-linuxlibc1-gcc CXX=i486-linuxlibc1-g++ \
 configure --x-libraries=/usr/lib/libc5-compat
+
+Note especially the --x-libraries part!  If you leave that out, the
+configure script looks around for the libraries and finds the libc6
+versions in /usr/X11R6/lib.
+
+There's nothing DUMB-specific in this command; it should work with
+other packages as well.

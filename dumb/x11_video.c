@@ -95,6 +95,8 @@ ConfItem video_conf[] =
 #define sync_io        (video_conf[2].intval)
 #define abort_on_error (video_conf[3].intval)
 
+const char video_dep_name[] = "xdumb"; /* for --version */
+
 enum grab_choice_enum {
    GRAB_NEVER,
    GRAB_WHEN_POINTED,

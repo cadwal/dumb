@@ -162,6 +162,7 @@
 -TXErrorEvent
 -TXEvent
 -TXExposeEvent
+-TXImage
 -TXKeyEvent
 -TXMotionEvent
 

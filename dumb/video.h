@@ -25,6 +25,7 @@
 #include "libdumbutil/confdef.h"
 
 extern ConfItem video_conf[];
+extern const char video_dep_name[]; /* like "xdumb", for --version */
 
 void init_video(int *width, int *height, int *bpp, int *real_width);
 void reset_video(void);

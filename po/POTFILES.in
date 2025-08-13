@@ -2,9 +2,11 @@
 # in the DUMB root directory.
 
 libmissing/getopt.c
+libdumbutil/bugaddr.c
 libdumbutil/confeng.c
 libdumbutil/conffile.c
 libdumbutil/confhelp.c
+libdumbutil/copyright.c
 libdumbutil/fixed.h
 libdumbutil/log.c
 libdumbutil/safeio.c

@@ -102,24 +102,25 @@ l = @l@
 
 bin_PROGRAMS = $(x_bin_programs)
 
-XWad_SOURCES = xwad.c choose.c colour.c connect.c controls.c disphash.c \
- drawmap.c mapcon.c savemap.c tchoose.c xtexture.c xwadctls.c \
- choose.h colour.h controls.h disphash.h xtexture.h xwad.h xwadmap.h
+XWad_SOURCES = xwad.c choose.c colour.c connect.c controls.c		\
+disphash.c drawmap.c mapcon.c savemap.c tchoose.c xtexture.c		\
+xwadctls.c choose.h colour.h controls.h disphash.h xtexture.h xwad.h	\
+xwadmap.h
 
-XProtoThing_SOURCES = xproto.c choose.c colour.c controls.c disphash.c \
- xproctls.c xtexture.c \
- xproto.h choose.h colour.h controls.h disphash.h xtexture.h
+XProtoThing_SOURCES = xproto.c choose.c colour.c controls.c disphash.c	\
+xproctls.c xtexture.c xproto.h choose.h colour.h controls.h disphash.h	\
+xtexture.h
 
 XProtoThing_LDADD = $(LDADD) $(DUMB_CONFIG_SOUND_LDADD)
 
 # DUMB libraries are in the build tree, so don't use $(srcdir).
-LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
- ../libdumbutil/libdumbutil.a \
- $(X_LIBS) $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS) $(INTLLIBS)
+LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a			\
+../libdumbutil/libdumbutil.a ../libmissing/libmissing.a $(X_PRE_LIBS)	\
+-lX11 $(X_EXTRA_LIBS) $(INTLLIBS)
 
 CC = $(CXX_HACK_CC)
 
-INCLUDES = -I$(top_srcdir) -I../intl
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/libmissing -I../intl
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -138,12 +139,13 @@ XWad_OBJECTS =  xwad.o choose.o colour.o connect.o controls.o disphash.o \
 drawmap.o mapcon.o savemap.o tchoose.o xtexture.o xwadctls.o
 XWad_LDADD = $(LDADD)
 XWad_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
-../libdumbutil/libdumbutil.a
+../libdumbutil/libdumbutil.a ../libmissing/libmissing.a
 XWad_LDFLAGS = 
 XProtoThing_OBJECTS =  xproto.o choose.o colour.o controls.o disphash.o \
 xproctls.o xtexture.o
 XProtoThing_DEPENDENCIES =  ../libdumb/libdumb.a \
-../libdumbwad/libdumbwad.a ../libdumbutil/libdumbutil.a
+../libdumbwad/libdumbwad.a ../libdumbutil/libdumbutil.a \
+../libmissing/libmissing.a
 XProtoThing_LDFLAGS = 
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
@@ -258,6 +260,62 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
+choose.o: choose.c ../config.h controls.h choose.h colour.h disphash.h
+colour.o: colour.c ../config.h xwad.h ../libdumbutil/fixed.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
+	../libdumbwad/wadio.h controls.h choose.h colour.h
+connect.o: connect.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h xwad.h \
+	../libdumbutil/fixed.h ../libdumbwad/wadstruct.h \
+	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h controls.h \
+	choose.h
+controls.o: controls.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h controls.h colour.h \
+	disphash.h
+disphash.o: disphash.c ../config.h disphash.h
+drawmap.o: drawmap.c ../config.h xwad.h ../libdumbutil/fixed.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
+	../libdumbwad/wadio.h controls.h choose.h colour.h xwadmap.h
+mapcon.o: mapcon.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h xwad.h ../libdumbutil/fixed.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
+	../libdumbwad/wadio.h controls.h choose.h xwadmap.h
+savemap.o: savemap.c ../config.h ../libdumbutil/log.h \
+	../libdumbutil/safem.h ../libdumbwad/wadwr.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h xwad.h \
+	../libdumbutil/fixed.h ../libdumbwad/wadio.h controls.h \
+	choose.h
+tchoose.o: tchoose.c ../config.h ../libdumbutil/dumb-nls.h xtexture.h \
+	../libdumb/texture.h ../libdumbwad/wadio.h controls.h choose.h \
+	colour.h disphash.h xwad.h ../libdumbutil/fixed.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h
+xproctls.o: xproctls.c ../config.h ../libdumbutil/dumb-nls.h xproto.h \
+	../libdumbutil/fixed.h ../libdumbwad/wadio.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h \
+	../libdumbutil/endiantypes.h ../libdumb/texture.h controls.h \
+	choose.h
+xproto.o: xproto.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libmissing/getopt.h ../libdumbutil/bugaddr.h \
+	../libdumbutil/copyright.h ../libdumbutil/exitcode.h \
+	../libdumbutil/log.h ../libdumbwad/wadio.h ../libdumb/dsound.h \
+	../libdumbutil/fixed.h ../libdumbutil/endiantypes.h \
+	../libdumb/view.h ../libdumb/sound.h ../libdumbutil/confdef.h \
+	xproto.h ../libdumb/prothing.h ../libdumb/prothingstruct.h \
+	../libdumb/texture.h controls.h choose.h colour.h disphash.h \
+	xtexture.h
+xtexture.o: xtexture.c ../config.h xtexture.h ../libdumb/texture.h \
+	../libdumbwad/wadio.h
+xwadctls.o: xwadctls.c ../config.h ../libdumbutil/dumb-nls.h xwad.h \
+	../libdumbutil/fixed.h ../libdumbwad/wadstruct.h \
+	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h controls.h \
+	choose.h
+xwad.o: xwad.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libmissing/getopt.h ../libdumbutil/bugaddr.h \
+	../libdumbutil/copyright.h ../libdumbutil/exitcode.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h \
+	../libdumbwad/wadio.h xwad.h ../libdumbutil/fixed.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
+	controls.h choose.h colour.h disphash.h
 
 info:
 dvi:

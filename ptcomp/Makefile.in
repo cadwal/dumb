@@ -99,18 +99,18 @@ l = @l@
 
 bin_PROGRAMS = ptcomp
 
-ptcomp_SOURCES = ptcomp.c globals.h token.c token.h parm.c parm.h \
- animcomp.c animcomp.h gettcomp.c gettcomp.h licomp.c licomp.h \
- ltcomp.c ltcomp.h phasecomp.c phasecomp.h protocomp.c protocomp.h \
- soundcomp.c soundcomp.h
+ptcomp_SOURCES = ptcomp.c globals.h token.c token.h parm.c parm.h	\
+animcomp.c animcomp.h gettcomp.c gettcomp.h licomp.c licomp.h ltcomp.c	\
+ltcomp.h phasecomp.c phasecomp.h protocomp.c protocomp.h soundcomp.c	\
+soundcomp.h
 
 # DUMB libraries are in the build tree, so don't use $(srcdir).
-LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
- ../libdumbutil/libdumbutil.a $(INTLLIBS)
+LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a			\
+../libdumbutil/libdumbutil.a ../libmissing/libmissing.a $(INTLLIBS)
 
 CC = $(CXX_HACK_CC)
 
-INCLUDES = -I$(top_srcdir) -I../intl
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/libmissing -I../intl
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -129,7 +129,7 @@ ptcomp_OBJECTS =  ptcomp.o token.o parm.o animcomp.o gettcomp.o licomp.o \
 ltcomp.o phasecomp.o protocomp.o soundcomp.o
 ptcomp_LDADD = $(LDADD)
 ptcomp_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
-../libdumbutil/libdumbutil.a
+../libdumbutil/libdumbutil.a ../libmissing/libmissing.a
 ptcomp_LDFLAGS = 
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
@@ -240,6 +240,46 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
+animcomp.o: animcomp.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/safem.h ../libdumbutil/timer.h \
+	../libdumb/animtexstruct.h token.h globals.h parm.h \
+	../libdumbutil/fixed.h animcomp.h
+gettcomp.o: gettcomp.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/safem.h ../libdumb/gettablestruct.h \
+	../libdumbutil/endiantypes.h token.h globals.h parm.h \
+	../libdumbutil/fixed.h gettcomp.h protocomp.h soundcomp.h
+licomp.o: licomp.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/safem.h ../libdumb/levinfostruct.h \
+	../libdumbutil/endiantypes.h token.h globals.h parm.h \
+	../libdumbutil/fixed.h licomp.h
+ltcomp.o: ltcomp.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/safem.h ../libdumb/levdatanums.h \
+	../libdumb/linetypestruct.h ../libdumbutil/endiantypes.h \
+	../libdumbutil/fixed.h token.h globals.h parm.h ltcomp.h \
+	protocomp.h soundcomp.h
+parm.o: parm.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/timer.h parm.h ../libdumbutil/fixed.h token.h
+phasecomp.o: phasecomp.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/safem.h token.h globals.h parm.h \
+	../libdumbutil/fixed.h phasecomp.h ../libdumb/prothingstruct.h \
+	../libdumbutil/endiantypes.h soundcomp.h
+protocomp.o: protocomp.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/safem.h ../libdumb/prothingstruct.h \
+	../libdumbutil/endiantypes.h ../libdumbutil/fixed.h token.h \
+	globals.h parm.h gettcomp.h phasecomp.h protocomp.h
+ptcomp.o: ptcomp.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libmissing/getopt.h ../libdumbutil/bugaddr.h \
+	../libdumbutil/copyright.h ../libdumbutil/exitcode.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h token.h globals.h \
+	parm.h ../libdumbutil/fixed.h animcomp.h gettcomp.h licomp.h \
+	ltcomp.h phasecomp.h ../libdumb/prothingstruct.h \
+	../libdumbutil/endiantypes.h protocomp.h soundcomp.h
+soundcomp.o: soundcomp.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/safem.h ../libdumb/dsound.h \
+	../libdumbutil/fixed.h ../libdumbutil/endiantypes.h \
+	../libdumb/view.h token.h globals.h parm.h soundcomp.h
+token.o: token.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/safem.h token.h
 
 info:
 dvi:

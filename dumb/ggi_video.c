@@ -61,6 +61,7 @@ ConfItem video_conf[] =
    CONFITEM_END
 };
 
+const char video_dep_name[] = "ggidumb"; /* for --version */
 
 struct ggi_screen_info {
 

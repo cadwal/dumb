@@ -1,16 +1,22 @@
 ## Process this file with automake to produce Makefile.in
 
-noinst_PROGRAMS = fixed_bm ldltest
+if DUMB_CONFIG_LDWB
+ldwb_programs = ldltest
+else
+ldwb_programs = 
+endif
 
-fixed_bm_LDADD = ../libdumbutil/libdumbutil.a $(INTLLIBS)
+noinst_PROGRAMS = fixed_bm $(ldwb_programs)
+
+LDADD = ../libdumbutil/libdumbutil.a ../libmissing/libmissing.a	\
+$(INTLLIBS)
+
+fixed_bm_LDADD = $(LDADD)
 
 # DUMB libraries are in the build tree, so don't use $(srcdir).
-# libdumb.a and libdumbworldb.a currently refer to each other.  This
-# will be fixed later.
-ldltest_LDADD = ../libdumb/libdumb.a ../libdumbworldb/libdumbworldb.a \
- ../libdumb/libdumb.a \
- ../libdumbwad/libdumbwad.a ../libdumbutil/libdumbutil.a \
- ../libmissing/libmissing.a $(INTLLIBS)
+# FIXME: libdumb.a and libdumbworldb.a currently refer to each other.
+ldltest_LDADD = ../libdumb/libdumb.a ../libdumbworldb/libdumbworldb.a	\
+../libdumb/libdumb.a ../libdumbwad/libdumbwad.a $(LDADD)
 
 # libintl.h is generated in the build tree.
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/libmissing -I../intl

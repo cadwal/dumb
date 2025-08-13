@@ -43,7 +43,7 @@ DUMBLOGO.lump: ../docs/dumblogo.ppm PLAYPAL.lump $(ppmtodumb)
 	$(ppmtodumb) -p -M PLAYPAL.lump <$< >$@
 
 $(d4d_pt_lumps): $(d4d_sources) $(ptcomp)
-	$(pt_preprocess) -DDOOM $< | $(ptcomp) .
+	$(pt_preprocess) -DDOOM $< | $(ptcomp) -d .
 
 COLORM16.lump: PLAYPAL.lump $(ppmtodumb)
 	$(ppmtodumb) -c -2 -M $< >$@

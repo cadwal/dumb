@@ -2,6 +2,7 @@
  *
  * xwad/xwad.c: The level editor.
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <limits.h>
@@ -38,7 +40,11 @@
 #include <X11/keysym.h>
 
 #include "libdumbutil/dumb-nls.h"
+#include "getopt.h"		/* ../libmissing/ */
 
+#include "libdumbutil/bugaddr.h"
+#include "libdumbutil/copyright.h"
+#include "libdumbutil/exitcode.h"
 #include "libdumbutil/log.h"
 #include "libdumbutil/safem.h"
 #include "libdumbwad/wadio.h"
@@ -47,11 +53,19 @@
 #include "colour.h"
 #include "disphash.h"
 
+#define MAX_WADS 16
+
 GC mapgc, mapgc2, msggc;
 Cursor drag_map_cursor, drag_obj_cursor;
 XFontStruct *msgfont, *detailfont, *lilfont;
 
 static XWadInstance inst[1];
+
+/* argv[0] saved near the beginning of main() */
+static const char *argv0;
+
+static void print_help(FILE *dest);
+static void print_version(void);
 
 #ifdef HAVE_FORK
 RETSIGTYPE
@@ -66,22 +80,37 @@ sigchld_handler(int i)
 #endif /* HAVE_FORK */
 
 static void
-usage(const char *name)
+print_help(FILE *dest)
 {
-   printf(_("Usage: %s [options]\n"
-	    "Where options are:\n"
-	    "\t-v\t\tVerbose: log to the screen.\n"
-	    "\t-w <wadfile> [wadfile] [wadfile]...\n"
-	    "\t-l <logfile> [logfile] [logfile]...\n"
-	    "\t-m <mapname>\n"
-	    "\t-d <display>\n"),
-	  name);
-   exit(1);
+   fprintf(dest,
+	   _("Usage: %s [OPTION]...\n"
+	     "Interactively edit DUMB levels in X11.\n"
+	     "\n"), argv0);
+   fputs(_("  -w, --load-wad=FILE    load FILE as a WAD\n"
+	   "  -m, --map=MAPNAME      start editing map MAPNAME (default E1M1)\n"
+	   "  -d, --display=DISPLAY  use X display DISPLAY\n"
+	   "  -l, --log-to=FILE      save messages to FILE\n"
+	   "  -v, --verbose          log to the screen\n"
+	   "      --help             display this help and exit\n"
+	   "      --version          output version information and exit\n"
+	   "\n"), dest);
+   print_bugaddr_message(dest);
 }
 
-#define usage() usage(argv[0])
-
-#define MAX_WADS 16
+static void
+print_version(void)
+{
+   static const struct copyright copyrights[] = {
+      { "1998", "Josh Parsons" },
+      { "1998", "Kalle Niemitalo" },
+      COPYRIGHT_END
+   };
+   fputs("XWad (DUMB) " VERSION "\n", stdout);
+   print_copyrights(copyrights);
+   fputs(_("This program is free software; you may redistribute it under the terms of\n"
+	   "the GNU General Public License.  This program has absolutely no warranty.\n"),
+	 stdout);
+}
 
 static int
 wadmapcmp(const char *wname, const char *mname)
@@ -100,9 +129,22 @@ main(int argc, char **argv)
 {
    int nwads = 0;
    const char *wadf[MAX_WADS];
-   int i, quiet = 1;
+   int verbose_flag = 0;
    const char *mapname = "E1M1";
    char *dpyname = NULL;
+   static const struct option long_options[] =
+   {
+      { "load-wad", required_argument, NULL, 'w' },
+      { "map", required_argument, NULL, 'm' },
+      { "display", required_argument, NULL, 'd' },
+      { "log-to", required_argument, NULL, 'l' },
+      { "verbose", no_argument, NULL, 'v' },
+      { "help", no_argument, NULL, 'h' }, /* no -h */
+      { "version", no_argument, NULL, 'V' }, /* no -V */
+      { NULL, 0, NULL, '\0' }
+   };
+
+   argv0 = argv[0];
 
 #ifdef ENABLE_NLS
    setlocale(LC_ALL, "");
@@ -110,58 +152,45 @@ main(int argc, char **argv)
    textdomain(PACKAGE);
 #endif /* ENABLE_NLS */
 
-   /* scan args */
-   for (i = 1; i < argc; i++) {
-      char c;
-      if (argv[i][0] != '-')
-	 usage();
-      switch (c = argv[i][1]) {
-	 /* q = quiet */
-      case ('v'):
-	 quiet = 0;
+   for (;;) {
+      int c = getopt_long(argc, argv, "w:m:d:l:v", long_options, NULL);
+      if (c == -1)
+	 break;			/* end of options */
+      switch (c) {
+      case 'w':			/* -w, --load-wad=FILE */
+	 if (nwads >= MAX_WADS) {
+	    fprintf(stderr, _("%s: internal limit on wad files exceeded\n"),
+		    argv0);
+	    exit(DUMB_EXIT_INTERNAL_LIMIT);
+	 } else
+	    wadf[nwads++] = optarg;
 	 break;
-	 /* w = wad */
-      case ('w'):
-	 while (++i < argc) {
-	    if (argv[i][0] == '-') {
-	       i--;
-	       break;
-	    }
-	    if (nwads < MAX_WADS)
-	       wadf[nwads++] = argv[i];
-	 }
+      case 'm':			/* -m, --map=MAPNAME */
+	 mapname = optarg;
 	 break;
-	 /* l = log */
-      case ('l'):
-	 while (++i < argc) {
-	    if (argv[i][0] == '-') {
-	       i--;
-	       break;
-	    }
-	    log_file(argv[i], LOG_ALL, NULL);
-	 }
+      case 'd':			/* -d, --display=DISPLAY */
+	 dpyname = optarg;
 	 break;
-	 /* m = map */
-      case ('m'):
-	 if (++i >= argc)
-	    usage();
-	 mapname = argv[i];
+      case 'l':			/* -l, --log-to=FILE */
+	 log_file(optarg, LOG_ALL, NULL);
 	 break;
-	 /* d=display */
-      case ('d'):
-	 if (++i >= argc)
-	    usage();
-	 dpyname = argv[i];
+      case 'v':			/* -v, --verbose */
+	 verbose_flag = 0;
 	 break;
-	 /* ? = help */
-      case ('?'):
-      default:
-	 usage();
-      }
-   }
+      case 'h':			/*     --help */
+	 print_help(stdout);
+	 exit(EXIT_SUCCESS);
+      case 'V':			/*     --version */
+	 print_version();
+	 exit(EXIT_SUCCESS);
+      case '?':			/* invalid option */
+	 fprintf(stderr, _("Try `%s --help' for more information.\n"), argv0);
+	 exit(DUMB_EXIT_INVALID_ARGS);
+      }	/* switch */
+   } /* for ever */
 
    /* start logging */
-   if (!quiet) {
+   if (verbose_flag) {
       /*setlinebuf(stdout); *//* if stdout is a socket, we'll need this */
       log_stdout();
    }
@@ -189,10 +218,11 @@ main(int argc, char **argv)
 
    /* load wads */
    if (nwads > 0) {
-      i = 0;
+      int i = 0;
       init_iwad(wadf[i++], NULL);
       while (i < nwads) {
 	 /* if this PWAD has the same name as the level, back it up */
+	 /* TODO: delay this until saving for the first time */
 	 if (mapname && !wadmapcmp(wadf[i], mapname)) {
 #ifdef PATH_MAX
 	    char buf[PATH_MAX];

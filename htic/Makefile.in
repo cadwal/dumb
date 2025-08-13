@@ -252,7 +252,7 @@ DUMBLOGO.lump: ../docs/dumblogo.ppm PLAYPAL.lump $(ppmtodumb)
 	$(ppmtodumb) -p -M PLAYPAL.lump <$< >$@
 
 $(h4d_pt_lumps): $(h4d_sources) $(ptcomp)
-	$(pt_preprocess) -DHERETIC $< | $(ptcomp) .
+	$(pt_preprocess) -DHERETIC $< | $(ptcomp) -d .
 
 COLORM16.lump: PLAYPAL.lump $(ppmtodumb)
 	$(ppmtodumb) -c -2 -M $< >$@

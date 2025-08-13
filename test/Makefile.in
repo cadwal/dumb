@@ -97,17 +97,20 @@ USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 l = @l@
 
-noinst_PROGRAMS = fixed_bm ldltest
+@DUMB_CONFIG_LDWB_TRUE@ldwb_programs = ldltest
+@DUMB_CONFIG_LDWB_FALSE@ldwb_programs = 
 
-fixed_bm_LDADD = ../libdumbutil/libdumbutil.a $(INTLLIBS)
+noinst_PROGRAMS = fixed_bm $(ldwb_programs)
+
+LDADD = ../libdumbutil/libdumbutil.a ../libmissing/libmissing.a	\
+$(INTLLIBS)
+
+fixed_bm_LDADD = $(LDADD)
 
 # DUMB libraries are in the build tree, so don't use $(srcdir).
-# libdumb.a and libdumbworldb.a currently refer to each other.  This
-# will be fixed later.
-ldltest_LDADD = ../libdumb/libdumb.a ../libdumbworldb/libdumbworldb.a \
- ../libdumb/libdumb.a \
- ../libdumbwad/libdumbwad.a ../libdumbutil/libdumbutil.a \
- ../libmissing/libmissing.a $(INTLLIBS)
+# FIXME: libdumb.a and libdumbworldb.a currently refer to each other.
+ldltest_LDADD = ../libdumb/libdumb.a ../libdumbworldb/libdumbworldb.a	\
+../libdumb/libdumb.a ../libdumbwad/libdumbwad.a $(LDADD)
 
 # libintl.h is generated in the build tree.
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/libmissing -I../intl
@@ -132,7 +135,8 @@ X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_PRE_LIBS = @X_PRE_LIBS@
 fixed_bm_SOURCES = fixed_bm.c
 fixed_bm_OBJECTS =  fixed_bm.o
-fixed_bm_DEPENDENCIES =  ../libdumbutil/libdumbutil.a
+fixed_bm_DEPENDENCIES =  ../libdumbutil/libdumbutil.a \
+../libmissing/libmissing.a
 fixed_bm_LDFLAGS = 
 ldltest_SOURCES = ldltest.c
 ldltest_OBJECTS =  ldltest.o

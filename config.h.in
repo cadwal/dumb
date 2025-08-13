@@ -135,6 +135,9 @@
 /* A standard place to look for HERETIC .WADs */
 #undef DUMB_CONFIG_HERETIC_PATH
 
+/* Define to enable libdumbworldb */
+#undef DUMB_CONFIG_LDWB
+
 /* The number of bytes in a int.  */
 #undef SIZEOF_INT
 
@@ -161,6 +164,9 @@
 
 /* Define if you have the getpagesize function.  */
 #undef HAVE_GETPAGESIZE
+
+/* Define if you have the memcpy function.  */
+#undef HAVE_MEMCPY
 
 /* Define if you have the munmap function.  */
 #undef HAVE_MUNMAP

@@ -4,11 +4,11 @@
 
 Summary: Doom-compatible 3D game engine
 Name: dumb
-Version: 0.13.2
+Version: 0.13.3
 Release: 1
 Copyright: GPL
 Group: Games
-Source: samba.anu.edu.au:/pub/dumb/source/dumb-0.13.2.tar.gz
+Source: samba.anu.edu.au:/pub/dumb/source/dumb-0.13.3.tar.gz
 
 %description
 This program allows you to build and play 3D games rather after the

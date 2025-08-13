@@ -1,0 +1,42 @@
+This patch fixes a minor bug in po-mode.  You don't need this if you
+aren't going to participate in the translation work.
+
+
+To apply this in the gettext sources:
+
+# cd /usr/local/src/gettext-0.10.35
+(or wherever you have extracted the source tree)
+# patch -p1 </PATH/TO/gettext-0.10.35-1-po-regexp.diff
+
+With some creative thinking, you should be able to apply this to a
+gettext binary package as well.  Use `locate' to find the files.
+Remember to get rid of the old po-mode.elc.
+
+
+diff -Nurp gettext-0.10.35/misc/po-mode.el gettext-0.10.35.kn.1/misc/po-mode.el
+--- gettext-0.10.35/misc/po-mode.el	Wed Apr 29 22:28:56 1998
++++ gettext-0.10.35.kn.1/misc/po-mode.el	Wed Sep 23 16:36:32 1998
+@@ -1211,7 +1211,7 @@ If WRAP is not nil, the search may wrap 
+ ;; Untranslated entries.
+ 
+ (defvar po-after-entry-regexp
+-  "\\(\\'\\|\\(#[ \t]*\\)?[^\"]\\)"
++  "\\(\\'\\|\\(#[ \t]*\\)?$\\)"
+   "Regexp which should be true after a full msgstr string matched.")
+ 
+ (defvar po-untranslated-regexp
+diff -Nurp gettext-0.10.35/misc/ChangeLog gettext-0.10.35.kn.1/misc/ChangeLog
+--- gettext-0.10.35/misc/ChangeLog	Wed Apr 29 22:29:15 1998
++++ gettext-0.10.35.kn.1/misc/ChangeLog	Wed Sep 23 16:37:38 1998
+@@ -1,3 +1,11 @@
++1998-05-09  François Pinard  <pinard@iro.umontreal.ca>
++
++	* po-mode.el (po-after-entry-regexp): Check if at end of line,
++	rather than for any character not being quote.  Else, M-u skips
++	over immediately previous untranslated entry, because backward
++	pattern extends beyond point.
++	Reported by Kalle Niemitalo.
++
+ 1998-03-30  François Pinard  <pinard@iro.umontreal.ca>
+ 
+ 	* po-mode.el (po-tags-search, po-mark-translatable,

@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
- * libdumbutil/confhelp.h: Online help for configuration items.
- * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ * libdumbutil/bugaddr.c: Where to report bugs.
+ * Copyright (C) 1998 by Kalle Olavi Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,24 +14,25 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
- * USA.
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111, USA.
  */
 
-#ifndef CONFHELP_H
-#define CONFHELP_H
+#include <config.h>		/* may define const */
 
-#include "libdumbutil/confdef.h"
+#include "libdumbutil/dumb-nls.h"
 
-void conf_help(const ConfModule conf[], const char *prog, const char *mod);
-void conf_usage(const ConfModule conf[], const char *prog, const char *err);
+#include "bugaddr.h"
 
-/* You must define this function.  It is called if --version is given.
- * If it returns, the program exits successfully.  */
-void print_program_version(void);
+/* This can be changed by each program.  */
+const char *program_bug_address = "dumb-list@schlick.anu.edu.au";
 
-#endif
+void
+print_bugaddr_message(FILE *dest)
+{
+   fprintf(dest, _("Report bugs to %s.\n"), program_bug_address);
+}
 
 // Local Variables:
 // c-basic-offset: 3

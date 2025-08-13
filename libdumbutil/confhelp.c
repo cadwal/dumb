@@ -26,6 +26,7 @@
 
 #include "libdumbutil/dumb-nls.h"
 
+#include "bugaddr.h"
 #include "confhelp.h"
 #include "confdef.h"
 #include "confeng.h"
@@ -34,7 +35,7 @@ static void swhelp(ConfItem *ci, const char *mod);
 static void modhelp(const ConfModule *conf);
 static void pr_etype(const ConfEnum *ce);
 
-int
+void
 conf_help(const ConfModule *conf, const char *prog, const char *mod)
 {
    conf_usage(conf, prog, NULL);
@@ -42,14 +43,14 @@ conf_help(const ConfModule *conf, const char *prog, const char *mod)
       /* help with a switch */
       ConfItem *ci;
       if (mod[1] == '?')
-	 return 1;
+	 return;
       else if (mod[1] == '-')
 	 ci = conf_lookup_longname(conf, mod + 2);
       else
 	 ci = conf_lookup_shortname(conf, mod[1]);
       if (ci)
 	 swhelp(ci, mod);
-      else
+      else			/* FIXME: --help --help */
 	 printf(_("`%s' is not a switch I recognise\n"), mod);
    } else {
       /* help with a module */
@@ -63,10 +64,9 @@ conf_help(const ConfModule *conf, const char *prog, const char *mod)
 	 conf++;
       }
    }
-   return 1;
 }
 
-int
+void
 conf_usage(const ConfModule *conf, const char *prog, const char *err)
 {
    if (err)
@@ -74,17 +74,19 @@ conf_usage(const ConfModule *conf, const char *prog, const char *err)
 	       "  The token which is causing trouble\n"
 	       "is `%s'.\n\n"), err);
    printf(_("usage: %s [switch [parameter]] [switch [parameter]]...\n\n"
-	    "For a list of all switches available, invoke %s -? all\n\n"
-	    "Or, for switches relating to a particular module, %s -? <module>\n"
+	    "For a list of all switches available, invoke %s --help all\n\n"
+	    "Or, for switches relating to a particular module, %s --help <module>\n"
 	    "where module is one of: all"),
 	  prog, prog, prog);
    while (conf->name) {
       printf(", %s", conf->name);
       conf++;
    }
-   printf(_("\n\nFor information on a particular switch: %s -? <switch>\n\n"),
+   printf(_("\n\nFor information on a particular switch: %s --help <switch>\n\n"),
 	  prog);
-   return 1;
+   printf(_("You can abbreviate `--help' as `-\\?'.\n"
+	    "\n"));
+   print_bugaddr_message(stdout);
 }
 
 static void

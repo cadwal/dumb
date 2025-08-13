@@ -2,6 +2,7 @@
  *
  * tool/wadtool.c: Copy lumps between wads and other files.
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,9 @@
 
 #include "libdumbutil/dumb-nls.h"
 
+#include "libdumbutil/bugaddr.h"
+#include "libdumbutil/copyright.h"
+#include "libdumbutil/exitcode.h"
 #include "libdumbutil/log.h"
 #include "libdumbwad/wadio.h"
 #include "libdumbwad/wadwr.h"
@@ -39,32 +43,51 @@
 /* There should be a --verbose, but because there isn't, this is always 1.  */
 int verbose_flag = 1;
 
-int
-usage(void)
-{
-   printf(_("Usage:  wadtool <option> <file> <file>... <option> <file>...\n\n"
-	    "Options:\n"
-	    " -r <wadfile> : read this file as an IWAD\n"
-	    " -p <wadfile> : read these files as PWADs\n"
-	    " -w <wadfile> : start writing output to this PWAD\n"
-	    " -W <wadfile> : start writing output to this IWAD\n"
-	    " -D <dir>     : start writing output to this directory\n"
-	    " -c <wadfile> : copy all lumps in this wadfile (without patching)\n"
-	    " -l <lump>    : copy these lumps to the current wad\n"
-	    " -L <lump>    : spit out an empty lump\n"
-	    " -x <lump>    : copy these lumps to raw files\n"
-	    /*" -X <s> <d>   : copy lump <s> to raw file <d>\n" */
-	    " -f <rawfile> : copy raw file to lump (guessing lumpname)\n"
-	    " -F <rawfile> : copy raw file to lump (adding to current)\n"
-	    " -n <s> <d>   : copy lump 's' to lump 'd'\n"));
-   exit(1);
-}
+void print_help(FILE *dest);
+void print_version(void);
 
 typedef enum {
    None, ReadWad, WriteIWad, WritePWad, WriteDir, PatchWad, CatWad,
    WriteLump, RenameLump,
    WriteRaw, WriteRawCurrent, SpitLump, ExtractLump	/*, ExtractLumpAs */
 } Mode;
+
+void
+print_help(FILE *dest)
+{
+   fprintf(dest,
+	   _("Usage:  wadtool <option> <file> <file>... <option> <file>...\n\n"
+	     "Options:\n"
+	     " -r <wadfile> : read this file as an IWAD\n"
+	     " -p <wadfile> : read these files as PWADs\n"
+	     " -w <wadfile> : start writing output to this PWAD\n"
+	     " -W <wadfile> : start writing output to this IWAD\n"
+	     " -D <dir>     : start writing output to this directory\n"
+	     " -c <wadfile> : copy all lumps in this wadfile (without patching)\n"
+	     " -l <lump>    : copy these lumps to the current wad\n"
+	     " -L <lump>    : spit out an empty lump\n"
+	     " -x <lump>    : copy these lumps to raw files\n"
+	     /*" -X <s> <d>   : copy lump <s> to raw file <d>\n" */
+	     " -f <rawfile> : copy raw file to lump (guessing lumpname)\n"
+	     " -F <rawfile> : copy raw file to lump (adding to current)\n"
+	     " -n <s> <d>   : copy lump 's' to lump 'd'\n"
+	     "\n"));
+   print_bugaddr_message(dest);
+}
+
+void
+print_version(void)
+{
+   static const struct copyright copyrights[] = {
+      { "1998", "Josh Parsons" },
+      COPYRIGHT_END
+   };
+   fputs("wadtool (DUMB) " VERSION "\n", stdout);
+   print_copyrights(copyrights);
+   fputs(_("This program is free software; you may redistribute it under the terms of\n"
+	   "the GNU General Public License.  This program has absolutely no warranty.\n"),
+	 stdout);
+}
 
 void
 catwad(WADWR *wr, FILE *fin)
@@ -112,8 +135,20 @@ main(int argc, char **argv)
    textdomain(PACKAGE);
 #endif /* ENABLE_NLS */
    log_stdout();
-   if (argc < 2)
-      usage();
+   if (argc >= 2) {
+      if (!strcmp(argv[1], "--help")) {
+	 print_help(stdout);
+	 exit(EXIT_SUCCESS);
+      }
+      if (!strcmp(argv[1], "--version")) {
+	 print_version();
+	 exit(EXIT_SUCCESS);
+      }
+   }
+   if (argc < 2) {
+      print_help(stderr);
+      exit(DUMB_EXIT_INVALID_ARGS);
+   }
    for (i = 1; i < argc; i++) {
       if (argv[i][0] == '-')
 	 switch (argv[i][1]) {
@@ -155,7 +190,8 @@ main(int argc, char **argv)
 	    mode = SpitLump;
 	    break;
 	 default:
-	    usage();
+	    print_help(stderr);
+	    exit(DUMB_EXIT_INVALID_ARGS);
       } else
 	 switch (mode) {
 	 case (ReadWad):
@@ -266,14 +302,14 @@ main(int argc, char **argv)
 	    }
 	    break;
 	 case (None):
-	    usage();
-	    break;
+	    print_help(stderr);
+	    exit(DUMB_EXIT_INVALID_ARGS);
 	 }
    }
    if (wr)
       wadwr_close(wr);
    reset_wad();
-   return 0;
+   exit(EXIT_SUCCESS);
 }
 
 // Local Variables:
