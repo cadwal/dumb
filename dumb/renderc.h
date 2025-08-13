@@ -232,7 +232,7 @@ static LevData *ld = NULL;
       (ldthingd(ld)[on].tmpinv))
 #define OBJECT_IMAGE(on) (ldthingd(ld)[on].image)
 #define OBJECT_IS_MIRRORIMAGE(on) (ldthingd(ld)[on].mirror_image)
-#define OBJECT_INVISIBLE(on) (ldthingd(ld)[on].proto->sprite[0]==0||(ldthingd(ld)[on].proto->flags&PT_BOGUS))
+#define OBJECT_INVISIBLE(on) (ldthingd(ld)[on].proto->sprite[0]==0||(ldthingd(ld)[on].proto->flags&PT_BOGUS)||(ldthingd(ld)[on].phase_tbl[ldthingd(ld)[on].phase].flags&TPH_TINVIS))
 #define OBJECT_EXISTS(on) (ldthingd(ld)[on].proto!=NULL)
 
 #define REGION_FLOOR(i) ldsectord(ld)[i].floor

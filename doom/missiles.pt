@@ -7,9 +7,8 @@
 #define GlowRate  200msec
 #define ExplodeRate  300msec
 
-// IDEA: (allow plasma/bfg to pass through impfireball etc)
 #define EnergyBall
-#define EnergyProof  Hits 1
+#define EnergyProof
 
 
 PhaseTable FireBall
@@ -28,27 +27,27 @@ PhaseTable FireBall
 Proto ImpFireBall 8004
   Sprite BAL1
   Phases FireBall
-  Damage 3
-  Size 16 16
-  Explosive EnergyBall ZCenter BulletProof EnergyProof
-  NoHurtOwner
-  Mass 0
-  Speed 40
-
-Proto CacoFireBall 8005
-  Sprite BAL2
-  Phases FireBall
-  Damage 5
+  Damage 6
   Size 16 16
   Explosive EnergyBall ZCenter BulletProof EnergyProof
   NoHurtOwner
   Mass 0
   Speed 64
 
+Proto CacoFireBall 8005
+  Sprite BAL2
+  Phases FireBall
+  Damage 10
+  Size 16 16
+  Explosive EnergyBall ZCenter BulletProof EnergyProof
+  NoHurtOwner
+  Mass 0
+  Speed 96
+
 Proto BaronFireBall 8006
   Sprite BAL7
   Phases FireBall
-  Damage 15
+  Damage 20
   Size 19 16
   Explosive EnergyBall ZCenter BulletProof EnergyProof
   NoHurtOwner
@@ -73,10 +72,10 @@ PhaseTable ClassicMissile
 Proto ClassicMissile 8016
   Sprite MISL
   Size 10 10
-  Damage 20 Hits 1
+  Damage 25 Hits 1
   Mass 0
   Explosive ZCenter
-  Speed 64
+  Speed 100
 
 
 /* Josh's "smoky heatseeking rocket" */
@@ -111,7 +110,7 @@ PhaseTable Missile
 Proto Missile 8001
   Sprite MISL
   Size 10 10
-  Damage 25 Hits 1
+  Damage 25 Hits 6
   Mass 0
   Explosive ZCenter
   Spawn2 Smoke
@@ -135,11 +134,11 @@ PhaseTable SkelFireBall
 
 Proto SkelFireBall 8002
   Sprite FATB
-  Damage 8
+  Damage 15
   Size 18 18
   Explosive EnergyBall ZCenter BulletProof EnergyProof
   Mass 0
-  Speed 48
+  Speed 64
 
 PhaseTable MancFireBall
   Default Duration GlowRate
@@ -158,7 +157,7 @@ PhaseTable MancFireBall
 
 Proto MancFireBall 8007
   Sprite MANF
-  Damage 8
+  Damage 15
   Size 18 18
   Explosive EnergyBall ZCenter BulletProof EnergyProof
   NoHurtOwner
@@ -185,12 +184,12 @@ PhaseTable AracFireBall
 
 Proto AracFireBall 8068
   Sprite APLS
-  Damage 4
+  Damage 8
   Size 15 15
   Explosive EnergyBall ZCenter BulletProof EnergyProof
   NoHurtOwner
   Mass 0
-  Speed 72
+  Speed 100
 
 
 PhaseTable PlasmaBall
@@ -211,11 +210,11 @@ PhaseTable PlasmaBall
 
 Proto PlasmaBall 8204
   Sprite PLSS
-  Damage 4
+  Damage 5
   Size 12 12
   Explosive EnergyBall ZCenter BulletProof EnergyProof
   Mass 0
-  Speed 64
+  Speed 100
 
 
 PhaseTable BFGBall

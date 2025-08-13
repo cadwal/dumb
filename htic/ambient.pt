@@ -3,14 +3,16 @@
  **  Ambient sounds
  **/
 
-#define AmbientRWait Duration 0sec RndDuration 180sec
+#define AmbientRWait Duration 0sec RndDuration 160sec
 
+SoundType AMB10
 SoundType AMB10-1 Redir AMB10 BendConst -2
 SoundType AMB10-2 Redir AMB10 BendConst -4
 SoundType AMB10-3 Redir AMB10 BendConst -8
 SoundType AMB10-4 Redir AMB10 BendConst -12
 SoundType AMB10-5 Redir AMB10 BendConst -16
 
+SoundType AMB9
 SoundType AMB9-1 Redir AMB9 BendConst -2
 SoundType AMB9-2 Redir AMB9 BendConst -4
 SoundType AMB9-3 Redir AMB9 BendConst -8

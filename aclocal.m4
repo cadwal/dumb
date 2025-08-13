@@ -54,7 +54,7 @@ dnl DUMB_SYS_SHMAT_RMID
 dnl
 dnl Cache variable: dumb_cv_sys_shmat_rmid
 dnl
-dnl I copied this test from gtk+-0.99.4/configure.in and made it a macro.
+dnl I copied this test from the gtk+-0.99.4/configure.in and made it a macro.
 
 AC_DEFUN(DUMB_SYS_SHMAT_RMID,
 [AC_CACHE_CHECK(whether shmctl IPC_RMID allows subsequent attaches,
@@ -379,10 +379,12 @@ AC_DEFUN(AM_WITH_NLS,
 
 	   if test "$gt_cv_func_gettext_libc" != "yes"; then
 	     AC_CHECK_LIB(intl, bindtextdomain,
-	       [AC_CHECK_LIB(intl, gettext,
-		 gt_cv_func_gettext_libintl=yes INTLLIBS=-lintl,
-		 gt_cv_func_gettext_libintl=no)],
-	       gt_cv_func_gettext_libintl=no)
+	       [AC_CACHE_CHECK([for gettext in libintl],
+		 gt_cv_func_gettext_libintl,
+		 [AC_CHECK_LIB(intl, gettext,
+		  gt_cv_func_gettext_libintl=yes,
+		  gt_cv_func_gettext_libintl=no)],
+		 gt_cv_func_gettext_libintl=no)])
 	   fi
 
 	   if test "$gt_cv_func_gettext_libc" = "yes" \
@@ -391,8 +393,6 @@ AC_DEFUN(AM_WITH_NLS,
 	      AM_PATH_PROG_WITH_TEST(MSGFMT, msgfmt,
 		[test -z "`$ac_dir/$ac_word -h 2>&1 | grep 'dv '`"], no)dnl
 	      if test "$MSGFMT" != "no"; then
-		gt_save_LIBS="$LIBS"
-		LIBS="$INTLLIBS $LIBS"
 		AC_CHECK_FUNCS(dcgettext)
 		AC_PATH_PROG(GMSGFMT, gmsgfmt, $MSGFMT)
 		AM_PATH_PROG_WITH_TEST(XGETTEXT, xgettext,
@@ -404,7 +404,6 @@ AC_DEFUN(AM_WITH_NLS,
 		  [CATOBJEXT=.mo
 		   DATADIRNAME=lib])
 		INSTOBJEXT=.mo
-		LIBS="$gt_save_LIBS"
 	      fi
 	    fi
 	])

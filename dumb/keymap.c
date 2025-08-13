@@ -56,44 +56,57 @@ static struct keymap_default_binding keymap_defaults[] =
 {
    {CTLKEY_QUIT, "Escape"},
    {CTLKEY_MOVE_FORWARD, "Up"},
-   {CTLKEY_MOVE_FORWARD, "KP_Up"},
-   {CTLKEY_MOVE_FORWARD, "k"},	/* AA */
+   {CTLKEY_MOVE_FORWARD, "Pad Up"},	/* X11 */
+   {CTLKEY_MOVE_FORWARD, "Pad 8"},	/* X11, GGI */
+   {CTLKEY_MOVE_FORWARD, "k"},		/* AA */
    {CTLKEY_MOVE_BACKWARD, "Down"},
-   {CTLKEY_MOVE_BACKWARD, "KP_Down"},
-   {CTLKEY_MOVE_BACKWARD, "j"},	/* AA */
+   {CTLKEY_MOVE_BACKWARD, "Pad Down"},	/* X11 */
+   {CTLKEY_MOVE_BACKWARD, "Pad 2"},	/* X11, GGI */
+   {CTLKEY_MOVE_BACKWARD, "j"},		/* AA */
    {CTLKEY_TURN_LEFT, "Left"},
-   {CTLKEY_TURN_LEFT, "KP_Left"},
-   {CTLKEY_TURN_LEFT, "h"},	/* AA */
+   {CTLKEY_TURN_LEFT, "Pad Left"},	/* X11 */
+   {CTLKEY_TURN_LEFT, "Pad 4"},		/* X11, GGI */
+   {CTLKEY_TURN_LEFT, "h"},		/* AA */
    {CTLKEY_TURN_RIGHT, "Right"},
-   {CTLKEY_TURN_RIGHT, "KP_Right"},
-   {CTLKEY_TURN_RIGHT, "l"},	/* AA */
-   {CTLKEY_TURN_180, "KP_Insert"},
+   {CTLKEY_TURN_RIGHT, "Pad Right"},	/* X11 */
+   {CTLKEY_TURN_RIGHT, "Pad 6"},	/* X11, GGI */
+   {CTLKEY_TURN_RIGHT, "l"},		/* AA */
+   {CTLKEY_TURN_180, "Pad Insert"},	/* X11 */
    {CTLKEY_MOVE_LEFT, ","},
-   {CTLKEY_MOVE_LEFT, "KP_End"},
+   {CTLKEY_MOVE_LEFT, "Pad End"},	/* X11 */
+   {CTLKEY_MOVE_LEFT, "Pad 1"},		/* X11, GGI */
    {CTLKEY_MOVE_RIGHT, "."},
-   {CTLKEY_MOVE_RIGHT, "KP_Next"},
+   {CTLKEY_MOVE_RIGHT, "Pad PageDown"},	/* X11 */
+   {CTLKEY_MOVE_RIGHT, "Pad 3"},	/* X11, GGI */
    {CTLKEY_MOVE_UP, "a"},
    {CTLKEY_MOVE_DOWN, "z"},
    {CTLKEY_LOOK_UP, "Prior"},
+   {CTLKEY_LOOK_UP, "PageUp"},		/* GGI */
    {CTLKEY_LOOK_DOWN, "Next"},
-   {CTLKEY_AIM_UP, "KP_Prior"},
-   {CTLKEY_AIM_UP, "d"},	/* AA */
-   {CTLKEY_AIM_DOWN, "KP_Home"},
-   {CTLKEY_AIM_DOWN, "c"},	/* AA */
-   {CTLKEY_CENTER_VIEW, "KP_Begin"},
+   {CTLKEY_LOOK_DOWN, "PageDown"},	/* GGI */
+   {CTLKEY_AIM_UP, "Pad PageUp"},	/* X11 */
+   {CTLKEY_AIM_UP, "Pad 9"},		/* X11, GGI */
+   {CTLKEY_AIM_UP, "d"},		/* AA */
+   {CTLKEY_AIM_DOWN, "Pad Home"},	/* X11 */
+   {CTLKEY_AIM_DOWN, "Pad 7"},		/* X11, GGI */
+   {CTLKEY_AIM_DOWN, "c"},		/* AA */
+   {CTLKEY_CENTER_VIEW, "Pad Begin"},	/* X11 */
+   {CTLKEY_CENTER_VIEW, "Pad 5"},	/* X11 */
    {CTLKEY_RUN, "Shift_L"},
    {CTLKEY_RUN, "Shift_R"},
-   {CTLKEY_RUN, "Shift"},	/* AA */
+   {CTLKEY_RUN, "Shift"},		/* AA, GGI */
    {CTLKEY_STRAFE, "Alt_L"},
    {CTLKEY_STRAFE, "Alt_R"},
+   {CTLKEY_STRAFE, "Alt"},		/* GGI */
    {CTLKEY_STRAFE, "Meta_L"},
    {CTLKEY_STRAFE, "Meta_R"},
    {CTLKEY_STRAFE, "Mode_switch"},
-   {CTLKEY_STRAFE, "slash"},
+   {CTLKEY_STRAFE, "slash"},		/* TODO: unused? */
    {CTLKEY_ACTIVATE, "Space"},
    {CTLKEY_SHOOT, "Control_L"},
    {CTLKEY_SHOOT, "Control_R"},
-   {CTLKEY_SHOOT, "s"},		/* AA */
+   {CTLKEY_SHOOT, "Control"},		/* GGI */
+   {CTLKEY_SHOOT, "s"},			/* AA */
    {CTLKEY_SHOOT_SPECIAL, "x"},
    {CTLKEY_NEXT_WEAPON, "Tab"},
    {CTLKEY_NEXT_WEAPON, "w"},
@@ -109,9 +122,9 @@ static struct keymap_default_binding keymap_defaults[] =
    {CTLKEY_WEAPON_8, "8"},
    {CTLKEY_WEAPON_9, "9"},
    {CTLKEY_USE_ITEM, "Return"},
-   {CTLKEY_USE_ITEM, "KP_Enter"},
-   {CTLKEY_NEXT_ITEM, "KP_Multiply"},
-   {CTLKEY_PREVIOUS_ITEM, "KP_Divide"},
+   {CTLKEY_USE_ITEM, "Pad Enter"},	/* X11, GGI */
+   {CTLKEY_NEXT_ITEM, "Pad *"},		/* X11, GGI */
+   {CTLKEY_PREVIOUS_ITEM, "Pad /"},	/* X11, GGI */
    /* CTLKEY_NONE marks the terminator here (but not in the real keymap) */
    {CTLKEY_NONE, NULL}
 };

@@ -63,7 +63,6 @@ void
 send_one_slaveinit(const LevData *ld, int station)
 {
    SlaveInitPkt sip;
-   int pl = 0;
    memset(&sip, 0, sizeof(sip));
    sip.sig = SLAVEINIT_SIG;
    sip.size = sizeof(SlaveInitPkt) - 2;
@@ -79,9 +78,13 @@ send_one_slaveinit(const LevData *ld, int station)
    if (!ld->mplayer)
       stations[station].player = 0;
    else if (stations[station].player < 0) {
-      if (pl == ld->localplayer)
-	 pl++;
-      stations[station].player = pl++;
+      /* look for an unassigned player number */
+      int pl = 0,i;
+      for (i=0 ; i<nstations ; i++) {
+	 if (stations[i].player == pl) pl++;
+	 if (pl == ld->localplayer) pl++;
+      };
+      stations[station].player = pl;
    }
    logprintf(LOG_DEBUG, 'N', _("sending slave-init to %s (station %d)"),
 	     stations[station].name, station);
@@ -190,6 +193,18 @@ send_empty(char ch)
    buf[3] = 0;
    net_sendmaster(buf, 4);
    net_sendmaster_flush();
+}
+
+void 
+send_newlvl(int secret)
+{
+   unsigned char buf[4];
+   buf[0] = NEWLVL_SIG;
+   buf[1] = 2;
+   buf[2] = secret;
+   buf[3] = 0;
+   net_slavecast(buf, 4);
+   net_slavecast_flush();
 }
 
 void
@@ -413,6 +428,9 @@ netplay_poll(LevData *ld)
 	 case (QUIT_SIG):
 	    game_want_quit(1);
 	    rs->flags &= ~RS_LIVE;
+	    break;
+	 case (NEWLVL_SIG):
+	    game_want_newlvl(code[2]);
 	    break;
 	 case (SYNC_SIG):
 	    ld->map_ticks = ((SyncPkt *) (code))->tickspassed;

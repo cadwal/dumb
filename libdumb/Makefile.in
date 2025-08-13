@@ -222,28 +222,6 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
-dsound.o: dsound.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/log.h ../libdumbutil/safem.h \
-	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
-	../libdumbwad/wadio.h sound.h ../libdumbutil/fixed.h \
-	../libdumbutil/confdef.h dsound.h view.h
-linux_sound.o: linux_sound.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/log.h ../libdumbutil/safem.h \
-	../libdumbutil/safeio.h sound.h ../libdumbutil/fixed.h \
-	../libdumbutil/confdef.h sound_mix.h
-prothing.o: prothing.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/log.h ../libdumbutil/safem.h \
-	../libdumbwad/wadio.h prothing.h prothingstruct.h \
-	../libdumbutil/endiantypes.h ../libdumbutil/fixed.h texture.h
-sound_mix.o: sound_mix.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/fixed.h ../libdumbutil/log.h sound_mix.h sound.h \
-	../libdumbutil/confdef.h
-texture.o: texture.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/log.h ../libdumbutil/safem.h \
-	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
-	texture.h ../libdumbwad/wadio.h pastepic.h
-view.o: view.c ../config.h ../libdumbutil/fixed.h ../libdumbutil/log.h \
-	view.h
 
 info:
 dvi:

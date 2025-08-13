@@ -171,6 +171,22 @@ phasecomp(void)
 	 tp->flags |= TPH_SHOOT;
       else if (!strcasecmp(s, "NoSpawn"))
 	 tp->flags &= ~TPH_SHOOT;
+      else if (!strcasecmp(s, "TInvis"))
+	 tp->flags |= TPH_TINVIS;
+      else if (!strcasecmp(s, "NoTInvis"))
+	 tp->flags &= ~TPH_TINVIS;
+      else if (!strcasecmp(s, "Whirly"))
+	 tp->flags |= TPH_WHIRLY;
+      else if (!strcasecmp(s, "NoWhirly"))
+	 tp->flags &= ~TPH_WHIRLY;
+      else if (!strcasecmp(s, "Charge"))
+	 tp->flags |= TPH_CHARGE;
+      else if (!strcasecmp(s, "NoCharge"))
+	 tp->flags &= ~TPH_CHARGE;
+      else if (!strcasecmp(s, "RSkip"))
+	 tp->flags |= TPH_RSKIP;
+      else if (!strcasecmp(s, "NoRSkip"))
+	 tp->flags &= ~TPH_RSKIP;
       else if (!strcasecmp(s, "Become")) {
 	 tp->flags |= TPH_BECOME;
 	 tp->next = 0;

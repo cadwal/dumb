@@ -27,6 +27,52 @@ Proto WandZap
   Phantom BulletKludge BulletAttack
   Speed 64
 
+PhaseTable Mine
+  Default Duration 50msec
+  Default Glow
+
+  Phase INIT	H	TInvis NoSigs
+  Phase -	H	NoSigs
+  Phase -	G	NoSigs
+  Phase -	F	
+  Phase -	E	
+  Phase -	D	
+  Phase -	C	
+  Phase -	B
+  Phase -	C	
+  Phase -	D	
+  Phase -	E	
+  Phase -	F	
+  Phase -	G	NoSigs
+  Phase -	H	NoSigs Destroy	
+
+  Default Duration 100msec NoSigs
+  Phase BOOM	I	SigExplode Sound LOBHIT
+  Phase	-	J	Explode
+  Phase -	K	
+  Phase	-	L	
+  Phase	-	M	Destroy
+
+Proto Mine
+  Sprite FX13
+  Size 48 48
+  Damage 20
+  Mine StuckDown NoHurtOwner
+
+PhaseTable MineSpawner
+  Phase INIT	A Duration 350msec /* wait a bit before we start spawning */
+  Phase LOOP	B Duration 120msec Spawn2 TargetSeek Goto LOOP
+  Phase BOOM	A SigExplode Destroy
+
+Proto MineSpawner
+  Size 16 16
+  Damage 0
+  Mass 0
+  Explosive NoHurtOwner
+  Spawn2 Mine
+  Speed 64
+
+
 /* Neat trick: ArrowZaps inflict their damage in two goes */
 
 PhaseTable ArrowZap
@@ -149,6 +195,29 @@ Proto MummyZap
   Speed 64
   Explosive ZCenter
 
+PhaseTable WereDragonBreath
+  Default Duration 50msec
+  Default Glow
+
+  Phase INIT A
+  Phase -    B
+  Phase -    C Goto INIT
+
+  Default Duration ExplodeRate
+  Default NoSigs
+  Phase BOOM D  SigExplode Explode Sound LOBHIT
+  Phase -    E
+  Phase -    F
+  Phase -    G Destroy
+
+Proto WereDragonBreath
+  Sprite FX06
+  Size 40 40
+  Damage 18
+  Mass 0
+  Speed 64
+  Explosive ZCenter
+
 
 PhaseTable GreenAxe
   Default Duration 100msec
@@ -172,7 +241,7 @@ PhaseTable RedAxe
 Proto GreenAxe
   Sprite SPAX
   Size 16 16
-  Damage 10
+  Damage 15
   Mass 0
   Speed 64
   Explosive ZCenter
@@ -180,7 +249,7 @@ Proto GreenAxe
 Proto RedAxe
   Sprite RAXE
   Size 16 16
-  Damage 20
+  Damage 25
   Mass 0
   Speed 64
   Explosive ZCenter

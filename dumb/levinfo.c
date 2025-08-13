@@ -86,6 +86,7 @@ static void
 load(LevData *ld, const LevInfo *li)
 {
    int d = ld->difficulty, m = ld->mplayer, i;
+   int lp = ld->localplayer;
    int plhits[MAXPLAYERS], plarm[MAXPLAYERS];
    /* sanity check */
    if (li == NULL || li > info + ninfo)
@@ -104,6 +105,8 @@ load(LevData *ld, const LevInfo *li)
    reset_level(ld);
    load_level(ld, li->name, d, m);
    ld->levinfo_id = li - info;
+   /* restore player number */
+   ld->localplayer=lp;
    /* restore player hps */
    for (i = 0; i < MAXPLAYERS; i++) {
       if (ld->player[i] >= 0 && plhits[i] >= 0) {

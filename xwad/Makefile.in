@@ -258,58 +258,6 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
-choose.o: choose.c ../config.h controls.h choose.h colour.h disphash.h
-colour.o: colour.c ../config.h xwad.h ../libdumbutil/fixed.h \
-	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
-	../libdumbwad/wadio.h controls.h choose.h colour.h
-connect.o: connect.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/log.h ../libdumbutil/safem.h xwad.h \
-	../libdumbutil/fixed.h ../libdumbwad/wadstruct.h \
-	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h controls.h \
-	choose.h
-controls.o: controls.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/log.h ../libdumbutil/safem.h controls.h colour.h \
-	disphash.h
-disphash.o: disphash.c ../config.h disphash.h
-drawmap.o: drawmap.c ../config.h xwad.h ../libdumbutil/fixed.h \
-	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
-	../libdumbwad/wadio.h controls.h choose.h colour.h xwadmap.h
-mapcon.o: mapcon.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/log.h xwad.h ../libdumbutil/fixed.h \
-	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
-	../libdumbwad/wadio.h controls.h choose.h xwadmap.h
-savemap.o: savemap.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/safem.h ../libdumbwad/wadwr.h \
-	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h xwad.h \
-	../libdumbutil/fixed.h ../libdumbwad/wadio.h controls.h \
-	choose.h
-tchoose.o: tchoose.c ../config.h ../libdumbutil/dumb-nls.h xtexture.h \
-	../libdumb/texture.h ../libdumbwad/wadio.h controls.h choose.h \
-	colour.h disphash.h xwad.h ../libdumbutil/fixed.h \
-	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h
-xproctls.o: xproctls.c ../config.h ../libdumbutil/dumb-nls.h xproto.h \
-	../libdumbutil/fixed.h ../libdumbwad/wadio.h \
-	../libdumb/prothing.h ../libdumb/prothingstruct.h \
-	../libdumbutil/endiantypes.h ../libdumb/texture.h controls.h \
-	choose.h
-xproto.o: xproto.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/log.h ../libdumbwad/wadio.h ../libdumb/dsound.h \
-	../libdumbutil/fixed.h ../libdumbutil/endiantypes.h \
-	../libdumb/view.h ../libdumb/sound.h ../libdumbutil/confdef.h \
-	xproto.h ../libdumb/prothing.h ../libdumb/prothingstruct.h \
-	../libdumb/texture.h controls.h choose.h colour.h disphash.h \
-	xtexture.h
-xtexture.o: xtexture.c ../config.h xtexture.h ../libdumb/texture.h \
-	../libdumbwad/wadio.h
-xwadctls.o: xwadctls.c ../config.h ../libdumbutil/dumb-nls.h xwad.h \
-	../libdumbutil/fixed.h ../libdumbwad/wadstruct.h \
-	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h controls.h \
-	choose.h
-xwad.o: xwad.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/log.h ../libdumbutil/safem.h \
-	../libdumbwad/wadio.h xwad.h ../libdumbutil/fixed.h \
-	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
-	controls.h choose.h colour.h disphash.h
 
 info:
 dvi:

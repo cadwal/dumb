@@ -1,36 +1,71 @@
 Josh Parsons
-	<josh@coombs.anu.edu.au>
-	http://schlick.anu.edu.au/~josh
+<josh@coombs.anu.edu.au>
+http://schlick.anu.edu.au/~josh
+	Developed DUMB from wt.
+	Most of the code is his.
 
 Chris Laurel
+	The wt (What's That?) 3D engine, on which DUMB is based.
+	The renderer comes almost straight from wt.
 
 Marcus Sundberg
-	<e94_msu@e.kth.se>
-	http://www.e.kth.se/~e94_msu/
+<e94_msu@e.kth.se>
+http://www.e.kth.se/~e94_msu/
+	64-bit Alpha/DUNIX stuff, MME sound driver
+	timer.c patch
+	fbrerender
+	GGI timer use fix
 
 Andrew Apted
-	<ajapted@ggi-project.org>
+<ajapted@ggi-project.org>
+	GGI support
+	doom.pt additions
+	bend patch
+	spectre patch
+	loads of linetypes, linetype tweaks
+	svgalib mouse support
+	heretic .pt tweaks
+	heretic ambient sounds
+	monster wakefulness patch
 
 Steffen Moeller
+	bugfixes
 
 Andreas Beck
-	<becka@sunserver1.rz.uni-duesseldorf.de>
+<becka@sunserver1.rz.uni-duesseldorf.de>
+	GGI support in versions 0.04-0.06
 
 Andrew Tridgell
-	<tridge@samba.anu.edu.au>
-	http://samba.anu.edu.au/~tridge/
+<tridge@samba.anu.edu.au>
+http://samba.anu.edu.au/~tridge/
+	help for network resume
 
 Kalle Niemitalo
-	<tosi@stekt.oulu.fi>
-	http://stekt.oulu.fi/~tosi/
+<tosi@stekt.oulu.fi>
+http://stekt.oulu.fi/~tosi/
+	XWad del_thing & del_line, single-side sector highlight, 
+	line crossing & joining
+	texture pegging bugfix
+	intel BPP>1 spectre bugfix
+	keymapping, XKB
+	three-state --input-grab-kbd with X11
+	offsetof() in THING_MAGIC_JELLYBEAN
+	TurnWhenHitting
+	using Autoconf & Automake
+	looking down when climbing stairs backwards
+	safe_strdup()
+	conf.[ch] cleanup
+	aadumb params, shift support
 
 Ben Bullock
-	<ben@hayamasa.demon.co.uk>
+<ben@hayamasa.demon.co.uk>
 
 The Rubber Buccaneer
-	<rap@maths.soton.ac.uk>
-	http://www.maths.soton.ac.uk/rap/HomePage.html
+<rap@maths.soton.ac.uk>
+http://www.maths.soton.ac.uk/rap/HomePage.html
+	Solaris patches
 
 Ulf Axelsson
-	<cadwal@hem2.passagen.se>
-	http://hem2.passagen.se/cadwal
+<cadwal@hem2.passagen.se>
+http://hem2.passagen.se/cadwal
+	DJGPP support (dosdumb)

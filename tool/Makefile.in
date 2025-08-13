@@ -308,21 +308,6 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
-dark2trans.o: dark2trans.c ../config.h ../libdumbutil/dumb-nls.h
-mkdfnt.o: mkdfnt.c ../config.h ../libdumbutil/dumb-nls.h
-mknulmap.o: mknulmap.c ../config.h ../libdumbutil/safem.h \
-	../libdumbutil/log.h ../libdumbwad/wadwr.h \
-	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
-	../libdumbutil/dumb-nls.h
-mkpnames.o: mkpnames.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/endiantypes.h ../libdumbutil/align.h \
-	../libdumbwad/wadstruct.h
-ppmtodumb.o: ppmtodumb.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h
-wadtool.o: wadtool.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/log.h ../libdumbwad/wadio.h \
-	../libdumbwad/wadwr.h ../libdumbwad/wadstruct.h \
-	../libdumbutil/endiantypes.h
 
 info:
 dvi:

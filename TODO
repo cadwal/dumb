@@ -35,6 +35,7 @@ move bpp-independent code to rendcommon.c
 moving vertices, sideways opening & hinged doors
 polymorphing to a monster (like in Nethack!)
 rename ldltest to dwdbtest
+runtime fallback to read() if mmap() fails (possible with Hurd)
 sector shouldn't give damage while player is in air
 snapshot.ppm when BPP=1 (8 bits)
 sound shouldn't get through closed doors
@@ -60,7 +61,6 @@ ctlkey: look at GGI's General Input Interface
 conf: don't forget aadumb settings with xdumb -S, etc.
 conf: dynamic enumerations (like for AA-lib fonts)
 conf: halt on bogus parameters to enumerated switches
-conf: quote special characters in .dumbrc strings
 conf: support floating-point entries (for aadumb --vid-gamma)
 conf: use libargp?
 Doom: automate 666 effect

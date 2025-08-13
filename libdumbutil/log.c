@@ -48,12 +48,11 @@ typedef struct LogFile {
 static LogFile *logs = NULL;
 static int errors = 0;
 
-static void log_cleanup(void);
 static void add_logfile(enum log_level, const char *classes,
 			FILE *stream, unsigned flags);
 
-static void
-log_cleanup(void)
+void
+log_close_all(void)
 {
    while (logs != NULL) {
       LogFile *del = logs;
@@ -102,7 +101,7 @@ void
 log_exit(void)
 {
    logprintf(LOG_INFO, 'L', _("Normal exit."));
-   log_cleanup();
+   log_close_all();
    exit(0);
 }
 
@@ -133,7 +132,7 @@ do_logfatal(void)
    /* strerror(errno) should always be called as part of the log
     * message, and then the following line could be removed.  */
    perror(_("System error message (may be unrelated)"));
-   log_cleanup();
+   log_close_all();
    exit(EXIT_FAILURE);
 }
 

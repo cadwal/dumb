@@ -47,6 +47,7 @@ void logfatal(char cl, const char *fmt,...)
 
 void log_stream(FILE *f, enum log_level, const char *cl);
 void log_file(const char *fname, enum log_level, const char *cl);
+void log_close_all(void);	/* called automatically by log_exit() */
 
 void log_exit(void);
 void log_chkerror(int maxerrs);

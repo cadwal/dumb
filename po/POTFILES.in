@@ -51,8 +51,8 @@ dumb/ggi_video.c
 dumb/linux_video.c
 dumb/linux_input.c
 dumb/x11_video.c
-dumb/dos_input.c
 dumb/dos_video.c
+dumb/dos_input.c
 dumb/vgagl_video.c
 xwad/xwad.c
 xwad/connect.c

@@ -83,7 +83,7 @@ dummydumb_SOURCES = dummy_video.c dummy_input.c keymapdummy.c \
  $(core_sources)
 EXTRA_dummydumb_SOURCES = $(extra_sources)
 
-ggidumb_SOURCES = ggi_video.c keymapdummy.c \
+ggidumb_SOURCES = ggi_video.c $(keyname_sources) \
  $(core_sources)
 EXTRA_ggidumb_SOURCES = $(extra_sources)
 

@@ -160,7 +160,8 @@ rotate_selection(LevData *ld, int pl, int type, int dir)
       break;
    }
    PLSEL(pl)[type] = i;
-   set_bogot(ld, pl, gett + PLSEL(pl)[type]);
+   if (i >= 0)
+      set_bogot(ld, pl, gett + PLSEL(pl)[type]);
 }
 
 void

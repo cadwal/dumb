@@ -1,3 +1,115 @@
+1998-08-30  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Makefile.am ($(distdir).lsm): New target.
+	(RPMSPEC): Use $(srcdir).
+	(EXTRA_DIST): Use $(RPMSTEM).spec instead of $(RPMSPEC).
+	(kn-dist): New target.
+
+1998-08-29  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* docs/maint/: New directory.  Moved various files there.
+	* configure.in: Added docs/dos and docs/maint directories.
+
+	* docs/discord.txt: New file.
+	* docs/Makefile.am (EXTRA_DIST): Added discord.txt.
+
+1998-08-24  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* dumb/dumb.c (main): Always log to stdout until the configuration
+	has been parsed.
+	* libdumbutil/log.c (log_cleanup): Renamed to log_close_all() and
+	published.  All callers changed.
+
+	* dumb/gettable.c (rotate_selection): Don't call set_bogot() if
+	nothing gets selected.
+
+	* dumb/x11_video.c (keymap_keycode_to_keyname): Added
+	GGI-compatible names for pad keys.
+	* dumb/keymap.c (keymap_defaults): Changed X11 pad keys from "XK_"
+	to "Pad ".
+
+1998-08-23  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* docs/dos/: New directory.
+	* docs/dos.txt: Superseded by docs/dos/dos-compile.txt.
+	* docs/Makefile.am (EXTRA_DIST): Updated.
+
+Mon Aug 17 16:35:05 1998  Josh Parsons  <josh@coombs.anu.edu.au>
+
+	* dumb/bangbang.c (thing_can_shoot_at): reworked 2S wall
+	checking: previously monsters could see right through low
+	ceilings and high walls.
+	* dumb/levdyn.c (diffchk): workaround for a bug in Doom
+	and Heretic .wads, some player start locations have no 
+	difficulty level eg. htic E2M8 
+	* xwad/choose.c (sb_motion, sb_button): fixed a bug that
+	prevented scroll bars from scrolling upwards
+	* doom/monsters.pt, htic/monsters.pt: ImmuneToSuch
+	sprinkled in appropriate places, more tweaks, esp. to
+	lost souls, Heretic's Maulotaur
+	* dumb/netplay.h, dumb/netplay.c, dumb/dumb.c: new level
+	transitions in network play
+	* dumb/thingm.c: fixed a bug causing monsters to always
+	shoot, never fight, tweaked turnspeeds somemore, explosives
+	w/o hitpoints can never be set off by another explosion
+	* dumb/netplay.c (send_one_slaveinit), 
+	dumb/levinfo.c (load): fixed bugs that prevented multiplayer 
+	games with 3 or more players
+	* libdumb/prothingstruct.h: TPH_TINVIS, TPH_WHIRLY, PT_MINE,
+	PT_STUCKDOWN, PT_IMMUNETOSUCH, TPH_CHARGE, TPH_RSKIP defined
+	* ptcomp/protocomp.c, ptcomp/phasecomp.c: many new keywords
+	to match new PT_ and TPH_ flags
+	* ptcomp/soundcomp.c (new_sound): make sure that new SoundRec
+	is inited to all zeros with memset
+	
+1998-08-15  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* dumb/dumb.c (main): conf_file is a pointer, not an array.
+	* libdumbutil/conffile.c (conf_file_name): Replaces
+	find_conf_file().
+
+	* libdumbutil/conffile.c (parse_conf_strings, dequote_conf_string,
+	fput_conf_string): New functions to handle quoting.  All strings
+	and lists are now quoted and backslashified when saved.
+	* TODO (conf): Quoting now done.
+	* libdumbutil/strgrow.c, libdumbutil/strgrow.h: New files.
+
+Thu Aug 13 00:19:27 1998  Josh Parsons  <josh@coombs.anu.edu.au>
+
+	* dumb/updthing.c: fixed bug introduced in previous patch,
+	causing heretic missiles to be affected by gravity. tweaked
+	gravity/floatup acceleration to be more processor-speed 
+	independent
+	* htic/missiles.pt, htic/monsters.pt: implemented WereDragon,
+	Pod
+	
+1998-08-08  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* dumb/ggi_video.c: Revision 1.6 from Andrew Apted.
+
+	* test/fixed_bm.c: Added copyright notice.
+	(rtimer): Don't use SIGVTALRM at all.
+
+	* dumb/unix_net.c (udp_init_station): Moved rs->addr assignment
+	inside typecast.
+
+	* dumb/Makefile.am (ggidumb_SOURCES): Included $(keyname_sources).
+	* configure.in: Updated GGI check.
+
+Fri Aug  7 16:31:35 1998  Josh Parsons  <josh@coombs.anu.edu.au>
+
+	* libdumb/prothingstruct.h: PT_TAKESECTDMG defined
+	* doom/missiles.pt, doom/monsters.pt, htic/missiles.pt,
+	htic/monsters.pt: speed and damage tweaks
+	* dumb/levdyn.h (ThingDyn): added last_hit_wall field, so
+	monsters know when they last crashed into a wall
+	* dumb/updthing.c (update_things): maintain last_hit_wall,
+	flying monsters fall when they run out of hits, only
+	players get hurt by the Patented Doom Fluid
+	* dumb/thingm.c (do_strategy): monsters try to dodge out
+	of enemy's line of fire, miscellaneous fine tuning
+	
+	
 Wed Jul 22 03:06:11 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
 
 	* libmissing/Makefile.am (INCLUDES): Added.

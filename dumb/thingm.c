@@ -214,7 +214,17 @@ thing_find_enemy(const LevData *ld, int th)
    }
 }
 
+/* how close a monster will try to aim */
 #define CLOSE_ENOUGH_ARC (FIXED_PI/16)
+/* arc around front of enemy that monsters consider dangerous */
+#define DODGE_ARC (FIXED_PI/6)
+/* angle that monster will try to follow when dodging */
+#define DODGE_ANGLE (FIXED_PI/8)
+
+/* slow speeds for fine turning */
+#define FINE_TURNSPEED (FIXED_ONE/4)
+#define VERY_FINE_TURNSPEED (FIXED_ONE/16)
+
 static void
 do_strategy(const LevData *ld, int th)
 {
@@ -236,57 +246,113 @@ do_strategy(const LevData *ld, int th)
    /* chase after and attack our target */
    if (td->target >= 0) {
       ThingDyn *ttd = ldthingd(ld) + td->target;
-      fixed t = fix_vec2angle(ttd->x - td->x, ttd->y - td->y) - td->angle;
+      fixed angle_to_target = fix_vec2angle(ttd->x - td->x, ttd->y - td->y);
+      fixed t = angle_to_target - td->angle; 
+      fixed t2 = FIXED_PI + angle_to_target - ttd->angle;
       double d2 = pyth_sq(ttd->x - td->x, ttd->y - td->y);
       fixed attack_dist = td->proto->radius + ttd->proto->radius;
-      double attd2;
-      fixed dz = (ttd->z + ttd->proto->height) - (td->z + td->proto->height);
+      double attd2,bkod2;
+      fixed dz = (ttd->z + ttd->proto->height/2) - 
+	 (td->z + td->proto->height/2);
       fixed movespeed = fixmul(td->proto->realmass, td->proto->speed);
-      fixed turnspeed = movespeed / 2;
+      fixed turnspeed = 3 * movespeed / 4;
       NORMALIZE_ANGLE(t);
-      if (td->proto->signals[TS_FIGHT] < 0)
+      NORMALIZE_ANGLE(t2);
+      /* figure out a good distance to attack from */
+      if (td->proto->signals[TS_FIGHT] < 0) {
 	 attack_dist += INT_TO_FIXED(4);
-      else
+	 attd2 = SQ(FIXED_TO_FLOAT(attack_dist));
+	 bkod2 = attd2;
+      }
+      else {
 	 attack_dist += FIXED_ONE;
-      attd2 = SQ(FIXED_TO_FLOAT(attack_dist));
-      /* try fighting or shooting */
+	 attd2 = SQ(FIXED_TO_FLOAT(attack_dist));
+	 bkod2 = /* 3 * attd2 / 4 */ attd2/2;
+      };
+      /* if they're in our sights, fight or shoot */
       if (t < CLOSE_ENOUGH_ARC / 2 || t > FIXED_2PI - CLOSE_ENOUGH_ARC / 2) {
 	 if (reject_thing_thing(ld, th, td->target));
 	 else if (td->proto->signals[TS_FIGHT] >= 0 && d2 <= attd2)
 	    thing_send_sig(ld, th, TS_FIGHT);
 	 else if (!thing_can_shoot_at(ld, th, td->target));
-	 /* FAST_SHOOTERs are nasty */
+#if 0 /* make all monsters nasty, they need it if they're going to dodge */
 	 else if (td->proto->flags & PT_FAST_SHOOTER)
 	    thing_send_sig(ld, th, TS_SHOOT);
 	 /* if we're just standing there, attack more often */
-	 else if ((d2 <= attd2) && !(rand() & 3))
+	 else if ((d2 <= attd2) && (!rand() & 3))
 	    thing_send_sig(ld, th, TS_SHOOT);
 	 /* sometimes just shoot anyway */
 	 else if (!(rand() & 3))
 	    thing_send_sig(ld, th, TS_SHOOT);
+#endif
+	 else
+	    thing_send_sig(ld, th, TS_SHOOT);
       }
-      /* failing that, turn towards them */
-      else if (t < FIXED_PI)
-	 thingd_apply_torque(td, turnspeed);
-      else
-	 thingd_apply_torque(td, -turnspeed);
-      /* move towards foe */
-      if (d2 < 3 * attd2 / 4)
-	 thingd_apply_forward(td, -movespeed / 4);
-      else if (d2 > attd2 * 2)
+      /* if we're in their sights, dodge, unless,
+         1. we're a vicious nasty monster, or,
+	 2. there might be an impassible wall in the way, or,
+	 3. we're in melee
+      */
+      /*if ((ld->map_ticks-td->last_hit_wall)<1000/MSEC_PER_TICK) 
+	 logprintf(LOG_DEBUG,'O',"dodge for %d inhibited by impassible wall",
+	 th);*/
+      if (!(td->proto->flags & PT_FAST_SHOOTER) 
+	  && !((ld->map_ticks-td->last_hit_wall)<1000/MSEC_PER_TICK)
+	  && !(td->proto->signals[TS_FIGHT] >= 0 && d2 <= attd2)
+	  && (t2 < DODGE_ARC / 2 || t2 > FIXED_2PI - DODGE_ARC / 2)) 
+      {
+	 /*logprintf(LOG_DEBUG,'O',"monster %d is dodging",th);*/
+	 if (t < FIXED_PI) {
+	    if (t < DODGE_ANGLE)
+	       thingd_apply_torque(td, -turnspeed);
+	    else if(t > FIXED_PI/2)
+	       thingd_apply_torque(td, turnspeed);
+	 }
+	 else /* >= FIXED_PI */ {
+	    if(t > (FIXED_2PI-DODGE_ANGLE)) 
+	       thingd_apply_torque(td, turnspeed);
+	    else if(t < FIXED_PI+FIXED_PI/2)
+	       thingd_apply_torque(td, -turnspeed);
+	 }
 	 thingd_apply_forward(td, movespeed);
-      /* move slower when you're close */
-      else if (d2 > attd2)
-	 thingd_apply_forward(td, movespeed / 2);
-      if (td->proto->flags & PT_CAN_FLY) {
-	 if (dz > td->proto->height)
-	    thingd_apply_up(td, movespeed / 2);
-	 else if (dz < -2 * td->proto->height)
+      }
+      /* otherwise, go towards them */
+      else {
+	 /* turn in right direction */
+	 fixed myturn,abst;
+	 if (t < FIXED_PI) {
+	    myturn=1;
+	    abst=t;
+	 }
+	 else {
+	    myturn=-1;
+	    abst=FIXED_2PI-t;
+	 }
+	 if(abst<CLOSE_ENOUGH_ARC/2) myturn*=VERY_FINE_TURNSPEED;
+	 else if(abst<CLOSE_ENOUGH_ARC) myturn*=FINE_TURNSPEED;
+	 else myturn*=turnspeed;
+	 if(myturn) 
+	    thingd_apply_torque(td, myturn);
+	 /* back off if we're too close */
+	 if (d2 < bkod2)
+	    thingd_apply_forward(td, -movespeed / 4);
+	 /* move towards foe */
+	 else if (d2 > attd2 * 2)
+	    thingd_apply_forward(td, movespeed);
+	 /* move slower when you're close */
+	 else if (d2 > attd2)
+	    thingd_apply_forward(td, movespeed / 2);
+	 /* flyers can move up and down too */
+	 if (td->proto->flags & PT_CAN_FLY) {
+	    if (dz > td->proto->height)
+	       thingd_apply_up(td, movespeed / 2);
+	    else if (dz < -td->proto->height)
 	    thingd_apply_up(td, -movespeed / 2);
-	 else if (dz > 0)
-	    thingd_apply_up(td, movespeed / 4);
-	 else if (dz < -td->proto->height)
-	    thingd_apply_up(td, -movespeed / 4);
+	    else if (dz > 0)
+	       thingd_apply_up(td, movespeed / 4);
+	    else if (dz < -td->proto->height/2)
+	       thingd_apply_up(td, -movespeed / 4);
+	 }
       }
       /* give up if they seem dead */
       if (!(ttd->proto->flags & PT_BEASTIE))
@@ -300,7 +366,8 @@ static void
 spawn_or_hurl(const LevData *ld, int th, int prid)
 {
    ThingDyn *td = ldthingd(ld) + th;
-   new_thing(ld, prid, td->x, td->y, td->z);
+   int nth=new_thing(ld, prid, td->x, td->y, td->z);
+   ldthingd(ld)[nth].owner=th;
 }
 
 /* wake anyone who can see me */
@@ -324,19 +391,26 @@ void
 thing_take_damage(const LevData *ld, int th, int dmg)
 {
    ThingDyn *td = ldthingd(ld) + th;
+
    /* bail out if dmg<=0 */
    if (dmg <= 0)
       return;
-   /* check if we explode before checking hits */
-   if (td->proto->flags & PT_EXPLOSIVE) {
-      td->dx = td->dy = td->dz = 0;	/* stop explosions from being knocked around */
-      thing_send_sig(ld, th, TS_EXPLODE);
-   }
+
    /* if hits<0 either we're already dead,
-    * or we were invulernable to begin with (proto->hits==-1)
+    * or we were invulnerable to begin with (proto->hits==-1)
     */
    if (td->hits < 0)
       return;
+
+   /* check if we explode before checking hits */
+   if ((td->proto->flags & PT_EXPLOSIVE)) {
+      /* stop explosions from being knocked around */
+      td->dx = td->dy = td->dz = 0;	
+      /*logprintf(LOG_DEBUG,'O',"explosive %d set off by dmg (%d)",th,dmg);*/
+      thing_send_sig(ld, th, TS_EXPLODE);
+      return;
+   }
+
    /* TODO: check temporary invulnerability */
 
 #ifdef THINGM_DEBUG
@@ -392,7 +466,13 @@ do_damage(const LevData *ld, int th, fixed arc)
       int dmg;
       if (ttd->proto == NULL || ttd->proto->hits == -1 || targ == th)
 	 continue;
-      if ((td->proto->flags & PT_NOHURTO) && targ == td->owner)
+      /* check immunetosuch */
+      if((ttd->proto->flags&PT_IMMUNETOSUCH) &&
+	 td->proto->id==ttd->proto->spawn1)
+	 continue;
+      /* check nohurto */
+      if ((td->proto->flags & PT_NOHURTO) 
+	  && (targ == td->owner || targ== myowner))
 	 continue;
       angle = fix_vec2angle(ttd->x - td->x, ttd->y - td->y);
       NORMALIZE_ANGLE(angle);
@@ -437,6 +517,10 @@ do_melee_damage(const LevData *ld, int th, fixed knockback)
    int myowner;
    if (td->target < 0 || ttd->proto == NULL)
       return;
+   /* check immunetosuch */
+   if((ttd->proto->flags&PT_IMMUNETOSUCH) && td->proto->id==ttd->proto->spawn1)
+      return;
+   /* check distance */
    dist = fix_pyth3d(td->x - ttd->x, td->y - ttd->y, td->z - ttd->z);
    if ((dist > td->proto->radius + ttd->proto->radius + MELEE_DISTANCE) &&
        !(td->proto->flags & PT_BULLET)) {
@@ -556,8 +640,19 @@ thing_enter_phase(LevData *ld, int th, int ph)
    if (td->phase_tbl == NULL || td->proto == NULL)
       return;
 
+   /* check for RSKIP */
+   while ((nu->flags & TPH_RSKIP) && !(rand() & 1) ) {
+      ph++;
+      nu = td->phase_tbl + ph;
+   };
+
    /* do post-phase effects */
    if (old->flags & TPH_DESTROY) {
+      /* remove one from my owner's spawncount */
+      if(td->owner>=0) {
+	 if(--(ldthingd(ld)[td->owner].spawncount)<0)
+	    ldthingd(ld)[td->owner].spawncount=0;
+      };
       td->proto = NULL;
       return;
    }
@@ -575,14 +670,20 @@ thing_enter_phase(LevData *ld, int th, int ph)
       ph = td->phase;
       nu = td->phase_tbl + ph;
    }
+   
    /* update phase */
    td->phase = ph;
    td->phase_wait = nu->wait + rnd(nu->rwait);
+   
    /* play sound */
    if (nu->sound >= 0)
       play_dsound(nu->sound + td->proto->sound,
 		  td->x, td->y, td->proto->radius);
+
    /* do pre-phase effects */
+   if (nu->flags & TPH_CHARGE)
+      thingd_apply_forward(td, 
+			  3 * fixmul(td->proto->realmass, td->proto->speed));
    if (nu->flags & TPH_EXPLODE)
       do_damage(ld, th, FIXED_2PI);
    if (nu->flags & TPH_MELEE)

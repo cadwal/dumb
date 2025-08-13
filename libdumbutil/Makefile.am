@@ -5,7 +5,7 @@ noinst_LIBRARIES = libdumbutil.a
 common_sources = align.h confargs.c confargs.h confdef.h \
  confeng.c confeng.h conffile.c conffile.h confhelp.c confhelp.h \
  dumb-nls.h endiantypes.h fixed.c fixed.h log.c log.h safeio.c \
- safeio.h safem.c safem.h timer.h
+ safeio.h safem.c safem.h strgrow.c strgrow.h timer.h
 
 if DUMB_CONFIG_DOS
 libdumbutil_a_SOURCES = $(common_sources) dos_timer.c

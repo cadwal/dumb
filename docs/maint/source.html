@@ -5,7 +5,7 @@
 
 <h1>DUMB source HOWTO</h1>
 
-This corresponds to DUMB 0.13.0.</p>
+This corresponds to DUMB 0.13.2.</p>
 
 <ul>
 <li><a href="#dirs" name="TOCdirs">Directory structure</a>
@@ -21,8 +21,8 @@ There are some rules on how the directories are built.
 <ol>
 <li>Libraries are built before programs and other libraries that need
     them.
-<li>Most important programs are built first so that you get to play as
-    soon as possible.
+<li>Most important programs are built first so that <kbd>make
+    install</kbd> lets you play as soon as possible.
 </ol>
 
 <p>Here's the list:
@@ -132,6 +132,16 @@ There are some rules on how the directories are built.
 <dt>docs/
 <dd>The incomplete documentation.
 
+    <dl>
+
+    <dt>dos/
+    <dd>Documentation for the DOS port.
+
+    <dt>maint/
+    <dd>Documentation on maintaining DUMB.  This file is here.
+
+    </dl>
+
 </dl>
 
 <h2><a href="#TOCmkver" name="mkver">Updating the version number</a></h2>
@@ -143,8 +153,6 @@ version number:
 <li>configure.in
 <li>NEWS
 <li>ChangeLog
-<li>docs/Makefile.am
-<li>docs/dumb-<var>&lt;version&gt;</var>.lsm
 </ul>
 
 <p>The version number is also mentioned in the following files but
@@ -154,8 +162,8 @@ in such a way that you don't have to change them if you feel lazy:
     dumb-0.13.0"
 <li>docs/configure.txt: "In the following, I'll call that directory
     /cdrom/sources/dumb-0.12."
-<li>docs/contrib.html: "(it probably is, as dumb-0.12.tar.gz was just 340k
-    :)"
+<li>docs/maint/contrib.html: "(it probably is, as dumb-0.12.tar.gz was
+    just 340k :)"
 </ul>
 
 <p>After changing the version number in configure.in, run make in the
@@ -194,12 +202,12 @@ Do the following in the source directory:</p>
 <li>Run <var>$srcdir</var>/configure with any options you need.  This
     generates foo/Makefile.
 
-    <p>Alternatively, you can run ./config.status &#45;-recheck.  This
+    <p>Alternatively, you can run ./config.status --recheck.  This
     gives <var>$srcdir</var>/configure the same options you last gave
     it.  Then you must run ./config.status again, this time without
-    options, because ./config.status &#45;-recheck gave
-    <var>$srcdir</var>/configure the &#45;-no-create option which
-    caused it to skip the Makefiles and only update config.status.
+    options, because ./config.status --recheck gave
+    <var>$srcdir</var>/configure the --no-create option which caused
+    it to skip the Makefiles and only update config.status.
 
 <li>Run make.  This will repeat some of these steps.  Don't
     worry about that.
@@ -213,15 +221,16 @@ target in Makefile.am to do all this.
 
 <h2><a href="#TOCmkfile" name="mkfile">Adding a new source file</a></h2>
 
-Copy the boilerplate from docs/template.c.
+Copy the boilerplate from docs/maint/template.c, or use
+docs/maint/dumb-autoins.el which does this (and more) automatically.
 
 <p>Add the name of the file to SOURCES in the Makefile.am of that
 directory.  Or if that isn't appropriate, add it to EXTRA_DIST
 instead.
 
 <p>When finished with the directory, change to the root of the build
-treee and run "make update-po" to scan files for translatable strings
-and update po/*.po files.
+tree and run "<kbd>make update-po<kbd>".  This scans files for
+translatable strings and updates po/*.po files.
 
 <address>
 <a href="mailto:tosi@stekt.oulu.fi">Kalle O. Niemitalo</a>

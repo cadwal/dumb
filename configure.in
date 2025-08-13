@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(libdumb/dsound.h)
-AM_INIT_AUTOMAKE(dumb, 0.13.1)
+AM_INIT_AUTOMAKE(dumb, 0.13.2)
 AM_CONFIG_HEADER(config.h)
 
 # $datadir is usually '${prefix}/share'.  Expand it once.
@@ -94,7 +94,7 @@ AC_CHECK_LIB(m, sin, ,
 DUMB_CHECK_HDR_LIB_YESNO(aalib.h, aa, aa_renderpalette, [-lncurses $x_ldadd],
  dumb_have_aalib)
 AM_CONDITIONAL(DUMB_CONFIG_AALIB, test "$dumb_have_aalib" = "yes")
-DUMB_CHECK_HDR_LIB_YESNO(ggi/libggi.h, ggi, ggiSetGraphMode, [],
+DUMB_CHECK_HDR_LIB_YESNO(ggi/ggi.h, ggi, ggiSetMode, [],
  dumb_have_ggi)
 AM_CONDITIONAL(DUMB_CONFIG_GGI, test "$dumb_have_ggi" = "yes")
 DUMB_CHECK_HDR_LIB_YESNO(vga.h, vga, vga_setmode, [],
@@ -412,8 +412,9 @@ dnl --- Output.
 AC_OUTPUT(Makefile libmissing/Makefile libdumbutil/Makefile
   libdumbwad/Makefile libdumbworldb/Makefile libdumbrender/Makefile
   libdumb/Makefile dumb/Makefile xwad/Makefile ptcomp/Makefile
-  tool/Makefile doom/Makefile htic/Makefile test/Makefile docs/Makefile
-  intl/Makefile po/Makefile.in)
+  tool/Makefile doom/Makefile htic/Makefile test/Makefile
+  docs/Makefile docs/dos/Makefile docs/maint/Makefile intl/Makefile
+  po/Makefile.in)
 
 dnl Local Variables:
 dnl comment-start: "dnl "

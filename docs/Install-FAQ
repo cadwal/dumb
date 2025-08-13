@@ -8,6 +8,8 @@ when compiling?
 
 Q3. Ppmtodumb dumps core.
 
+Q4. Where are the netpbm sources?
+
 * Q1. DUMB compiles and installs fine but the executables are huge.
 Could you make the Makefile strip them?
 
@@ -38,5 +40,13 @@ lack.
 
 * Q3. Ppmtodumb dumps core.
 
-A bad pbmplus installation can cause this.  Are you sure the headers
+A bad netpbm installation can cause this.  Are you sure the headers
 and the libraries are from the same version?
+
+* Q4. Where are the netpbm sources?
+
+Try these:
+
+ftp://samba.anu.edu.au/pub/dumb/source/netpbm-01MAR94-p1.tar.gz
+ftp://ftp.funet.fi/pub/graphics/packages/pbmplus/netpbm-1mar1994.tar.gz
+ftp://ftp.debian.org/pub/debian/dists/hamm/main/source/graphics/netpbm-free_19940301.2.orig.tar.gz

@@ -216,18 +216,6 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
-loadlump.o: loadlump.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/safeio.h ../libdumbutil/safem.h \
-	../libdumbutil/log.h wadstruct.h ../libdumbutil/endiantypes.h \
-	wadio.h
-wadio.o: wadio.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/safeio.h ../libdumbutil/safem.h \
-	../libdumbutil/log.h wadstruct.h ../libdumbutil/endiantypes.h \
-	wadio.h
-wadwr.o: wadwr.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/safem.h ../libdumbutil/log.h \
-	../libdumbutil/align.h wadwr.h wadstruct.h \
-	../libdumbutil/endiantypes.h
 
 info:
 dvi:

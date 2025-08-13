@@ -1,0 +1,50 @@
+To compile DUMB for DOS you need an installation of DJGPP v2. In
+addition to the standard components you need allegro (v3), autoconf
+and GNU fileutils (implies at least bash as well). Search for the
+necessary files through http://www.delorie.com/ and read and follow
+all instructions carefully.
+
+Since DJGPP's conio library (in libc.a) contains a gettext function
+that conflicts with NLS-support, we make it easy for ourselves by
+disabling NLS-support.
+
+1. Install DJGPP and its subcomponents.
+2. Install netpbm if necessary. (See below.)
+3. Unpack the source distribution to a new subdirectory while
+   preserving the directory structure of the distribution archive.
+4. Start bash and enter the previously created directory.
+5. Type autoconf (this will generate a new DJGPP-compatible
+   configure-script and associated makefile.)
+6. Make sure a suitable wad-file (doom.wad, heretic.wad etc.) is where
+   configure can find it.
+7. Type ./configure --disable-nls (and wait for completion)
+8. Type make (and wait while DUMB compiles)
+9. Retrieve the new dosdumb.exe from the dumb subdirectory.
+10. Play.
+
+DUMB writes data to stdout while playing so redirecting stdout when
+starting DUMB eliminates the odd "screen jumps" during gameplay.
+
+** Netpbm
+
+Netpbm is a set of libraries and utilities for processing pictures in
+PBM, PGM and PPM formats. DUMB's ppmtodumb and dark2trans utilities
+require it. Ppmtodumb is in turn needed when doom4dum.wad and
+htic4dum.wad are built.
+
+If you want to avoid getting the WAD files from the precompiled (UNIX)
+DUMB binaries, you will have to install the netpbm development
+libraries. You can download a set of precompiled libraries from
+http://hem2.passagen.se/cadwal.
+
+Or, you can compile netpbm from the source. The DUMB Install-FAQ lists
+some places you can get it from. Compiling it for DJGPP requires some
+twiddling with Makefiles and headers. The DUMB distribution includes
+patched files for the Debian netpbm-free-19940301.2 package. If you
+have some other version, you may have to tweak them a little. After
+compiling netpbm, remember to put the headers and libraries where
+DJGPP can find them.
+
+(TODO: Distribute patches instead of entire files? They would then
+work with more versions but people would have to install patch (from
+GNU Diffutils) or parse the format by hand.)

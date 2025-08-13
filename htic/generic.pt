@@ -6,6 +6,9 @@
 PhaseTable Mundane
   Phase INIT A  Goto INIT
 
+PhaseTable MundaneGlow
+  Phase INIT A  Glow Goto INIT
+
 PhaseTable ThreePhase
   Default Duration 100msec
   Default Glow
@@ -25,6 +28,12 @@ PhaseTable Repeat3
   Phase -    B
   Phase -    C Goto IDLE
 
+PhaseTable Repeat3Glow
+  Default Duration 150msec
+  Phase IDLE A Glow
+  Phase -    B Glow
+  Phase -    C Glow Goto IDLE
+
 PhaseTable Repeat4
   Default Duration 150msec
   Phase IDLE A
@@ -38,6 +47,13 @@ PhaseTable Cycle3
   Phase -    B
   Phase -    C
   Phase -    B  Goto INIT
+
+PhaseTable Cycle3Glow
+  Default Duration 150msec
+  Phase INIT A  Glow
+  Phase -    B  Glow
+  Phase -    C  Glow
+  Phase -    B  Glow Goto INIT
 
 PhaseTable Cycle4
   Default Duration 150msec

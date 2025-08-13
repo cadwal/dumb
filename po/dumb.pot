@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1998-07-11 22:39+0300\n"
+"POT-Creation-Date: 1998-08-24 00:28+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,23 +91,31 @@ msgstr ""
 msgid "internal error: set_conf(): strange type %d\n"
 msgstr ""
 
-#: libdumbutil/conffile.c:110
+#: libdumbutil/conffile.c:119
 #, c-format
 msgid ""
 "; %s\n"
 "; this file was created automatically, but you can modify it if you want\n"
 msgstr ""
 
-#: libdumbutil/conffile.c:122
+#: libdumbutil/conffile.c:131
 #, c-format
 msgid ""
 "\n"
 "; Module `%s': %s\n"
 msgstr ""
 
-#: libdumbutil/conffile.c:127
+#: libdumbutil/conffile.c:137
 #, c-format
 msgid "internal error: save_conf(): strange type %d, treating as int\n"
+msgstr ""
+
+#: libdumbutil/conffile.c:202
+msgid "Missing quote in configuration file\n"
+msgstr ""
+
+#: libdumbutil/conffile.c:224
+msgid "Trailing backslash in configuration file\n"
 msgstr ""
 
 #: libdumbutil/confhelp.c:53
@@ -245,27 +253,27 @@ msgstr ""
 msgid "  Cannot be saved in a config file.\n"
 msgstr ""
 
-#: libdumbutil/log.c:94
+#: libdumbutil/log.c:93
 #, c-format
 msgid "%s: opening log file: %s"
 msgstr ""
 
-#: libdumbutil/log.c:104
+#: libdumbutil/log.c:103
 msgid "Normal exit."
 msgstr ""
 
-#: libdumbutil/log.c:113
+#: libdumbutil/log.c:112
 #, c-format
 msgid "%d errors occured."
 msgstr ""
 
-#: libdumbutil/log.c:132
+#: libdumbutil/log.c:131
 msgid "A fatal error occured."
 msgstr ""
 
 #. strerror(errno) should always be called as part of the log
 #. * message, and then the following line could be removed.
-#: libdumbutil/log.c:135
+#: libdumbutil/log.c:134
 msgid "System error message (may be unrelated)"
 msgstr ""
 
@@ -1093,25 +1101,25 @@ msgstr ""
 msgid "Preloading sprites"
 msgstr ""
 
-#: dumb/dumb.c:318
+#: dumb/dumb.c:327
 #, c-format
 msgid "Read configuration from %s"
 msgstr ""
 
-#: dumb/dumb.c:364
+#: dumb/dumb.c:373
 msgid "network mode: slave"
 msgstr ""
 
-#: dumb/dumb.c:370
+#: dumb/dumb.c:379
 msgid "network mode: master"
 msgstr ""
 
-#: dumb/dumb.c:446
+#: dumb/dumb.c:455
 #, c-format
 msgid "Unsupported BPP=%d"
 msgstr ""
 
-#: dumb/dumb.c:465
+#: dumb/dumb.c:474
 msgid "Can't find sector for player"
 msgstr ""
 
@@ -1138,45 +1146,45 @@ msgstr ""
 #. * 	 }
 #. * }
 #.
-#: dumb/dumb.c:520
+#: dumb/dumb.c:529
 msgid "starting game"
 msgstr ""
 
-#: dumb/dumb.c:559
+#: dumb/dumb.c:568
 msgid "Demo ran out..."
 msgstr ""
 
-#: dumb/dumb.c:599
+#: dumb/dumb.c:611
 msgid "saving snapshot..."
 msgstr ""
 
-#: dumb/dumb.c:627
+#: dumb/dumb.c:639
 msgid "snapshot done"
 msgstr ""
 
-#: dumb/dumb.c:631
+#: dumb/dumb.c:643
 #, c-format
 msgid "%d ticks passed with MAXTICKS=%d"
 msgstr ""
 
-#: dumb/dumb.c:661
+#: dumb/dumb.c:673
 msgid "WARNING: this system is running faster than the timer resolution"
 msgstr ""
 
-#: dumb/dumb.c:664
+#: dumb/dumb.c:676
 msgid "Try running DUMB in a larger window."
 msgstr ""
 
-#: dumb/dumb.c:667
+#: dumb/dumb.c:679
 msgid "YOU DIED.  TOO BAD..."
 msgstr ""
 
-#: dumb/dumb.c:683
+#: dumb/dumb.c:695
 #, c-format
 msgid "%d frames, %d seconds, %f fps"
 msgstr ""
 
-#: dumb/dumb.c:709
+#: dumb/dumb.c:721
 #, c-format
 msgid "Saving config to %s"
 msgstr ""
@@ -1240,27 +1248,27 @@ msgstr ""
 msgid "PLAYER %d SMASHES PUMPKINS"
 msgstr ""
 
-#: dumb/gettable.c:197
+#: dumb/gettable.c:198
 #, c-format
 msgid "Strange gettable type=%d num=%d"
 msgstr ""
 
-#: dumb/gettable.c:209
+#: dumb/gettable.c:210
 #, c-format
 msgid "YOU GOT THE %s!"
 msgstr ""
 
-#: dumb/gettable.c:211
+#: dumb/gettable.c:212
 #, c-format
 msgid "THAT %s WOULD BE WASTED..."
 msgstr ""
 
-#: dumb/gettable.c:214
+#: dumb/gettable.c:215
 #, c-format
 msgid "GOT A %s."
 msgstr ""
 
-#: dumb/gettable.c:361
+#: dumb/gettable.c:362
 #, c-format
 msgid "init %d gettables"
 msgstr ""
@@ -1327,7 +1335,7 @@ msgstr ""
 msgid "Couldn't find protothing ID=%d"
 msgstr ""
 
-#: dumb/levdyn.c:237
+#: dumb/levdyn.c:243
 #, c-format
 msgid "diffchk: strange difficulty??? (%d)"
 msgstr ""
@@ -1341,11 +1349,11 @@ msgstr ""
 msgid "Init %d levels"
 msgstr ""
 
-#: dumb/levinfo.c:92
+#: dumb/levinfo.c:93
 msgid "bogus levinfo pointer in levinfo_load"
 msgstr ""
 
-#: dumb/levinfo.c:124
+#: dumb/levinfo.c:127
 #, c-format
 msgid "no levinfo for %s, so can't find next level"
 msgstr ""
@@ -1405,73 +1413,73 @@ msgstr ""
 msgid "time between sending acks"
 msgstr ""
 
-#: dumb/netplay.c:86
+#: dumb/netplay.c:89
 #, c-format
 msgid "sending slave-init to %s (station %d)"
 msgstr ""
 
-#: dumb/netplay.c:97
+#: dumb/netplay.c:100
 msgid "sending slave-init packets..."
 msgstr ""
 
 #. say what's going on
-#: dumb/netplay.c:110
+#: dumb/netplay.c:113
 msgid "waiting for slaves to initialise"
 msgstr ""
 
-#: dumb/netplay.c:132
+#: dumb/netplay.c:135
 msgid "all slaves up"
 msgstr ""
 
-#: dumb/netplay.c:151
+#: dumb/netplay.c:154
 msgid "sending init-request"
 msgstr ""
 
-#: dumb/netplay.c:166
+#: dumb/netplay.c:169
 msgid "waiting for slave init info from master"
 msgstr ""
 
-#: dumb/netplay.c:345
+#: dumb/netplay.c:360
 #, c-format
 msgid "waiting for slave '%s' (%d) to catch up"
 msgstr ""
 
-#: dumb/netplay.c:349
+#: dumb/netplay.c:364
 #, c-format
 msgid "slave '%s' (%d) seems to be dead"
 msgstr ""
 
-#: dumb/netplay.c:401
+#: dumb/netplay.c:416
 #, c-format
 msgid "inconsistent packet length %lu > %lu"
 msgstr ""
 
-#: dumb/netplay.c:442
+#: dumb/netplay.c:460
 #, c-format
 msgid "init request from %s ignored"
 msgstr ""
 
-#: dumb/netplay.c:446
+#: dumb/netplay.c:464
 #, c-format
 msgid "got init request: setting up new station %d"
 msgstr ""
 
-#: dumb/netplay.c:455
+#: dumb/netplay.c:473
 #, c-format
 msgid "init pkt length mismatch: got %d, expecting %lu"
 msgstr ""
 
-#: dumb/netplay.c:460
+#: dumb/netplay.c:478
 #, c-format
 msgid "protocol version mismatch: got %d, expecting %d"
 msgstr ""
 
-#: dumb/netplay.c:472
+#: dumb/netplay.c:490
 #, c-format
 msgid "strange packet type (%c) in netplay_poll()"
 msgstr ""
 
-#: dumb/netplay.c:481
+#: dumb/netplay.c:499
 #, c-format
 msgid "station %s (%d) lives!"
 msgstr ""
@@ -1537,22 +1545,22 @@ msgstr ""
 msgid "Obj %d is heatseeking %d"
 msgstr ""
 
-#: dumb/thingm.c:232
+#: dumb/thingm.c:242
 #, c-format
 msgid "thing %d is out to get %d!"
 msgstr ""
 
-#: dumb/thingm.c:343
+#: dumb/thingm.c:417
 #, c-format
 msgid "thing %d took %d damage (%d/%d hits)"
 msgstr ""
 
-#: dumb/thingm.c:444
+#: dumb/thingm.c:528
 #, c-format
 msgid "melee: %d's attack on %d failed"
 msgstr ""
 
-#: dumb/thingm.c:531
+#: dumb/thingm.c:615
 #, c-format
 msgid "Thing %d becomes type %d; old type was %d"
 msgstr ""
@@ -1632,7 +1640,7 @@ msgstr ""
 msgid "%d is being crushed, but not by sector %d ???"
 msgstr ""
 
-#: dumb/updthing.c:452
+#: dumb/updthing.c:489
 #, c-format
 msgid "climbing, factor=%d"
 msgstr ""
@@ -1777,25 +1785,25 @@ msgstr ""
 msgid "Previous item"
 msgstr ""
 
-#: dumb/keymap.c:164
+#: dumb/keymap.c:177
 #, c-format
 msgid "NULL keyname for keycode 0x%08lX"
 msgstr ""
 
-#: dumb/keymap.c:175
+#: dumb/keymap.c:188
 #, c-format
 msgid "No action for keyname \"%s\""
 msgstr ""
 
-#: dumb/keymap.c:278
+#: dumb/keymap.c:291
 msgid "--- begin keymap debug dump"
 msgstr ""
 
-#: dumb/keymap.c:284
+#: dumb/keymap.c:297
 msgid "--- end keymap debug dump"
 msgstr ""
 
-#: dumb/keymap.c:323
+#: dumb/keymap.c:336
 msgid "attempt to resize keymap under its length"
 msgstr ""
 
@@ -2093,32 +2101,31 @@ msgstr ""
 msgid "dummy input: always quit"
 msgstr ""
 
-#: dumb/ggi_video.c:117
+#: dumb/ggi_video.c:87
+msgid "GGI: ggiInit failed."
+msgstr ""
+
+#: dumb/ggi_video.c:93
 msgid "GGI: ggiOpen failed."
 msgstr ""
 
-#: dumb/ggi_video.c:153 dumb/linux_video.c:152 dumb/vgagl_video.c:138
+#: dumb/ggi_video.c:129 dumb/linux_video.c:152 dumb/vgagl_video.c:138
 #, c-format
 msgid "Bad BPP (%d) in init_video"
 msgstr ""
 
-#: dumb/ggi_video.c:157
-msgid "GGI: SetGraphMode failed."
+#: dumb/ggi_video.c:144
+#, c-format
+msgid "Depth %d not supported."
 msgstr ""
 
-#: dumb/ggi_video.c:167
+#: dumb/ggi_video.c:149
+msgid "Mode not supported by LibGGI."
+msgstr ""
+
+#: dumb/ggi_video.c:157
 #, c-format
 msgid "init_video in copying mode pagelen=%d"
-msgstr ""
-
-#: dumb/ggi_video.c:436
-#, c-format
-msgid "Unused key: Latin sym=%04x (%c)\n"
-msgstr ""
-
-#: dumb/ggi_video.c:588
-#, c-format
-msgid "Unused key: Special sym=%04x\n"
 msgstr ""
 
 #: dumb/linux_video.c:39
@@ -2312,19 +2319,6 @@ msgstr ""
 msgid "keyboard grab failed!"
 msgstr ""
 
-#. FIXME: It shouldn't be necessary to put default values in the string.
-#: dumb/dos_input.c:39
-msgid "mouse sensitivity x-axis (4)"
-msgstr ""
-
-#: dumb/dos_input.c:40
-msgid "mouse sensitivity y-axis (2)"
-msgstr ""
-
-#: dumb/dos_input.c:142
-msgid "Can't initialize mouse! Missing driver?"
-msgstr ""
-
 #: dumb/dos_video.c:39
 msgid "dont try to use page flipping"
 msgstr ""
@@ -2353,6 +2347,19 @@ msgstr ""
 #: dumb/dos_video.c:142
 #, c-format
 msgid "Video mode: %s (%s)"
+msgstr ""
+
+#. FIXME: It shouldn't be necessary to put default values in the string.
+#: dumb/dos_input.c:39
+msgid "mouse sensitivity x-axis (4)"
+msgstr ""
+
+#: dumb/dos_input.c:40
+msgid "mouse sensitivity y-axis (2)"
+msgstr ""
+
+#: dumb/dos_input.c:142
+msgid "Can't initialize mouse! Missing driver?"
 msgstr ""
 
 #: dumb/vgagl_video.c:142
@@ -2975,28 +2982,28 @@ msgstr ""
 msgid "name expected after PhaseTable"
 msgstr ""
 
-#: ptcomp/phasecomp.c:205
+#: ptcomp/phasecomp.c:221
 #, c-format
 msgid "%5d phase tables\n"
 msgstr ""
 
-#: ptcomp/phasecomp.c:227
+#: ptcomp/phasecomp.c:243
 msgid "phase table name parameter expected"
 msgstr ""
 
-#: ptcomp/phasecomp.c:230
+#: ptcomp/phasecomp.c:246
 msgid "phase table name unrecognised"
 msgstr ""
 
-#: ptcomp/phasecomp.c:240
+#: ptcomp/phasecomp.c:256
 msgid "you need to specify a phasetable first"
 msgstr ""
 
-#: ptcomp/phasecomp.c:242
+#: ptcomp/phasecomp.c:258
 msgid "phase name parameter expected"
 msgstr ""
 
-#: ptcomp/phasecomp.c:246
+#: ptcomp/phasecomp.c:262
 msgid "phase name unrecognised"
 msgstr ""
 
@@ -3004,29 +3011,29 @@ msgstr ""
 msgid "name expected after Proto"
 msgstr ""
 
-#: ptcomp/protocomp.c:234
+#: ptcomp/protocomp.c:243
 #, c-format
 msgid "%5d protos: sorting"
 msgstr ""
 
-#: ptcomp/protocomp.c:237
+#: ptcomp/protocomp.c:246
 msgid ", writing"
 msgstr ""
 
-#: ptcomp/protocomp.c:241
+#: ptcomp/protocomp.c:250
 #, c-format
 msgid "warning: proto %s (%d) has no phasetable\n"
 msgstr ""
 
-#: ptcomp/protocomp.c:254
+#: ptcomp/protocomp.c:263
 msgid "proto name parameter expected"
 msgstr ""
 
-#: ptcomp/protocomp.c:260
+#: ptcomp/protocomp.c:269
 msgid "proto name unrecognised"
 msgstr ""
 
-#: ptcomp/protocomp.c:272
+#: ptcomp/protocomp.c:281
 #, c-format
 msgid "ID %d not unique (clashes with %s)\n"
 msgstr ""
@@ -3035,20 +3042,20 @@ msgstr ""
 msgid "name expected after SoundType"
 msgstr ""
 
-#: ptcomp/soundcomp.c:80
+#: ptcomp/soundcomp.c:81
 msgid "too many sound redirects"
 msgstr ""
 
-#: ptcomp/soundcomp.c:93
+#: ptcomp/soundcomp.c:94
 #, c-format
 msgid "%5d sounds\n"
 msgstr ""
 
-#: ptcomp/soundcomp.c:104
+#: ptcomp/soundcomp.c:105
 msgid "sound name parameter expected"
 msgstr ""
 
-#: ptcomp/soundcomp.c:121
+#: ptcomp/soundcomp.c:122
 msgid "soundtype redefined"
 msgstr ""
 
@@ -3188,7 +3195,7 @@ msgstr ""
 msgid "font trouble\n"
 msgstr ""
 
-#: test/fixed_bm.c:71
+#: test/fixed_bm.c:91
 msgid "Seeding random number generator\n"
 msgstr ""
 
@@ -3196,29 +3203,29 @@ msgstr ""
 #. printf("sizeof(long long)=%d sizeof(long)=%d, sizeof(int)=%d\n",
 #. sizeof(long long),sizeof(long),sizeof(int));
 #.
-#: test/fixed_bm.c:79
+#: test/fixed_bm.c:99
 msgid ""
 "\n"
 "Adding random numbers..."
 msgstr ""
 
-#: test/fixed_bm.c:86 test/fixed_bm.c:102 test/fixed_bm.c:119
+#: test/fixed_bm.c:106 test/fixed_bm.c:122 test/fixed_bm.c:139
 #, c-format
 msgid "  Fixed: %d"
 msgstr ""
 
-#: test/fixed_bm.c:93 test/fixed_bm.c:109 test/fixed_bm.c:127
+#: test/fixed_bm.c:113 test/fixed_bm.c:129 test/fixed_bm.c:147
 #, c-format
 msgid "  Float: %d"
 msgstr ""
 
-#: test/fixed_bm.c:95
+#: test/fixed_bm.c:115
 msgid ""
 "\n"
 "Multiplying random numbers..."
 msgstr ""
 
-#: test/fixed_bm.c:111
+#: test/fixed_bm.c:131
 msgid ""
 "\n"
 "Dividing random numbers..."

@@ -5,7 +5,7 @@
 
 
 #define NormalRate   130msec
-#define OuchRate     400msec
+#define OuchRate     300msec
 #define DieRate      100msec
 #define ExplodeRate  120msec
 #define RespawnRate  300msec
@@ -17,9 +17,6 @@
 
 // IDEA: (for 'oof' after falling off a cliff)
 #define SigStunned
-
-// IDEA: (stop imps (etc) killing themselves & each other)
-#define ImmuneToSuch
 
 
 /* Player */
@@ -408,6 +405,7 @@ Proto Zombie 3004
   Becomes DeadZombie
   Become2 ExZombie
   Spawn2 Bullets
+  Speed 20
 
 Proto ZombieSarg 9
   Sprite SPOS
@@ -421,6 +419,7 @@ Proto ZombieSarg 9
   Becomes DeadZombieSarg
   Become2 ExZombieSarg
   Spawn2 Shotgun
+  Speed 18
 
 /* Chaingun guy */
 
@@ -516,6 +515,7 @@ Proto ChaingunGuy 65
   Becomes DeadChaingunGuy
   Become2 ExChaingunGuy
   Spawn2 Chaingun
+  Speed 15
 
 
 /* Demon and spectre */
@@ -591,6 +591,7 @@ Proto Demon 3002
   Beastie Blocking SkirtCliffs
   Splat BloodSplat
   Becomes DeadDemon
+  Speed 28
 
 Proto Spectre 58
   Sprite SARG
@@ -602,7 +603,7 @@ Proto Spectre 58
   Beastie Blocking SkirtCliffs PInvis
   Splat BloodSplat
   Becomes DeadSpectre
-  Speed 18
+  Speed 28
 
 
 /* Cacodemon */
@@ -665,7 +666,7 @@ Proto Cacodemon 3005
   Splat BloodSplat
   Shoots CacoFireBall ImmuneToSuch
   Becomes DeadCacodemon
-
+  Speed 20
 
 /* Baron and Hell-knight */
 
@@ -738,6 +739,7 @@ Proto Baron 3003
   Shoots BaronFireBall ImmuneToSuch
   Damage 20
   Becomes DeadBaron
+  Speed 19
 
 Proto HellKnight 69
   Sprite BOS2
@@ -750,7 +752,7 @@ Proto HellKnight 69
   Shoots BaronFireBall ImmuneToSuch
   Damage 2
   Becomes DeadHellKnight
-
+  Speed 18
 
 /* Revenant */
 
@@ -814,13 +816,13 @@ PhaseTable Revenant
 Proto Revenant 66
   Sprite SKEL
   Size 40 60
-  Hits 30
+  Hits 50
   Mass 100
   Beastie Blocking SkirtCliffs
   Damage 4
   Shoots SkelFireBall ImmuneToSuch
   Becomes DeadRevenant
-
+  Speed 30
 
 /* Mancubus */
 
@@ -887,14 +889,14 @@ PhaseTable Mancubus
 Proto Mancubus 67
   Sprite FATT
   Size 72 64
-  Hits 60
+  Hits 75
   Mass 200
   Beastie Blocking SkirtCliffs
   Splat BloodSplat
   Shoots MancFireBall ImmuneToSuch
   ShootPara 2 48
   Becomes DeadMancubus
-  Speed 8
+  Speed 10
 
 
 /* Archvile */
@@ -973,15 +975,17 @@ PhaseTable ArchVile
 Proto ArchVile 64
   Sprite VILE
   Size 40 60
-  Hits 70
+  Hits 75
   Mass 100
   Beastie Blocking SkirtCliffs Shooter Resurrector
   Shoots VileFire
   Becomes DeadArchVile
-  Speed 20
+  Speed 35
 
 
 /* Lost soul */
+
+/*SoundType DSSKLATK Chance -10*/
 
 PhaseTable LostSoul
   Default Duration NormalRate
@@ -992,27 +996,24 @@ PhaseTable LostSoul
   Phase SIGHT   A       SigDetect Sound DSSKLATK
 
   Phase MOVE    A
-  Phase -       B       Strategy
+  Phase -	B	Strategy       
   Phase -       A
-  Phase -       B       Strategy Goto MOVE
+  Phase -       B	Strategy Goto MOVE
 
   Default Duration 50msec
-  Phase FIGHT   C       Sound DSSKLATK SigShoot
-  Phase -       C       Strategy
-  Phase -       D       Strategy
-  Phase -       D       Strategy
-  Phase -       C       Strategy
-  Phase -       C       Strategy
-  Phase -       D       Strategy
-  Phase -       D       Strategy
-  Phase -       C       Strategy
-  Phase -       C       Strategy
-  Phase -       D       Strategy
-  Phase -       D       Strategy
-  Phase -       C       Strategy
-  Phase -       C       Strategy
-  Phase -       D       Strategy
-  Phase -       D       Strategy Melee Goto MOVE
+  Phase FIGHT   C       Sound DSSKLATK SigFight
+  Phase -	D	Melee
+  Phase -	C	Duration 100msec Goto MOVE
+
+  Phase SHOOT	C	SigShoot 
+  Phase	-	C	Charge Melee
+  Phase	-	D	Melee
+  Phase	-	D	Charge Melee
+  Phase	-	C	Melee
+  Phase	-	C	Charge Melee
+  Phase	-	D	Melee
+  Phase -       D       Melee Goto MOVE
+
 
   Default Duration OuchRate
   Phase OUCH    E       Sound DSDMPAIN Goto MOVE
@@ -1023,15 +1024,15 @@ PhaseTable LostSoul
   Phase -       F
   Phase -       G
   Phase -       H
-  Phase -       I
+  Phase -       I	Explode
   Phase -       J
   Phase -       K       Destroy
 
 Proto LostSoul 3006
   Sprite SKUL
   Size 32 32
-  Mass 70
-  Beastie Blocking CanFly
+  Mass 50
+  Beastie Blocking CanFly FastShoot
   Hits 10
   Damage 5
   Speed 24
@@ -1077,7 +1078,7 @@ Proto PainElemental 71
   Damage 3
   Shoots LostSoul
   Hits 40
-
+  Speed 18
 
 /* Spiderdemon */
 
@@ -1152,7 +1153,7 @@ Proto Spiderdemon 7
   Shoots Bullet
   ShootMany 3 60
   Becomes DeadSpiderdemon
-  Speed 12
+  Speed 18
 
 
 /* Arachnotron */
@@ -1216,7 +1217,7 @@ PhaseTable Arachnotron
    Beastie Blocking SkirtCliffs
    Shoots AracFireBall ImmuneToSuch FastShoot
    Becomes DeadArachnotron
-
+   Speed 25
 
 /* The dreaded Cyberdemon */
 
@@ -1279,10 +1280,10 @@ Proto Cyberdemon 16
   Size 80 72
   Hits 500
   Mass 300
-  Beastie Blocking SkirtCliffs
+  Beastie Blocking SkirtCliffs FastShoot
   Shoots ClassicMissile
   Becomes DeadCyberdemon
-
+  Speed 20
 
 /* Barrel */
 
@@ -1305,7 +1306,7 @@ PhaseTable Barrel
 Proto Barrel 2035
   Sprite BAR1
   Size 23 32
-  Mass 150
+  Mass 125
   Hits 5
   Damage 160
   Target Blocking
@@ -1321,5 +1322,3 @@ Proto Barrel 2035
 #undef _Resurrect
 #undef Resurrector
 #undef SigStunned
-#undef ImmuneToSuch
-

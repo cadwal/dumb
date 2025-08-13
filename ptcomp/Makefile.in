@@ -240,44 +240,6 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
-animcomp.o: animcomp.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/safem.h ../libdumbutil/timer.h \
-	../libdumb/animtexstruct.h token.h globals.h parm.h \
-	../libdumbutil/fixed.h animcomp.h
-gettcomp.o: gettcomp.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/safem.h ../libdumb/gettablestruct.h \
-	../libdumbutil/endiantypes.h token.h globals.h parm.h \
-	../libdumbutil/fixed.h gettcomp.h protocomp.h soundcomp.h
-licomp.o: licomp.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/safem.h ../libdumb/levinfostruct.h \
-	../libdumbutil/endiantypes.h token.h globals.h parm.h \
-	../libdumbutil/fixed.h licomp.h
-ltcomp.o: ltcomp.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/safem.h ../libdumb/levdatanums.h \
-	../libdumb/linetypestruct.h ../libdumbutil/endiantypes.h \
-	../libdumbutil/fixed.h token.h globals.h parm.h ltcomp.h \
-	protocomp.h soundcomp.h
-parm.o: parm.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/timer.h parm.h ../libdumbutil/fixed.h token.h
-phasecomp.o: phasecomp.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/safem.h token.h globals.h parm.h \
-	../libdumbutil/fixed.h phasecomp.h ../libdumb/prothingstruct.h \
-	../libdumbutil/endiantypes.h soundcomp.h
-protocomp.o: protocomp.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/safem.h ../libdumb/prothingstruct.h \
-	../libdumbutil/endiantypes.h ../libdumbutil/fixed.h token.h \
-	globals.h parm.h gettcomp.h phasecomp.h protocomp.h
-ptcomp.o: ptcomp.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/log.h token.h globals.h parm.h \
-	../libdumbutil/fixed.h animcomp.h gettcomp.h licomp.h ltcomp.h \
-	phasecomp.h ../libdumb/prothingstruct.h \
-	../libdumbutil/endiantypes.h protocomp.h soundcomp.h
-soundcomp.o: soundcomp.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/safem.h ../libdumb/dsound.h \
-	../libdumbutil/fixed.h ../libdumbutil/endiantypes.h \
-	../libdumb/view.h token.h globals.h parm.h soundcomp.h
-token.o: token.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/safem.h token.h
 
 info:
 dvi:

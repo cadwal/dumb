@@ -130,7 +130,7 @@ udp_init_station(RemoteStation *rs)
 	     (unsigned char) he->h_addr[3],
 	     port);
    sin = (struct sockaddr_in *)
-      rs->addr = safe_malloc(rs->addrlen = sizeof(struct sockaddr_in));
+      (rs->addr = safe_malloc(rs->addrlen = sizeof(struct sockaddr_in)));
    sin->sin_family = AF_INET;
    sin->sin_port = htons((unsigned short) port);
    memcpy(&sin->sin_addr, he->h_addr, sizeof(struct in_addr));

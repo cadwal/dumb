@@ -251,7 +251,7 @@ do_preload(LevData *ld, int bpp)
 int
 main(int argc, char **argv)
 {
-   char conf_file[256];
+   char *conf_file;
    void *fb, *rendfb = NULL, *fbptr;
    View view;
    ViewTrans viewtrans;
@@ -290,7 +290,7 @@ main(int argc, char **argv)
    INIT_RENDERER_FN *init_renderer = NULL;
    RENDER_FN *render = NULL;
 
-   video_preinit();
+   /* variable definitions end here */
 
 #ifdef ENABLE_NLS
    setlocale(LC_ALL, "");
@@ -298,14 +298,23 @@ main(int argc, char **argv)
    textdomain(PACKAGE);
 #endif /* ENABLE_NLS */
 
+   /* Always log to stdout until the configuration has been parsed.  */
+   log_stdout();
+
+   video_preinit();
+
 #ifdef __MSDOS__
-   find_conf_file(conf_file, "dumb.cfg");
+   conf_file = conf_file_name("dumb.cfg");
 #else
-   find_conf_file(conf_file, ".dumbrc");
+   conf_file = conf_file_name(".dumbrc");
 #endif
    load_failed = load_conf(dumbconf, conf_file);
    if (conf_args(dumbconf, argc, argv))
       return 1;
+
+   /* Finished parsing the configuration.  The stdout log will
+    * probably be opened again very soon.  */
+   log_close_all();
 
    if (!cnf_quiet) {
       /*setlinebuf(stdout); *//* if stdout is a socket, we'll want this 
@@ -583,6 +592,9 @@ main(int argc, char **argv)
 	    /* we don't want this level's doors to close in the next
 	     * level...  */
 	    unqueue_all_events(ld);
+	    /* tell our slaves to go to the next level */
+	    if(master) send_newlvl(want_new_lvl-1);
+	    /* go there ourselves */
 	    levinfo_next(ld, want_new_lvl > 1);
 	    reset_local_gettables(ld);
 	    td = ldthingd(ld) + (follow = ld->player[ld->localplayer]);
@@ -710,6 +722,7 @@ main(int argc, char **argv)
       keymapconf_before_save();
       save_conf(dumbconf, conf_file, DIRT_ARGS);
    }
+   safe_free(conf_file);
    log_exit();
    return 0;
 }

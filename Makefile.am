@@ -7,9 +7,9 @@ SUBDIRS = libmissing libdumbutil libdumbwad libdumbworldb \
 # stuff for making Red Hat style rpms
 RPMRELEASE = 1
 RPMSTEM	= $(PACKAGE)-$(VERSION)-$(RPMRELEASE)
-RPMSPEC = $(RPMSTEM).spec
+RPMSPEC = $(srcdir)/$(RPMSTEM).spec
 RPMIN	= rpmspec.m4 
-EXTRA_DIST = $(RPMSPEC) $(RPMIN)
+EXTRA_DIST = $(RPMSTEM).spec $(RPMIN)
 MAINTAINERCLEANFILES = $(RPMSPEC)
 
 rpmspec: $(RPMSPEC)
@@ -39,4 +39,21 @@ update-po:
 	fi
 	cd po && $(MAKE) update-po
 
-.PHONY: update-po
+# Automake sets $(distdir) to something like dumb-0.13.2
+$(distdir).lsm: $(distdir).tar.gz $(srcdir)/docs/maint/lsm-template 	
+	( LC_ALL=POSIX;	export LC_ALL;			\
+	  targz=$(distdir).tar.gz;			\
+	  bytes=`wc -c <$$targz`;			\
+	  kilos=`expr \( $$bytes + 500 \) / 1000`;	\
+	  date=`date +%d%b%y | tr "a-z" "A-Z"`;		\
+	  sed -e "s/@LSM-VERSION@/$(VERSION)/"		\
+	      -e "s/@LSM-DATE@/$$date/"			\
+	      -e "s/@LSM-KILOS@/$$kilos/"		\
+	      -e "s/@LSM-TARGZ@/$$targz/"		\
+	      < $(srcdir)/docs/maint/lsm-template	\
+	      > $@					\
+	)
+
+kn-dist: rpmspec dist $(distdir).lsm
+
+.PHONY: update-po kn-dist

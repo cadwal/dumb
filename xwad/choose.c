@@ -309,14 +309,15 @@ sb_button(ChooseInst *ci, int y)
    if (y >= y1 && y <= y2)
       ci->sbdragstart = y;
    else
-      movescroll(ci, ((y - y1) * ci->nitems * SLOT_HEIGHT) / (ci->height - 2));
+      movescroll(ci, ((y - y1) * ci->nitems * SLOT_HEIGHT) 
+		 / ((int)ci->height - 2));
 }
 
 static void
 sb_motion(ChooseInst *ci, int y)
 {
    movescroll(ci, (((y - ci->sbdragstart) * ci->nitems * SLOT_HEIGHT)
-		   / (ci->height - 2)));
+		   / ((int)ci->height - 2)));
    ci->sbdragstart = y;
 }
 

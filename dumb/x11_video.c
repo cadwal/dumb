@@ -701,10 +701,48 @@ keymap_keycode_to_keyname(keymap_keycode keycode)
 {
    /* X has separate keycodes and keysyms but keymap.h calls them all
     * keycodes.  */
-   if (keycode >= CHAR_MIN && keycode <= CHAR_MAX)
-      return keyname_of_char((char) keycode);
-   else
-      return XKeysymToString((KeySym) keycode);
+   switch (keycode) {
+   case XK_KP_Space:     return "Pad Space";
+   case XK_KP_Tab:       return "Pad Tab";
+   case XK_KP_Enter:     return "Pad Enter";
+   case XK_KP_F1:        return "Pad F1";
+   case XK_KP_F2:        return "Pad F2";
+   case XK_KP_F3:        return "Pad F3";
+   case XK_KP_F4:        return "Pad F4";
+   case XK_KP_Home:      return "Pad Home";
+   case XK_KP_Left:      return "Pad Left";
+   case XK_KP_Up:        return "Pad Up";
+   case XK_KP_Right:     return "Pad Right";
+   case XK_KP_Down:      return "Pad Down";
+   case XK_KP_Page_Up:   return "Pad PageUp";   /* == XK_KP_Prior */
+   case XK_KP_Page_Down: return "Pad PageDown"; /* == XK_KP_Next */
+   case XK_KP_End:       return "Pad End";
+   case XK_KP_Begin:     return "Pad Begin";
+   case XK_KP_Insert:    return "Pad Insert";
+   case XK_KP_Delete:    return "Pad Delete";
+   case XK_KP_Equal:     return "Pad =";
+   case XK_KP_Multiply:  return "Pad *";
+   case XK_KP_Add:       return "Pad +";
+   case XK_KP_Separator: return "Pad Separator"; /* TODO: which of these is */
+   case XK_KP_Subtract:  return "Pad -";
+   case XK_KP_Decimal:   return "Pad Decimal";   /* "." and which is ","? */
+   case XK_KP_Divide:    return "Pad /";
+   case XK_KP_0:         return "Pad 0";
+   case XK_KP_1:         return "Pad 1";
+   case XK_KP_2:         return "Pad 2";
+   case XK_KP_3:         return "Pad 3";
+   case XK_KP_4:         return "Pad 4";
+   case XK_KP_5:         return "Pad 5";
+   case XK_KP_6:         return "Pad 6";
+   case XK_KP_7:         return "Pad 7";
+   case XK_KP_8:         return "Pad 8";
+   case XK_KP_9:         return "Pad 9";
+   default:
+      if (keycode >= CHAR_MIN && keycode <= CHAR_MAX)
+	 return keyname_of_char((char) keycode);
+      else
+	 return XKeysymToString((KeySym) keycode);
+   }
 }
 
 void

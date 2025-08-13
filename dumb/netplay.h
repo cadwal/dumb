@@ -108,6 +108,8 @@ typedef struct {
 #define QUIT_SIG 'Q'
 #define MESSAGE_SIG 'M'
 
+#define NEWLVL_SIG 'N'
+
 extern SlaveInitPkt slave_info;
 extern int got_slave_info;
 
@@ -121,6 +123,8 @@ void send_sync(int ack, int ticks);
 void send_slavequit(void);
 void send_message(int player, const char *msg);
 void send_dsound(int sound, fixed x, fixed y, fixed radius);
+
+void send_newlvl(int secret);
 
 void wait_slaveinfo(LevData *ld);	/* slave call to wait for info */
 int wait4master(void);

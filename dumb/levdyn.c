@@ -213,6 +213,12 @@ new_thing(const LevData *ld, int prid, fixed x, fixed y, fixed z)
 static int
 diffchk(const ThingData *t, const LevData *ld)
 {
+   /* workaround for a bug in Doom / Heretic (eg. on htic lvl E2M8)
+      if the game designers forgot to set *any* difficulty flags
+      for an object, always create it (as opposed to never) */
+   if ( !( t->flags & (THING_MULTI|THING_12|THING_3|THING_45) ) )
+      return 1;
+   /* now sensible check */
    if ((t->flags & THING_MULTI) && !ld->mplayer)
       return 0;
    switch (ld->difficulty) {

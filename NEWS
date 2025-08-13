@@ -1,3 +1,52 @@
+* Changes in DUMB 0.13.2.
+
+** Enhanced monsters.
+
+By Josh Parsons.  He posted these changes on dumb-list as Monster
+Patches 1 to 3.
+
+The monsters are now smarter and can no longer shoot you through
+walls.  Also, Heretic monsters are better supported than before.
+
+** Keymap support under GGI.
+
+By Andrew Apted.  He also updated the GGI driver to match the latest
+development version of the LibGGI API.  One version known to work is
+ggi-devel-980801.
+
+** Keypad key names changed.
+
+The names used to begin with "KP_" when playing under X11.  Now they
+begin with "Pad " instead.  Also, long names such as "KP_Subtract"
+have been collapsed to "Pad -" and the like.
+
+The GGI version uses the exact same names, so keypad bindings should
+now be portable between X11 and GGI.
+
+** All strings are quoted in .dumbrc.
+
+This was necessary because the key names can now contain spaces.
+
+Your old .dumbrc should work fine if it didn't have any quote
+characters ("").  Even backslashes are treated as ordinary characters
+when they occur outside quotes.
+
+This is the confquote patch posted on dumb-list.
+
+** DUMB should no longer crash if you try to select an item when the
+inventory is empty.
+
+This code is rather untested.  One situation that may be handled
+erroneously is when you have already selected an item and then the
+inventory somehow becomes empty.  But I don't have Heretic so I don't
+know whether this can actually happen.
+
+** Internals
+
+*** More documentation on how to compile dosdumb.
+
+By Ulf Axelsson.
+
 * Changes in DUMB 0.13.1.
 
 ** MS-DOS DJGPP support by Ulf Axelsson.

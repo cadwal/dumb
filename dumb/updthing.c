@@ -36,9 +36,15 @@
 #include "linetype.h"
 #include "things.h"
 
+/* some magic values */
+
+/* how hard we try to slide along walls */
 #define SLIDE_BAILOUT 4
+
+/* acceleration due to gravity (roughly) */
 #define GRAVITY (FIXED_ONE)
 
+/* magic number used to apply fixed accelerations to things */
 #define TICKDIV (2*MSEC_PER_TICK)
 
 fixed
@@ -153,6 +159,18 @@ thing_chk_collide(LevData *ld, int thingnum)
 	 continue;
       if (otd->proto->flags & PT_PHANTOM)
 	 continue;
+
+      /* missiles don't explode each other */
+      if ( (td->proto->flags & (PT_MINE|PT_EXPLOSIVE))
+	   && (otd->proto->flags & (PT_MINE|PT_EXPLOSIVE)) )
+	 continue;
+
+      /* can't collide with your own missiles / spawns */
+      /* they can still hurt you though */
+      if (on==td->owner || thingnum==otd->owner) 
+	 continue;
+
+      /* some quick checks before we do the (costly) pythagoras */
       if (otd->proto->height + otd->z < td->z)
 	 continue;
       if (otd->z > td->proto->height + td->z)
@@ -161,23 +179,22 @@ thing_chk_collide(LevData *ld, int thingnum)
 	 continue;
       if (abs(otd->y - td->y) > td->proto->radius + otd->proto->radius)
 	 continue;
+
       f = pyth_sq(otd->x - td->x, otd->y - td->y);
       /* are objects overlapping? */
       if (f <= SQ(FIXED_TO_FLOAT(td->proto->radius + otd->proto->radius))) {
 	 /* explode, if necessary */
-	 if (td->proto->flags & PT_EXPLOSIVE) {
-	    /* missiles don't explode each other */
-	    if (otd->proto->flags & PT_EXPLOSIVE)
-	       continue;
-	    /* can't collide with your own missiles */
-	    /* they can still hurt you when they explode though */
-	    if (on == td->owner)
-	       continue;
+	 if (td->proto->flags & PT_MINE) {
 	    /* stop and explode */
 	    td->dx = td->dy = td->dz = 0;
 	    thing_send_sig(ld, thingnum, TS_EXPLODE);
 	    /*logprintf(LOG_DEBUG, 'O', _("missile hit %d: dist=%f"),
-	       on, sqrt(f)); */
+	      on, sqrt(f));*/ 
+	 }
+	 /* set off someone else's explosion, if nec. */
+	 if (otd->proto->flags & PT_MINE) {
+	    otd->dx = otd->dy = otd->dz = 0;
+	    thing_send_sig(ld, on, TS_EXPLODE);
 	 }
 	 /* are we a player running into a gettable */
 	 else if ((td->proto->flags & PT_PLAYER)
@@ -206,18 +223,23 @@ thing_chk_collide(LevData *ld, int thingnum)
 void
 sector_thing_effect(LevData *ld, int sector, int thing, int tickspassed)
 {
-   /*ThingDyn *td=ldthingd(ld)+thing; */
+   ThingDyn *td=ldthingd(ld)+thing;
    SectorDyn *sd = ldsectord(ld) + sector;
    const SectorType *st = lookup_sectortype(sd->type);
    if (!st)
       return;
-   if (st->damage) {
+   if(!td->proto)
+      return;
+   if (st->damage&&(td->proto->flags&PT_TAKESECTDMG)) {
       int tmp = MSEC_PER_TICK * tickspassed * st->damage;
       tmp += random() & 1023;	/* not quite 1000, but faster */
       tmp /= 1024;
       thing_take_damage(ld, thing, tmp);
    }
 }
+
+/*#define fixed_accel(acc) ( ((acc) * tickspassed) /TICKDIV )*/
+#define fixed_accel(acc) ( ((acc) * (tickspassed + TICKDIV)) / (4 * TICKDIV) )
 
 void
 update_things(LevData *ld, int tickspassed)
@@ -286,22 +308,32 @@ update_things(LevData *ld, int tickspassed)
 	 if (td->sector >= 0) {
 	    if (td->proto->flags & PT_HANGING)
 	       td->z = ldsectord(ld)[td->sector].ceiling - td->proto->height;
-#if 0
 	    /* profiling suggests not much gained by this */
+	    /* it's useful for heretic's mines though */
 	    else if (td->proto->flags & PT_STUCKDOWN)
 	       td->z = ldsectord(ld)[td->sector].floor;
-#endif
 	 }
+	 /* check explosive-collisions before continuing */
+	 if (td->proto->flags & (PT_MINE|PT_EXPLOSIVE))
+	    thing_chk_collide(ld,thingnum);
 	 continue;
       }
-      /* apply gravity */
-      if (td->proto->realmass == 0 || (td->proto->flags & PT_CAN_FLY));
+
+      /* gravity stuff */
+
+      /* no gravity if no mass */
+      if (td->proto->realmass == 0);
+      /* no gravity if a flyer, unless we'd dead */
+      else if ((td->proto->flags & PT_CAN_FLY) && 
+	       (td->hits>0 || td->proto->hits<=0));
+      /* reverse gravity for floaters */
       else if (td->proto->flags & PT_FLOATSUP)
-	 td->dz = (td->proto->speed * tickspassed) / TICKDIV;
+	 td->dz = fixed_accel(td->proto->speed);
+      /* apply gravity */
       else if (td->dz < -FIXED_EPSILON)
-	 td->dz -= (2 * GRAVITY * tickspassed) / TICKDIV;
+	 td->dz -= fixed_accel(2 * GRAVITY);
       else
-	 td->dz -= (GRAVITY * tickspassed) / TICKDIV;
+	 td->dz -= fixed_accel(GRAVITY);
 
       /* fake up velocities based on tickspassed */
       dx = (td->dx * tickspassed) / TICKDIV;
@@ -318,9 +350,14 @@ update_things(LevData *ld, int tickspassed)
 	 td->angle += dangle;
 	 continue;
       }
+
       /* skip collision checking if we're only moving vertically */
-      if (dx == 0 && dy == 0)
+      if (dx == 0 && dy == 0) {
 	 steps = 0;
+	 /* unless we're explosive */
+	 if (td->proto->flags & (PT_MINE|PT_EXPLOSIVE))
+	    thing_chk_collide(ld,thingnum);
+      }
 
       /* if we're moving more than our radius horizontally, do it in steps */
       else {
@@ -466,6 +503,9 @@ update_things(LevData *ld, int tickspassed)
 	    }
 	    /* wall must be impassible */
 
+	    /* make a note that we're running into a wall, for monster AI */
+	    td->last_hit_wall=ld->map_ticks;
+
 	    /* check if wall is within our radius */
 	    if (FIXED_ABS(tdist) <= r) {
 
@@ -475,7 +515,7 @@ update_things(LevData *ld, int tickspassed)
 		  thing_send_sig(ld, thingnum, TS_EXPLODE);
 		  thing_hit_wall(ld, thingnum, wall, dist > 0, Damaged);
 		  /*logprintf(LOG_DEBUG, 'O', _("explosive %d hits wall"),
-		     thingnum); */
+		    thingnum);*/ 
 	       }
 	       /* slide along wall
 	        * two things to know about this:
@@ -559,6 +599,7 @@ update_things(LevData *ld, int tickspassed)
 	 if (td->proto->flags & PT_EXPLOSIVE) {
 	    dz = dx = dy = td->dx = td->dy = td->dz = 0;
 	    thing_send_sig(ld, thingnum, TS_EXPLODE);
+	    /*logprintf(LOG_DEBUG,'O',"explosive thing %d hit floor",thingnum);*/
 	 } else if (td->proto->flags & PT_BOUNCY) {
 	    dz = maxfloor - td->z;
 	    td->dz = td->bouncemax;
@@ -574,6 +615,7 @@ update_things(LevData *ld, int tickspassed)
 	 if (td->proto->flags & PT_EXPLOSIVE) {
 	    dz = dx = dy = td->dx = td->dy = td->dz = 0;
 	    thing_send_sig(ld, thingnum, TS_EXPLODE);
+	    /*logprintf(LOG_DEBUG,'O',"explosive thing %d hit ceiling",thingnum);*/
 	 } else {
 	    dz = r - (td->z + FIXED_EPSILON);
 	    sector_crush_thing(ld, td->sector, thingnum);

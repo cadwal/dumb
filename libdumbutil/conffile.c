@@ -24,33 +24,45 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "libdumbutil/dumb-nls.h"
 
 #include "conffile.h"
 #include "confeng.h"
+#include "log.h"
+#include "strgrow.h"
+#include "safem.h"
 
-static void set_conf_list(ConfItem *ci, char *val, int dirt);
+static void parse_conf_strings(ConfItem *ci, const char *s, int dirt);
+static const char *dequote_conf_string(struct strgrow *, const char *);
+static void fput_conf_string(FILE *fout, const char *s);
 
-/* Find the configuration file and copy its name in BUF which must
- * have enough room -- overflow is not checked (FIXME).  Return BUF.
- */
+/* Find the configuration file and return its name as a string
+ * allocated from the free store.  */
 char *
-find_conf_file(char *buf, const char *basename)
+conf_file_name(const char *basename)
 {
-   char *s;
+   char *buf;
    FILE *f;
-   strcpy(buf, basename);
-   if ((f = fopen(buf, "r")) != NULL) {
+   const char *home;
+   if ((f = fopen(basename, "r")) != NULL) {
       fclose(f);
-      return buf;
+      return safe_strdup(basename);
    }
-   s = getenv("HOME");
+   home = getenv("HOME");
    /* Someone might get nasty and set "HOME=" (empty string) */
-   if (!s || !s[0])
-      return buf;
-   strcpy(buf, s);
-   if (buf[strlen(buf) - 1] != '/')
+   if (!home || !home[0])
+      return safe_strdup(basename);
+   /* Room is needed for:
+    * - characters of home[]
+    * - '/', if home[] doesn't include it
+    * - characters of basename[]
+    * - '\0'
+    */
+   buf = (char *) safe_malloc(strlen(home) + 1 + strlen(basename) + 1);
+   strcpy(buf, home);
+   if (buf[strlen(buf)-1] != '/')
       strcat(buf, "/");
    strcat(buf, basename);
    return buf;
@@ -60,12 +72,12 @@ find_conf_file(char *buf, const char *basename)
 int
 load_conf(const ConfModule *conf, const char *fn)
 {
-   FILE *fin = fopen(fn, "r");
+   FILE *fin = fopen(fn, "r");	/* text */
    if (!fin)
       return 1;
    while (!feof(fin)) {
       ConfItem *ci;
-      char buf[LOAD_CONF_BUFLEN];
+      char buf[LOAD_CONF_BUFLEN]; /* FIXME: arbitrary limit */
       char *s, *t;
       if (fgets(buf, LOAD_CONF_BUFLEN, fin) == NULL)
 	 break;
@@ -79,11 +91,11 @@ load_conf(const ConfModule *conf, const char *fn)
       s = strchr(buf, ';');
       if (s)
 	 *s = '\0';
-      /* find seperator */
+      /* find separator */
       s = strchr(buf, '=');
       if (!s)
 	 continue;
-      *s = 0;
+      *s = '\0';
       s++;
       /* find confitem */
       t = buf;
@@ -93,95 +105,191 @@ load_conf(const ConfModule *conf, const char *fn)
       if (!ci)
 	 continue;
       /* set it */
-      if (ci->type == CONF_TYPE_LIST)
-	 set_conf_list(ci, s, DIRT_FILE);
-      else
-	 set_conf(ci, s, DIRT_FILE);
+      parse_conf_strings(ci, s, DIRT_FILE);
    }
    return 0;
 }
 
 int
-save_conf(const ConfModule *conf, const char *fn, int dirt)
+save_conf(const ConfModule *confmod, const char *fn, int dirt)
 {
-   FILE *fout = fopen(fn, "w");
+   FILE *fout = fopen(fn, "w");  /* text */
    if (!fout)
       return 1;
    fprintf(fout, _("; %s\n; this file was created automatically, but you can"
 		   " modify it if you want\n"),
 	   fn);
-   for (; conf->name; conf++) {
+   for (; confmod->name; confmod++) {
       const ConfItem *ci;
       int nout = 0;
-      for (ci = conf->items; ci->name; ci++) {
+      for (ci = confmod->items; ci->name; ci++) {
 	 if (ci->dirtlvl < dirt)
 	    continue;
 	 if (ci->flags & CI_NOSAVE)
 	    continue;
 	 if ((nout++) == 0)
-	    fprintf(fout, _("\n; Module `%s': %s\n"), conf->name, conf->desc);
-	 fprintf(fout, "%s-%s=", conf->name, ci->name);
+	    fprintf(fout, _("\n; Module `%s': %s\n"),
+		    confmod->name, confmod->desc);
+	 fprintf(fout, "%s-%s=", confmod->name, ci->name);
 	 switch (ci->type) {
 	 default:
-	    fprintf(stderr,
-		    _("internal error: save_conf():"
-		      " strange type %d, treating as int\n"),
-		    (int) ci->type);
+	    logprintf(LOG_ERROR, 'C', 
+		      _("internal error: save_conf():"
+			" strange type %d, treating as int\n"),
+		      (int) ci->type);
 	    /* fallthrough */
 	 case CONF_TYPE_INT:
 	 case CONF_TYPE_BOOL:
-	    fprintf(fout, "%d\n", ci->intval);
+	    fprintf(fout, "%d", ci->intval);
 	    break;
 	 case CONF_TYPE_ENUM:
-	    fprintf(fout, "%s\n", ci->etype[ci->intval].name);
+	    fput_conf_string(fout, ci->etype[ci->intval].name);
 	    break;
 	 case CONF_TYPE_STR:
-	    if (ci->strval)
-	       fprintf(fout, "%s\n", ci->strval);
-	    else
-	       putc(' ', fout);
+	    fput_conf_string(fout, ci->strval ? ci->strval : "");
 	    break;
 	 case CONF_TYPE_LIST:
 	    {
-	       char **s = ci->listval;
-	       while (s && *s) {
-		  fprintf(fout, "%s", *s);
-		  s++;
-		  if (*s)
+	       char **ps = ci->listval;
+	       while (ps && *ps) {
+		  fput_conf_string(fout, *ps);
+		  ps++;
+		  if (*ps)
 		     putc(' ', fout);
 	       }
-	       putc('\n', fout);
 	    }
 	    break;
-	 }
-      }
-   }
+	 } /* switch ci->type */
+	 putc('\n', fout);
+      }	/* for ci */
+   } /* for confmod */
    putc('\n', fout);
    fclose(fout);
    return 0;
 }
 
-/* Append all whitespace-separated strings from VAL to CI.  If
- * anything is appended, set the dirt level to DIRT.  Destroy the
- * string CI in the process.  */
 static void
-set_conf_list(ConfItem *ci, char *val, int dirt)
+parse_conf_strings(ConfItem *ci, const char *s, int dirt)
 {
-   char *s;
-   while (val && *val) {
-      /* FIXME: use isspace()?  */
-      while (*val == ' ' || *val == '\t')
-	 val++;
-      if (!*val)
-	 break;
-      s = strchr(val, ' ');
-      if (s) {
-	 *s = 0;
+   struct strgrow sg;
+   strgrow_init(&sg);
+   for (;;) {
+      while (isspace(*s))
 	 s++;
-      }
-      set_conf(ci, val, dirt);
-      val = s;
+      if (!*s)
+	 break;			/* end of line */
+      s = dequote_conf_string(&sg, s);
+      if (!s)
+	 break;			/* error */
+      set_conf(ci, sg.str, dirt);
    }
+   strgrow_fini(&sg);
+}
+
+/* Read one possibly quoted string from S to SG.  Return the address
+ * of the next character in S, or NULL if an error occurs.  */
+static const char *
+dequote_conf_string(struct strgrow *sg, const char *s)
+{
+   int quote = 0;
+   strgrow_clear(sg);
+   for (;;) {
+      switch (*s) {
+      case '\0':
+	 if (quote) {
+	    /* FIXME: print line number too */
+	    logprintf(LOG_ERROR, 'C',
+		      _("Missing quote in configuration file\n"));
+	    return NULL;
+	 } else {
+	    strgrow_grow(sg, '\0');
+	    return s;
+	 }
+      case '"':
+	 quote = !quote;
+	 break;
+      case '\\':
+	 /* For compatibility with configuration files written by
+	  * previous versions that didn't support quoting, treat
+	  * backslashes outside quotes as ordinary characters.  */
+	 if (!quote) {
+	    strgrow_grow(sg, '\\');
+	    break;
+	 }
+	 s++;
+	 switch (*s) {
+	 case '\0':
+	    /* FIXME: print line number too */
+	    logprintf(LOG_ERROR, 'C',
+		      _("Trailing backslash in configuration file\n"));
+	    return NULL;
+	 case 'n':
+	    strgrow_grow(sg, '\n');
+	    break;
+	 case 't':
+	    strgrow_grow(sg, '\t');
+	    break;
+	 case '0': case '1': case '2': case '3':
+	 case '4': case '5': case '6': case '7':
+	    { /* Octal sequence */
+	       int sum = 0;
+	       int count;
+	       for (count=0; count<3 && strchr("01234567", *s); count++, s++)
+		  sum = sum*8 + (*s - '0');
+	       /* TODO: check limits */
+	       strgrow_grow(sg, (char) count);
+	       s--; /* now it points to the last digit */
+	    }
+	    break;
+	 default:
+	    /* Literal */
+	    strgrow_grow(sg, *s);
+	    break;
+	 } /* switch (*s) after backslash */
+	 break;
+	 /* that was the backslash case... now the rest */
+      default:
+	 if (!quote && isspace(*s)) {
+	    strgrow_grow(sg, '\0');
+	    return s;
+	 } else
+	    strgrow_grow(sg, *s);
+	 break;
+      }	/* outer switch (*s) */
+      s++;
+   } /* for ever */
+}
+
+static void
+fput_conf_string(FILE *fout, const char *s)
+{
+   putc('"', fout);
+   for (; *s; s++) {
+      switch (*s) {
+      case '\\':
+	 fputs("\\\\", fout);
+	 break;
+      case '\"':
+	 fputs("\\\"", fout);
+	 break;
+      case '\n':
+	 fputs("\\\n", fout);
+	 break;
+      case '\t':
+	 fputs("\\\t", fout);
+	 break;
+      default:
+	 /* Locales affect the result of isprint(), but that doesn't matter,
+	  * since the reader can parse both formats in any locale.
+	  */
+	 if (isprint(*s))
+	    putc(*s, fout);
+	 else /* FIXME: this assumes chars are 8-bit */
+	    fprintf(fout, "\\%03o", *s);
+	 break;
+      }
+   }
+   putc('"', fout);
 }
 
 // Local Variables:

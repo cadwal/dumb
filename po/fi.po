@@ -46,9 +46,9 @@
 # blocking (as in a blocking read) = pidättelevä
 msgid ""
 msgstr ""
-"Project-Id-Version: DUMB 0.12.2\n"
-"POT-Creation-Date: 1998-07-11 22:39+0300\n"
-"PO-Revision-Date: 1998-07-22 04:03+03:00\n"
+"Project-Id-Version: DUMB 0.13.2\n"
+"POT-Creation-Date: 1998-08-24 00:28+0300\n"
+"PO-Revision-Date: 1998-08-30 00:48+03:00\n"
 "Last-Translator: Kalle Olavi Niemitalo <tosi@stekt.oulu.fi>\n"
 "Language-Team: Finnish <fi@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -135,7 +135,7 @@ msgstr "Tarkenne tarvitsee argumentin -- %s\n"
 msgid "internal error: set_conf(): strange type %d\n"
 msgstr "sisäinen virhe: set_conf(): outo tyyppi %d\n"
 
-#: libdumbutil/conffile.c:110
+#: libdumbutil/conffile.c:119
 #, c-format
 msgid ""
 "; %s\n"
@@ -144,7 +144,7 @@ msgstr ""
 "; %s\n"
 "; tämä tiedosto on ohjelman tekemä, mutta voit muuttaa tätä jos haluat\n"
 
-#: libdumbutil/conffile.c:122
+#: libdumbutil/conffile.c:131
 #, c-format
 msgid ""
 "\n"
@@ -153,11 +153,19 @@ msgstr ""
 "\n"
 "; Osa \"%s\": %s\n"
 
-#: libdumbutil/conffile.c:127
+#: libdumbutil/conffile.c:137
 #, c-format
 msgid "internal error: save_conf(): strange type %d, treating as int\n"
 msgstr ""
 "sisäinen virhe: save_conf(): outo tyyppi %d, käsittelen kokonaislukuna\n"
+
+#: libdumbutil/conffile.c:202
+msgid "Missing quote in configuration file\n"
+msgstr "Asetustiedostosta puuttuu lainausmerkki\n"
+
+#: libdumbutil/conffile.c:224
+msgid "Trailing backslash in configuration file\n"
+msgstr "Asetustiedossa on kenoviiva rivin lopussa\n"
 
 #: libdumbutil/confhelp.c:53
 #, c-format
@@ -308,27 +316,27 @@ msgstr "  Enimmäispituus=%d\n"
 msgid "  Cannot be saved in a config file.\n"
 msgstr "  Ei tallennu asetustiedostoon.\n"
 
-#: libdumbutil/log.c:94
+#: libdumbutil/log.c:93
 #, c-format
 msgid "%s: opening log file: %s"
 msgstr "%s: lokitiedostoa avatessa: %s"
 
-#: libdumbutil/log.c:104
+#: libdumbutil/log.c:103
 msgid "Normal exit."
 msgstr "Ohjelma loppui normaalisti."
 
-#: libdumbutil/log.c:113
+#: libdumbutil/log.c:112
 #, c-format
 msgid "%d errors occured."
 msgstr "Tuli %d virhettä."
 
-#: libdumbutil/log.c:132
+#: libdumbutil/log.c:131
 msgid "A fatal error occured."
 msgstr "Tuli kohtalokas virhe."
 
 #. strerror(errno) should always be called as part of the log
 #. * message, and then the following line could be removed.
-#: libdumbutil/log.c:135
+#: libdumbutil/log.c:134
 msgid "System error message (may be unrelated)"
 msgstr "Järjestelmän virheilmoitus (ei ehkä liity asiaan)"
 
@@ -1159,25 +1167,25 @@ msgstr "Lataan katto- ja lattiakuvioita ennakkoon"
 msgid "Preloading sprites"
 msgstr "Lataan spritejä ennakkoon"
 
-#: dumb/dumb.c:318
+#: dumb/dumb.c:327
 #, c-format
 msgid "Read configuration from %s"
 msgstr "Asetukset ladattu tiedostosta %s"
 
-#: dumb/dumb.c:364
+#: dumb/dumb.c:373
 msgid "network mode: slave"
 msgstr "verkkopeli: orja"
 
-#: dumb/dumb.c:370
+#: dumb/dumb.c:379
 msgid "network mode: master"
 msgstr "verkkopeli: isäntä"
 
-#: dumb/dumb.c:446
+#: dumb/dumb.c:455
 #, c-format
 msgid "Unsupported BPP=%d"
 msgstr "BPP:tä %d ei tueta"
 
-#: dumb/dumb.c:465
+#: dumb/dumb.c:474
 msgid "Can't find sector for player"
 msgstr "Pelaajan sektoria ei löydy"
 
@@ -1204,45 +1212,45 @@ msgstr "Pelaajan sektoria ei löydy"
 #. * 	 }
 #. * }
 #.
-#: dumb/dumb.c:520
+#: dumb/dumb.c:529
 msgid "starting game"
 msgstr "peli alkaa"
 
-#: dumb/dumb.c:559
+#: dumb/dumb.c:568
 msgid "Demo ran out..."
 msgstr "Demo loppui..."
 
-#: dumb/dumb.c:599
+#: dumb/dumb.c:611
 msgid "saving snapshot..."
 msgstr "tallennan kuvaa..."
 
-#: dumb/dumb.c:627
+#: dumb/dumb.c:639
 msgid "snapshot done"
 msgstr "kuva tallennettu"
 
-#: dumb/dumb.c:631
+#: dumb/dumb.c:643
 #, c-format
 msgid "%d ticks passed with MAXTICKS=%d"
 msgstr "%d hetkeä kului ja MAXTICKS=%d"
 
-#: dumb/dumb.c:661
+#: dumb/dumb.c:673
 msgid "WARNING: this system is running faster than the timer resolution"
 msgstr "VAROITUS: tämä kone toimii nopeammin kuin ajastin ehtii mitata"
 
-#: dumb/dumb.c:664
+#: dumb/dumb.c:676
 msgid "Try running DUMB in a larger window."
 msgstr "Kokeile ajaa DUMBia isommassa ikkunassa."
 
-#: dumb/dumb.c:667
+#: dumb/dumb.c:679
 msgid "YOU DIED.  TOO BAD..."
 msgstr "KUOLIT.  VOI HARMI..."
 
-#: dumb/dumb.c:683
+#: dumb/dumb.c:695
 #, c-format
 msgid "%d frames, %d seconds, %f fps"
 msgstr "%d framea, %d sekuntia, %f fps"
 
-#: dumb/dumb.c:709
+#: dumb/dumb.c:721
 #, c-format
 msgid "Saving config to %s"
 msgstr "Tallennan asetuksia tiedostoon %s"
@@ -1309,28 +1317,28 @@ msgstr "PELAAJA %d PALASI"
 msgid "PLAYER %d SMASHES PUMPKINS"
 msgstr "PELAAJA %d MURSKAA KURPITSOJA"
 
-#: dumb/gettable.c:197
+#: dumb/gettable.c:198
 #, c-format
 msgid "Strange gettable type=%d num=%d"
 msgstr "Outo kerättävä tyyppi=%d määrä=%d"
 
 # Nämä pitää tehdä uusiksi niin, että WAD:ssa on koko lauseet.
-#: dumb/gettable.c:209
+#: dumb/gettable.c:210
 #, fuzzy, c-format
 msgid "YOU GOT THE %s!"
 msgstr "SAIT %s:N!"
 
-#: dumb/gettable.c:211
+#: dumb/gettable.c:212
 #, c-format
 msgid "THAT %s WOULD BE WASTED..."
 msgstr "SE %s MENISI HUKKAAN..."
 
-#: dumb/gettable.c:214
+#: dumb/gettable.c:215
 #, fuzzy, c-format
 msgid "GOT A %s."
 msgstr "SAIT %s:N."
 
-#: dumb/gettable.c:361
+#: dumb/gettable.c:362
 #, c-format
 msgid "init %d gettables"
 msgstr "alustetaan %d kerättävää"
@@ -1397,7 +1405,7 @@ msgstr "Esinepaikat loppuivat kesken"
 msgid "Couldn't find protothing ID=%d"
 msgstr "Ei löytynyt protothingiä, jonka ID=%d"
 
-#: dumb/levdyn.c:237
+#: dumb/levdyn.c:243
 #, c-format
 msgid "diffchk: strange difficulty??? (%d)"
 msgstr "diffchk: outo vaikeustaso??? (%d)"
@@ -1411,11 +1419,11 @@ msgstr "varoitus: pelille ei ole LEVINFO-könttiä"
 msgid "Init %d levels"
 msgstr "Alustettu %d kenttää"
 
-#: dumb/levinfo.c:92
+#: dumb/levinfo.c:93
 msgid "bogus levinfo pointer in levinfo_load"
 msgstr "virheellinen levinfo-osoitin levinfo_load:ssa"
 
-#: dumb/levinfo.c:124
+#: dumb/levinfo.c:127
 #, c-format
 msgid "no levinfo for %s, so can't find next level"
 msgstr "ei levinfoa %s:lle, joten seuraavasta kentästä ei ole tietoa"
@@ -1475,73 +1483,73 @@ msgstr "älä tahdista ollenkaan"
 msgid "time between sending acks"
 msgstr "aika kuittausten lähettämisen välillä"
 
-#: dumb/netplay.c:86
+#: dumb/netplay.c:89
 #, c-format
 msgid "sending slave-init to %s (station %d)"
 msgstr "lähetän orjan alustusta %s:lle (asema %d)"
 
-#: dumb/netplay.c:97
+#: dumb/netplay.c:100
 msgid "sending slave-init packets..."
 msgstr "lähetän orjanalustuspaketteja..."
 
 #. say what's going on
-#: dumb/netplay.c:110
+#: dumb/netplay.c:113
 msgid "waiting for slaves to initialise"
 msgstr "odotan orjien käynnistymistä"
 
-#: dumb/netplay.c:132
+#: dumb/netplay.c:135
 msgid "all slaves up"
 msgstr "kaikki orjat käynnissä"
 
-#: dumb/netplay.c:151
+#: dumb/netplay.c:154
 msgid "sending init-request"
 msgstr "lähetän alustuspyyntöä"
 
-#: dumb/netplay.c:166
+#: dumb/netplay.c:169
 msgid "waiting for slave init info from master"
 msgstr "odotan orjanalustustietoja isännältä"
 
-#: dumb/netplay.c:345
+#: dumb/netplay.c:360
 #, c-format
 msgid "waiting for slave '%s' (%d) to catch up"
 msgstr "odotan että orja \"%s\" (%d) pääsee tahtiin"
 
-#: dumb/netplay.c:349
+#: dumb/netplay.c:364
 #, c-format
 msgid "slave '%s' (%d) seems to be dead"
 msgstr "orja \"%s\" (%d) vaikuttaa kuolleelta"
 
-#: dumb/netplay.c:401
+#: dumb/netplay.c:416
 #, c-format
 msgid "inconsistent packet length %lu > %lu"
 msgstr "paketin pituus ei täsmää (%lu > %lu)"
 
-#: dumb/netplay.c:442
+#: dumb/netplay.c:460
 #, c-format
 msgid "init request from %s ignored"
 msgstr "alustuspyyntö asemalta %s hylätty"
 
-#: dumb/netplay.c:446
+#: dumb/netplay.c:464
 #, c-format
 msgid "got init request: setting up new station %d"
 msgstr "tuli alustuspyyntö: valmistelen uuden aseman %d"
 
-#: dumb/netplay.c:455
+#: dumb/netplay.c:473
 #, c-format
 msgid "init pkt length mismatch: got %d, expecting %lu"
 msgstr "alustuspaketin pituus ei täsmää: tuli %d, pitäisi olla %lu"
 
-#: dumb/netplay.c:460
+#: dumb/netplay.c:478
 #, c-format
 msgid "protocol version mismatch: got %d, expecting %d"
 msgstr "protokollan versio ei täsmää: tuli %d, pitäisi olla %d"
 
-#: dumb/netplay.c:472
+#: dumb/netplay.c:490
 #, c-format
 msgid "strange packet type (%c) in netplay_poll()"
 msgstr "outo paketin tyyppi (%c) netplay_poll():ssa"
 
-#: dumb/netplay.c:481
+#: dumb/netplay.c:499
 #, c-format
 msgid "station %s (%d) lives!"
 msgstr "asema %s (%d) on elossa!"
@@ -1607,22 +1615,22 @@ msgstr "outo könttityyppi (%d) toimintoja suoritettaessa"
 msgid "Obj %d is heatseeking %d"
 msgstr "Olio %d hakeutuu olioon %d"
 
-#: dumb/thingm.c:232
+#: dumb/thingm.c:242
 #, c-format
 msgid "thing %d is out to get %d!"
 msgstr "olio %d suuttui %d:lle!"
 
-#: dumb/thingm.c:343
+#: dumb/thingm.c:417
 #, c-format
 msgid "thing %d took %d damage (%d/%d hits)"
 msgstr "olio %d kärsi %d vahinkoa (%d/%d kestopistettä)"
 
-#: dumb/thingm.c:444
+#: dumb/thingm.c:528
 #, c-format
 msgid "melee: %d's attack on %d failed"
 msgstr "tappelu: %d:n hyökkäys %d:n kimppuun epäonnistui"
 
-#: dumb/thingm.c:531
+#: dumb/thingm.c:615
 #, c-format
 msgid "Thing %d becomes type %d; old type was %d"
 msgstr "Olio %d muuttuu tyyppi %d:ksi; ennen tyyppi oli %d"
@@ -1702,7 +1710,7 @@ msgstr "Outo könttityyppi %d um_events:ssä"
 msgid "%d is being crushed, but not by sector %d ???"
 msgstr "joku murskaa oliota %d muttei sektori %d ???"
 
-#: dumb/updthing.c:452
+#: dumb/updthing.c:489
 #, c-format
 msgid "climbing, factor=%d"
 msgstr "kiipeää, suhde=%d"
@@ -1847,25 +1855,25 @@ msgstr "Seuraava esine"
 msgid "Previous item"
 msgstr "Edellinen esine"
 
-#: dumb/keymap.c:164
+#: dumb/keymap.c:177
 #, c-format
 msgid "NULL keyname for keycode 0x%08lX"
 msgstr "NULL-nimi näppäinkoodille 0x%08lX"
 
-#: dumb/keymap.c:175
+#: dumb/keymap.c:188
 #, c-format
 msgid "No action for keyname \"%s\""
 msgstr "Ei toimintoa näppäimelle \"%s\""
 
-#: dumb/keymap.c:278
+#: dumb/keymap.c:291
 msgid "--- begin keymap debug dump"
 msgstr "--- näppäinkartan koetuloste alkaa"
 
-#: dumb/keymap.c:284
+#: dumb/keymap.c:297
 msgid "--- end keymap debug dump"
 msgstr "--- näppäinkartan koetuloste loppuu"
 
-#: dumb/keymap.c:323
+#: dumb/keymap.c:336
 msgid "attempt to resize keymap under its length"
 msgstr "yritys kutistaa näppäinkartta alle pituutensa"
 
@@ -2163,33 +2171,32 @@ msgstr "udp yhteensä:  %d pakettia, %d tavua, keskipituus %d"
 msgid "dummy input: always quit"
 msgstr "muka-ohjaus: lopeta heti"
 
-#: dumb/ggi_video.c:117
+#: dumb/ggi_video.c:87
+msgid "GGI: ggiInit failed."
+msgstr "GGI: ggiInit epäonnistui."
+
+#: dumb/ggi_video.c:93
 msgid "GGI: ggiOpen failed."
 msgstr "GGI: ggiOpen epäonnistui."
 
-#: dumb/ggi_video.c:153 dumb/linux_video.c:152 dumb/vgagl_video.c:138
+#: dumb/ggi_video.c:129 dumb/linux_video.c:152 dumb/vgagl_video.c:138
 #, c-format
 msgid "Bad BPP (%d) in init_video"
 msgstr "Kelvoton BPP (%d) init_video:ssa"
 
-#: dumb/ggi_video.c:157
-msgid "GGI: SetGraphMode failed."
-msgstr "GGI: SetGraphMode epäonnistui."
+#: dumb/ggi_video.c:144
+#, c-format
+msgid "Depth %d not supported."
+msgstr "Syvyyttä %d ei tueta."
 
-#: dumb/ggi_video.c:167
+#: dumb/ggi_video.c:149
+msgid "Mode not supported by LibGGI."
+msgstr "LibGGI ei tue tilaa."
+
+#: dumb/ggi_video.c:157
 #, c-format
 msgid "init_video in copying mode pagelen=%d"
 msgstr "init_video kopiointitilassa pagelen=%d"
-
-#: dumb/ggi_video.c:436
-#, c-format
-msgid "Unused key: Latin sym=%04x (%c)\n"
-msgstr "Käyttämätön näppäin: Latin sym=%04x (%c)\n"
-
-#: dumb/ggi_video.c:588
-#, c-format
-msgid "Unused key: Special sym=%04x\n"
-msgstr "Käyttämätön näppäin: Special sym=%04x\n"
 
 #: dumb/linux_video.c:39
 msgid "maximum pages to use for flipping"
@@ -2386,19 +2393,6 @@ msgstr "DetectableAutorepeat käytössä"
 msgid "keyboard grab failed!"
 msgstr "näppäimistön omiminen epäonnistui!"
 
-#. FIXME: It shouldn't be necessary to put default values in the string.
-#: dumb/dos_input.c:39
-msgid "mouse sensitivity x-axis (4)"
-msgstr "hiiren herkkyys x-suunnassa (4)"
-
-#: dumb/dos_input.c:40
-msgid "mouse sensitivity y-axis (2)"
-msgstr "hiiren herkkyys y-suunnassa (2)"
-
-#: dumb/dos_input.c:142
-msgid "Can't initialize mouse! Missing driver?"
-msgstr "En voi alustaa hiirtä!  Puuttuuko ohjain?"
-
 #: dumb/dos_video.c:39
 msgid "dont try to use page flipping"
 msgstr "älä yritä vaihdella näyttösivuja"
@@ -2428,6 +2422,19 @@ msgstr "Kaksivaiheinen kaksoispuskurointi käytössä"
 #, c-format
 msgid "Video mode: %s (%s)"
 msgstr "Näyttötila: %s (%s)"
+
+#. FIXME: It shouldn't be necessary to put default values in the string.
+#: dumb/dos_input.c:39
+msgid "mouse sensitivity x-axis (4)"
+msgstr "hiiren herkkyys x-suunnassa (4)"
+
+#: dumb/dos_input.c:40
+msgid "mouse sensitivity y-axis (2)"
+msgstr "hiiren herkkyys y-suunnassa (2)"
+
+#: dumb/dos_input.c:142
+msgid "Can't initialize mouse! Missing driver?"
+msgstr "En voi alustaa hiirtä!  Puuttuuko ohjain?"
 
 #: dumb/vgagl_video.c:142
 #, c-format
@@ -3070,28 +3077,28 @@ msgstr "WaitFor-sanan jälkeen pitää olla tapahtumatyyppi"
 msgid "name expected after PhaseTable"
 msgstr "PhaseTable-sanan jälkeen pitää olla nimi"
 
-#: ptcomp/phasecomp.c:205
+#: ptcomp/phasecomp.c:221
 #, c-format
 msgid "%5d phase tables\n"
 msgstr "%5d tilataulukkoa (PHASES)\n"
 
-#: ptcomp/phasecomp.c:227
+#: ptcomp/phasecomp.c:243
 msgid "phase table name parameter expected"
 msgstr "tarvitaan tilataulukon nimi"
 
-#: ptcomp/phasecomp.c:230
+#: ptcomp/phasecomp.c:246
 msgid "phase table name unrecognised"
 msgstr "tätä tilataulukkoa ei ole määritelty"
 
-#: ptcomp/phasecomp.c:240
+#: ptcomp/phasecomp.c:256
 msgid "you need to specify a phasetable first"
 msgstr "valitse ensin taulukko, johon tämä tila kuuluu"
 
-#: ptcomp/phasecomp.c:242
+#: ptcomp/phasecomp.c:258
 msgid "phase name parameter expected"
 msgstr "tarvitaan tilan nimi"
 
-#: ptcomp/phasecomp.c:246
+#: ptcomp/phasecomp.c:262
 msgid "phase name unrecognised"
 msgstr "tätä tilaa ei ole määritelty"
 
@@ -3099,29 +3106,29 @@ msgstr "tätä tilaa ei ole määritelty"
 msgid "name expected after Proto"
 msgstr "Proto-sanan jälkeen pitää olla nimi"
 
-#: ptcomp/protocomp.c:234
+#: ptcomp/protocomp.c:243
 #, c-format
 msgid "%5d protos: sorting"
 msgstr "%5d protoa (PROTOS): lajittelen"
 
-#: ptcomp/protocomp.c:237
+#: ptcomp/protocomp.c:246
 msgid ", writing"
 msgstr ", tallennan"
 
-#: ptcomp/protocomp.c:241
+#: ptcomp/protocomp.c:250
 #, c-format
 msgid "warning: proto %s (%d) has no phasetable\n"
 msgstr "varoitus: protolla %s (%d) ei ole tilataulukkoa\n"
 
-#: ptcomp/protocomp.c:254
+#: ptcomp/protocomp.c:263
 msgid "proto name parameter expected"
 msgstr "tarvitaan proton nimi"
 
-#: ptcomp/protocomp.c:260
+#: ptcomp/protocomp.c:269
 msgid "proto name unrecognised"
 msgstr "tätä protoa ei ole määritelty"
 
-#: ptcomp/protocomp.c:272
+#: ptcomp/protocomp.c:281
 #, c-format
 msgid "ID %d not unique (clashes with %s)\n"
 msgstr "ID %d on jo käytössä (%s)\n"
@@ -3130,20 +3137,20 @@ msgstr "ID %d on jo käytössä (%s)\n"
 msgid "name expected after SoundType"
 msgstr "SoundType-sanan jälkeen pitää olla nimi"
 
-#: ptcomp/soundcomp.c:80
+#: ptcomp/soundcomp.c:81
 msgid "too many sound redirects"
 msgstr "liikaa sijaisääniä"
 
-#: ptcomp/soundcomp.c:93
+#: ptcomp/soundcomp.c:94
 #, c-format
 msgid "%5d sounds\n"
 msgstr "%5d ääntä (SOUNDS)\n"
 
-#: ptcomp/soundcomp.c:104
+#: ptcomp/soundcomp.c:105
 msgid "sound name parameter expected"
 msgstr "tarvitaan äänen nimi"
 
-#: ptcomp/soundcomp.c:121
+#: ptcomp/soundcomp.c:122
 msgid "soundtype redefined"
 msgstr "ääni on jo määritelty"
 
@@ -3325,7 +3332,7 @@ msgstr "käyttö: mkdfnt <kirjasinlaji> <merkki> [<pehmennys>]\n"
 msgid "font trouble\n"
 msgstr "kirjasinlajipulmia\n"
 
-#: test/fixed_bm.c:71
+#: test/fixed_bm.c:91
 msgid "Seeding random number generator\n"
 msgstr "Alustan satunnaislukugeneraattorin\n"
 
@@ -3333,7 +3340,7 @@ msgstr "Alustan satunnaislukugeneraattorin\n"
 #. printf("sizeof(long long)=%d sizeof(long)=%d, sizeof(int)=%d\n",
 #. sizeof(long long),sizeof(long),sizeof(int));
 #.
-#: test/fixed_bm.c:79
+#: test/fixed_bm.c:99
 msgid ""
 "\n"
 "Adding random numbers..."
@@ -3341,17 +3348,17 @@ msgstr ""
 "\n"
 "Satunnaislukujen yhteenlasku..."
 
-#: test/fixed_bm.c:86 test/fixed_bm.c:102 test/fixed_bm.c:119
+#: test/fixed_bm.c:106 test/fixed_bm.c:122 test/fixed_bm.c:139
 #, c-format
 msgid "  Fixed: %d"
 msgstr "  Kiinto: %d"
 
-#: test/fixed_bm.c:93 test/fixed_bm.c:109 test/fixed_bm.c:127
+#: test/fixed_bm.c:113 test/fixed_bm.c:129 test/fixed_bm.c:147
 #, c-format
 msgid "  Float: %d"
 msgstr "  Liuku: %d"
 
-#: test/fixed_bm.c:95
+#: test/fixed_bm.c:115
 msgid ""
 "\n"
 "Multiplying random numbers..."
@@ -3359,7 +3366,7 @@ msgstr ""
 "\n"
 "Satunnaislukujen kertolasku..."
 
-#: test/fixed_bm.c:111
+#: test/fixed_bm.c:131
 msgid ""
 "\n"
 "Dividing random numbers..."
@@ -3562,3 +3569,12 @@ msgstr "%s: oliota numero %d ei ole olemassa\n"
 #, c-format
 msgid "Sectors thing %d is in:"
 msgstr "Sektorit, joissa olio %d on:"
+
+#~ msgid "GGI: SetGraphMode failed."
+#~ msgstr "GGI: SetGraphMode epäonnistui."
+
+#~ msgid "Unused key: Latin sym=%04x (%c)\n"
+#~ msgstr "Käyttämätön näppäin: Latin sym=%04x (%c)\n"
+
+#~ msgid "Unused key: Special sym=%04x\n"
+#~ msgstr "Käyttämätön näppäin: Special sym=%04x\n"

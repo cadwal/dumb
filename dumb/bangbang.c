@@ -33,6 +33,11 @@
 #include "libdumbutil/fixed.h"
 #include "things.h"
 
+/* max number of objects that anything is allowed to spawn at one time
+   w/ thing_hurl.  should be configurable on a per object basis, but
+   that would mean modifying wad structures */
+#define MAX_SPAWNCOUNT 5
+
 int
 thing_hurl(LevData *ld, int thnum, int mtype, fixed a, fixed elev,
 	   fixed arc, int num, int para)
@@ -40,6 +45,11 @@ thing_hurl(LevData *ld, int thnum, int mtype, fixed a, fixed elev,
    ThingDyn *td = ldthingd(ld) + thnum, *md;
    int missile = -1, i;
    fixed ofs = -arc / 2, step = 0;
+   /* check that we aren't overspawning */
+   if (td->spawncount>=MAX_SPAWNCOUNT) {
+      logprintf(LOG_DEBUG,'O',"spawncount exceeded for %d",thnum);
+      return -1;
+   };
    if (num < 1)
       num = 1;
    if (num > 1)
@@ -53,6 +63,7 @@ thing_hurl(LevData *ld, int thnum, int mtype, fixed a, fixed elev,
 	 md->owner = td->owner;
       else
 	 md->owner = thnum;
+      if(md->owner>=0) ldthingd(ld)[md->owner].spawncount++;
       /* work out angle to shoot it */
       md->angle = a + td->angle;
       if (!para)
@@ -135,18 +146,21 @@ thing_can_shoot_at(const LevData *ld, int looker, int target)
    const ThingDyn *std = ldthingd(ld) + looker;
    const ThingDyn *ttd = ldthingd(ld) + target;
 
-   double dist2 = pyth_sq(ttd->x - std->x, ttd->y - std->y);
-   fixed dist = FLOAT_TO_FIXED(sqrt(dist2));
-   fixed vx, vy;
+   double pdist2,dist2 = pyth_sq(ttd->x - std->x, ttd->y - std->y);
+   fixed pdist,dist = FLOAT_TO_FIXED(sqrt(dist2));
+   fixed vx, vy, vz;
 
    if (dist < FIXED_EPSILON)
       return 1;
    vx = fixdiv(ttd->x - std->x, dist);
    vy = fixdiv(ttd->y - std->y, dist);
+   vz = fixdiv((ttd->z + SHOOT_HEIGHT(ttd)) - (std->z + SHOOT_HEIGHT(std)), 
+	       dist);
 
    for (i = 0; i < ldnlines(ld); i++) {
+      const SectorDyn *front = &WALL_SCT(i, 0), *back = &WALL_SCT(i, 1);
       int side;
-      fixed t, sx, sy;
+      fixed t, sx, sy, sz;
 
       /* avoid w-r-i for walls entirely behind ray */
       if ((FIXED_PRODUCT_SIGN(WALL_VER1(i).x - std->x, vx) ||
@@ -155,11 +169,6 @@ thing_can_shoot_at(const LevData *ld, int looker, int target)
 	   FIXED_PRODUCT_SIGN(WALL_VER2(i).y - std->y, vy)))
 	 continue;
 
-      if (WALL_2S(i)) {
-	 const SectorDyn *front = &WALL_SCT(i, 0), *back = &WALL_SCT(i, 1);
-	 if (front->floor < front->ceiling && back->floor < back->ceiling)
-	    continue;
-      }
       t = wall_ray_intersection(ld, vx, vy, std->x, std->y, i, &side);
       if (t <= FIXED_ZERO || t > FIXED_ONE)
 	 continue;
@@ -174,11 +183,23 @@ thing_can_shoot_at(const LevData *ld, int looker, int target)
 	 continue;
 
       /* now calculate distance */
-      if (pyth_sq(sx - std->x, sy - std->y) > dist2)
-	 continue;
+      pdist2 = pyth_sq(sx - std->x, sy - std->y);
 
-      /* it's a funny kind of for() loop :) */
-      return 0;
+      /* bail if wall is behind target */
+      if (pdist2 > dist2)
+	 continue;
+      
+      /* can't ever see through one-sided wall */
+      if (!WALL_2S(i)) return 0;
+
+      /* calculate z posn of line of sight on wall */
+      pdist = FLOAT_TO_FIXED(sqrt(pdist2));
+      sz = std->z + SHOOT_HEIGHT(std) + fixmul(pdist, vz);
+
+      if(sz <= front->floor || sz <= back->floor) return 0;
+      if(sz >= front->ceiling || sz >= back->ceiling) return 0;
+
+      /* we saw through this wall, continue */
    }
 
    /* no walls seemed to intervene; they can shoot each other, if they want */

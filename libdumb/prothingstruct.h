@@ -52,6 +52,10 @@ typedef struct {
 /*#define TPH_NOISY 0x1000      wake up monsters that can see me now */
 #define TPH_IDLE 0x2000		/* idle phase (allow TS_DETECTs) */
 #define TPH_BFGEFFECT 0x4000	/* make like the big friendly gun */
+#define TPH_TINVIS 0x8000       /* phase is totally invisible */
+#define TPH_WHIRLY 0x10000      /* throw target up in the air (if in range) */
+#define TPH_CHARGE 0x20000      /* lostsoul-like charge */
+#define TPH_RSKIP 0x40000       /* 1/2 the time, skip this phase entirely */
 
 typedef enum {
    TS_INIT,
@@ -95,8 +99,9 @@ typedef struct {
 #define PT_PINVIS 0x080		/* object is partially invisible */
 #define PT_BULLET_KLUDGE 0x100	/* convert bullet pocks to bloodspurts */
 #define PT_SHOOTER 0x200	/* shoot, don't hurl on SPAWN1 */
-#define PT_FAST_SHOOTER 0x400	/* "chaingun" effect: always shoot when I can */
-/*#define PT_NOISY 0x800          wake up monsters when I come across them */
+#define PT_NASTY 0x400          /* especially agressive monster */
+#define PT_FAST_SHOOTER PT_NASTY /* obsolete */
+#define PT_MINE 0x800           /* explode when I collide w/ monster */
 #define PT_HANGING 0x1000	/* hanging from ceiling */
 #define PT_INF_MASS 0x2000	/* thing is infinitely massive */
 #define PT_PLAYER 0x4000	/* thing is allowed to pickup objects, etc */
@@ -111,9 +116,13 @@ typedef struct {
 #define PT_BLOCKING 0x1000000	/* object can get in the way */
 #define PT_BOGUS 0x2000000	/* object is bogus */
 #define PT_NOHURTO 0x4000000	/* don't damage my owner */
-#define PT_TURNWHENHITTING 0x8000000	/* weapon bogot turns user when hitting */
+#define PT_TURNWHENHITTING 0x8000000 /* weapon bogot turns user when hitting */
 #define PT_BULLET 0x10000000	/* do melee damage like bullet */
-			       /* ie. skip range check in melee */
+			        /* ie. skip range check in melee */
+#define PT_IMMUNETOSUCH 0x20000000 /* immune to own missile type (ala Doom) */
+#define PT_STUCKDOWN 0x40000000 /* stuck to floor */
+
+#define PT_TAKESECTDMG PT_PLAYER /* for now, only players hurt by goo */
 
 #endif
 

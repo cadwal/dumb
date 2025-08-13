@@ -222,48 +222,6 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
-alloc.o: alloc.c ../config.h ../libdumbutil/safem.h ../libdumbutil/log.h \
-	dumbworldb.h ../libdumbutil/fixed.h ../libdumb/texture.h \
-	../libdumbwad/wadio.h private.h
-del.o: del.c ../config.h ../libdumbutil/dumb-nls.h ../libdumbutil/log.h \
-	dumbworldb.h ../libdumbutil/fixed.h ../libdumb/texture.h \
-	../libdumbwad/wadio.h private.h
-detach.o: detach.c ../config.h private.h dumbworldb.h \
-	../libdumbutil/fixed.h ../libdumb/texture.h \
-	../libdumbwad/wadio.h
-difficulty.o: difficulty.c ../config.h dumbworldb.h \
-	../libdumbutil/fixed.h ../libdumb/texture.h \
-	../libdumbwad/wadio.h
-dummyvtbl.o: dummyvtbl.c ../config.h dumbworldb.h ../libdumbutil/fixed.h \
-	../libdumb/texture.h ../libdumbwad/wadio.h
-findsec.o: findsec.c ../config.h ../libdumbutil/fixed.h dumbworldb.h \
-	../libdumb/texture.h ../libdumbwad/wadio.h
-initfini.o: initfini.c ../config.h ../libdumbutil/safem.h dumbworldb.h \
-	../libdumbutil/fixed.h ../libdumb/texture.h \
-	../libdumbwad/wadio.h
-isok.o: isok.c ../config.h dumbworldb.h ../libdumbutil/fixed.h \
-	../libdumb/texture.h ../libdumbwad/wadio.h
-lineprop.o: lineprop.c ../config.h dumbworldb.h ../libdumbutil/fixed.h \
-	../libdumb/texture.h ../libdumbwad/wadio.h private.h
-loaddoom.o: loaddoom.c ../config.h ../libdumbutil/log.h \
-	../libdumbwad/wadio.h dumbworldb.h ../libdumbutil/fixed.h \
-	../libdumb/texture.h private.h doomwad.h \
-	../libdumbutil/endiantypes.h
-observer.o: observer.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/safem.h dumbworldb.h ../libdumbutil/fixed.h \
-	../libdumb/texture.h ../libdumbwad/wadio.h
-prop.o: prop.c ../config.h ../libdumbutil/safem.h dumbworldb.h \
-	../libdumbutil/fixed.h ../libdumb/texture.h \
-	../libdumbwad/wadio.h private.h
-savedoom.o: savedoom.c ../config.h ../libdumbutil/dumb-nls.h \
-	../libdumbutil/log.h ../libdumbutil/safem.h \
-	../libdumbwad/wadwr.h ../libdumbwad/wadstruct.h \
-	../libdumbutil/endiantypes.h doomwad.h dumbworldb.h \
-	../libdumbutil/fixed.h ../libdumb/texture.h \
-	../libdumbwad/wadio.h
-thingsec.o: thingsec.c ../config.h ../libdumbutil/safem.h private.h \
-	dumbworldb.h ../libdumbutil/fixed.h ../libdumb/texture.h \
-	../libdumbwad/wadio.h
 
 info:
 dvi:

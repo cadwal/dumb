@@ -102,7 +102,7 @@ Proto WallTorch 50
   Sprite WTRHA0
   HangMiddle
 
-
+#ifndef NO_GLITTER
 PhaseTable RedGlitter
   Default Duration 120msec Glow
   Phase INIT A
@@ -142,7 +142,7 @@ Proto TeleportGlitter 74
   Spawns RedGlitter
   Spawn2 BlueGlitter
   Phantom Mass 1000 StickToFloor
-
+#endif
 
 #undef HangMiddle
 

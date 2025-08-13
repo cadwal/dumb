@@ -63,6 +63,7 @@ soundcomp(void)
    if (s == NULL || *s == '\n')
       synerr(_("name expected after SoundType"));
    sr = &sounds[new_sound(s)];
+   sr->s.nredir=0;
    /* start filling in data */
    while (1) {
       s = next_token();
@@ -124,6 +125,7 @@ new_sound(const char *name)
       maxsounds += ALLOC_BLK;
       sounds = (SoundRec *) safe_realloc(sounds, maxsounds * sizeof(SoundRec));
    }
+   memset(sounds+i,0,sizeof(SoundRec));
    strcpy(sounds[i].name, name);
    strcpy(sounds[i].s.lumpname, name);
    return i;

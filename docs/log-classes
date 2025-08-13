@@ -10,6 +10,9 @@ xwad/savemap.c
 'C': Child process
 xwad/xwad.c
 
+'C': Configuration
+libdumbutil/conffile.c
+
 'C': Connect
 xwad/connect.c
 

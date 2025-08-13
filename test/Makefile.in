@@ -238,11 +238,6 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
-ldltest.o: ldltest.c ../config.h ../libmissing/getopt.h \
-	../libdumbutil/dumb-nls.h ../libdumbutil/log.h \
-	../libdumbutil/safem.h ../libdumbwad/wadio.h \
-	../libdumbworldb/dumbworldb.h ../libdumbutil/fixed.h \
-	../libdumb/texture.h
 
 info:
 dvi:

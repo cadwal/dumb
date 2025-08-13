@@ -57,7 +57,7 @@ Proto HeftyWandAmmo 12
 
 Proto WimpyBowAmmo 18
   Sprite AMC1
-  Phases Mundane
+  Phases MundaneGlow
   Mass 1000 YMoveOnly Bouncy
   Size 16 16
   Gets EtherealArrows 4
@@ -72,14 +72,14 @@ Proto HeftyBowAmmo 19
 
 Proto WimpyClawAmmo 54
   Sprite AMB1
-  Phases Repeat3
+  Phases Repeat3Glow
   Mass 1000 YMoveOnly Bouncy
   Size 16 16
   Gets ClawOrbs 20
 
 Proto HeftyClawAmmo 55
   Sprite AMB2
-  Phases Repeat3
+  Phases Repeat3Glow
   Mass 1000 YMoveOnly
   Size 16 16
   Gets ClawOrbs 100
@@ -101,7 +101,7 @@ Proto QuartzFlask 82
 
 Proto Torch 33
   Sprite TRCH
-  Phases Cycle3
+  Phases Cycle3Glow
   Mass 1000 YMoveOnly
   Size 16 16
   Gets Torch 1

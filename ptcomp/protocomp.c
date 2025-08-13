@@ -153,10 +153,13 @@ protocomp(void)
 	 p->pt.hits = parm_num();
       else if (!strcasecmp(s, "Shooter"))
 	 p->pt.flags |= PT_SHOOTER;
-      /*else if(!strcasecmp(s,"Noisy")) p->pt.flags|=PT_NOISY; */
+      else if(!strcasecmp(s,"Mine")) 
+	 p->pt.flags|=PT_MINE;
       else if (!strcasecmp(s, "Beastie"))
 	 p->pt.flags |= PT_BEASTIE | PT_TARGET;
       else if (!strcasecmp(s, "Explosive"))
+	 p->pt.flags |= PT_EXPLOSIVE | PT_MINE;
+      else if (!strcasecmp(s, "WExplosive"))
 	 p->pt.flags |= PT_EXPLOSIVE;
       else if (!strcasecmp(s, "ZCenter"))
 	 p->pt.flags |= PT_ZCENTER;
@@ -173,9 +176,13 @@ protocomp(void)
       else if (!strcasecmp(s, "BULLETKLUDGE"))
 	 p->pt.flags |= PT_BULLET_KLUDGE;
       else if (!strcasecmp(s, "FASTSHOOT"))
+	 p->pt.flags |= PT_NASTY;
+      else if (!strcasecmp(s, "Nasty"))
 	 p->pt.flags |= PT_FAST_SHOOTER;
       else if (!strcasecmp(s, "Hanging"))
 	 p->pt.flags |= PT_HANGING;
+      else if (!strcasecmp(s, "StuckDown"))
+	 p->pt.flags |= PT_STUCKDOWN;
       else if (!strcasecmp(s, "YMoveOnly"))
 	 p->pt.flags |= PT_YMOVE_ONLY;
       else if (!strcasecmp(s, "Player"))
@@ -198,6 +205,8 @@ protocomp(void)
 	 p->pt.flags |= PT_SPAWNSPOT;
       else if (!strcasecmp(s, "NoHurtOwner"))
 	 p->pt.flags |= PT_NOHURTO;
+      else if (!strcasecmp(s, "ImmuneToSuch"))
+	 p->pt.flags |= PT_IMMUNETOSUCH;
       else if (!strcasecmp(s, "TurnWhenHitting"))
 	 p->pt.flags |= PT_TURNWHENHITTING;
       else if (!strcasecmp(s, "BulletAttack"))

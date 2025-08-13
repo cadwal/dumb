@@ -92,6 +92,9 @@ typedef struct {
    int target;
    int owner;
    int wakeness;
+   int spawncount;
+   /* time at which this object last hit an impassible wall, for monster AI */
+   Ticks last_hit_wall;
 } ThingDyn;
 
 LD_DYNDECL(Thing);
@@ -100,7 +103,7 @@ LD_DYNDECL(Thing);
 
 /* ThingDyn::flags */
 /* Only 16 bits have been allocated for these in ThingCode.  */
-#define THINGDF_NOCLIP 0x0001	/* spispopd */
+#define THINGDF_NOCLIP 0x0001  /* spispopd */
 
 #define ldvertexd(ld) ((VertexDyn *)(ld->dyn[ML_VERTEX]))
 #define ldsectord(ld) ((SectorDyn *)(ld->dyn[ML_SECTOR]))
