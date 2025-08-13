@@ -1,0 +1,588 @@
+
+          *** WARNING: this information is out of date!!!  *** 
+          *** it's mostly right for protos and phases, but ***
+          *** misses out linetypes, gettables and heaps    ***
+	  *** of other stuff                               ***
+
+
+Several people have contacted me about creating more proto entries for
+doom.pt.  Accordingly, I've created this file to explain how to do
+it.  It's in question and answer format:
+
+
+*** 1. What is ptcomp?  What is doom/doom.pt?  What is game/protos.pt?
+
+DUMB levels contain instructions for placing objects (sometimes called
+"things") into maps.  These objects might be bonuses, like Doom's
+health and armour bonuses; or they might be monsters; or they might be
+mere furniture.  Some objects are created on the fly by the game, such
+as missiles, bullet puffs, and teleport fogs.  
+
+Since objects encompass such a wide range of entities, each with their
+own detailed kinds of behaviour, instead of keeping track of, for
+example, an object's mass, or sprite, for each object, objects are
+classified into types.  Each type is called a ProtoThing, or proto for
+short. 
+
+Each proto has an ID.  For example, in Doom, the player's ID is 1.
+The ID numbers are used by the level data to tell DUMB to create
+objects in certain positions when the level starts up, and internally
+in DUMB, so that DUMD knows where the player is, can create missiles
+and bullets fired by the player, etc.
+
+Now, how do the IDs get assigned to types of object?  Well, in Doom,
+they were built into the engine.  To change the behaviour of an object
+type, you had to get the source and recompile it, or hack the binary
+with a tool like DHE.  DUMB is more generalised than this: the
+descriptions of the object types and their IDs are in a lump in the
+IWAD file called PROTOS.
+
+PROTOS is compiled from a human readable source file by a tool called
+ptcomp.  At the moment, DUMB comes with two such source files:
+doom/doom.pt (containing an incomplete set of protos for Doom and Doom
+II) and game/protos.pt (containing protos for "game.wad").  These
+source files are passed through the C preprocessor before being
+compiled, so they may include other files.
+
+
+*** 2. What sort of information is specified in the .pt files?
+
+At the moment, three distinct kinds.
+
+Most importantly, there are Proto definitions, which look like this:
+
+Proto ZombieSarg 9
+  Sprite SPOS
+  Phases Zombie
+  Size 16 56
+  Hits 6
+  Mass 100
+  Beastie SkirtCliffs Shooter
+  Splat BloodSplat
+  Shoots Bullet
+  ShootMany 6 24
+  Becomes DeadZombie
+  Become2 ExZombie
+
+This is the proto for the "Zombie Sargeant" AKA "Shotgun Guy" in Doom.
+The definition begins with a line starting with the keyword "Proto".
+It continues until another line beginning with "Proto" or
+"PhaseTable".  "ZombieSarg" is the name that will be used to refer to
+this proto in doom.pt (it is not written to PROTOS), and 9 is the
+protothing ID.  All the other lines describe this protothing.
+
+There are also PhaseTables.  This is more complicated: Every object in
+DUMB has associated with it a finite state machine.  States of the
+machine are called "phases".  Every object knows which phase it's in,
+and when the objects are updated after rendering a frame, the object's
+phase table is consulted to see whether it should change phase.  The
+phase table mechanism is used to animate objects, as well as to
+control their behaviour.  For example, Doom's keys have two phases, a
+glowing one, in which the bright ?KEYB0 sprite is shown, and a dark
+one, in which ?KEYA0 is shown.  Distinct protothings can share a phase
+table (Doom has 6 different key protothings, all of which could share
+a common phasetable).
+
+Objects can change phase asynchronously too.  When this happens, DUMB
+sends the object a "signal".  There are (at present) 8 types of
+signal, sent to objects when (for example) they are damaged or when
+the player gets near to them.  One of the object's phases may be
+marked as an appropriate handler for that signal, in which case, the
+object will (usually) change phase to the handler when it gets that
+signal.
+
+Here is an example of a simple phase table:
+
+PhaseTable Blink
+  Default Duration 4
+  Phase 0 A Glow
+  Phase 1 B Goto 0
+
+This phasetable could be used for Doom's keys, as discussed about.
+It starts with the keyword "PhaseTable", and like a Proto definition,
+continues until another phase table or proto definition starts. 
+
+The third kind of information in the .pt file are gettable types,
+which are types of stuff that players can collect through interacting
+with certain objects.  [NEED EXAMPLE HERE] 
+
+
+*** 3. How do I go about creating a new Proto?
+
+I think it's probably best to explain this by looking at some
+examples.  Here's the Proto def. for a blue health bonus in Doom:
+
+Proto BlueBonus 2014
+  Sprite BON1
+  Phases Cycle4
+  Size 16 12
+  Gettable -1 1
+
+This is very simple: first, we've looked up the ID for this type of
+object in the Doom specification, "dmspec16" (this file is available
+fairly widely; if you can't find it anywhere else, try anonymous FTP
+to cmbsb78.anu.edu.au)
+
+"BlueBonus" is just a name for mnemonic purposes; we won't need to
+refer to it anywhere.  Now, we don't need a phase table specifically
+for this object, there's already Cycle4 there in the doom.pt file.
+The sprite "stem" (the first four letters of the sprite name) is
+"BON1".  The object is roughly 12 units high and 16 in diameter (these
+units are Doom map-units, ptcomp will convert them to DUMB's internal
+representation).
+
+"Gettable -1 1" tells DUMB that this object is Gettable and increases
+the quantity identified by "-1" by "1".  (-1 will be health).  This is
+likely to change when I work out a proper mechanism for gettables.
+
+
+Let's try a more complicated example, the section of doom.pt that
+deals with Imps:
+
+# First, a phase table.  The table is split up into 6 sequences,
+# beginning with the phases called IDLE, MOVE, SHOOT, OUCH, DIE and
+# BOOM.
+
+PhaseTable Imp
+  Default Duration 2    # this just makes the duration for all
+			# following phases 2 unless otherwise
+			# specified (the default default is 1)
+
+# The first phase IDLE, is the one Imps will enter when they are first
+# created (usually at the start of a level).  It just loops until the
+# Imp becomes aware of a player in the vicinity.  "Idle" allows the
+# reception of "Detect" signals, which are disabled otherwise.
+
+  Phase IDLE	A	Idle Goto IDLE
+
+# MOVE and the following phases are the main loop.  MOVE is the
+# handler for the "Detect" signal which gets sent when the player 
+# gets close to this monster.  "Strategy" tells DUMB to run a monster
+# strategy routine when that phase is entered.  The strategy routine
+# tries to find enemies and kill them.  The sequence of letters "A"
+# through "D" makes the Imp appear to be walking.
+
+  Phase MOVE	A	Strategy SigDetect
+  Phase -	B
+  Phase -	C	Strategy
+  Phase -	D	Goto MOVE
+
+# SHOOT is the handler for the "Shoot" signal, which is sent to the
+# object by the strategy routine.  The sprite sequence E-G shows the 
+# Imp hurling a fireball.  During the 2 and third parts of the
+# sequence, the Imp is lit up by its fireball, and should be visible
+# in the dark, hence "Glow".  "Shoot" causes DUMB to create a new
+# object in front of the Imp and hurl it towards the Imp's current
+# foe.  The type of object hurled is given in the Proto.
+
+  Phase SHOOT   E	SigShoot
+  Phase -	F	Glow
+  Phase - 	G	Shoot Glow Goto MOVE
+
+# OUCH is the handler for "Ouch" signals which get sent when the Imp
+# is wounded.  All it does is show the poor creature in pain for a
+# while, and then get back to moving around.  Because "Ouch" signals
+# could occur at any time, this means that the Imp could be interrupted
+# in the middle of shooting a fireball at you, for example.  
+
+  Phase OUCH	H	SigOuch Duration 4 Goto MOVE
+
+# Now we have two very similar sequences for death and complete
+# destruction, respectively.  Every Phase in these sequences has a
+# "NoSigs" flag --- it will not accept signals.  This is to prevent
+# you from shooting an Imp in the middle of its death sequence and
+# bringing it back to life (OUCH returns the Imp to MOVE, remember).
+# The death sequence ends with "Become" which tells the Imp to turn
+# into a dead body (the kind of body is specified in the Proto), and
+# the explode sequence ends with "Become2" which turns the Imp into an
+# exploded body (which is a different object type).
+
+  Default NoSigs
+  Phase DIE	H	SigDie
+  Phase -	I
+  Phase -	J
+  Phase -	K
+  Phase -	L
+  Phase -	M	Become
+  Phase BOOM	N	SigExplode
+  Phase -	O
+  Phase -	P
+  Phase -	Q
+  Phase -	R
+  Phase -	S
+  Phase -	T
+  Phase -	U	Become2
+
+
+# Next we have protos and phasetables for Imp bodies.  Each will just
+# sit there until it receives a "Reanimate" signal, at which point it
+# plays the death sequence backwards, and "Become"s back to an Imp
+# (the becoming process restores the Imps hit points).
+
+PhaseTable DeadImp
+  Phase INIT	M Goto INIT
+  Default Duration 2 NoSigs
+  Phase RESPAWN M	SigReanimate
+  Phase -	L
+  Phase -	K
+  Phase -	J
+  Phase -	I	Become
+
+# Since this Proto uses a phasetable that is of no use to anything
+# else, we don't need a "Phases" keyword here.  By default, ptcomp
+# will just look up the Phasetable with the same name as the Proto.
+# The "Becomes" keyword tells DUMB that a "Become" phase turns this
+# kind of object into proto ID 3001, a live Imp.  We could have used
+# the symbolic name of the proto entry for the live Imp instead, but
+# we haven't defined it yet, and it will need to refer to this proto anyway.
+
+Proto DeadImp 20
+  Sprite TROO
+  Size 16 10
+  Becomes 3001
+
+# Similarly, another object for exploded Imps.  Note that the Proto
+# definition has no ID number.  This is because this Proto is never
+# referred to outside doom.pt.  ptcomp will assign it a unique ID, and
+# plug it in when we refer to "ExImp"
+
+PhaseTable ExImp
+  Phase INIT	U Goto INIT
+  Default Duration 2 NoSigs
+  Phase RESPAWN U	SigReanimate
+  Phase -	T
+  Phase -	S
+  Phase -	R
+  Phase -	Q
+  Phase -	P
+  Phase -	O
+  Phase -	N	Become
+Proto ExImp
+  Sprite TROO
+  Size 16 10
+  Becomes 3001
+
+# Now the proto entry for the Imp itself.  The sprite stem, size,
+# maximum hit points, and mass have been looked up from dmspec16.
+# "Beastie" tells DUMB that Imps are monsters (or players), moving
+# about under their own steam.  "SkirtCliffs" tells DUMB that this
+# kind of monster won't leap blindly over cliffs greater than half its
+# height.  The remaining lines refer to other protos in doom.pt.
+
+Proto Imp 3001
+  Sprite TROO
+  Size 16 56
+  Hits 3
+  Mass 100
+  Beastie SkirtCliffs
+  Splat BloodSplat
+  Shoots ImpFireball
+  Becomes DeadImp
+  Become2 ExImp
+
+
+*** 4. What are the keywords usuable in the .pt sources?
+
+Here is a complete list, as of 9/9/97:
+
+
+Proto <name> [id]
+
+Starts defining a protothing.  <name> is the name of the thing (used
+only within the .pt file, and <id> is the proto's ID in decimal.  <id>
+is optional; if it is not specified, ptcomp will generate a unique ID
+number above 16383.  Otherwise, IDs should be between 1 and 16383.
+
+
+Phases <name>
+
+Specifies the phasetable to use with this proto.  If a proto def. has
+no Phases keyword, ptcomp tries to use a phasetable with the same name
+as the proto.
+
+
+Sig<signal> <phase>
+
+Sets <phase> from this proto's phasetable as the handler for
+<signal>.  This overrides any handler that may have been set in the
+phasetable itself.
+
+<signal> may be one of Detect, Fight, Shoot, Special, Ouch, Die,
+Explode, Reanimate, Init
+
+
+Splat <proto name>
+
+Blood splats for this monster will be of type <proto name>.  Blood
+splats are generated when a monster is shot with a "BulletKludged"
+projectile.
+
+
+Shoots <proto name>
+
+This proto shoot or hurls missiles of type <proto name>.  The missiles
+will be shot when an object of this type enters a phase that has the
+"Shoot" flag.
+
+
+Spawns <proto name>
+
+This is synonymous with "Shoots"
+
+
+Spawn2 <proto name>
+
+This proto spawns new objects of type <proto name> when entering a
+"Spawn2" phase.
+
+
+Becomes <proto name>
+
+This proto becomes a new object of type <proto name> when exiting a
+"Become" phase.
+
+
+Become2 <proto name>
+
+This proto becomes a new object of type <proto name> when exiting a
+"Become2" phase.
+
+
+Sprite <stem>
+
+This proto uses the sprite series beginning with the four characters
+<stem>.  If no sprite stem is specified, the proto is invisible.
+
+
+Damage <number>
+
+This proto does at most <number> hit points damage when exploding or
+attacking a monster or player.
+
+
+Mass <number>
+
+This proto's mass.  Actually, right now DUMB does not have very good
+physics, and the mass does double duty as friction.  I should fix this
+sometime.  <number> should be roughly in kilos.  If mass is not
+specified, the object is considered to be infinitely massive.
+
+
+Hits <number>
+
+Maximum/Initial hit points of objects of this type.
+
+
+Shooter 
+
+This proto is a "shooter".  Missiles spawned with "Shoot" will be
+instantly delivered to their target (like bullets).
+
+
+Noisy
+
+Objects of this type make noise moving around, and will periodically
+send Detect signals to nearby objects when doing so.
+
+
+Beastie
+
+This proto describes a monster or the player.
+
+
+Explosive.
+
+Objects of this type will get sent an Explode signal on any collision.
+If the signal fails, the object will be destroyed.
+
+
+ZCenter
+
+Objects of this type have their vertical position at the center of
+their sprites, rather than at the bottom.  Used for fireball-like
+missiles, explosions, bullet puffs, and the like.
+
+
+Phantom
+
+These objects never collide with anything.
+
+
+Skirtcliffs
+
+Causes monsters to know their limits and not jump off cliffs!
+Players, however, can jump off anything they like (it looks silly when
+monsters do it).
+
+
+Flyer
+
+This proto describes a flying monster like a cacodemon.
+
+
+Hanging
+
+This proto describes something that hangs from the ceiling.
+Otherwise, objects start on the floor.
+
+
+PInvis
+
+This proto's sprites should be displayed with "partial invisibility"
+(not implemented)
+
+
+FastShoot
+
+This monster is especially agressive and will take any opportunity to
+shoot its enemies.  Normal monster strategy routines won't just
+continually shoot if they can (it's too hard on the player).
+FastShoot overrides this behaviour (for Doom II's Chaingun Guys).
+
+
+Player
+
+This monster is a player and can pick up gettables.
+
+
+ShootMany <number> <denom>
+
+This also affects shooting.  It causes a "Shoot" phase to spawn
+<number> missiles instead of one, spreading them over an angle of
+pi/<denom>.  Shootmany 6 24 produces a shotgun-like effect. 
+
+
+Size <diameter> <height>
+
+Speaks for itself.  The units are doom-style map units.
+
+
+Gets <type> <number>
+
+This object gives a player who collides with it <number> items of type
+<type>.  <type> must be an already defined Gettable type.
+
+
+
+PhaseTable <name>
+
+Starts defining a phase table named <name>
+
+
+Phase <name> <ch>
+
+Starts defining a new phase in the current phase table.  <name> is the
+name of the phase, and is only used internally in the .pt source to
+refer to that phase.  It can be a single dash (-) if no name is
+necessary.  <ch> is added to the sprite stem to create the name of the
+sprite for this phase (a further digit will be added by the renderer
+to rotate the sprite).  All keywords following apply to this phase,
+until the next "Phase", "Default", "PhaseTable", or "Proto"
+
+
+Default
+
+The following keywords in this phasetable will affect only the default
+settings for new phases, until the next "Phase"
+
+
+Sig<signal>
+
+This phase will be the handler for signal type <signal>.
+
+<signal> may be one of Detect, Fight, Shoot, Special, Ouch, Die,
+Explode, Reanimate, Init
+
+
+Glow
+
+This phase should be glowing: ie unaffected by being in a dark area
+and distant from the viewpoint.
+
+
+Destroy
+
+Destroy object on leaving this phase.
+
+
+NoSigs
+
+Ignore any signals sent during this phase.
+
+
+Strategy
+
+Perform standard monster strategy functions.
+
+
+HeatSeek
+
+Perform "heatseeking" strategy. 
+
+
+Shoot
+
+Shoot or hurl an object specified by the "Shoots" keyword in a proto
+def.
+
+
+Explode
+
+Cause damage to surroundings inversely proportional to distance.
+
+
+Melee
+
+Cause damage to target selected by a strategy routine (provided it is
+still in range).
+
+
+Spawn2
+
+Spawn an object specified by the "Spawn2" keyword in my proto def.
+
+
+RSpawn2
+
+Randomly spawn2 an object or do nothing.
+
+
+Idle
+
+Allow "Detect" signals during this phase.
+
+
+Become
+
+Become a new object, specified by a "Becomes" keyword in my proto def.
+
+
+Become2
+
+Become a new object, specified by a "Become2" keyword in my proto def.
+
+
+Duration <ticks>
+
+This phase will last for <ticks> ticks (at the moment ticks are just
+frames, but that may change).
+
+
+Goto <phase>
+
+Change to <phase> when this phase's duration has run out.  If no
+"Goto" is specified, phases continue onto the next phase.
+
+
+Sprite <stem>
+
+Override the normal sprite stem for this phase.  This is useful to
+co-opt images from other objects (for explosions, for example).
+
+
+
+
+
+
+
+

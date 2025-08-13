@@ -1,0 +1,419 @@
+
+/**
+ **  Gettable items
+ **/
+
+/* YMoveOnly saves time in update_things() (josh) */
+#define StickToFloor  Mass 1000 YMoveOnly
+
+#define PowerUpQty  300
+#define PowerUpTimeout  Decay 1  
+
+// IDEA: (use 'parm_speed' instead of assuming ticks)
+//
+//  #define PowerUpQty  1
+//  #define PowerUpTimeout  Timeout 30sec
+
+#define PowerUp  Special
+
+#define SlimeProtection  3
+#define DamageProtection 5
+#define SuperStrength    4
+#define SuperSight       7
+#define GhostWhoWalks    6
+
+
+/* Health and Armour */
+
+Gettable Health
+  Icon BON1A0 RevAnim D Timing 150msec
+  IconPos 8 6 
+  Special 1
+  Collect 200
+  PickupSound DSITEMUP
+//  GotThe Message HEALTH
+
+Gettable Armour
+  Icon BON2A0 RevAnim D Timing 150msec
+  IconPos 32 8
+  Collect 200
+  PickupSound DSITEMUP
+//  GotThe Message ARMOUR
+ 
+Gettable Bullet
+  Icon CLIPA0
+  IconPos -8 8
+  Collect 100
+  Initial 50
+  PickupSound DSITEMUP
+//  GotThe Message BULLETS
+  
+Gettable Shell
+  Icon SHELA0
+  IconPos -32 10
+  Collect 50
+  PickupSound DSITEMUP
+//  GotThe Message SHELLS
+
+Gettable Rocket
+  Icon ROCKA0
+  IconPos -56 4
+  Collect 50
+  PickupSound DSITEMUP
+//  GotThe Message ROCKETS
+
+Gettable Cell
+  Icon CELLA0
+  IconPos -76 8
+  Collect 400
+  PickupSound DSITEMUP
+//  GotThe Message CELLS
+
+Gettable Backpack
+  Special 8
+  GotThe Message BACKBACK_FULL_OF_AMMO
+  PickupSound DSITEMUP
+
+Gettable Allmap
+  Collect 1
+  Special 9
+  GotThe Message ALL_MAP
+  PickupSound DSGETPOW
+
+
+/* now the actual proto entries */
+
+Proto BlueBonus 2014
+  Sprite BON1
+  Phases Cycle4
+  Size 16 16
+  StickToFloor
+  Gets Health 1
+
+Proto GreenBonus 2015
+  Sprite BON2
+  Phases Cycle4
+  Size 16 16
+  StickToFloor
+  Gets Armour 1
+
+Proto GreenArmour 2018
+  Sprite ARM1
+  Phases Repeat2
+  Size 31 16
+  StickToFloor
+  Gets Armour 100
+
+Proto BlueArmour 2019
+  Sprite ARM2
+  Phases Repeat2
+  Size 31 16
+  StickToFloor
+  Gets Armour 200
+
+Proto Stimpak 2011
+  Sprite STIM
+  Phases Mundane
+  Size 32 16
+  StickToFloor
+  Gets Health 10
+
+Proto Medikit 2012
+  Sprite MEDI
+  Phases Mundane
+  Size 24 20
+  StickToFloor
+  Gets Health 25
+
+Proto Soulsphere 2013
+  Sprite SOUL
+  Phases Cycle4
+  Size 24 20
+  StickToFloor
+  Gets Health 200
+
+Proto Megasphere 83
+  Sprite MEGA
+  Phases Cycle4
+  Size 24 20
+  StickToFloor
+  Gets Armour 200
+  Gets Health 200
+
+
+/* Ammunition */
+
+Proto Bullets 2007
+  Sprite CLIP
+  Phases Mundane
+  Size 9 11
+  Gets Bullet 20
+  StickToFloor
+
+Proto Shells 2008
+  Sprite SHEL
+  Phases Mundane
+  Size 15 7
+  Gets Shell 4
+  StickToFloor
+
+Proto Rocket 2010
+  Sprite ROCK
+  Phases Mundane
+  Size 12 27
+  Gets Rocket 1
+  StickToFloor
+
+Proto Cell 2047
+  Sprite CELL
+  Phases Mundane
+  Size 17 12
+  Gets Cell 20
+  StickToFloor
+
+Proto BoxBullets 2048
+  Sprite AMMO
+  Phases Mundane
+  Size 28 16
+  Gets Bullet 50
+  StickToFloor
+
+Proto BoxShells 2049
+  Sprite SBOX
+  Phases Mundane
+  Size 32 12
+  Gets Shell 25
+  StickToFloor
+
+Proto BoxRockets 2046
+  Sprite BROK
+  Phases Mundane
+  Size 54 21
+  Gets Rocket 5
+  StickToFloor
+
+Proto CellPack 17
+  Sprite CELP
+  Phases Mundane
+  Size 32 21
+  Gets Cell 100
+  StickToFloor
+
+
+/* Equipment (once-only pickup) */
+
+Proto Backpack 8
+  Sprite BPAK
+  Phases Mundane
+  Size 22 29
+  Gets Bullet 10
+  Gets Shell 4
+  Gets Rocket 1
+  Gets Cell 20
+  Gets Backpack 1
+  StickToFloor
+
+Proto Allmap 2026
+  Sprite PMAP
+  Phases Blink4
+  Size 28 27
+  Gets Allmap 1
+  StickToFloor
+
+
+/* Keys */
+
+Gettable RedKey
+  Icon RKEYA0
+  IconPos 8 40 Anim B Timing 400msec
+  Collect 1
+  KeyType 1 
+  Local
+  GotThe Message RED_KEY
+  PickupSound DSITEMUP
+
+Gettable BlueKey
+  Icon BKEYA0
+  IconPos 28 40 Anim B Timing 400msec
+  Collect 1
+  KeyType 2
+  Local
+  GotThe Message BLUE_KEY
+  PickupSound DSITEMUP
+
+Gettable YellowKey
+  Icon YKEYA0
+  IconPos 48 40 Anim B Timing 400msec
+  Collect 1
+  KeyType 3
+  Local
+  GotThe Message YELLOW_KEY
+  PickupSound DSITEMUP
+
+Gettable RedSkull
+  Icon RSKUA0
+  IconPos 8 40 Anim B Timing 400msec
+  Collect 1
+  KeyType 1
+  Local
+  GotThe Message RED_SKULL_KEY
+  PickupSound DSITEMUP
+
+Gettable BlueSkull
+  Icon BSKUA0
+  IconPos 28 40 Anim B Timing 400msec
+  Collect 1
+  KeyType 2
+  Local
+  GotThe Message BLUE_SKULL_KEY
+  PickupSound DSITEMUP
+
+Gettable YellowSkull
+  Icon YSKUA0
+  IconPos 48 40 Anim B Timing 400msec
+  Collect 1
+  KeyType 3
+  Local
+  GotThe Message YELLOW_SKULL_KEY
+  PickupSound DSITEMUP
+
+
+Proto RedKey 13
+  Sprite RKEY
+  Phases Blink2
+  Size 14 16
+  StickToFloor
+  Gets RedKey 1
+
+Proto BlueKey 5
+  Sprite BKEY
+  Phases Blink2
+  Size 14 16
+  StickToFloor
+  Gets BlueKey 1
+
+Proto YellowKey 6
+  Sprite YKEY
+  Phases Blink2
+  Size 14 16
+  StickToFloor
+  Gets YellowKey 1
+
+Proto RedSkull 38
+  Sprite RSKU
+  Phases Blink2
+  Size 14 16
+  StickToFloor
+  Gets RedSkull 1
+
+Proto BlueSkull 40
+  Sprite BSKU
+  Phases Blink2
+  Size 14 16
+  StickToFloor
+  Gets BlueSkull 1
+
+Proto YellowSkull 39
+  Sprite YSKU
+  Phases Blink2
+  Size 14 16
+  StickToFloor
+  Gets YellowSkull 1
+
+
+/* Power-ups */
+
+Gettable Suit
+  Icon SUITA0
+  IconPos -8 40
+  Collect PowerUpQty
+  GotThe Message RADIATION_SUIT
+  PowerUp SlimeProtection
+  PowerUpTimeout
+  PickupSound DSGETPOW
+
+Gettable Berserk
+  Icon PSTRA0
+  IconPos 80 6
+  Collect 300
+  GotThe Message BESERK_STRENGTH___CHARGE
+  PowerUp SuperStrength
+  PowerUpTimeout
+  PickupSound DSGETPOW
+
+Gettable Invincibility
+  Icon PINVA0
+  IconPos 114 6
+  Collect PowerUpQty
+  GotThe Message INVINCIBILITY___OH_MY_GOD
+  PowerUp DamageProtection
+  PowerUpTimeout
+  PickupSound DSGETPOW
+
+Gettable Invisibility
+  Icon PINSA0
+  IconPos 148 6
+  Collect PowerUpQty
+  GotThe Message INVISIBILITY
+  PowerUp GhostWhoWalks
+  PowerUpTimeout
+  PickupSound DSGETPOW
+
+Gettable Goggles
+  Icon PVISA0
+  IconPos 184 12
+  Collect PowerUpQty
+  GotThe Message LIGHT_AMPLIFICATION_GOGGLES
+  PowerUp SuperSight
+  PowerUpTimeout
+  PickupSound DSGETPOW
+
+
+Proto Invincibility 2022
+  Sprite PINV
+  Phases Cycle4
+  Size 24 20
+  StickToFloor
+  Gets Invincibility PowerUpQty
+
+Proto Invisibility 2024
+  Sprite PINS
+  Phases Cycle4
+  Size 24 20
+  StickToFloor
+  Gets Invisibility PowerUpQty
+
+Proto Berserk 2023
+  Sprite PSTR
+  Phases Mundane
+  Size 32 20
+  StickToFloor
+  Gets Health 100
+  Gets Berserk PowerUpQty
+
+Proto Suit 2025
+  Sprite SUIT
+  Phases Mundane
+  Size 24 45
+  StickToFloor
+  Gets Suit PowerUpQty
+
+Proto Goggles 2045
+  Sprite PVIS
+  Phases Blink2
+  Size 28 8
+  StickToFloor
+  Gets Goggles PowerUpQty
+
+
+#undef StickToFloor
+#undef PowerUpQty
+#undef PowerUpTimeout
+#undef PowerUp
+
+#undef SlimeProtection
+#undef SuperStrength
+#undef Invincibility
+#undef Invisibility
+#undef SuperSight
+

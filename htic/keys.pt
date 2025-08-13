@@ -1,0 +1,85 @@
+
+/**
+ **  Keys
+ **/
+
+Gettable GreenKey
+  Icon AKYYA0  /* GKEYICON or KGZGA0 */
+  Anim J Timing 100msec XCenter
+  IconPos 54 8
+  Collect 1
+  KeyType 1
+  Local
+  GotThe Message GREEN_KEY
+  PickupSound KEYUP
+
+Gettable BlueKey
+  Icon BKYYA0  /* BKEYICON or KGZBA0 */
+  Anim J Timing 100msec XCenter
+  IconPos 84 6
+  Collect 1
+  KeyType 2
+  Local
+  GotThe Message BLUE_KEY
+  PickupSound KEYUP
+
+Gettable YellowKey
+  Icon CKYYA0  /* YKEYICON or KGZYA0 */
+  Anim I Timing 100msec XCenter
+  IconPos 114 4
+  Collect 1
+  KeyType 3
+  Local
+  GotThe Message YELLOW_KEY
+  PickupSound KEYUP
+
+PhaseTable BGKey
+  Default Duration 50msec
+  Default Glow
+
+  Phase INIT A
+  Phase -    B
+  Phase -    C
+  Phase -    D
+  Phase -    E
+  Phase -    F
+  Phase -    G
+  Phase -    H
+  Phase -    I
+  Phase -    J  Goto INIT
+
+PhaseTable YKey
+  Default Duration 50msec
+  Default Glow
+
+  Phase INIT A
+  Phase -    B
+  Phase -    C
+  Phase -    D
+  Phase -    E
+  Phase -    F
+  Phase -    G
+  Phase -    H
+  Phase -    I  Goto INIT
+
+Proto GreenKey 73
+  Gets GreenKey 1
+  Sprite AKYY
+  Phases BGKey
+  Size 32 16
+  StickToFloor
+
+Proto BlueKey 79
+  Gets BlueKey 1
+  Sprite BKYY
+  Phases BGKey
+  Size 32 16
+  StickToFloor
+
+Proto YellowKey 80
+  Gets YellowKey 1
+  Sprite CKYY
+  Phases YKey
+  Size 32 16
+  StickToFloor
+

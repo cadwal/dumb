@@ -1,0 +1,220 @@
+
+/**
+ ** various kinds of Missile
+ **/
+
+#define TargetSeek  HeatSeek
+
+#define NormalRate 100msec
+#define ExplodeRate 150msec
+
+PhaseTable WandZap
+  Default Duration 50msec
+  Default Glow
+
+  Phase BOOM C  Melee
+  Phase -    D
+  Phase -    E
+  Phase -    F
+  Phase -    G
+  Phase -    H  Destroy
+
+Proto WandZap
+  Sprite FX01
+  Size 16 16
+  Damage 2 
+  Explosive ZCenter
+  Phantom BulletKludge
+  Speed 64
+
+/* Neat trick: ArrowZaps inflict their damage in two goes */
+
+PhaseTable ArrowZap
+  Default Duration 100msec
+  Default Glow
+
+  Phase INIT A  Goto INIT
+
+  Default Duration 50msec
+  Default NoSigs
+  Phase BOOM A  SigExplode
+  Phase -    B
+  Phase -    D  Explode Sound PHOHIT
+  Phase -    E
+  Phase -    F
+  Phase -    G
+  Phase -    H  Explode
+  Phase -    I
+  Phase -    J  Destroy
+
+Proto ArrowZap
+  Sprite FX03
+  Size 16 16
+  Damage 3
+  Mass 0
+  Explosive ZCenter
+  Speed 120
+  NoHurtOwner
+
+PhaseTable ClawZap
+  Default Duration 100msec
+  Default Glow
+
+  Phase INIT A
+  Phase -    B  Goto INIT
+
+  Default Duration 50msec
+  Phase BOOM C  Explode SigExplode Sound BLSHIT
+  Phase -    D
+  Phase -    E
+  Phase -    F
+  Phase -    G
+  Phase -    H  Destroy
+
+Proto ClawZap
+  Sprite FX17
+  Size 10 10
+  Damage 6
+  Mass 0
+  Speed 120
+  Explosive ZCenter
+
+
+PhaseTable WizardZap
+  Duration NormalRate Glow
+  Phase INIT A
+  Phase - B Goto INIT
+  Default Duration ExplodeRate
+  Default NoSigs
+  Phase BOOM C  SigExplode Explode 
+  Phase - D
+  Phase - E
+  Phase - F
+  Phase - G Destroy
+
+Proto WizardZap
+  Sprite FX11
+  Size 16 16
+  Damage 6
+  Mass 0
+  Speed 64
+  Explosive ZCenter
+
+
+PhaseTable ImpZap
+  Duration NormalRate Glow
+  Phase INIT A
+  Phase - B
+  Phase - C Goto INIT
+  Default Duration ExplodeRate
+  Default NoSigs
+  Phase BOOM C  SigExplode Explode
+  Phase - D
+  Phase - E
+  Phase - F Destroy
+
+Proto ImpZap
+  Sprite FX10
+  Size 16 16
+  Damage 3
+  Mass 0
+  Speed 64
+  Explosive ZCenter
+
+
+PhaseTable MummyZap
+  Default Duration 35msec
+  Default Glow
+
+  Phase INIT A TargetSeek
+  Phase -    A TargetSeek
+  Phase -    B TargetSeek
+  Phase -    B TargetSeek
+  Phase -    C TargetSeek
+  Phase -    C TargetSeek Goto INIT
+
+  Default Duration ExplodeRate
+  Default NoSigs
+  Phase BOOM C  SigExplode Explode Sound MUMHED
+  Phase -    D
+  Phase -    E
+  Phase -    F
+  Phase -    G Destroy
+
+Proto MummyZap
+  Sprite FX15
+  Size 16 16
+  Damage 6
+  Mass 0
+  Speed 64
+  Explosive ZCenter
+
+
+PhaseTable GreenAxe
+  Default Duration 100msec
+  Phase INIT	A
+  Phase -	B
+  Phase -	C Goto INIT
+  Default NoSigs Duration ExplodeRate
+  Phase BOOM	D SigExplode Explode
+  Phase -	E
+  Phase -	F Destroy
+
+PhaseTable RedAxe
+  Default Duration 100msec
+  Phase INIT	A
+  Phase -	B Goto INIT
+  Default NoSigs Duration ExplodeRate
+  Phase BOOM	C SigExplode Explode
+  Phase -	D
+  Phase -	E Destroy
+
+Proto GreenAxe
+  Sprite SPAX
+  Size 16 16
+  Damage 10
+  Mass 0
+  Speed 64
+  Explosive ZCenter
+
+Proto RedAxe
+  Sprite RAXE
+  Size 16 16
+  Damage 20
+  Mass 0
+  Speed 64
+  Explosive ZCenter
+  
+
+PhaseTable TeleportFog
+  Default Duration 200msec
+  Default Glow
+
+  Phase TELEPORT G
+  Phase -        E
+  Phase -        C
+
+  Phase -        A Sound TELEPT
+  Phase -        B
+  Phase -        C
+  Phase -        D
+  Phase -        E
+  Phase -        F
+  Phase -        G
+  Phase -        H Destroy
+
+
+Proto TeleportFog
+  Sprite TELE
+  Phantom ZCenter
+
+Proto TeleSpot 14
+  Phases Mundane
+  Phantom
+
+
+#undef ExplodeRate
+#undef NormalRate
+
+#undef TargetSeek
+

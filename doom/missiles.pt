@@ -1,0 +1,324 @@
+
+/**
+ **  Missiles and Miscellany
+ **/
+
+
+#define GlowRate  200msec
+#define ExplodeRate  300msec
+
+// IDEA: (allow plasma/bfg to pass through impfireball etc)
+#define EnergyBall
+#define EnergyProof  Hits 1
+
+
+PhaseTable FireBall
+  Default Duration GlowRate
+  Default Glow
+
+  Phase INIT    A
+  Phase -       B Goto INIT
+
+  Default Duration ExplodeRate
+  Default NoSigs
+  Phase EXPLODE C Explode  SigExplode Sound DSFIRXPL
+  Phase -       D 
+  Phase -       E Destroy
+
+Proto ImpFireBall 8004
+  Sprite BAL1
+  Phases FireBall
+  Damage 3
+  Size 16 16
+  Explosive EnergyBall ZCenter BulletProof EnergyProof
+  NoHurtOwner
+  Mass 0
+  Speed 40
+
+Proto CacoFireBall 8005
+  Sprite BAL2
+  Phases FireBall
+  Damage 5
+  Size 16 16
+  Explosive EnergyBall ZCenter BulletProof EnergyProof
+  NoHurtOwner
+  Mass 0
+  Speed 64
+
+Proto BaronFireBall 8006
+  Sprite BAL7
+  Phases FireBall
+  Damage 7
+  Size 19 16
+  Explosive EnergyBall ZCenter BulletProof EnergyProof
+  NoHurtOwner
+  Mass 0
+  Speed 48
+
+
+/* A "classic" rocket design */
+
+PhaseTable ClassicMissile
+  Default Duration GlowRate
+  Default Glow
+
+  Phase INIT    A Goto INIT
+
+  Default Duration ExplodeRate
+  Default NoSigs
+  Phase EXPLODE B Explode  SigExplode Sound DSRXPLOD
+  Phase -       C
+  Phase -       D Destroy
+
+Proto ClassicMissile 8016
+  Sprite MISL
+  Size 10 10
+  Damage 20 Hits 1
+  Mass 0
+  Explosive ZCenter
+  Speed 64
+
+
+/* Josh's "smoky heatseeking rocket" */
+
+PhaseTable Smoke
+  Default Duration GlowRate
+
+  Phase - C Glow
+  Phase - D Destroy
+
+Proto Smoke
+  Sprite PUFF
+  Mass 1000 YMoveOnly
+  ZCenter Phantom FloatsUp
+
+
+PhaseTable Missile
+  Default Duration 70msec
+  Default Glow
+
+  Phase INIT    A RSpawn2
+  Phase -       A RSpawn2 HeatSeek
+  Phase -       A RSpawn2
+  Phase -       A RSpawn2 HeatSeek Goto INIT
+
+  Default Duration ExplodeRate
+  Default NoSigs
+  Phase EXPLODE B Explode  SigExplode Sound DSRXPLOD
+  Phase -       C 
+  Phase -       D Destroy
+
+Proto Missile 8001
+  Sprite MISL
+  Size 10 10
+  Damage 25 Hits 1
+  Mass 0
+  Explosive ZCenter
+  Spawn2 Smoke
+  Speed 100
+
+
+PhaseTable SkelFireBall
+  Default Duration GlowRate
+  Default Glow
+
+  Phase INIT    A HeatSeek
+  Phase -       B HeatSeek Goto INIT
+
+  Default Duration ExplodeRate
+  Default Sprite FBXP
+  Default NoSigs
+
+  Phase EXPLODE A Explode  SigExplode
+  Phase -       B 
+  Phase -       C Destroy
+
+Proto SkelFireBall 8002
+  Sprite FATB
+  Damage 8
+  Size 18 18
+  Explosive EnergyBall ZCenter BulletProof EnergyProof
+  Mass 0
+  Speed 48
+
+PhaseTable MancFireBall
+  Default Duration GlowRate
+  Default Glow
+
+  Phase INIT    A 
+  Phase -       B Goto INIT
+
+  Default Duration ExplodeRate
+  Default Sprite MISL
+  Default NoSigs
+
+  Phase EXPLODE B Explode  SigExplode
+  Phase -       C 
+  Phase -       D Destroy
+
+Proto MancFireBall 8007
+  Sprite MANF
+  Damage 8
+  Size 18 18
+  Explosive EnergyBall ZCenter BulletProof EnergyProof
+  NoHurtOwner
+  Mass 0
+  Speed 80
+
+
+PhaseTable AracFireBall
+  Default Duration GlowRate
+  Default Glow
+
+  Phase INIT    A 
+  Phase -       B Goto INIT
+
+  Default Duration ExplodeRate
+  Default Sprite APBX
+  Default NoSigs
+
+  Phase EXPLODE A Explode  SigExplode
+  Phase -       B 
+  Phase -       C 
+  Phase -       D 
+  Phase -       E Destroy
+
+Proto AracFireBall 8068
+  Sprite APLS
+  Damage 4
+  Size 15 15
+  Explosive EnergyBall ZCenter BulletProof EnergyProof
+  NoHurtOwner
+  Mass 0
+  Speed 72
+
+
+PhaseTable PlasmaBall
+  Default Duration GlowRate
+  Default Glow
+
+  Phase INIT    A 
+  Phase -       B Goto INIT
+
+  Default Duration ExplodeRate
+  Default Sprite PLSE
+  Default NoSigs
+
+  Phase EXPLODE A Explode  SigExplode
+  Phase -       B 
+  Phase -       C 
+  Phase -       D Destroy
+
+Proto PlasmaBall 8204
+  Sprite PLSS
+  Damage 4
+  Size 12 12
+  Explosive EnergyBall ZCenter BulletProof EnergyProof
+  Mass 0
+  Speed 64
+
+
+PhaseTable BFGBall
+  Default Duration GlowRate
+  Default Glow
+
+  Phase INIT    A 
+  Phase -       B Goto INIT
+
+  Default Duration 350msec
+  Default Sprite BFE1
+  Default NoSigs
+
+  Phase EXPLODE A Explode  SigExplode BFGEffect
+  Phase -       B 
+  Phase -       C 
+  Phase -       D 
+  Phase -       E 
+  Phase -       F Destroy
+
+Proto BFGBall 8206
+  Sprite BFS1
+  Damage 50
+  Size 15 15
+  Explosive EnergyBall ZCenter BulletProof EnergyProof
+  Mass 0
+  Speed 40
+
+
+PhaseTable Bullet
+  Default Duration 100msec
+  Phase 0 A Glow Melee 
+  Phase 1 B Glow
+  Phase 2 C
+  Phase 3 D Destroy
+
+Proto Bullet 9001
+  Sprite PUFF
+  Mass 1000 YMoveOnly
+  Phantom BulletKludge ZCenter 
+  FloatsUp Speed 10
+  Damage 1
+
+
+PhaseTable BloodSplat
+  Default Duration 100msec
+  Phase 0 A Melee 
+  Phase 1 B
+  Phase 2 C Destroy
+
+Proto BloodSplat 9002
+  Sprite BLUD
+  Phantom ZCenter
+  Damage 1
+
+
+PhaseTable TeleportFog
+  Default Duration 200msec
+  Default Glow
+
+  Phase TELEPORT J
+  Phase -        G
+  Phase -        D
+
+  Phase -        A Sound DSTELEPT
+  Phase -        B
+  Phase -        C
+  Phase -        D
+  Phase -        E
+  Phase -        F
+  Phase -        G
+  Phase -        H
+  Phase -        I
+  Phase -        J Destroy
+
+Proto TeleportFog 9014
+  Sprite TFOG
+  Phantom ZCenter
+
+
+PhaseTable VileFire
+  Default Duration 200msec
+  Default Glow
+
+  Phase BURN    A 
+  Phase -       B
+  Phase -       C
+  Phase -       D Melee
+  Phase -       E
+  Phase -       F
+  Phase -       G
+  Phase -       H Destroy
+
+Proto VileFire 8064
+  Sprite FIRE
+  Phantom ZCenter
+  Damage 25
+
+
+#undef GlowRate
+#undef ExplodeRate
+
+#undef EnergyBall
+#undef EnergyProof
+
+

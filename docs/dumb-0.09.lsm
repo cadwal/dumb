@@ -1,0 +1,21 @@
+Begin3 
+Title: 		DUMB (A Doom-like 3d game engine) 
+Version: 	0.09
+Entered-date: 	05FEB98
+Description: 	DUMB is a 3d graphics engine more or less 
+		compatible with that used in id software's 
+		Doom.  It plays Doom and Heretic levels,
+		and also allows you to create your own.
+		A level editor for X is included.
+		This is a work-in-progress.
+		Requires netpbm to compile properly, and
+		a Doom or Heretic .wad to play.
+		Visit the DUMB home page at 
+		http://samba.anu.edu.au/dumb/
+Keywords:	3D game graphics X11 dumb doom GNU GPL
+Author:		josh@coombs.anu.edu.au
+Maintained-by:	josh@coombs.anu.edu.au
+Primary-site: 	samba.anu.edu.au /pub/dumb/source
+		260k dumb-src-0.09.tar.gz
+Copying-policy:	GPL
+End

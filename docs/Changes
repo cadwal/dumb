@@ -1,0 +1,185 @@
+version 0.01:
+
+first released
+
+version 0.02:
+
+64bit cleanliness and Makefile changes from Marcus Sundberg
+complete rewrite of updmap.c
+new ptcomp tool for creating PHASES and PROTOS lumps
+XWad made usuable
+more original textures and even a sprite!
+monsters now wake out of their IDLE states when the player gets near
+x11_video tidied up
+x86 renderer assembly tidied: removed reliance on -fomit-frame-pointer
+miscellaneous bugfixes
+
+version 0.02a:
+
+doom.pt additions from Andrew Apted
+bugfixes and additions to ptcomp
+docs/README.ptcomp
+
+version 0.03:
+
+render/draw.c: draw transparent images over the framebuffer
+GETTABLES lump (dumb/gettable.h)
+changed format of PROTOS!!!
+hanging and flying objects
+mechanics rationalised (updthing.c)
+melee fixed up
+.pt sources preprocessed with cpp
+banners (dumb/banner.h)
+restricted auto-aiming for player
+bugfixes from Steffen Moeller
+more 64bit stuff from Marcus Sundberg
+yet more doom.pt additions from Andrew Apted
+GGI stuff from Andreas Beck
+heretic stuff (htic/*)
+fixed trouble with transparency at bpp>1
+teleportation (dumb/thinghit.c, dumb/updmap.c)
+remote doors (dumb/thinghit.c) 
+
+version 0.04:
+
+twiddled bullet code to make Archvile attack nicer
+hacked sources to allow compilation under GNU C++: "DUMB++"
+(DUMB++ only) byteorder fixes
+reduced LOTS in ptcomp.c
+kludge to x11_video.c for 24-bit truecolour modes on Matrox cards
+fixed 32-bit pixel conversion in texture.c 
+more alpha/DUNIX stuff from Marcus Sundberg
+doom player's bloodtype fixed
+modularised XWad a bit
+texture browser for XWad
+fixed "maxval too large" errors with some builds of netpbm
+new GGI driver from Andreas Beck (now with mouse support)
+increased resolution of fields in PlayerInput (plat/*.c) for mouse support
+XProtoThing tool created (soon it will do more)
+decaying gettables (gettables.c, doom/gettables.pt)
+fixed bug that caused missiles to slide along the ground
+fixed view height to conform with Doom
+fixed sizes of many doom gettables (gettables.pt)
+fixed pillar collision problem
+new hashing algorithm for wadio.c (much faster) 
+
+version 0.05:
+
+more GGI twiddling for mouse support from Andreas Beck
+"minor fixes" to doom/*.pt from Andrew Apted
+preprocess .pt sources with -lang-c++ for // comments 
+memory allocation in tool/ptcomp.c rationalised
+thinghit.c now uses a linetype database (doom/linetypes.pt)
+animtex.c modified to deal with switches
+made teleport fogs wake monsters
+sound added
+different timing for different player weapons
+fixed monster diameters
+XProtoThing updated to incorporate sound
+fight sequences twiddled (Demon, Chaingun Guy, Baron)
+fixed mirroring problem with some monsters
+
+version 0.05a:
+more monster sounds and bend patch from Andrew Apted
+
+version 0.06:
+
+manual door keytypes fixed
+subtle legal change: derived libraries may go under LGPL instead of GPL
+processor timing independence (lib/timer.* dumb/upd*.c)
+DUnix: MME sound driver from Marcus Sundberg
+"local" gettables
+spectre patch (Andrew Apted again)
+judicious use of const LevData * and static inline (thanks to Gareth Jones)
+support for aalib (Yay! Doom on an MDA! :)
+extra sanity checking in wadio.c
+loads of linetypes from Andrew Apted
+tagged sector highlighting in xwad (xwad/drawmap.c)
+dark areas darker, more sinister (see top of render.c to fine-tune)
+partial invisibility (not quite like Doom's, but it looks OK)
+crushing ceilings and non-crushing doors
+PT_BULLETPROOF flag
+missiles of same type don't explode each other
+changed game behaviour on player death
+modified Makefile to use makedepend
+peg PT_HANGING objects to ceilings when they move
+MAX_SPARE_THINGS revved to 64
+fixed anomalously glowing barrels
+"Speed" keyword for monster and missile protos (ptcomp.c, prothing.h) 
+tweaks to monster strategy (still not smart enough though)
+some objects get Mass so they go up and down with floors
+tweaks to melee/bullet code for Archvile
+
+version 0.07:
+
+rotated floor and ceiling textures 90 degrees to agree with Doom (flrender.c)
+wadwr.c: fixed bug to do with freeing (NULL) on error
+wadwr.c,wadtool.c: added ability to write output to a directory of lumps 
+debug messages in levdata.c to track down alignment woes on non-intel ports
+linetype tweaks from Andrew Apted
+ptcomp now produces ANIMTEX lump
+doom/linetypes.pt modified to support heretic
+heretic: keys, switches, animtexs, some monsters
+timer.c patch from Marcus Sundberg
+slowed down turbo stairs to medium speed (twice as fast as normal stairs)
+x11_input.c: spacebar sets input.action
+dumb/dumb.c: call thing_activate on input.action
+automagically look up/down when climbing stairs (updthing.c)
+termtype.c: implemented DarkestSector, etc., NextHighestCeiling, etc.
+fixed a bug in ptcomp: NULL dereference when phasename used before Phases kw
+made ptcomp check that every proto has a phasetable
+fixed a bug in XProtoThing auto-rotation + speeded up auto-animation
+PT_FLOATSUP, PT_ZPEGGED, and PT_BOUNCY added (updthing.c, rendcore.c, ptcomp.c)
+tweaked player turning speed, volume in linux_sound
+bullet puffs and smoke float up (doom/missiles.pt)
+fixed missing call to XInstallColormap in x11_video.c
+rewrote sprite lookup code in textures.c to cope with sprite PWADs
+sprite browser for XWad
+LEVINFO mechanism (dumb/levinfo.*, tool/ptcomp.c) 
+fixed diameters in doom/furnishings.pt
+implemented texture copying linetypes
+dumb/bangbang.c optimized a bit, smoothed monster TSIG_DETECT checking
+lib/conf.*: configuration files, new command line parsing arrangement
+cute little crosshair: --dumb-crosshair switch
+svgalib mouse support and new GGI driver from Andrew Apted
+
+version 0.07a:
+fixed a bug in the first release of 0.07 that stopped it compiling w/C++
+
+version 0.08:
+bogothings
+player weapons reimplemented using bogothings
+DEC Alpha fixes, x11_video run/strafe fix, fbrerender from Marcus Sundberg
+heretic .pt tweaks from Andrew Apted
+flying monsters try to meet you eye-to-eye (thingm.c)
+fixed x11_video.c to cope with 32bpp modes
+fixed gravity problems
+monsters slow down when they close with you (fixed trouble with htic's imps)
+new proto elements: see_arc, aim_arc (kws: SeeArc AimArc)
+PT_NOHURTO: don't hurt owner
+config help now tells you about enumerated options
+beginnings of network game synch code: dyncode.*, levdata.*, netplay.*
+updated docs for first time in ages
+fixed jpot to deal with pasting transparencies (pastepic.c)
+GGI timer use fix from Marcus Sundberg
+fixed draw() to deal with negative origin pos'n
+twiddled timing-independent player movement
+round up when calcing banner update (banner.c)
+texture preloading: use --dumb-preload (dumb.c)
+
+*** some copies of an unreleased version of 0.08 got out at the CLUG talk
+
+version 0.09:
+added proper phasetable for player to doom/monsters.pt htic/monsters.pt
+fixed bigendian stuff (again)
+added linux-ppc config stuff to Makefile
+use (long long) to do fixed point multiplies on non-intel machines
+different auto-aiming arcs for different weapons
+heretic ambient sounds from Andrew Apted
+fixbm: benchmark fixed point ops in fixed.h
+changed format of PlayerInput to make it saveable/networkable
+multiplayer support: big changes to gettables.c, game.c, dumb.c
+NOHURTO stops weapons from shooting their owners
+sound and game messages network aware
+animating icons for gettables 
+fixed a bug in conf.c that caused sigsegvs when configuring list args

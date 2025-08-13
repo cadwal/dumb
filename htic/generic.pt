@@ -1,0 +1,77 @@
+
+/**
+ **  Generic phasetables
+ **/
+
+PhaseTable Mundane
+  Phase INIT A  Goto INIT
+
+PhaseTable ThreePhase
+  Default Duration 100msec
+  Default Glow
+
+  Phase INIT A
+  Phase -    B
+  Phase -    C  Goto INIT
+
+PhaseTable Repeat2
+  Default Duration 250msec
+  Phase IDLE A 
+  Phase -    B Goto IDLE
+
+PhaseTable Repeat3
+  Default Duration 150msec
+  Phase IDLE A 
+  Phase -    B
+  Phase -    C Goto IDLE
+
+PhaseTable Repeat4
+  Default Duration 150msec
+  Phase IDLE A 
+  Phase -    B
+  Phase -    C
+  Phase -    D Goto IDLE
+
+PhaseTable Cycle3
+  Default Duration 150msec
+  Phase INIT A
+  Phase -    B
+  Phase -    C
+  Phase -    B  Goto INIT
+
+PhaseTable Cycle4
+  Default Duration 150msec
+  Default Glow
+
+  Phase IDLE A 
+  Phase -    B 
+  Phase -    C 
+  Phase -    D 
+  Phase -    C
+  Phase -    B Goto IDLE
+
+
+PhaseTable Blink2
+  Default Duration 250msec
+  Default Glow
+  
+  Phase IDLE A 
+  Phase -    B Goto IDLE
+
+PhaseTable Blink3
+  Default Duration 150msec
+  Default Glow
+  
+  Phase IDLE A 
+  Phase -    B
+  Phase -    C Goto IDLE
+
+PhaseTable Blink4
+  Default Duration 150msec
+  Default Glow
+  
+  Phase IDLE A 
+  Phase -    B 
+  Phase -    C 
+  Phase -    D Goto IDLE
+

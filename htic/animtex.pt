@@ -1,0 +1,28 @@
+
+/* heretic keeps these nice and simple */
+
+/* switches */
+
+SwitchTexture SW1
+  Texture SW1OFF
+  Texture SW1ON
+
+SwitchTexture SW2
+  Texture SW2OFF
+  Texture SW2ON
+
+/* animated walls */
+
+AnimTexture LAVAFL%d Parm 1 To 3
+AnimTexture WATRWAL%d Parm 1 To 3
+
+/* animated flats */
+
+AnimTexture FLTWAWA%d Flat Parm 1 To 3
+AnimTexture FLTSLUD%d Flat Parm 1 To 3
+AnimTexture FLTFLWW%d Flat Parm 1 To 3
+AnimTexture FLTTELE%d Flat Parm 1 To 4
+AnimTexture FLTLAVA%d Flat Parm 1 To 4
+AnimTexture FLTHUH%d Flat Parm 1 To 4
+
+

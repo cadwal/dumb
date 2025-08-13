@@ -1,0 +1,112 @@
+
+/**
+ **  Ambient sounds
+ **/
+
+#define AmbientRWait Duration 0sec RndDuration 180sec
+
+SoundType AMB10-1 Redir AMB10 BendConst -2
+SoundType AMB10-2 Redir AMB10 BendConst -4
+SoundType AMB10-3 Redir AMB10 BendConst -8
+SoundType AMB10-4 Redir AMB10 BendConst -12
+SoundType AMB10-5 Redir AMB10 BendConst -16
+
+SoundType AMB9-1 Redir AMB9 BendConst -2
+SoundType AMB9-2 Redir AMB9 BendConst -4
+SoundType AMB9-3 Redir AMB9 BendConst -8
+SoundType AMB9-4 Redir AMB9 BendConst -12
+SoundType AMB9-5 Redir AMB9 BendConst -16
+
+PhaseTable Growl /* sounds like more laughter to me??? */
+  Phase WAIT A AmbientRWait
+  Phase PLAY A  Duration 120msec Sound AMB9 
+  Phase -    A  Duration 160msec Sound AMB9-1 
+  Phase -    A  Duration 160msec Sound AMB9-1 
+  Phase -    A  Duration 200msec Sound AMB9-1 
+  Phase -    A  Duration 240msec Sound AMB9-2 
+  Phase -    A  Duration 300msec Sound AMB9-3 
+  Phase -    A  Duration 350msec Sound AMB9-4 
+  Phase -    A  Duration 350msec Sound AMB9-5 Goto WAIT
+
+PhaseTable Laughter
+  Phase WAIT A AmbientRWait
+  Phase PLAY A  Duration 120msec Sound AMB10 
+  Phase -    A  Duration 160msec Sound AMB10-1 
+  Phase -    A  Duration 160msec Sound AMB10-1 
+  Phase -    A  Duration 200msec Sound AMB10-1 
+  Phase -    A  Duration 240msec Sound AMB10-2 
+  Phase -    A  Duration 300msec Sound AMB10-3 
+  Phase -    A  Duration 350msec Sound AMB10-4 
+  Phase -    A  Duration 350msec Sound AMB10-5 Goto WAIT
+
+PhaseTable Squish
+  Phase WAIT A AmbientRWait
+  Phase PLAY A Duration 2sec Sound AMB2 Goto WAIT
+
+PhaseTable Magic
+  Phase WAIT A AmbientRWait
+  Phase PLAY A Duration 2sec Sound AMB1 Goto WAIT
+
+PhaseTable Scream
+  Phase WAIT A AmbientRWait
+  Phase PLAY A Duration 2sec Sound AMB8 Goto WAIT
+
+PhaseTable WaterDrip
+  Phase WAIT A AmbientRWait
+  Phase PLAY A Duration 200msec RndDuration 800msec Sound AMB3
+  Phase -    A Duration 2sec Sound AMB7 Goto WAIT
+
+PhaseTable SlowFootsteps
+  Phase WAIT A AmbientRWait
+  Phase INIT A Duration 1200msec Sound AMB4
+  Phase -    A Duration 3000msec Sound AMB4 Goto WAIT
+
+PhaseTable FastFootsteps
+  Phase WAIT A AmbientRWait
+  Phase INIT A Duration 1000msec Sound AMB4
+  Phase -    A Duration 600msec Sound AMB11
+  Phase -    A Duration 600msec Sound AMB11
+  Phase -    A Duration 600msec Sound AMB11 Goto WAIT
+
+PhaseTable HeartBeat
+  Phase WAIT A AmbientRWait
+  Phase PLAY A Duration 1070msec Sound AMB5
+  Phase -    A Duration 1070msec Sound AMB5
+  Phase -    A Duration 1070msec Sound AMB5
+  Phase -    A Duration 1000msec Sound AMB5
+  Phase -    A Duration 900msec Sound AMB5
+  Phase -    A Duration 800msec Sound AMB5
+  Phase -    A Duration 700msec Sound AMB5
+  Phase -    A Duration 700msec Sound AMB5
+  Phase -    A Duration 700msec Sound AMB5
+  Phase -    A Duration 700msec Sound AMB5
+  Phase -    A Duration 800msec Sound AMB5
+  Phase -    A Duration 800msec Sound AMB5
+  Phase -    A Duration 900msec Sound AMB5
+  Phase -    A Duration 900msec Sound AMB5
+  Phase -    A Duration 1000msec Sound AMB5
+  Phase -    A Duration 1000msec Sound AMB5
+  Phase -    A Duration 1000msec Sound AMB5 Goto WAIT
+
+PhaseTable Bells
+  Phase WAIT A AmbientRWait
+  Phase PLAY A Duration 500msec RndDuration 600msec Sound AMB6
+  Phase -    A Duration 500msec RndDuration 600msec Sound AMB6
+  Phase -    A Duration 500msec RndDuration 600msec Sound AMB6
+  Phase -    A Duration 500msec RndDuration 600msec Sound AMB6 Goto WAIT
+
+PhaseTable Magic
+  Phase INIT A Duration 2000msec Sound AMB1 Goto INIT
+
+Proto Scream 1200        /* eg. E3M1 */
+Proto Squish 1201        /* eg  E2M1 */
+Proto WaterDrip 1202     /* eg. E1M1 */
+Proto SlowFootsteps 1203 /* eg. E1M1 */
+Proto FastFootsteps 1209 /* eg. E1M2 */
+Proto HeartBeat 1204     /* eg. E1M2 */
+Proto Bells 1205         /* eg. E1M4 */
+Proto Magic 1207         /* eg. E2M3 */
+Proto Growl 1206         /* eg. E2M1 */
+Proto Laughter 1208      /* eg. E1M2 */
+
+

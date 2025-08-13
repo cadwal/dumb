@@ -1,0 +1,83 @@
+
+
+/* animated floors and ceilings */
+
+AnimTexture NUKAGE%d Flat Parm 1 To 3
+AnimTexture BLOOD%d Flat Parm 1 To 3
+AnimTexture SWATER%d Flat Parm 1 To 4
+AnimTexture FWATER%d Flat Parm 1 To 4
+AnimTexture LAVA%d Flat Parm 1 To 4
+AnimTexture RROCK0%d Flat Parm 1 To 4
+AnimTexture SLIME%02d Flat Parm 1 To 4
+AnimTexture SLIME%02d Flat Parm 5 To 8
+AnimTexture SLIME%02d Flat Parm 9 To 12
+
+/* NB: you can also write these as: (eg.)
+
+AnimTexture NUKAGE Flat
+  Texture NUKAGE1
+  Texture NUKAGE2
+  Texture NUKAGE3
+
+*/
+
+/* animated walls */
+
+AnimTexture BFALL%d Parm 1 To 4
+AnimTexture SFALL%d Parm 1 To 4
+AnimTexture WFALL%d Parm 1 To 4
+AnimTexture DBRAIN%d Parm 1 To 4
+AnimTexture BLODGR%d Parm 1 To 4
+AnimTexture BLODRIP%d Parm 1 To 4
+AnimTexture FIREBLU%d Parm 1 To 2
+AnimTexture FIRELAV%d Parm 1 To 2
+AnimTexture FIREMAG%d Parm 1 To 3
+AnimTexture GSTFONT%d Parm 1 To 3
+AnimTexture ROCKRED%d Parm 1 To 3
+AnimTexture SLADRIP%d Parm 1 To 3
+
+
+/* switches */
+
+SwitchTexture SW%dBLUE   Parm 1 To 2
+SwitchTexture SW%dBRCOM  Parm 1 To 2
+SwitchTexture SW%dBRIK   Parm 1 To 2
+SwitchTexture SW%dBRN1   Parm 1 To 2
+SwitchTexture SW%dBRN2   Parm 1 To 2
+SwitchTexture SW%dBRNGN  Parm 1 To 2
+SwitchTexture SW%dBROWN  Parm 1 To 2
+SwitchTexture SW%dCMT    Parm 1 To 2
+SwitchTexture SW%dCOMM   Parm 1 To 2
+SwitchTexture SW%dCOMP   Parm 1 To 2
+SwitchTexture SW%dDIRT   Parm 1 To 2
+SwitchTexture SW%dEXIT   Parm 1 To 2
+SwitchTexture SW%dGARG   Parm 1 To 2
+SwitchTexture SW%dGRAY   Parm 1 To 2
+SwitchTexture SW%dGRAY1  Parm 1 To 2
+SwitchTexture SW%dGSTON  Parm 1 To 2
+SwitchTexture SW%dHOT    Parm 1 To 2
+SwitchTexture SW%dLION   Parm 1 To 2
+SwitchTexture SW%dMARB   Parm 1 To 2
+SwitchTexture SW%dMET2   Parm 1 To 2
+SwitchTexture SW%dMETAL  Parm 1 To 2
+SwitchTexture SW%dMOD1   Parm 1 To 2
+SwitchTexture SW%dPANEL  Parm 1 To 2
+SwitchTexture SW%dPIPE   Parm 1 To 2
+SwitchTexture SW%dROCK   Parm 1 To 2
+SwitchTexture SW%dSATYR  Parm 1 To 2
+SwitchTexture SW%dSKIN   Parm 1 To 2
+SwitchTexture SW%dSKUL   Parm 1 To 2
+SwitchTexture SW%dSLAD   Parm 1 To 2
+SwitchTexture SW%dSTARG  Parm 1 To 2
+SwitchTexture SW%dSTON1  Parm 1 To 2
+SwitchTexture SW%dSTON2  Parm 1 To 2
+SwitchTexture SW%dSTON6  Parm 1 To 2
+SwitchTexture SW%dSTONE  Parm 1 To 2
+SwitchTexture SW%dSTRTN  Parm 1 To 2
+SwitchTexture SW%dTEK    Parm 1 To 2
+SwitchTexture SW%dVINE   Parm 1 To 2
+SwitchTexture SW%dWDMET  Parm 1 To 2
+SwitchTexture SW%dWOOD   Parm 1 To 2
+SwitchTexture SW%dZIM    Parm 1 To 2
+
+

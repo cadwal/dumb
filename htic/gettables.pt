@@ -1,0 +1,109 @@
+
+/**
+ **  Gettables
+ **/
+
+Gettable Health
+  Initial 100
+  Collect 200
+  Icon PTN1A0 Anim C Timing 200msec
+  IconPos 8 8
+  PickupSound ITEMUP
+  Special 1
+
+
+Gettable WandCrystals
+  Initial 50
+  Collect 100
+  Icon AMG2A0 Anim C Timing 230msec
+  IconPos -8 8
+  PickupSound ITEMUP
+
+Gettable EtherealArrows
+  Collect 50
+  Icon AMC2A0 RevAnim C Timing 150msec
+  IconPos -28 8
+  PickupSound ITEMUP
+
+Gettable ClawOrbs
+  Collect 200
+  Icon AMB1A0 Anim B Timing 150msec
+  IconPos -50 8
+  PickupSound ITEMUP
+
+Gettable Torch
+  Collect 1
+  Icon TRCHA0 Anim C Timing 100msec
+  IconPos 160 8
+  PickupSound ITEMUP
+
+
+/* now the protothings */
+
+Proto WimpyWandAmmo 10
+  Sprite AMG1
+  Phases Mundane
+  Mass 1000 YMoveOnly Bouncy
+  Size 16 16
+  Gets WandCrystals 4
+
+Proto HeftyWandAmmo 12
+  Sprite AMG2
+  Phases Cycle3
+  Mass 1000 YMoveOnly Bouncy
+  Size 16 16
+  Gets WandCrystals 10
+
+
+Proto WimpyBowAmmo 18
+  Sprite AMC1
+  Phases Mundane
+  Mass 1000 YMoveOnly Bouncy
+  Size 16 16
+  Gets EtherealArrows 4
+
+Proto HeftyBowAmmo 19
+  Sprite AMC2
+  Phases Cycle3
+  Mass 1000 YMoveOnly
+  Size 16 16
+  Gets EtherealArrows 10
+
+
+Proto WimpyClawAmmo 54
+  Sprite AMB1
+  Phases Repeat3
+  Mass 1000 YMoveOnly Bouncy
+  Size 16 16
+  Gets ClawOrbs 20
+
+Proto HeftyClawAmmo 55
+  Sprite AMB2
+  Phases Repeat3
+  Mass 1000 YMoveOnly
+  Size 16 16
+  Gets ClawOrbs 100
+
+
+Proto CrystalVial 81
+  Sprite PTN1
+  Phases Repeat3
+  Mass 1000 YMoveOnly Bouncy
+  Size 16 16
+  Gets Health 10
+
+Proto QuartzFlask 82
+  Sprite PTN2
+  Phases Repeat3
+  Mass 1000 YMoveOnly Bouncy
+  Size 16 16
+  Gets Health 25
+
+Proto Torch 33
+  Sprite TRCH
+  Phases Cycle3
+  Mass 1000 YMoveOnly 
+  Size 16 16
+  Gets Torch 1
+
+

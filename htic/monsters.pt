@@ -1,0 +1,536 @@
+
+/**
+ ** Heretic monsters
+ **/
+
+#define NormalRate   100msec
+#define OuchRate     400msec
+#define DieRate      160msec
+#define ExplodeRate  130msec
+#define RespawnRate  400msec 
+
+
+/* the Player */
+
+SoundType PLRPAI /*Chance 3*/
+
+SoundType PLRDTH*
+  Random PLRDTH
+  Random PLRCDTH
+  Random PLRWDTH
+
+#define SigStunned
+
+PhaseTable DeadPlayer
+  Phase INIT P Goto INIT
+Proto DeadPlayer
+  Sprite PLAY
+  Size 40 16
+  Mass 1000 YMoveOnly
+
+PhaseTable ExPlayer
+  Phase INIT Y Goto INIT
+Proto ExPlayer
+  Sprite PLAY
+  Size 40 16
+  Mass 1000 YMoveOnly
+
+SoundType DSPLPAIN Chance 3
+
+PhaseTable Player
+  Default Duration NormalRate
+  Phase INIT    A   
+  Phase -	B   
+  Phase -	C   
+  Phase -	D   Goto INIT
+
+  /* player shooting needs to be like this because the actual shooting
+     is done asychronously by a bogothing */
+  Phase SHOOT   F   Glow SigShoot
+  Phase -	E   Duration OuchRate Goto INIT
+
+  Phase OUCH    G   SigOuch Sound PLRPAI Duration OuchRate Goto INIT
+
+  Phase WINDED  H   SigStunned Sound PLROOF Goto INIT
+
+  Default NoSigs Duration DieRate
+  Phase DIE     I   SigDie Sound PLRDTH*
+  Phase -	J
+  Phase -	K
+  Phase -	L
+  Phase -	M
+  Phase -	N
+  Phase -	O
+  Phase -	P   Become
+
+  Phase EXPLODE Q   SigExplode Sound PLRDTH*
+  Phase -	R
+  Phase -	S
+  Phase -	T
+  Phase -	U
+  Phase -	V
+  Phase -	W
+  Phase -	X
+  Phase -	Y   Become2
+
+Proto Player 1
+  Phases Player
+  Sprite PLAY
+  Size 32 56
+  Mass 100
+  Hits 80
+  Beastie Blocking Player
+  Becomes DeadPlayer
+  Become2 ExPlayer
+Proto Player2 2
+  Phases Player
+  Sprite PLAY
+  Size 32 56
+  Mass 100
+  Hits 80
+  Beastie Blocking Player
+  Becomes DeadPlayer
+  Become2 ExPlayer
+Proto Player3 3
+  Phases Player
+  Sprite PLAY
+  Size 32 56
+  Mass 100
+  Hits 80
+  Beastie Blocking Player
+  Becomes DeadPlayer
+  Become2 ExPlayer
+Proto Player4 4
+  Phases Player
+  Sprite PLAY
+  Size 32 56
+  Mass 100
+  Hits 80
+  Beastie Blocking Player
+  Becomes DeadPlayer
+  Become2 ExPlayer
+
+
+/* Imp */
+
+PhaseTable DeadImp
+  Phase DEAD    L      Goto DEAD
+
+  Default Duration RespawnRate
+  Default NoSigs
+
+  Phase RESPAWN L      SigReanimate
+  Phase -       K
+  Phase -       J
+  Phase -       I
+  Phase -       H      Become
+
+
+PhaseTable ExImp
+  Phase DEAD    Z      Goto DEAD
+
+  Default Duration RespawnRate
+  Default NoSigs
+
+  Phase RESPAWN Z      SigReanimate
+  Phase -       Y
+  Phase -       X
+  Phase -       W
+  Phase -       V
+  Phase -       U
+  Phase -       T
+  Phase -       S      Become
+
+Proto DeadImp
+  Sprite IMPX
+  Size 40 16
+  Mass 100
+  Becomes 66
+
+Proto ExImp
+  Sprite IMPX
+  Size 40 16
+  Mass 200
+  Becomes 66
+
+SoundType IMPAT
+  Random IMPAT1
+  Random IMPAT2
+
+SoundType IMPPAI Bend 6 Chance 3
+
+PhaseTable Imp
+  Default Duration NormalRate
+
+  Phase IDLE    A       Idle Goto IDLE
+
+  Phase SIGHT   A       SigDetect Sound IMPSIT
+
+  Phase MOVE    A
+  Phase -       B       Strategy
+  Phase -       C	Strategy
+  Phase -       B	Strategy Goto MOVE
+
+  Phase SHOOT   D       Glow
+  Phase -       E       Glow Shoot Sound IMPAT
+  Phase -       F       Glow Goto MOVE
+
+  Phase FIGHT   D       SigFight Glow
+  Phase -       E       Glow Melee Sound IMPAT
+  Phase -       F       Glow Goto MOVE
+
+  Phase OUCH    G       SigOuch Sound IMPPAI Duration OuchRate Goto MOVE
+
+  Default Duration DieRate
+  Default NoSigs
+  Phase DIE     H       SigDie Sound IMPDTH
+  Phase -       I
+  Phase -       J
+  Phase -       K
+  Phase -       L       Become
+
+  Default Duration ExplodeRate
+  Default Glow
+  Phase BOOM    S       SigExplode
+  Phase -       T	Sound RIPSLOP
+  Phase -       U
+  Phase -       V
+  Phase -       W
+  Phase -       X
+  Phase -       Y
+  Phase -       Z       Become2
+
+Proto Imp 66
+  Sprite IMPX
+  Size 50 35
+  Hits 6
+  Mass 100
+  Beastie Blocking CanFly
+  Damage 2
+  Shoots ImpZap
+  Becomes DeadImp
+  Become2 ExImp
+  Speed 20
+
+Proto ImpLeader 5
+  Phases Imp
+  Sprite IMPX
+  Size 50 35
+  Hits 6
+  Mass 100
+  Beastie Blocking CanFly
+  Damage 3
+  Shoots ImpZap
+  Becomes DeadImp
+  Become2 ExImp
+  Speed 20
+  SigShoot SHOOT
+
+
+/* Mummy */
+
+PhaseTable MummySpirit
+  Default Duration 300msec
+  Phase - Q Duration 600msec
+  Phase - R
+  Phase - S
+  Phase - T
+  Phase - U Spawn2
+  Phase - V
+  Phase - W Destroy
+
+Proto MummySpirit
+  Sprite MUMM
+  Mass 1000 YMoveOnly
+  Speed 20/sec
+  Phantom ZCenter FloatsUp
+  Spawn2 WimpyWandAmmo
+
+Proto MummyLeaderSpirit
+  Phases MummySpirit
+  Sprite MUMM
+  Mass 1000 YMoveOnly
+  Speed 30/sec
+  Phantom ZCenter FloatsUp
+  Spawn2 HeftyWandAmmo
+
+PhaseTable DeadMummy
+  Phase DEAD    P      Goto DEAD
+
+  Default Duration RespawnRate
+  Default NoSigs
+
+  Phase RESPAWN P      SigReanimate
+  Phase -       O
+  Phase -       N
+  Phase -       M
+  Phase -       L
+  Phase -       K
+  Phase -       J
+  Phase -       I      Become
+
+Proto DeadMummy
+  Sprite MUMM
+  Size 40 16
+  Mass 100
+  Becomes 46 /* reanimated Mummy becomes MEAN */
+
+SoundType MUMAT
+  Random MUMAT1
+  Random MUMAT2
+
+SoundType MUMPAI Bend 6 Chance 3
+
+PhaseTable Mummy
+  Default Duration NormalRate
+
+  Phase IDLE    A       Idle Goto IDLE
+
+  Phase SIGHT   A       SigDetect Sound MUMSIT
+
+  Phase MOVE    A
+  Phase -       B       Strategy
+  Phase -       C	
+  Phase -       D	Strategy Goto MOVE
+
+  Phase FIGHT   E       SigFight 
+  Phase -       F       Melee Sound MUMAT
+  Phase -       G       Goto MOVE
+
+  Phase OUCH    H       SigOuch Sound MUMPAI Duration OuchRate Goto MOVE
+
+  Default Duration 400msec
+  Phase SHOOT   X       Glow
+  Phase -       Y       Glow Shoot Sound MUMAT /* right sound? */ Goto MOVE
+
+  Default Duration DieRate
+  Default NoSigs
+  Phase DIE     I       SigDie Sound MUMDTH
+  Phase -       J	Spawn2
+  Phase -       K       
+  Phase -       L
+  Phase -       M
+  Phase -       N
+  Phase -       O
+  Phase -       P       Become
+  Phase ALTDIE  I       Sound MUMDTH
+  Phase -       J
+  Phase -       K
+  Phase -       L
+  Phase -       M
+  Phase -       N
+  Phase -       O
+  Phase -       P       Destroy
+
+
+Proto Mummy 68
+  Phases Mummy
+  Sprite MUMM
+  Size 40 64
+  Hits 10
+  Mass 100
+  Beastie Blocking SkirtCliffs
+  Damage 5
+  Shoots MummyZap
+  Spawn2 MummySpirit
+  Becomes DeadMummy
+  Speed 13
+
+Proto GhostMummy 69
+  Phases Mummy
+  Sprite MUMM
+  Size 40 64
+  Hits 15
+  Pinvis
+  Mass 100
+  Beastie Blocking SkirtCliffs
+  Damage 7
+  Shoots MummyZap
+  Becomes DeadMummy
+  SigDie ALTDIE
+  Speed 18
+
+Proto MummyLeader 45
+  Phases Mummy
+  Sprite MUMM
+  Size 40 64
+  Hits 30
+  Mass 100
+  Beastie Blocking SkirtCliffs
+  Damage 10
+  Shoots MummyZap
+  Spawn2 MummyLeaderSpirit
+  Becomes DeadMummy
+  SigShoot SHOOT
+  Speed 15
+
+Proto GhostMummyLeader 46
+  Phases Mummy
+  Sprite MUMM
+  Size 40 64
+  Hits 40
+  Pinvis
+  Mass 100
+  Beastie Blocking SkirtCliffs
+  Damage 15
+  Shoots MummyZap
+  SigShoot SHOOT
+  SigDie ALTDIE
+  Becomes DeadMummy
+  Speed 18
+
+
+/* Chaos Knights */
+
+PhaseTable DeadKnight
+  Phase DEAD    O      Goto DEAD
+
+  Default Duration RespawnRate
+  Default NoSigs
+
+  Phase RESPAWN O      SigReanimate
+  Phase -       N
+  Phase -       M
+  Phase -       L
+  Phase -       K
+  Phase -       J
+  Phase -       I      Become
+
+Proto DeadKnight
+  Sprite KNIG
+  Size 40 16
+  Mass 100
+  Becomes 64
+
+SoundType KGTPAI Bend 6 Chance 3
+
+PhaseTable Knight
+  Default Duration NormalRate
+  Phase INIT	A	Idle Goto INIT
+
+  Phase SIGHT   A	SigDetect Sound KGTSIT
+
+  Phase MOVE    A	Strategy
+  Phase -	B	
+  Phase -	C	Strategy
+  Phase -	D	Goto MOVE
+
+  Phase SHOOT	E	SigShoot Sound KGTATK
+  Phase -	F	Shoot
+  Phase -	G	Goto MOVE
+
+  Phase FIGHT   E	SigFight Sound KGTAT2
+  Phase -	F	Melee
+  Phase -	G	Goto MOVE
+
+  Phase OUCH	H	SigOuch Duration OuchRate Sound KGTPAI Goto MOVE
+
+  Default NoSigs Duration DieRate
+  Phase DIE	I	SigDie Sound KGTDTH 
+  Phase -	J	Spawn2
+  Phase -	K
+  Phase -	L
+  Phase -	M
+  Phase -	N
+  Phase -	O	Become
+
+
+Proto Knight 64
+  Sprite KNIG
+  Size 40 80
+  Hits 20
+  Mass 100
+  Beastie Blocking SkirtCliffs
+  Shoots GreenAxe
+  Becomes DeadKnight
+  Spawn2 WimpyBowAmmo
+  Damage 10
+  Speed 17
+
+Proto GhostKnight 65
+  Sprite KNIG
+  Phases Knight
+  Size 40 80
+  Hits 30
+  Mass 100
+  Beastie Blocking SkirtCliffs PInvis
+  Shoots RedAxe
+  Spawn2 WimpyBowAmmo
+  Damage 15
+  Speed 20
+
+
+/* Dark Disciple */
+
+PhaseTable DeadDisciple
+  Phase DEAD    M      Goto DEAD
+
+  Default Duration RespawnRate
+  Default NoSigs
+
+  Phase RESPAWN M      SigReanimate
+  Phase -       L
+  Phase -       K
+  Phase -       J
+  Phase -       I
+  Phase -       H
+  Phase -       G
+  Phase -       F      Become
+
+Proto DeadDisciple
+  Sprite WZRD
+  Size 40 16
+  Mass 100
+  Becomes 15
+
+SoundType WIZPAI Bend 6 Chance 3
+SoundType WIZACT Bend 4 Chance -30
+
+PhaseTable Disciple
+  Default Duration NormalRate
+
+  Phase IDLE    A       Idle Goto IDLE
+
+  Phase SIGHT   A       SigDetect Sound WIZSIT
+
+  Phase MOVE    A	Strategy
+  Phase -       B       Goto MOVE Sound WIZACT
+
+  Phase SHOOT   C       SigShoot Glow
+  Phase -       D       Glow Shoot Sound WIZATK Goto MOVE
+
+  Phase OUCH    E       SigOuch Sound WIZPAI Duration OuchRate Goto MOVE
+
+  Default Duration DieRate
+  Default NoSigs
+  Phase DIE     F       SigDie Sound WIZDTH
+  Phase -       G
+  Phase -       H       
+  Phase -       I
+  Phase -       J
+  Phase -       K
+  Phase -       L
+  Phase -       M       Become
+
+
+Proto Disciple 15
+  Sprite WZRD
+  Size 40 64
+  Hits 20
+  Mass 100
+  Beastie Blocking
+  Shoots WizardZap
+  Becomes DeadDisciple
+  CanFly
+  Speed 15
+
+
+#undef NormalRate  
+#undef OuchRate    
+#undef DieRate     
+#undef ExplodeRate 
+#undef RespawnRate 
+
+
+
+

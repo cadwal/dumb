@@ -1,0 +1,26 @@
+
+/**
+ **  Doom compatibility
+ **/
+
+/*  This is the thing prototype and phase and gettable data and linetype
+ *  data for using Doom WAD files.
+ *
+ *  Compile it into PROTOS.lump and PHASES.lump and GETTABLE.lump and
+ *  LINETYPE.lump and SOUNDS.lump with ptcomp and cpp
+ */
+
+#include <generic.pt>
+
+#include <missiles.pt>
+#include <gettables.pt>
+#include <weapons.pt>
+#include <furnishings.pt>
+#include <monsters.pt>
+#include <linetypes.pt>
+#include <animtex.pt>
+#include <levels.pt>
+
+// #include <textures.pt>
+// #include <sectortypes.pt>
+

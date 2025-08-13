@@ -1,0 +1,354 @@
+
+/**
+ **  Weapons
+ **/
+
+/* the weapons:
+   WepSel lets us select and use it as a weapon
+   Shoots is the missile proto
+   Ammo is the gettable to use up
+   Gun tells DUMB to shoot rather than hurl
+   GotThe Message <string> should make it say "You got the shotgun!"
+   or whatever.
+   Timing is the number of ticks that should pass between each use
+   Sound is a sound to make when used
+*/
+
+#define StickToFloor  Mass 1000 YMoveOnly
+
+
+/* phasetables for the player's weapon */
+
+#define _OverlaySprite(name)
+#define _ContSound  Sound
+
+PhaseTable Fist
+  Default Duration 100msec
+  Default Sprite PUNG
+
+  Phase IDLE    A  Goto IDLE
+
+  Default NoSigs
+  Phase PUNCH   A  SigShoot Sound DSPUNCH
+  Phase -       B
+  Phase -       C
+  Phase -       D  Melee
+  Phase -       C
+  Phase -       B  Goto IDLE
+
+
+PhaseTable HeldChainsaw
+  Default Duration 200msec
+
+  Phase IDLE    C  
+  Phase -       D
+  Phase -       C
+  Phase -       D
+  Phase -       C
+  Phase -       D  _ContSound DSSAWIDL Goto IDLE
+
+  Default NoSigs
+  Phase SAW     A  Melee SigShoot Sound DSSAWFUL
+  Phase -       B  Melee
+  Phase -       A  Melee
+  Phase -       B  Melee Goto IDLE
+
+  
+PhaseTable HeldPistol
+  Default Duration 120msec
+
+  Phase IDLE    A  Goto IDLE
+
+  Default NoSigs
+  Phase SHOOT   B  SigShoot Shoot Sound DSPISTOL _OverlaySprite(PISFA0)
+  Phase -       C  
+  Phase -       D
+  Phase -       E
+  Phase -       D  Goto IDLE
+
+
+PhaseTable HeldShotgun
+  Default Duration 200msec
+
+  Phase IDLE    A  Goto IDLE
+
+  Default NoSigs
+  Phase SHOOT   A  SigShoot Sound DSSHOTGN _OverlaySprite(SHTFA0)
+  Phase -       A  Shoot _OverlaySprite(SHTFB0)
+  Phase -       B
+  Phase -       C  Sound DSSGCOCK
+  Phase -       D
+  Phase -       C
+  Phase -       B  Goto IDLE
+
+
+PhaseTable HeldSuperShotgun
+  Default Duration 200msec
+
+  Phase IDLE    A  Goto IDLE
+
+  Default NoSigs
+  Phase SHOOT   A  SigShoot Sound DSDSHTGN _OverlaySprite(SHT2I0)
+  Phase -       A  Shoot _OverlaySprite(SHT2J0)
+  Phase -       B
+  Phase -       C
+  Phase -       D  Sound DSSGCOCK
+  Phase -       E
+  Phase -       F
+  Phase -       G
+  Phase -       H  Goto IDLE
+
+
+PhaseTable HeldChaingun
+  Default Duration 150msec
+
+  Phase IDLE    A  Goto IDLE
+
+  Phase SHOOT   B  NoSigs Shoot _OverlaySprite(CHGFB0) Sound DSPISTOL SigShoot 
+  Phase -       A  Shoot _OverlaySprite(CHGFA0) Sound DSPISTOL Goto IDLE
+
+
+PhaseTable HeldRocketLauncher
+  Default Duration 200msec
+
+  Phase IDLE    A  Goto IDLE
+
+  Default NoSigs
+  Phase SHOOT   A  _OverlaySprite(MISFA0) SigShoot 
+  Phase -       A  _OverlaySprite(MISFB0)
+  Phase -       A  _OverlaySprite(MISFC0)
+  Phase -       A  _OverlaySprite(MISFD0) Sound DSRLAUNC
+  Phase -       B  Shoot Duration 600msec Goto IDLE
+
+
+PhaseTable HeldPlasmaRifle
+  Default Duration 170msec
+
+  Phase IDLE    A  Goto IDLE
+
+  Phase SHOOT   C  NoSigs Sprite PLSF SigShoot Sound DSPLASMA
+  Phase -       D  NoSigs Sprite PLSF Shoot 
+
+  Phase COCK    B  Goto IDLE
+
+
+PhaseTable HeldBFG
+  Default Duration 400msec
+
+  Phase IDLE    A  Goto IDLE
+
+  Default NoSigs
+  Phase SHOOT   A  SigShoot
+  Phase -       B  _OverlaySprite(BFGFA0) Sound DSBFG 
+  Phase -       B  _OverlaySprite(BFGFA0) Shoot
+  Phase -       B  Duration 500msec
+
+  Phase COCK    C  Duration 600msec Goto IDLE
+
+
+/* protos for weapon bogus-objects(tm) */
+
+/* here's how it works: objects with the Bogus keyword in their proto
+   entries always follow the player around, face the same way, and never
+   collide with anything.  They are invisible to the renderer, but are 
+   drawn onto the players view after the renderer has finished. */ 
+
+Proto HeldPistol
+  Sprite PISG
+  AimArc 10deg
+  Size 32 56
+  Bogus Shooter
+  NoHurtOwner
+  Shoots Bullet
+
+Proto HeldChaingun
+  Sprite CHGG
+  AimArc 10deg
+  Size 32 56
+  Bogus Shooter
+  NoHurtOwner
+  Shoots Bullet
+  ShootMany 1 10deg
+
+Proto HeldShotgun
+  Sprite SHTG
+  AimArc 10deg
+  Size 32 56
+  Bogus Shooter
+  NoHurtOwner
+  Shoots Bullet
+  ShootMany 6 5deg
+
+Proto HeldSuperShotgun
+  Sprite SHT2
+  AimArc 10deg
+  Size 32 56
+  Bogus Shooter
+  NoHurtOwner
+  Shoots Bullet
+  ShootMany 10 15deg
+
+Proto HeldPlasmaRifle
+  Sprite PLSG
+  AimArc 10deg
+  Size 32 56
+  Bogus
+  Shoots PlasmaBall
+
+Proto HeldBFG
+  Sprite BFGG
+  AimArc 20deg
+  Size 32 56
+  Bogus
+  Shoots BFGBall
+
+Proto HeldRocketLauncher
+  Sprite MISG
+  AimArc 10deg
+  Size 32 56
+  Bogus
+  Shoots Missile
+
+Proto HeldChainsaw
+  Sprite SAWG
+  AimArc 45deg
+  Size 32 56
+  Bogus
+  NoHurtOwner
+  Damage 10
+
+
+/* now gettable entries for weapons */
+
+Gettable Pistol
+  Initial 1
+  Collect 1
+  WepSel
+  Bogotype HeldPistol
+  Ammo Bullet
+  GotThe Message PISTOL
+  PickupSound DSWPNUP
+
+Gettable Shotgun
+  Collect 1
+  WepSel
+  Bogotype HeldShotgun
+  Ammo Shell
+  AddAmmo 6
+  GotThe Message SHOTGUN
+  PickupSound DSWPNUP
+
+Gettable SuperShotgun
+  Collect 1
+  WepSel
+  Bogotype HeldSuperShotgun
+  UseNum 2
+  Ammo Shell
+  AddAmmo 6
+  GotThe Message SUPER_SHOTGUN
+  PickupSound DSWPNUP
+
+Gettable Chainsaw
+  Collect 1
+  Usenum 0
+  WepSel
+  BogoType HeldChainsaw
+  GotThe Message CHAINSAW___LETS_FIND_SOME_MEAT
+  PickupSound DSSAWUP
+
+Gettable Chaingun
+  Collect 1
+  WepSel
+  Bogotype HeldChaingun
+  Ammo Bullet
+  AddAmmo 20
+  GotThe Message CHAINGUN
+  PickupSound DSWPNUP
+
+Gettable PlasmaRifle
+  Collect 1
+  WepSel
+  Bogotype HeldPlasmaRifle
+  Ammo Cell
+  AddAmmo 40
+  UseNum 1
+  GotThe Message PLASMA_RIFLE
+  PickupSound DSWPNUP
+
+Gettable RocketLauncher
+  Collect 1
+  WepSel
+  Bogotype HeldRocketLauncher
+  Ammo Rocket
+  AddAmmo 2
+  UseNum 1
+  GotThe Message ROCKET_LAUNCHER
+  PickupSound DSWPNUP
+
+Gettable BFG
+  Collect 1
+  WepSel
+  Bogotype HeldBFG
+  Ammo Cell
+  AddAmmo 100
+  UseNum 40
+  GotThe Message BFG___OH_YES
+  PickupSound DSWPNUP
+
+
+/* now the actual proto entries */
+
+Proto Chainsaw 2005
+  Sprite CSAW
+  Phases Mundane
+  Size 62 24
+  Gets Chainsaw 1
+  StickToFloor
+
+Proto Shotgun 2001
+  Sprite SHOT
+  Phases Mundane
+  Size 62 12
+  Gets ShotGun 1
+  StickToFloor
+
+Proto SuperShotgun 82
+  Sprite SGN2
+  Phases Mundane
+  Size 56 12
+  Gets SuperShotgun 1
+  StickToFloor
+
+Proto Chaingun 2002
+  Sprite MGUN
+  Phases Mundane
+  Size 54 16
+  Gets Chaingun 1
+  StickToFloor
+
+Proto RocketLauncher 2003
+  Sprite LAUN
+  Phases Mundane
+  Size 62 16
+  Gets RocketLauncher 1
+  StickToFloor
+
+Proto PlasmaRifle 2004
+  Sprite PLAS
+  Phases Mundane
+  Size 54 16
+  Gets PlasmaRifle 1
+  StickToFloor
+
+Proto BFG9000 2006
+  Sprite BFUG
+  Phases Mundane
+  Size 61 36
+  Gets BFG 1
+  StickToFloor
+
+
+#undef StickToFloor
+#undef _OverlaySprite
+#undef _ContSound
+

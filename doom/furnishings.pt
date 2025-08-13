@@ -1,0 +1,350 @@
+
+/**
+ **  Furnishings & Gore
+ **/
+
+#define StickToFloor  Mass 1000 YMoveOnly
+
+
+Proto TallTechPillar 48
+  Sprite ELEC
+  Phases Mundane
+  Size 32 128
+  StickToFloor
+  Blocking
+
+Proto TallGreenPillar 30
+  Sprite COL1
+  Phases Mundane
+  Size 32 128
+  StickToFloor
+  Blocking
+
+Proto TallRedPillar 32
+  Sprite COL3
+  Phases Mundane
+  Size 32 128
+  StickToFloor
+  Blocking
+
+Proto ShortGreenPillar 31
+  Sprite COL2
+  Phases Mundane
+  Size 32 64
+  StickToFloor
+  Blocking
+
+Proto GreenHeartPillar 36
+  Sprite COL5
+  Phases Repeat2
+  Size 32 64
+  StickToFloor
+  Blocking
+
+Proto ShortRedPillar 33
+  Sprite COL4
+  Phases Mundane
+  Size 32 64
+  StickToFloor
+  Blocking
+
+Proto ShortPileSkulls 37
+  Sprite COL6
+  Phases Mundane
+  Size 32 64
+  StickToFloor
+  Blocking
+
+Proto Stalagmite 47
+  Sprite SMIT
+  Phases Mundane
+  Size 32 32
+  StickToFloor
+  Blocking
+
+Proto BurntTree 43
+  Sprite TRE1
+  Phases Mundane
+  Size 32 64
+  StickToFloor
+  Blocking
+
+Proto LargeTree 54
+  Sprite TRE2
+  Phases Mundane
+  Size 32 64
+  StickToFloor
+  Blocking
+
+Proto EvilEye 41
+  Sprite CEYE
+  Phases Cycle3
+  Size 32 16
+  StickToFloor
+
+Proto SkullRock 42
+  Sprite FSKU
+  Phases Cycle3
+  Size 32 16
+  StickToFloor
+  Blocking
+
+Proto BurningBarrel 70
+  Sprite FCAN
+  Phases Cycle3
+  Size 20 32
+  StickToFloor
+  Blocking
+
+Proto FloorLamp 2028
+  Sprite COLU
+  Phases Mundane
+  Size 24 48
+  StickToFloor
+  Blocking
+
+Proto TallTechLamp 85
+  Sprite TLMP
+  Phases Blink4
+  Size 24 88
+  StickToFloor
+  Blocking
+
+Proto ShortTechLamp 86
+  Sprite TLP2
+  Phases Blink4
+  Size 24 48
+  StickToFloor
+  Blocking
+
+Proto Candle 34
+  Sprite CAND
+  Phases Mundane
+  Size 16 16
+  StickToFloor
+
+Proto Candelabra 35
+  Sprite CBRA
+  Phases Mundane
+  Size 24 64
+  StickToFloor
+  Blocking
+
+
+/* Firesticks */
+
+PhaseTable FireStick
+  Default Duration 120msec
+  Default Glow
+
+  Phase IDLE A 
+  Phase -    B
+  Phase -    C
+  Phase -    D Goto IDLE
+
+Proto TallBlueFirestick 44
+  Sprite TBLU
+  Phases FireStick
+  Size 20 88
+  StickToFloor
+  Blocking
+
+Proto TallGreenFirestick 45
+  Sprite TGRN
+  Phases FireStick
+  Size 10 88
+  StickToFloor
+  Blocking
+
+Proto TallRedFirestick 46
+  Sprite TRED
+  Phases FireStick
+  Size 20 88
+  StickToFloor
+  Blocking
+
+Proto ShortBlueFirestick 55
+  Sprite SMBT
+  Phases FireStick
+  Size 12 60
+  StickToFloor
+  Blocking
+
+Proto ShortGreenFirestick 56
+  Sprite SMGT
+  Phases FireStick
+  Size 12 60
+  StickToFloor
+  Blocking
+
+Proto ShortRedFirestick 57
+  Sprite SMRT
+  Phases FireStick
+  Size 12 60
+  StickToFloor
+  Blocking
+
+
+/* Gore */
+
+Proto Twitching 49
+  Sprite GOR1
+  Phases Repeat2
+  Size 32 64
+  Hanging
+
+Proto TwitchingHigh 63
+  Sprite GOR1
+  Phases Repeat2
+  Size 32 64
+  Hanging
+
+Proto PairArms 50
+  Sprite GOR2
+  Phases Mundane
+  Size 32 48
+  Hanging
+
+Proto PairArmsHigh 59
+  Sprite GOR2
+  Phases Mundane
+  Size 32 48
+  Hanging
+
+Proto PairLegs 52
+  Sprite GOR4
+  Phases Mundane
+  Size 32 64
+  Hanging
+
+Proto PairLegsHigh 60
+  Sprite GOR4
+  Phases Mundane
+  Size 32 64
+  Hanging
+
+Proto OneLegged 51
+  Sprite GOR3
+  Phases Mundane
+  Size 32 64
+  Hanging
+
+Proto OneLeggedHigh 61
+  Sprite GOR3
+  Phases Mundane
+  Size 32 64
+  Hanging
+
+Proto HungLeg 53
+  Sprite GOR5
+  Phases Mundane
+  Size 18 48
+  Hanging
+
+Proto HungLegHigh 62
+  Sprite GOR5
+  Phases Mundane
+  Size 9 48
+  Hanging
+
+Proto GutsRemoved 73
+  Sprite HDB1
+  Phases Mundane
+  Size 32 64
+  Hanging
+
+Proto BrainRemoved 74
+  Sprite HDB2
+  Phases Mundane
+  Size 32 48
+  Hanging
+
+Proto TorsoDown 75
+  Sprite HDB3
+  Phases Mundane
+  Size 32 64
+  Hanging
+
+Proto TorsoSkull 76
+  Sprite HDB4
+  Phases Mundane
+  Size 32 48
+  Hanging
+
+Proto TorsoUp 77
+  Sprite HDB5
+  Phases Mundane
+  Size 32 48
+  Hanging
+
+Proto TorsoNobrains 78
+  Sprite HDB6
+  Phases Mundane
+  Size 32 64
+  Hanging
+
+Proto Impaled 25
+  Sprite POL1
+  Phases Mundane
+  Size 32 64
+  StickToFloor
+
+Proto ImpaledTwitch 26
+  Sprite POL6
+  Phases Mundane
+  Size 32 64
+  StickToFloor
+
+Proto PoleSkull 27
+  Sprite POL4
+  Phases Mundane
+  Size 32 40
+  StickToFloor
+
+Proto FiveSkulls 28
+  Sprite POL2
+  Phases Mundane
+  Size 32 40
+  StickToFloor
+
+Proto PileSkulls 29
+  Sprite POL3
+  Phases Mundane
+  Size 32 40
+  StickToFloor
+
+Proto PoolFlesh 24
+  Sprite POL5
+  Phases Mundane
+  Size 40 10
+  StickToFloor
+
+Proto PoolBlood1 79
+  Sprite POB1
+  Phases Mundane
+  Size 40 6
+  StickToFloor
+
+Proto PoolBlood2 80
+  Sprite POB2
+  Phases Mundane
+  Size 32 5
+  StickToFloor
+
+Proto PoolBrains 81
+  Sprite BRS1
+  Phases Mundane
+  Size 40 8
+  StickToFloor
+
+#undef StickToFloor
+
+
+
+
+
+
+
+
+
+

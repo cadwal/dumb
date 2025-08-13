@@ -1,0 +1,20 @@
+docs/README.fixbm:  1 Feb 1998
+
+You can test the performance of DUMB's fixed point arithmetic with
+the "fixbm" tool.  Use "make benchmark" to compile it, thereafter you
+can run ./fixbm directly.
+
+Basically, fixbm sees how many basic arithmetic operations it can do
+in a set period of time.  The numbers reported are the number of
+operations, so, the higher the better.  You can compare the
+performance of different builds of DUMB, or DUMB on different platforms.  
+You can also compare the performance of the fixed point ops with
+equivalent (unoptimized) floating point ops.  If you consistently
+get lower numbers for "Fixed: " than "Float: ", you should report it
+as a bug.
+
+The numbers displayed are a good index of DUMB's speed (though memory
+and video access will make a difference too).  Only the fixed point
+counts!  Different operations are not comparable with each other (ie,
+just because you get more divides than adds done does not mean your
+processor divides faster than it adds).

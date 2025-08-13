@@ -1,0 +1,13 @@
+allow reconfiguration of keyboard
+implement invincibility, light goggles, etc....
+allow objects to award multiple gettables (eg. MegaSphere)
+mapping
+continuous sounds for moving sectors
+do something about music
+scrolling walls
+monsters should be smarter
+multi-threaded sound driver
+make loops over things more efficient perhaps?
+finish off heretic protos
+implement sectortypes
+

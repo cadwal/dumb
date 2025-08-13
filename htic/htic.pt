@@ -1,0 +1,21 @@
+
+/**
+ **  Heretic-4-Dumb stuff
+ **
+ **  The beginnings of some proto table entries for heretic
+ **/
+
+#define StickToFloor Mass 1000 YMoveOnly
+
+#include <generic.pt>
+#include <gettables.pt>
+#include <keys.pt>
+#include <missiles.pt>
+#include <weapons.pt>
+#include <monsters.pt>
+#include <furniture.pt>
+#include <doom/linetypes.pt>
+#include <animtex.pt>
+#include <levels.pt>
+#include <ambient.pt>
+
