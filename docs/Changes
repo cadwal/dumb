@@ -209,3 +209,6 @@ tweaked player speed a bit more (dumb/game.c)
 fixed player's ability to keep shooting after death
 fixed broadcast gmsgs in non-network mode
 fixed a bug with weapon selection: only rotate when wep_sel becomes 1
+
+version 0.10a:
+ggi update from Andrew Apted (new arguments to init_video)

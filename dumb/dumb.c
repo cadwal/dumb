@@ -33,7 +33,7 @@
 /*#define WATCHDOG*/
 
 #define DUMB "DUMB"
-#define VERSION "0.10"
+#define VERSION "0.10a"
 
 #ifdef __cplusplus
 #define BANNER (DUMB "++ " VERSION)

@@ -4,8 +4,8 @@
  */
 
 #include <ggi/maintainers.h>
-#define MAINTAINER      "Andrew Apted <ajapted@netspace.net.au>"
-#define REVISION        "Revision: 1.4"
+#define MAINTAINER      "Andrew Apted <ajapted@ggi-project.org>"
+#define REVISION        "Revision: 1.5"
 
 #include <stdio.h>
 #include <string.h>
@@ -52,16 +52,19 @@
 #define MOUSE_X_SENSITIVITY  24;
 #define MOUSE_Y_SENSITIVITY  16;
 
-/* added by Josh Parsons, 24/11/97 */ 
+
 ConfItem input_conf[]={
-   /* fill in whatever input config GGI might want here */
-   {NULL}
+   /* no input configs yet... */
+   /* one idea: --input-sensitivity 24 */
+   { NULL }
 };
+
 ConfItem video_conf[]={
-   /* fill in whatever video config GGI might want here */
-   {NULL}
+   /* no video configs yet... */
+   /* one idea: --video-target display-X */
+   { NULL }
 };
-/* end of Josh's added stuff */
+
 
 struct ggi_screen_info
 {
@@ -89,12 +92,10 @@ void video_preinit(void)
                 logfatal('V',"GGI: ggiOpen failed.");
         }
 
-        ggiSetFocus(GSI.vis);
-
         GSI.pagev = NULL;
 }
 
-void init_video(int *width, int *height, int *bpp)
+void init_video(int *width, int *height, int *bpp, int *real_width)
 {
         int err;
 
@@ -114,12 +115,12 @@ void init_video(int *width, int *height, int *bpp)
                         err = ggiSetGraphMode(GSI.vis, *width,*height,
                                 *width,*height, GT_16BIT);
                         break;
-#if 0
+
                 case 3:
                         err = ggiSetGraphMode(GSI.vis, *width,*height,
                                 *width,*height, GT_24BIT);
                         break;
-#endif
+
                 case 4:
                         err = ggiSetGraphMode(GSI.vis, *width,*height,
                                 *width,*height, GT_32BIT);
@@ -137,14 +138,16 @@ void init_video(int *width, int *height, int *bpp)
         GSI.height = *height = ggiGetInfo(GSI.vis)->fb.height;
         GSI.bpp    = *bpp; 
 
-        GSI.pagelen = (*width) * (*height) * (*bpp);
+	*real_width = GSI.width;
+
+        GSI.pagelen = GSI.width * GSI.height * GSI.bpp;
 
         logprintf(LOG_INFO, 'V', "init_video in %s mode pagelen=%d",
                         "copying", GSI.pagelen);
 
         GSI.pagev = safe_malloc(GSI.pagelen);
 	
-	ggiSetInfoFlags(GSI.vis,GGIFLAG_ASYNC);
+	ggiSetInfoFlags(GSI.vis, GGIFLAG_ASYNC);
 }
 
 void reset_video(void)
