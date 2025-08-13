@@ -1,7 +1,25 @@
+/* ctlkey_input.h: enum ctlkey and conversion from it to PlayerInput.
+ *
+ * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA
+ * 02139, USA.
+ */
+
 #ifndef CTLKEY_INPUT_H
 #define CTLKEY_INPUT_H
-
-/* This is a helper used by x11_video.c and others hopefully later too. */
 
 #include "input.h"
 
@@ -30,21 +48,20 @@ enum ctlkey {
    CTLKEY_ARRAY_SIZE, CTLKEY_NONE=-1
 };
 
-/* I'm not yet too sure how these would be used...
- * The names are needed for runtime configuration but
- * I don't know which file to put that in.  */
-extern const char *const ctlkey_name[CTLKEY_ARRAY_SIZE];
-
 void ctlkey_init(void);
-
 void ctlkey_reset(void);
 
 /* pressed_flag must be either 0 or 1 */
+/* Calling this with KEY==CTLKEY_NONE is not considered an error.
+ * ctlkey_press() will then just return immediately.  */
 void ctlkey_press(enum ctlkey key, int pressed_flag);
 
 void ctlkey_calc_tick(void);
 
 void ctlkey_get_player_input(PlayerInput *dest);
+
+const char *ctlkey_ugly_name(enum ctlkey);  /* to config file */
+const char *ctlkey_pretty_name(enum ctlkey);  /* possibly translated */
 
 #endif
 

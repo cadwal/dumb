@@ -18,9 +18,9 @@
 #include <furnishings.pt>
 #include <monsters.pt>
 #include <linetypes.pt>
+#include <sectortypes.pt>
 #include <animtex.pt>
 #include <levels.pt>
 
-// #include <textures.pt>
-// #include <sectortypes.pt>
+
 

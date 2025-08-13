@@ -7,6 +7,9 @@
 #include "lib/log.h"
 #include "video.h"
 
+/* TODO: use this! aalib has lots of tunable parameters */
+ConfItem video_conf[]={{NULL}};
+
 /*#define USE_FASTRENDER*/
 
 aa_context *aa_ctxt=NULL;
@@ -22,14 +25,14 @@ static aa_renderparams aarp;
 void video_preinit(void) {
 };
 
-void init_video(int *width,int *height,int *bpp) {
+void init_video(int *width,int *height,int *bpp,int *real_width) {
    if(*width>0&&*width<256&&*height>0&&*height<256) {
       aa_defparams.width=*width;
       aa_defparams.height=*height;
    };
    aa=aa_autoinit(&aa_defparams);
    *bpp=1;
-   *width=aa_imgwidth(aa);
+   *real_width=*width=aa_imgwidth(aa);
    *height=aa_imgheight(aa);
 #ifdef USE_FASTRENDER 
    /* warm up the renderer */

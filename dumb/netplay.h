@@ -4,7 +4,8 @@
 
 #include "levdata.h"
 #include "plat/input.h"
-#include "netio.h"
+#include "plat/net.h"
+#include "dumb/netio.h"
 #include "lib/conf.h"
 
 extern ConfItem netplay_conf[];
@@ -30,17 +31,56 @@ typedef struct RemoteStation_struct {
 extern RemoteStation *stations;
 extern int nstations;
 
+#define PROTOCOL_VERSION 1
+
 typedef struct {
    char sig,size;
    char mapname[10];
    char plnum,mplayer;
-   char difficulty;
+   char difficulty,protocol_version;
 } SlaveInitPkt;
+#define SLAVEINIT_REQ_SIG '0'
+#define SLAVEINIT_SIG '1'
+#define SLAVEINIT_ACK_SIG '2'
 
 typedef struct {
    char sig,size;
-   LE_int32 sound,x,y,radius;
+   LE_int16 sound;
+   LE_int32 x,y,radius;
 } DSoundPkt;
+#define DSOUND_SIG '!'
+
+typedef struct {
+   char sig,size;
+   LE_int16 mltype,offset,_spare;
+   char code[0];
+} UpdatePktHdr;
+#define UPDATE_SIG 'U'
+
+typedef struct {
+   char sig,size;
+   LE_int16 player,offset,value;
+} PlayerInfoPkt;
+#define PLINFO_SIG 'P'
+
+typedef struct {
+   char sig,size;
+   LE_int16 _spare;
+   LE_int32 tickspassed;
+   PlayerInput inp;
+} InputPkt;
+#define INPUT_SIG 'I'
+
+typedef struct {
+   char sig,size;
+   LE_int16 _spare;
+   LE_int32 tickspassed;
+} SyncPkt,AckPkt;
+#define SYNC_SIG 'S'
+#define ACK_SIG 'A'
+
+#define QUIT_SIG 'Q'
+#define MESSAGE_SIG 'M'
 
 extern SlaveInitPkt slave_info;
 extern int got_slave_info;

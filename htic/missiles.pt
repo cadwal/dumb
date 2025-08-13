@@ -24,7 +24,7 @@ Proto WandZap
   Size 16 16
   Damage 2 
   Explosive ZCenter
-  Phantom BulletKludge
+  Phantom BulletKludge BulletAttack
   Speed 64
 
 /* Neat trick: ArrowZaps inflict their damage in two goes */

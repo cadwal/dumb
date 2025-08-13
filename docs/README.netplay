@@ -151,9 +151,38 @@ time the slave thinks it is.  This value had better be less than
 slave-timeout!  A value of zero sends Acks every frame.
 
 
-5. Known bugs
+5. Broadcast Packets
 
-5.1 Deathmatch.
+Normally, DUMB in master mode sends update packets to each of its
+slaves individually.  Since the update packets are responsible for
+most of DUMB's network usage, and are all identical, sending copies to
+each slave can be a bit of a waste!  Starting with version 0.11, DUMB
+is able instead to send "broadcast" packets that will be received by
+every host on the local network.  This can greatly improve performance
+in large games.
+
+Broadcast is only useful if: 1) you have 3 or more machines in a
+network game, 2) they are all on the same subnet, 3) the underlying
+network technology supports broadcast datagrams (eg. ethernet) and 4)
+you have the network more or less to yourself.
+
+These four conditions are likely to be realised on small private
+networks, and unlikely to be realised anywhere else.  In particular,
+overuse of broadcast packets can bring other traffic on a large
+network to a standstill.  If in doubt, check with your network
+administrator.
+
+Anyway, to turn broadcast on use "--net-broadcast <broadcast ip>",
+where <broadcast ip> is a special IP address, usually your IP address
+bitwise or'd with the complement of your netmask.  So, for example, if
+your address was 150.203.76.77 and your netmask 255.255.255.0, your
+broadcast address would be 150.203.76.255.  You can usually find out
+your broadcast address by running "ifconfig", or by asking your netadmin.
+
+
+6. Known bugs
+
+6.1 Deathmatch.
 
 There is no special deathmatch mode.  You can kill other players
 perfectly well as it is, if you want.  One thing that does make
@@ -161,12 +190,12 @@ deathmatch play a little difficult is that items can only be picked up
 once without restarting the level.  I may add an "item respawn" option
 to fix this.
 
-5.2 End of Level.
+6.2 End of Level.
 
 Going up a level in multi-player mode causes the game to crash.  This
 will definitely get fixed sometime soon.
 
-5.3 Lost network packets.
+6.3 Lost network packets.
 
 At the moment, DUMB uses UDP to communicate on the network.  It does
 not, however, make any attempt to ensure that all datagrams reach
@@ -176,3 +205,5 @@ Since the master possesses an authoritative and incorrigible copy of
 the game state, this shouldn't matter much in the long run:
 inconsistencies are likely to get overwritten.  Future versions of
 DUMB will support TCP as an alternative transport medium.
+
+

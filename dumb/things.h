@@ -32,6 +32,7 @@ void thing_enter_phase(LevData *ld,int th,int ph);
 
 /* return non-zero on fail */
 int thing_send_sig(const LevData *ld,int th,ThingSignal sig);
+int thing_sig_ok(const LevData *ld,int th,ThingSignal sig);
 
 void thingd_apply_polar(ThingDyn *td,fixed force,fixed angle);
 #define thingd_apply_forward(td,f) thingd_apply_polar(td,f,td->angle)

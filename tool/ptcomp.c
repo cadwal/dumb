@@ -70,14 +70,14 @@ typedef struct {
 int default_time_units=1;
 fixed default_speed=1<<11;
 
-int nprotos=0,nphasetbls=0,ngetts=0,nlts=0;
+int nprotos=0,nphasetbls=0,ngetts=0,nlts=0,nsts=0;
 int nsounds=0,nanims=0,nlinfos=0;
-int maxprotos=0,maxphasetbls=0,maxgetts=0,maxlts=0;
+int maxprotos=0,maxphasetbls=0,maxgetts=0,maxlts=0,maxsts=0;
 int maxsounds=0,maxanims=0,maxlinfos=0;
 ProtoThingRec *protos;
 ThingPhaseRec *phases;
 GettableRec *getts;
-LineTypeRec *lts;
+LineTypeRec *lts,*sts;
 SoundRec *sounds;
 AnimRec *anims;
 LevInfoRec *linfos;
@@ -425,7 +425,53 @@ void secomp(void) {
    unget_token();
 };
 
-void ltcomp(void) {
+int ltacomp(const char *s,LT_Action *lta,int *stage) {
+      if(!strcasecmp(s,"WaitFor")) {
+	 s=next_token();
+	 if(s==NULL||*s=='\n') synerr("eventtype expected after WaitFor");
+	 lta->waittype=atoeventtype(s);
+      }
+      else if(!strcasecmp(s,"Manual")) lta->flags|=LTA_MANUAL;
+      else if(!strcasecmp(s,"ManualF")) lta->flags|=LTA_MANUAL_FRONT;
+      else if(!strcasecmp(s,"DonutOuter")) lta->flags|=LTA_DONUT_OUTER;
+      else if(!strcasecmp(s,"DonutInner")) lta->flags|=LTA_DONUT_INNER;
+      else if(!strcasecmp(s,"Stair")) lta->flags|=LTA_STAIR;
+      else if(!strcasecmp(s,"UnqueueAll")) lta->flags|=LTA_UNQUEUE_ALL;
+      else if(!strcasecmp(s,"FastCrush")) lta->flags|=LTA_FASTCRUSH;
+      else if(!strcasecmp(s,"SlowCrush")) lta->flags|=LTA_SLOWCRUSH;
+      else if(!strcasecmp(s,"NoCrush")) lta->flags|=LTA_NOCRUSH;
+      else if(!strcasecmp(s,"TriggerModel")) /*lta->flags|=LTA_TRIG_MODEL*/;
+      else if(!strcasecmp(s,"NumericModel")) lta->flags|=LTA_NUM_MODEL;
+      /*else if(!strcasecmp(s,"Lockout")) lta->flags|=LTA_LOCKOUT;*/
+      else if(!strcasecmp(s,"Delay")) lta->delay=parm_time();
+      else if(!strcasecmp(s,"Plus")) lta->term_offset[*stage]=parm_num();
+      else if(!strcasecmp(s,"Minus")) lta->term_offset[*stage]=-parm_num();
+      else if(!strcasecmp(s,"To")) lta->term_type[*stage=0]=parm_termtype();
+      else if(!strcasecmp(s,"BackTo")) {
+	 lta->term_type[*stage=1]=parm_termtype();
+	 lta->speed[*stage]=-lta->speed[0];
+      }
+      else if(!strcasecmp(s,"Speed")) {
+	 int i=parm_speed();
+	 if(lta->speed[*stage]<0) lta->speed[*stage]=-i;
+	 else lta->speed[*stage]=i;
+      }
+      else if(!strcasecmp(s,"Up")) {
+	 if(lta->speed[*stage]<0) lta->speed[*stage]=-lta->speed[*stage];
+      }
+      else if(!strcasecmp(s,"Down")) {
+	 if(lta->speed[*stage]>0) lta->speed[*stage]=-lta->speed[*stage];
+      }
+      else if(!strcasecmp(s,"SpawnType")) lta->spawntype=parm_proto();
+      else if(!strcasecmp(s,"Sound")) lta->sound=parm_sound();
+      else if(!strcasecmp(s,"ContSound")) lta->contsound=parm_sound();
+      else if(!strcasecmp(s,"StartSound")) lta->sound=parm_sound();
+      else if(!strcasecmp(s,"StopSound")) lta->stopsound=parm_sound();
+      else return 0;
+      return -1;
+};
+
+void ltcomp(int issect) {
    const char *s;
    LineTypeRec *p;
    LT_Action *lta=NULL;
@@ -434,21 +480,37 @@ void ltcomp(void) {
    int stage=0;
    /* two parameters, name and id */
    s=next_token();
-   if(s==NULL||*s=='\n') synerr("name expected after LineType");
+   if(s==NULL||*s=='\n') synerr("name expected after Line/SectorType");
    strncpy(myname,s,NAMELEN-1);
    myname[NAMELEN-1]=0;
    s=next_token();
-   if(s==NULL||*s=='\n') synerr("ID expected after LineType");
+   if(s==NULL||*s=='\n') synerr("ID expected after Line/SectorType");
    id=atoi(s);
-   /* check allocation */
-   if(id>=maxlts) {
-      maxlts=id+ALLOC_BLK;
-      lts=(LineTypeRec*)safe_realloc(lts,maxlts*sizeof(LineTypeRec));
-      memset(lts+nlts,0,(maxlts-nlts)*sizeof(LineTypeRec));
+   /* allocate a sectortype */
+   if(issect) {
+      /* check allocation */
+      if(id>=maxsts) {
+	 maxsts=id+ALLOC_BLK;
+	 sts=(LineTypeRec*)safe_realloc(sts,maxsts*sizeof(LineTypeRec));
+	 memset(sts+nsts,0,(maxsts-nsts)*sizeof(LineTypeRec));
+      };
+      /* deal with id */
+      if(id>=nsts) nsts=id+1;
+      p=sts+id;
+   }
+   /* allocate a linetype */
+   else {
+      /* check allocation */
+      if(id>=maxlts) {
+	 maxlts=id+ALLOC_BLK;
+	 lts=(LineTypeRec*)safe_realloc(lts,maxlts*sizeof(LineTypeRec));
+	 memset(lts+nlts,0,(maxlts-nlts)*sizeof(LineTypeRec));
+      };
+      /* deal with id */
+      if(id>=nlts) nlts=id+1;
+      p=lts+id;
    };
-   /* deal with id */
-   if(id>=nlts) nlts=id+1;
-   p=lts+id;
+   /* check uniqueness */
    if(p->name[0]) {
       printf("ptcomp: line %d (%s): ID %d (%s) not unique (clashes with %s)\n",
 	     line,cppfile,id,myname,p->name);
@@ -473,6 +535,7 @@ void ltcomp(void) {
 	 lta->speed[0]=default_speed;
       }
       else if(!strcasecmp(s,"KeyType")) p->l.keytype=parm_num();
+      else if(!strcasecmp(s,"Damage")) p->l.damage=parm_num();
       else if(!strcasecmp(s,"SpotType")) p->l.spottype=parm_proto();
       else if(!strcasecmp(s,"Repeatable")) p->l.flags|=LT_REPEATABLE;
       else if(!strcasecmp(s,"AllowPlayer")) p->l.flags|=LT_ALLOW_PLAYER;
@@ -483,47 +546,7 @@ void ltcomp(void) {
       else if(!strcasecmp(s,"OnDamaged")) p->l.flags|=LT_ON_DAMAGED;
       else if(!strcasecmp(s,"FrontOnly")) p->l.flags|=LT_FRONT_ONLY;
       else if(lta==NULL) break;
-      else if(!strcasecmp(s,"WaitFor")) {
-	 s=next_token();
-	 if(s==NULL||*s=='\n') synerr("eventtype expected after WaitFor");
-	 lta->waittype=atoeventtype(s);
-      }
-      else if(!strcasecmp(s,"Manual")) lta->flags|=LTA_MANUAL;
-      else if(!strcasecmp(s,"ManualF")) lta->flags|=LTA_MANUAL_FRONT;
-      else if(!strcasecmp(s,"DonutOuter")) lta->flags|=LTA_DONUT_OUTER;
-      else if(!strcasecmp(s,"DonutInner")) lta->flags|=LTA_DONUT_INNER;
-      else if(!strcasecmp(s,"Stair")) lta->flags|=LTA_STAIR;
-      else if(!strcasecmp(s,"UnqueueAll")) lta->flags|=LTA_UNQUEUE_ALL;
-      else if(!strcasecmp(s,"FastCrush")) lta->flags|=LTA_FASTCRUSH;
-      else if(!strcasecmp(s,"SlowCrush")) lta->flags|=LTA_SLOWCRUSH;
-      else if(!strcasecmp(s,"NoCrush")) lta->flags|=LTA_NOCRUSH;
-      else if(!strcasecmp(s,"TriggerModel")) /*lta->flags|=LTA_TRIG_MODEL*/;
-      else if(!strcasecmp(s,"NumericModel")) lta->flags|=LTA_NUM_MODEL;
-      /*else if(!strcasecmp(s,"Lockout")) lta->flags|=LTA_LOCKOUT;*/
-      else if(!strcasecmp(s,"Delay")) lta->delay=parm_time();
-      else if(!strcasecmp(s,"Plus")) lta->term_offset[stage]=parm_num();
-      else if(!strcasecmp(s,"Minus")) lta->term_offset[stage]=-parm_num();
-      else if(!strcasecmp(s,"To")) lta->term_type[stage=0]=parm_termtype();
-      else if(!strcasecmp(s,"BackTo")) {
-	 lta->term_type[stage=1]=parm_termtype();
-	 lta->speed[stage]=-lta->speed[0];
-      }
-      else if(!strcasecmp(s,"Speed")) {
-	 int i=parm_speed();
-	 if(lta->speed[stage]<0) lta->speed[stage]=-i;
-	 else lta->speed[stage]=i;
-      }
-      else if(!strcasecmp(s,"Up")) {
-	 if(lta->speed[stage]<0) lta->speed[stage]=-lta->speed[stage];
-      }
-      else if(!strcasecmp(s,"Down")) {
-	 if(lta->speed[stage]>0) lta->speed[stage]=-lta->speed[stage];
-      }
-      else if(!strcasecmp(s,"SpawnType")) lta->spawntype=parm_proto();
-      else if(!strcasecmp(s,"Sound")) lta->sound=parm_sound();
-      else if(!strcasecmp(s,"ContSound")) lta->contsound=parm_sound();
-      else if(!strcasecmp(s,"StartSound")) lta->sound=parm_sound();
-      else if(!strcasecmp(s,"StopSound")) lta->stopsound=parm_sound();
+      else if(ltacomp(s,lta,&stage));
       else break;
    };
    unget_token();
@@ -875,6 +898,7 @@ void protocomp(void) {
       else if(!strcasecmp(s,"SpawnSpot")) p->pt.flags|=PT_SPAWNSPOT;
       else if(!strcasecmp(s,"NoHurtOwner")) p->pt.flags|=PT_NOHURTO;
       else if(!strcasecmp(s,"TurnWhenHitting")) p->pt.flags|=PT_TURNWHENHITTING;
+      else if(!strcasecmp(s,"BulletAttack")) p->pt.flags|=PT_BULLET;
       else if(!strcasecmp(s,"SeeArc")) p->pt.see_arc=parm_arc();
       else if(!strcasecmp(s,"AimArc")) p->pt.aim_arc=parm_arc();
       else if(!strcasecmp(s,"ShootMany")) {
@@ -948,7 +972,8 @@ void ptcomp(void) {
       else if(!strcasecmp(s,"Proto")) protocomp();
       else if(!strcasecmp(s,"PhaseTable")) phasecomp();
       else if(!strcasecmp(s,"Gettable")) gettcomp();
-      else if(!strcasecmp(s,"LineType")) ltcomp();
+      else if(!strcasecmp(s,"LineType")) ltcomp(0);
+      else if(!strcasecmp(s,"SectorType")) ltcomp(1);
       else if(!strcasecmp(s,"SoundType")) secomp();
       else if(!strcasecmp(s,"AnimTexture")) animcomp(0);
       else if(!strcasecmp(s,"SwitchTexture")) animcomp(1);
@@ -987,6 +1012,12 @@ void wrlts(FILE *fout) {
    printf("%5d linetypes\n",nlts);
    for(i=0;i<nlts;i++) 
       fwrite(&lts[i].l,sizeof(LineType),1,fout);
+};
+void wrsts(FILE *fout) {
+   int i;
+   printf("%5d sectortypes\n",nsts);
+   for(i=0;i<nsts;i++) 
+      fwrite(&sts[i].l,sizeof(LineType),1,fout);
 };
 void wrsounds(FILE *fout) {
    int i;
@@ -1039,11 +1070,12 @@ int main(int argc,char **argv) {
    };
    log_stdout(); /* for error messages from safem */
    maxlinfos=maxprotos=maxphasetbls=maxgetts=
-      maxlts=maxsounds=maxanims=ALLOC_BLK;
+      maxlts=maxsts=maxsounds=maxanims=ALLOC_BLK;
    protos=(ProtoThingRec*)safe_malloc(maxprotos*sizeof(ProtoThingRec));
    phases=(ThingPhaseRec*)safe_malloc(maxphasetbls*sizeof(ThingPhaseRec));
    getts=(GettableRec*)safe_malloc(maxgetts*sizeof(GettableRec));
    lts=(LineTypeRec*)safe_calloc(maxlts,sizeof(LineTypeRec));
+   sts=(LineTypeRec*)safe_calloc(maxsts,sizeof(LineTypeRec));
    sounds=(SoundRec*)safe_calloc(maxsounds,sizeof(SoundRec));
    anims=(AnimRec*)safe_calloc(maxanims,sizeof(AnimRec));
    linfos=(LevInfoRec*)safe_malloc(maxlinfos*sizeof(LevInfoRec));
@@ -1085,6 +1117,12 @@ int main(int argc,char **argv) {
       fclose(fout);
    }
    else printf("Error %d opening linetype file %s\n",errno,foutname);
+   fout=fopen(strcat(strcpy(foutname,argv[1]),"/SECTTYPE.lump"),"wb");
+   if(fout) {
+      wrsts(fout);
+      fclose(fout);
+   }
+   else printf("Error %d opening sectortype file %s\n",errno,foutname);
    fout=fopen(strcat(strcpy(foutname,argv[1]),"/SOUNDS.lump"),"wb");
    if(fout) {
       wrsounds(fout);

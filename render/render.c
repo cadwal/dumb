@@ -21,7 +21,7 @@
 
 /* these cause some sanity checks to be compiled in */
 
-//#define CHK_ACTIVE_COUNTS
+//#define CHK_ACTIVE_COUNT
 //#define CHK_FBROWS
 //#define CHK_FBCOLS
 

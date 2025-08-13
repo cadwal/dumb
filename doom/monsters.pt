@@ -70,7 +70,7 @@ PhaseTable Player
   Phase SHOOT   F   Glow SigShoot 
   Phase -	E   Duration OuchRate Goto INIT
 
-  Phase OUCH    G   SigOuch Sound DSPLPAIN Duration OuchRate Goto INIT
+  Phase OUCH    G   NoSigs SigOuch Sound DSPLPAIN Duration OuchRate Goto INIT
 
   Phase WINDED  A   SigStunned Sound DSOOF Goto INIT
 

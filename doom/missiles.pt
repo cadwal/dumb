@@ -255,10 +255,10 @@ PhaseTable Bullet
 Proto Bullet 9001
   Sprite PUFF
   Mass 1000 YMoveOnly
-  Phantom BulletKludge ZCenter 
+  Phantom BulletKludge BulletAttack ZCenter 
   FloatsUp Speed 10
   Damage 1
-
+  
 
 PhaseTable BloodSplat
   Default Duration 100msec
@@ -268,7 +268,7 @@ PhaseTable BloodSplat
 
 Proto BloodSplat 9002
   Sprite BLUD
-  Phantom ZCenter
+  Phantom ZCenter BulletAttack
   Damage 1
 
 
@@ -311,7 +311,7 @@ PhaseTable VileFire
 
 Proto VileFire 8064
   Sprite FIRE
-  Phantom ZCenter
+  Phantom ZCenter BulletAttack
   Damage 25
 
 

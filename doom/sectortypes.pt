@@ -3,99 +3,21 @@
  **  SectorTypes
  **/
 
-
-// IDEA: (use the phase-engine for doing lighting effects as well)
-
-#define LightTable  PhaseTable
-
-#define _Darkness(percent)  /* 0 is original darkness, 100 is
-                               DarkestAdjacentSector */
-
-#define _RandomDuration(min,max)  Duration max
-
-
-LightTable RandomOff
-  Phase IDLE A  _Darkness(0)    _RandomDuration(1msec,1000msec)
-  Phase -    A  _Darkness(100)  _RandomDuration(50msec,150msec)  Goto IDLE
-
-LightTable BlinkFast
-  Phase IDLE A  _Darkness(100)  _RandomDuration(300msec,350msec)
-  Phase -    A  _Darkness(0)    _RandomDuration(150msec,200msec)  Goto IDLE
-
-LightTable BlinkSlow
-  Phase IDLE A  _Darkness(100)  _RandomDuration(800msec,850msec)
-  Phase -    A  _Darkness(0)    _RandomDuration(150msec,200msec)  Goto IDLE
-
-LightTable BlinkFastSync
-  Phase IDLE A  _Darkness(100)  Duration 350msec
-  Phase -    A  _Darkness(0)    Duration 150msec  Goto IDLE
-
-LightTable BlinkSlowSync
-  Phase IDLE A  _Darkness(100)  Duration 850msec 
-  Phase -    A  _Darkness(0)    Duration 150msec  Goto IDLE
-
-LightTable Flicker
-  Phase IDLE A  _Darkness(0)   _RandomDuration(1msec,750msec)
-  Phase -    A  _Darkness(100) _RandomDuration(1msec,750msec)  Goto IDLE
-
-
-LightTable Oscillate
-  Default Duration 50msec
-
-  Phase IDLE A  _Darkness(100)   /* this is probably a hack */
-  Phase -    A  _Darkness(95)  
-  Phase -    A  _Darkness(90)  
-  Phase -    A  _Darkness(85)  
-  Phase -    A  _Darkness(80)  
-  Phase -    A  _Darkness(75)  
-  Phase -    A  _Darkness(70)  
-  Phase -    A  _Darkness(65)  
-  Phase -    A  _Darkness(60)  
-  Phase -    A  _Darkness(55)  
-  Phase -    A  _Darkness(50)  
-  Phase -    A  _Darkness(45)  
-  Phase -    A  _Darkness(40)  
-  Phase -    A  _Darkness(35)  
-  Phase -    A  _Darkness(30)  
-  Phase -    A  _Darkness(25)  
-  Phase -    A  _Darkness(20)  
-  Phase -    A  _Darkness(15)  
-  Phase -    A  _Darkness(10)  
-  Phase -    A  _Darkness(05)  
-  Phase -    A  _Darkness(00)  
-  Phase -    A  _Darkness(05)  
-  Phase -    A  _Darkness(10)  
-  Phase -    A  _Darkness(15)  
-  Phase -    A  _Darkness(20)  
-  Phase -    A  _Darkness(25)  
-  Phase -    A  _Darkness(30)  
-  Phase -    A  _Darkness(35)  
-  Phase -    A  _Darkness(40)  
-  Phase -    A  _Darkness(45)  
-  Phase -    A  _Darkness(50)  
-  Phase -    A  _Darkness(55)  
-  Phase -    A  _Darkness(60)  
-  Phase -    A  _Darkness(65)  
-  Phase -    A  _Darkness(70)  
-  Phase -    A  _Darkness(75)  
-  Phase -    A  _Darkness(80)  
-  Phase -    A  _Darkness(85)  
-  Phase -    A  _Darkness(90)  
-  Phase -    A  _Darkness(95)  Goto IDLE
-
-
-/* now the sector types */
+/* The syntax for sectortypes is identical to that for linetypes.
+   The plan is, to use the LTAction / Event model for light changes.
+   (this will allow smooth changes, which couldn't happen with PhaseTables)
+   So far, not much is implemented.
+*/
 
 SectorType RandomOff 1
 SectorType BlinkFast 2
 SectorType BlinkSlow 3
-SectorType Oscillate 8   /* see below */
+SectorType Oscillate 8 
 SectorType BlinkFastSync 12
 SectorType BlinkSlowSync 13
 SectorType Flicker 17
 
 SectorType BlinkFastDamageLarge 4
-  Phases LightBlinkFast 
   Damage 10
 
 SectorType DamageMedium 5
@@ -109,26 +31,3 @@ SectorType DamageLarge 16
 
 SectorType DamageWeird 11
   Damage 10
-  Message PREPARE_TO_DIE___MORTAL
-
-//  SectorType Oscillate 8
-//    Action Sector Darkness Up To DarkestAdjacentSector
-//           BackTo OrigDarkness Speed 128 _Auto
-
-SectorType Secret 9
-   Message YOU_FOUND_A_SECRET_AREA
-
-/* timed automatic door-like sectors */
-
-//  SectorType DoorCloser 10
-//    Action Sector Ceiling Down To Floor Delay 30sec _Auto
-//
-//  SectorType DoorOpenerLongDelay 14
-//    Action Sector Ceiling Up To LowestAdjacentCeiling Delay 300sec _Auto
-//
-
-
-#undef LightTable
-#undef _Darkness
-#undef _RandomDuration
-

@@ -17,9 +17,14 @@ int use_item(LevData *ld,int pl,const Gettable *gt) {
       int t=ld->plwep[pl];
       /*logprintf(LOG_DEBUG,'U',"use_item: pl=%d t=%d",pl,t);*/
       if(t<0||ldthingd(ld)[t].proto==NULL) return 0;
-      thing_autotarget(ld,t,TARG_ARC);
-      thing_send_sig(ld,ld->player[pl],TS_SHOOT);
-      if(thing_send_sig(ld,t,TS_SHOOT)) return 0;
+      /* only do autotarget + shoot if both player and bogothing are ready */
+      if(thing_sig_ok(ld,ld->player[pl],TS_SHOOT)&&
+	 thing_sig_ok(ld,t,TS_SHOOT)) {
+	 thing_autotarget(ld,t,TARG_ARC);
+	 thing_send_sig(ld,ld->player[pl],TS_SHOOT);
+	 thing_send_sig(ld,t,TS_SHOOT);
+	 return 1;
+      };
    };
-   return 1;
+   return 0;
 };

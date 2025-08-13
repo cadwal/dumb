@@ -52,10 +52,10 @@ typedef enum {
 
 typedef struct {
    LE_flags32 flags;
-   LE_int16 sound;
+   LE_int16 sound,damage;
    LE_int16 keytype,spottype;
    LT_Action action[MAX_LT_ACTIONS];
-} LineType;
+} LineType,SectorType;
 
 #define LT_REPEATABLE 0x0001
 #define LT_ALLOW_PLAYER 0x0002
@@ -66,10 +66,13 @@ typedef struct {
 #define LT_ON_DAMAGED 0x0040
 #define LT_FRONT_ONLY 0x0080       /* only allow activation from in front */
 
+#define ST_SECRET 0x10000          /* player gets credit for entering sector */
+
 void init_linetypes(void);
 void reset_linetypes(void);
 
 const LineType *lookup_linetype(int id);
+const SectorType *lookup_sectortype(int id);
 
 fixed get_term_type(const LevData *ld,LT_TermType ltt,int sector);
 

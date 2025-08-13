@@ -10,7 +10,12 @@ static LumpNum linetype_ln=BAD_LUMPNUM;
 static const LineType *lt=NULL;
 static int nlts=0;
 
+static LumpNum sectortype_ln=BAD_LUMPNUM;
+static const LineType *st=NULL;
+static int nsts=0;
+
 void init_linetypes(void) {
+   /* load linetypes */
    linetype_ln=lookup_lump("LINETYPE",NULL,NULL);
    lt=NULL; nlts=0;
    if(LUMPNUM_OK(linetype_ln)) {
@@ -19,13 +24,23 @@ void init_linetypes(void) {
       logprintf(LOG_INFO,'M',"Loaded %d linetypes",nlts);
    }
    else logprintf(LOG_ERROR,'M',"Failed to find LINETYPE in wad");
+   /* now sectortypes */
+   sectortype_ln=lookup_lump("SECTTYPE",NULL,NULL);
+   st=NULL; nsts=0;
+   if(LUMPNUM_OK(sectortype_ln)) {
+      st=load_lump(sectortype_ln);
+      nsts=get_lump_len(sectortype_ln)/sizeof(SectorType);
+      logprintf(LOG_INFO,'M',"Loaded %d sectortypes",nsts);
+   }
+   else logprintf(LOG_ERROR,'M',"Failed to find SECTTYPE in wad");
 };
 
 void reset_linetypes(void) {
    if(LUMPNUM_OK(linetype_ln)&&lt) free_lump(linetype_ln);
-   linetype_ln=BAD_LUMPNUM;
-   lt=NULL;
-   nlts=0;
+   if(LUMPNUM_OK(sectortype_ln)&&st) free_lump(sectortype_ln);
+   sectortype_ln=linetype_ln=BAD_LUMPNUM;
+   st=lt=NULL;
+   nsts=nlts=0;
 };
 
 #ifdef FAKE_LINETYPE_LUMP
@@ -71,6 +86,11 @@ const LineType *lookup_linetype(int id) {
    if(lt==NULL) return fake_linetype(id);
 #endif
    if(id>0&&id<=nlts) return lt+id;
+   else return NULL;
+};
+
+const SectorType *lookup_sectortype(int id) {
+   if(id>0&&id<=nsts) return st+id;
    else return NULL;
 };
 

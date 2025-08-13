@@ -4,10 +4,8 @@
 
 #include "lib/log.h"
 #include "lib/safem.h"
-#include "netio.h"
+#include "netplay.h"
 #include "plat/net.h"
-
-/* netio stuff (move to srcfile of its own???) */
 
 #define MAX_STATIONS 16
 int nstations=0;
@@ -53,6 +51,16 @@ int net_initstation(int station, const char *name, int flags) {
    return -1;
 };
 
+void net_getmyhost(char *myname,size_t l) {
+   /* get hostname from default driver */
+   *myname=0;
+   if(netdriver[0].getmyhost)
+      netdriver[0].getmyhost(myname,l);
+   else logprintf(LOG_ERROR,'N',
+		  "network driver doesn't know how to gethostname()?");
+};
+
+
 const unsigned char *net_recpkt(size_t *pktlen,int *station) {
    int i;
    *pktlen=0;
@@ -79,10 +87,15 @@ void net_sendmaster_nobuf(const void *pkt,size_t len) {
 	 net_sendto(stations+i,pkt,len);
 };
 void net_slavecast_nobuf(const void *pkt,size_t len) {
-   /* TODO: take advantage of driver slavecast() func */
    int i;
+   NetDriver *nd;
+   /* first, send to all broadcast-capable drivers */
+   for(nd=netdriver;nd->name;nd++)
+      if(nd->slavecast) nd->slavecast(pkt,len);
+   /* then, send individually to slaves of non-bcast drivers */
    for(i=0;i<nstations;i++)
-      if((stations[i].flags&RS_SLAVE)&&(stations[i].flags&RS_LIVE))
+      if((stations[i].flags&RS_SLAVE)&&(stations[i].flags&RS_LIVE)&&
+	 (stations[i].driver->slavecast==NULL))
 	 net_sendto(stations+i,pkt,len);
 };
 
@@ -92,6 +105,10 @@ static int sclen=0;
 static NetSendFunc scsend=NULL;
 
 void net_bufsend(NetSendFunc func,const void *pkt,size_t len) {
+   if(len%4) logprintf(LOG_ERROR,'N',
+		       "packet length not a multiple of 4 (type=%c len=%d)",
+		       *(const char *)pkt,len);
+   /* send the packet */
    if(scsend!=func) {
       net_bufflush();
       scsend=func;
@@ -104,4 +121,8 @@ void net_bufflush(void) {
    if(scsend&&sclen>0) scsend(scbuf,sclen);
    sclen=0;
 };
+
+
+
+
 

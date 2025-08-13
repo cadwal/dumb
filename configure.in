@@ -1,0 +1,358 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(dumb/animtex.c)
+
+dnl Some lines begin with "dnl **".  That means they have been 
+dnl commented out because DUMB would not use the test result anyway.
+
+dnl Autoconf provides @DEFS@ but that contains much useless crap.
+dnl So I use @DUMB_DEFS@ instead and put there only the definitions I need.
+dnl An alternate solution would be to use config.h, but that would
+dnl require adding an #include to every source file.
+AC_SUBST(DUMB_DEFS)DUMB_DEFS=""
+AC_SUBST(DUMB_FBREREND)DUMB_FBREREND="generic"
+AC_SUBST(DUMB_PLUSPLUSFLAGS)DUMB_PLUSPLUSFLAGS=""
+AC_SUBST(DUMB_BINARIES)DUMB_BINARIES=""
+AC_SUBST(DUMB_INCLUDES)DUMB_INCLUDES=""
+AC_SUBST(DUMB_AA_LIBS)DUMB_AA_LIBS=""  
+AC_SUBST(DUMB_GGI_LIBS)DUMB_GGI_LIBS=""  
+AC_SUBST(DUMB_GRX20_LIBS)DUMB_GRX20_LIBS=""  
+AC_SUBST(DUMB_VGA_LIBS)DUMB_VGA_LIBS=""
+AC_SUBST(DUMB_X_LIBS)DUMB_X_LIBS=""  
+AC_SUBST(DUMB_SOUND)DUMB_SOUND="" dnl don't force "dummy" yet!
+AC_SUBST(DUMB_SOUND_LIBS)DUMB_SOUND_LIBS=""
+AC_SUBST(DUMB_NETWORK)DUMB_NETWORK="" dnl don't force "dummy" yet!
+
+dnl This lets Makefile.in check whether it has been renamed to
+dnl Makefile without running configure.
+AC_SUBST(DUMB_CONFIGURE_WAS_RUN)DUMB_CONFIGURE_WAS_RUN="yes"
+
+dnl --- Checks for programs.
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_MAKE_SET
+
+dnl --- Video.
+dnl When writing checks for libraries, please remember that at least
+dnl the Debian Linux distribution allows one to install just the
+dnl runtime libraries and leave out the "development package" which
+dnl contains all the header files.  So I guess it is safer to check
+dnl for the header file than to check for a symbol in the library.
+dnl Perhaps we should check for both.  TODO: Make a macro that tries
+dnl to compile and link a program that #includes the header and uses
+dnl the symbol without declaring it itself.
+dumb_video_found="no"
+DUMB_ARG_HELP(
+  [  Graphics: Choose as many as you like.  [autodetect]])
+AC_ARG_WITH(aalib,
+  [  --with-aalib            use aalib for text-mode rendering],
+  AC_MSG_CHECKING(for aalib)
+  if test "$withval" = "no"; then
+    AC_MSG_RESULT(disabled)
+  else
+    AC_MSG_RESULT((forced) yes)
+    DUMB_BINARIES="$DUMB_BINARIES aadumb"
+    DUMB_AA_LIBS="-laa -lncurses -lgpm"
+    dumb_video_found="yes"
+  fi,
+  AC_CHECK_LIB(aa, aa_getevent,
+    DUMB_BINARIES="$DUMB_BINARIES aadumb"
+    DUMB_AA_LIBS="-laa -lncurses -lgpm"
+    dumb_video_found="yes", ,
+    -lgpm -lncurses))
+AC_ARG_WITH(ggi,
+  [  --with-ggi              use GGI for Linux console graphics],
+  AC_MSG_CHECKING(for GGI)
+  if test "$withval" = "no"; then
+    AC_MSG_RESULT(disabled)
+  else
+    AC_MSG_RESULT((forced) yes)
+    DUMB_BINARIES="$DUMB_BINARIES ggidumb"
+    DUMB_GGI_LIBS="-lggi"
+    dumb_video_found="yes"
+  fi,
+  AC_CHECK_LIB(ggi, ggiSetGraphMode,
+    DUMB_BINARIES="$DUMB_BINARIES ggidumb"
+    DUMB_GGI_LIBS="-lggi"
+    dumb_video_found="yes"))
+AC_ARG_WITH(grx20,
+  [  --with-grx20            use the GRX20 graphics library (for DOS)],
+  AC_MSG_CHECKING(for GRX20)
+  if test "$withval" = "no"; then
+    AC_MSG_RESULT(disabled)
+  else
+    AC_MSG_RESULT((forced) yes)
+    DUMB_BINARIES="$DUMB_BINARIES dosdumb"
+    DUMB_GRX20_LIBS="-lgrx20"
+    dumb_video_found="yes"
+  fi,
+  AC_CHECK_LIB(grx20, GrSetMode,
+    DUMB_BINARIES="$DUMB_BINARIES dosdumb"
+    DUMB_GRX20_LIBS="-lgrx20"
+    dumb_video_found="yes"))
+AC_ARG_WITH(svgalib, 
+  [  --with-svgalib          use the SVGA library for Linux console graphics],
+  AC_MSG_CHECKING(for svgalib)
+  if test "$withval" = "no"; then
+    AC_MSG_RESULT(disabled)
+  else
+    AC_MSG_RESULT((forced) yes)
+    DUMB_BINARIES="$DUMB_BINARIES ldumb"
+    DUMB_VGA_LIBS="-lvga"
+    dumb_video_found="yes"
+  fi,
+  AC_CHECK_HEADER(vga.h,
+    DUMB_BINARIES="$DUMB_BINARIES ldumb"
+    DUMB_VGA_LIBS="-lvga"
+    dumb_video_found="yes"))
+AC_PATH_X
+dnl These options are neatly indented in the help output.
+AC_ARG_ENABLE(dga,
+  [  --disable-dga           - disable XFree86 Direct Graphics Access])
+AC_ARG_ENABLE(xshm,
+  [  --disable-xshm          - disable X Shared Memory images])
+AC_ARG_ENABLE(xkb,
+  [  --disable-xkb           - disable X Keyboard Extension])
+if test "$no_x" != yes; then
+  DUMB_BINARIES="$DUMB_BINARIES xdumb XWad XProtoThing"
+  DUMB_X_LIBS="-L$x_libraries -lX11"
+  dumb_video_found="yes"
+  dnl AC_CHECK_LIB uses $LDFLAGS and AC_CHECK_HEADER uses $CPPFLAGS
+  LDFLAGS="$LDFLAGS -L$x_libraries"
+  dnl Don't mess with include dirs if $x_includes is the empty string
+  dnl (eg. on systems with X hdrs in /usr/include/X11 and no xmkmf)
+  if test -n "$x_includes"; then 
+    CPPFLAGS="$CPPFLAGS -I$x_includes"
+    DUMB_INCLUDES="$DUMB_INCLUDES -I$x_includes"
+  fi
+  if test "$enable_dga" = "no"; then
+    AC_MSG_CHECKING(for DGA)
+    AC_MSG_RESULT(disabled)
+    DUMB_DEFS="$DUMB_DEFS -DNO_DGA"
+  else
+    AC_CHECK_HEADER(X11/extensions/xf86dga.h,
+      DUMB_X_LIBS="$DUMB_X_LIBS -lXxf86dga",
+      DUMB_DEFS="$DUMB_DEFS -DNO_DGA")
+  fi
+  if test "$enable_xshm" = "no"; then
+    AC_MSG_CHECKING(for XShm)
+    AC_MSG_RESULT(disabled)
+    DUMB_DEFS="$DUMB_DEFS -DNO_XSHM"
+  else
+    AC_CHECK_LIB(Xext, XShmAttach,
+      DUMB_X_LIBS="$DUMB_X_LIBS -lXext"
+      DUMB_SYS_SHMAT_RMID
+      if test "$dumb_cv_sys_shmat_rmid" = "no"; then
+        DUMB_DEFS="$DUMB_DEFS -DNO_SHMAT_RMID"
+      fi,
+      DUMB_DEFS="$DUMB_DEFS -DNO_XSHM",
+      -lX11)
+  fi
+  if test "$enable_xkb" = "no"; then
+    AC_MSG_CHECKING(for XKB)
+    AC_MSG_RESULT(disabled)
+    DUMB_DEFS="$DUMB_DEFS -DNO_XKB"
+  else
+    AC_CHECK_LIB(X11, XkbSetDetectableAutoRepeat, ,
+      DUMB_DEFS="$DUMB_DEFS -DNO_XKB")
+  fi
+fi
+AC_ARG_WITH(dummy-video,
+  [  --with-dummy-video      make a version that doesn't show what happens],
+  AC_MSG_CHECKING(whether to include dummy-video version)
+  if test "$withval" = "no"; then
+    AC_MSG_RESULT(disabled)
+  else
+    AC_MSG_RESULT((forced) yes)
+    DUMB_BINARIES="$DUMB_BINARIES ddumb"
+  fi,
+  AC_MSG_CHECKING(whether to include dummy-video version)
+  if test "$dumb_video_found" = "no"; then
+    AC_MSG_RESULT(yes)
+    DUMB_BINARIES="$DUMB_BINARIES ddumb"
+  else
+    AC_MSG_RESULT(no)
+  fi)
+
+dnl --- Sound.
+dnl This is pretty complicated.  The user can:
+dnl  - select one sound system (--with-uss, --with-mme)
+dnl  - disable sound (--without-sound)
+dnl  - autodetect but disable some systems (--without-uss, --without-mme)
+dnl Disabling sound completely should have the same result as
+dnl disabling each sound system separately.
+dnl Note: Autoconf doesn't tell us which order the options were in, so
+dnl we can't rely on that for priority.  I arbitrarily decide that
+dnl --without-sound overrides individual sound systems.  The opposite
+dnl way would be useless; --with-uss disables all other sound systems
+dnl even without --without-sound.
+dumb_sound_uss="autodetect"
+dumb_sound_mme="autodetect"
+dumb_sound_specified=""
+dumb_sound_options=""
+DUMB_ARG_HELP(
+  [  Sound: Choose one system.  [autodetect]])
+AC_ARG_WITH(sound,
+  [  --without-sound         disable sound altogether],
+  if test "$withval" = "no"; then
+    DUMB_SOUND=dummy
+    AC_MSG_CHECKING(for sound)
+    AC_MSG_RESULT(disabled)
+  else
+    AC_MSG_WARN([--with-sound not supported; use --with-uss or --with-mme])
+  fi)
+DUMB_ARG_MULTICHOICE(sound, uss, uss,
+  [  --with-uss              use USS for sound (Linux usually has this)])
+DUMB_ARG_MULTICHOICE(sound, mme, mme,
+  [  --with-mme              use MME for sound (for Alphas)])
+DUMB_TEST_MULTICHOICE(DUMB_SOUND, sound, uss, USS,
+  DUMB_SOUND="linux"
+  DUMB_SOUND_LIBS="",
+  AC_CHECK_HEADER(linux/soundcard.h,
+    DUMB_SOUND="linux"
+    DUMB_SOUND_LIBS=""))
+DUMB_TEST_MULTICHOICE(DUMB_SOUND, sound, mme, MME,
+  DUMB_SOUND="mme"
+  DUMB_SOUND_LIBS="-lmme",
+  AC_CHECK_LIB(mme, waveOutGetNumDevs,
+    DUMB_SOUND="mme"
+    DUMB_SOUND_LIBS="-lmme"))
+AC_MSG_CHECKING(which sound driver to use)
+if test -z "$DUMB_SOUND"; then
+  DUMB_SOUND="dummy"
+fi
+AC_MSG_RESULT($DUMB_SOUND)
+AC_MSG_CHECKING(for sound bit/channel options)
+DUMB_ARG_HELP(
+  [                          The following options apply to both USS and MME:])
+AC_ARG_ENABLE(16bit-sound,
+  [  --disable-16bit-sound   - force 8-bit sound [16-bit]], ,
+  enable_16bit_sound="yes")
+AC_ARG_ENABLE(stereo-sound,
+  [  --disable-stereo-sound  - force mono sound [stereo]], ,
+  enable_stereo_sound="yes")
+if test "$enable_16bit_sound" = "no"; then
+  DUMB_DEFS="$DUMB_DEFS -DNO_16BIT_SOUND"
+  dumb_sound_options="$dumb_sound_options 8-bit"
+else
+  dumb_sound_options="$dumb_sound_options 16-bit"
+fi
+if test "$enable_stereo_sound" = "no"; then
+  DUMB_DEFS="$DUMB_DEFS -DNO_STEREO_SOUND"
+  dumb_sound_options="$dumb_sound_options mono"
+else
+  dumb_sound_options="$dumb_sound_options stereo"
+fi
+AC_MSG_RESULT($dumb_sound_options)
+
+dnl --- Required libraries.
+dnl ** AC_CHECK_LIB(m, sin)
+dnl ** AC_CHECK_LIB(pbm, pbm_readpbm)
+dnl ** AC_CHECK_LIB(pgm, pgm_readpgm)
+dnl ** AC_CHECK_LIB(ppm, ppm_readppm)
+
+dnl --- Checks for header files.
+dnl ** AC_HEADER_STDC
+dnl ** AC_HEADER_SYS_WAIT
+dnl ** AC_HEADER_TIME
+dnl ** AC_CHECK_HEADERS(fcntl.h limits.h strings.h sys/ioctl.h sys/time.h unistd.h)
+
+dnl --- Checks for typedefs, structures, and compiler characteristics.
+AC_C_BIGENDIAN
+if test $ac_cv_c_bigendian = yes; then
+  DUMB_PLUSPLUSFLAGS="$DUMB_PLUSPLUSFLAGS -x c++ -fenum-int-equiv"
+  DUMB_DEFS="$DUMB_DEFS -DBENDIAN"
+fi
+AC_CHECK_SIZEOF(int, 0)
+AC_CHECK_SIZEOF(long, 0)
+AC_MSG_CHECKING(which fbrerend to use)
+dnl default "generic" is set near the beginning of this configure.in
+if test $ac_cv_c_bigendian = no; then
+  if test $ac_cv_sizeof_long -ge 8; then
+    DUMB_FBREREND=le64
+  elif test $ac_cv_sizeof_int -ge 4; then
+    DUMB_FBREREND=le32
+  fi
+fi
+AC_MSG_RESULT($DUMB_FBREREND)
+dnl ** AC_C_CONST
+dnl ** AC_C_INLINE
+dnl ** AC_TYPE_SIZE_T
+
+dnl --- Checks for library functions.
+AC_PROG_GCC_TRADITIONAL
+dnl ** AC_FUNC_MEMCMP
+AC_FUNC_MMAP
+if test $ac_cv_func_mmap_fixed_mapped = no; then
+  DUMB_DEFS="$DUMB_DEFS -DNO_MMAP"
+fi
+dnl ** AC_FUNC_SETVBUF_REVERSED
+dnl ** AC_TYPE_SIGNAL
+dnl ** AC_FUNC_VPRINTF
+dnl ** AC_CHECK_FUNCS(select strdup strstr)
+
+dnl --- Framebuffer bytes.
+AC_MSG_CHECKING(what kind of framebuffers to support)
+dumb_bpp_names=""
+DUMB_ARG_HELP(
+  [  Framebuffer bytes: Disable at most two.  [support all]])
+AC_ARG_ENABLE(1bpp,
+  [  --disable-1bpp          don't support framebuffers with 1 byte per pixel])
+AC_ARG_ENABLE(2bpp,
+  [  --disable-2bpp          don't support framebuffers with 2 bytes per pixel])
+AC_ARG_ENABLE(4bpp,
+  [  --disable-4bpp          don't support framebuffers with 4 bytes per pixel])
+if test "$enable_1bpp" != "no"; then
+  DUMB_DEFS="$DUMB_DEFS -DWANT_1BPP"
+  dumb_bpp_names="$dumb_bpp_names 1BPP"
+fi
+if test "$enable_2bpp" != "no"; then
+  DUMB_DEFS="$DUMB_DEFS -DWANT_2BPP"
+  dumb_bpp_names="$dumb_bpp_names 2BPP"
+fi
+if test "$enable_4bpp" != "no"; then
+  DUMB_DEFS="$DUMB_DEFS -DWANT_4BPP"
+  dumb_bpp_names="$dumb_bpp_names 4BPP"
+fi
+if test -n "$dumb_bpp_names"; then
+  AC_MSG_RESULT($dumb_bpp_names)
+else
+  AC_MSG_RESULT(nothing!)
+  AC_MSG_WARN(No support included for framebuffers of any depth)
+fi
+
+dnl --- Networking.
+dnl This works just like sound support.
+dumb_net_unix="autodetect"
+dumb_net_specified=""
+DUMB_ARG_HELP(
+  [  Networking: Choose one system.  [autodetect]])
+AC_ARG_WITH(net,
+  [  --without-net           disable networking],
+  if test "$withval" = "no"; then
+    DUMB_NETWORK=dummy
+    AC_MSG_CHECKING(for network)
+    AC_MSG_RESULT(disabled)
+  else
+    AC_MSG_WARN([--with-net not supported; use --with-unix-net])
+  fi)
+DUMB_ARG_MULTICHOICE(net, unix, unix-net,
+  [  --with-unix-net         use Berkeley sockets for networking])
+DUMB_TEST_MULTICHOICE(DUMB_NETWORK, net, unix, Unix networking,
+  DUMB_NETWORK="unix",
+  AC_CHECK_HEADER(sys/socket.h,
+    DUMB_NETWORK="unix"))
+AC_MSG_CHECKING(which network driver to use)
+if test -z "$DUMB_NETWORK"; then
+  DUMB_NETWORK="dummy"
+fi
+AC_MSG_RESULT($DUMB_NETWORK)
+
+dnl --- Output.
+AC_OUTPUT(Makefile)
+
+dnl Local Variables:
+dnl comment-start: "dnl "
+dnl comment-end: ""
+dnl comment-start-skip: "\\bdnl\\b\\s *"
+dnl compile-command: "autoconf"
+dnl End:

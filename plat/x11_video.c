@@ -1,4 +1,3 @@
-#include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -7,9 +6,9 @@
 #include <X11/keysym.h>
 
 /* uncomment this to disable DGA */
-/*#define NO_DGA*/
+/*#define NO_DGA */
 /* uncomment this to disable shared memory */
-/*#define NO_XSHM*/
+/*#define NO_XSHM */
 /* uncomment this to disable XKB */
 /*#define NO_XKB */
 
@@ -32,7 +31,8 @@
 #include "lib/safem.h"
 #include "input.h"
 #include "video.h"
-#include "ctlkey_input.h"
+#include "keymap.h"
+#include "keymapconf.h"
 
 #ifndef __cplusplus
 #define c_class class
@@ -40,21 +40,32 @@
 
 ConfItem video_conf[]={
 #ifdef NO_DGA
-   CONFNB("use-dga",NULL,0,"<disabled at compile time>"),
+   CONFB("use-dga",NULL,0,"<disabled at compile time>"),
 #else
-   CONFNB("use-dga",NULL,0,"allow use of XFree86's DGA extension"),
+   CONFB("use-dga",NULL,0,"allow use of XFree86's DGA extension"),
 #endif
 #ifdef NO_XSHM
    CONFNB("use-xshm",NULL,0,"<disabled at compile time>"),
 #else
    CONFNB("use-xshm",NULL,0,"allow use of the MIT shared memory extension"),
 #endif
-   CONFNB("grab-focus",NULL,0,"grab the input focus while DUMB runs"),
    {NULL}
 };
 #define use_dga (video_conf[0].intval)
 #define use_shm (video_conf[1].intval)
-#define grab_focus (video_conf[2].intval)
+
+enum grab_choice_enum {
+   GRAB_NEVER,
+   GRAB_WHEN_POINTED,
+   GRAB_ALWAYS
+};
+
+static ConfEnum grab_choices[] = {
+   { "never", GRAB_NEVER },
+   { "when-pointed", GRAB_WHEN_POINTED },
+   { "always", GRAB_ALWAYS },
+   {NULL}
+};
 
 ConfItem input_conf[]={
 #ifdef NO_XKB
@@ -62,9 +73,14 @@ ConfItem input_conf[]={
 #else
    CONFNB("use-xkb",NULL,0,"allow use of the XKeyboard extension"),
 #endif
+   CONFE("grab-kbd",NULL,0,"grab the keyboard focus while DUMB runs",
+	 GRAB_ALWAYS, grab_choices),
+   KEYMAPCONF_DEFS,		/* dirty! */
    {NULL}
 };
 #define use_xkb (input_conf[0].intval)
+#define grab_kbd (input_conf[1].intval)
+#define FIRST_KEYMAPCONF_ENTRY (&input_conf[2])
 
 static Display *dpy=NULL;
 static Window win=None;
@@ -80,34 +96,40 @@ static XImage *image=NULL;
 /* this is used for DGA double buffering */
 static int page2ofs=0,page2line=0,curpage=0;
 
-static grab_worked=0;
-
-static XShmSegmentInfo xshminfo;
+static int grabbed=0;
 
 static int need_cmapinst=0,need_map=1;
 
 #ifndef NO_XKB
 static void init_xkb(void);
 #endif
+static void handle_keyevent(XKeyEvent *ev);
+static void handle_crossingevent(XCrossingEvent *ev);
+static void grab_keys(int pointer_mode, int keyboard_mode);
+static void ungrab_keys(void);
 
+#ifndef NO_XSHM
 static int xerr;
-static int errh(Display *d,XErrorEvent *ev) {xerr++;return 0;};
+static int errh(Display *d,XErrorEvent *ev) {xerr++;return 0;}
 static void trap_errs(void) {
    xerr=0;
    XSetErrorHandler(errh);
-};
+}
 static int untrap_errs(void) {
    XSync(dpy,0);
    XSetErrorHandler(NULL);
    return xerr;
-};
+}
+
+static XShmSegmentInfo xshminfo;
 
 static int chk_shm(void) {
    struct shmid_ds d;
    shmctl(xshminfo.shmid,IPC_STAT,&d);
    //logprintf(LOG_INFO,'V',"Shm Attaches=%d",d.shm_nattch);
    return d.shm_nattch<2;
-};
+}
+#endif
 
 void init_video(int *_width,int *_height,int *_bpp,int *_real_width) {
 #ifndef NO_DGA
@@ -117,12 +139,11 @@ void init_video(int *_width,int *_height,int *_bpp,int *_real_width) {
    /* init Xlib */
    if(dpy!=NULL) reset_video();
 
-   memset(&xshminfo,0,sizeof(xshminfo));
    dpy=XOpenDisplay(NULL);
    if(dpy==NULL) logfatal('V',"x11_video: Can't open default display");
    cmap=None;
    npages=0;
-   grab_worked=0;
+   grabbed=0;
 
 #ifdef NO_DGA
    if(0) ;
@@ -153,15 +174,11 @@ void init_video(int *_width,int *_height,int *_bpp,int *_real_width) {
 	 XF86DGADirectVideo(dpy,scrn,XF86DGADirectGraphics);
 	 XF86DGASetVidPage(dpy,scrn,0);
 	 XF86DGAForkApp(scrn);
-	 if(grab_focus)
-	   if(XGrabKeyboard(dpy,rootw,False,
-			    GrabModeSync,GrabModeAsync,
-			    CurrentTime))
-	     logprintf(LOG_ERROR,'V',"DGA: keyboard grab failed!");
-	 grab_worked=1;
+	 if(grab_kbd == GRAB_ALWAYS)
+	    grab_keys(GrabModeSync, GrabModeAsync);
 	 XSelectInput(dpy,rootw,KeyPressMask|KeyReleaseMask);
 	 logprintf(LOG_INFO,'V',"using XF86-DGA");
-      };
+      }
    }
 #endif /* NO_DGA */   
    
@@ -181,11 +198,14 @@ void init_video(int *_width,int *_height,int *_bpp,int *_real_width) {
       need_map=1; /* defer mapping so that it happens after XSetWMProps */
       pagelen=memlen=*_bpp*width*height;
       npages=1;
-      XSelectInput(dpy,win,KeyPressMask|KeyReleaseMask);
+      XSelectInput(dpy, win, 
+		   KeyPressMask|KeyReleaseMask
+		   |EnterWindowMask|LeaveWindowMask);
 
 #ifdef NO_XSHM
       use_shm=0;
 #else      
+      memset(&xshminfo,0,sizeof(xshminfo));
       /* do we have shm to use? */
       if(!XShmQueryExtension(dpy)) use_shm=0;
       if(use_shm) {
@@ -223,11 +243,21 @@ void init_video(int *_width,int *_height,int *_bpp,int *_real_width) {
 	     * So if the program crashes for some reason, causing both
 	     * itself and the X server to detach from the segment, the
 	     * operating system will automatically delete it.  Until
-	     * that, it can be attached to & used just fine.
+	     * that, it can be used just fine.
+	     *
+	     * Perhaps there are systems in which the X server
+	     * occasionally needs to detach & reattach the shared
+	     * memory segment and the system doesn't allow attaching
+	     * to a deleted ID?  If so, define NO_SHMAT_RMID (or let
+	     * the "configure" script define it for you) to delay the
+	     * removal until DUMB exits.  But if DUMB gets a fatal
+	     * signal, the segment will be left there.
 	     */
+#ifndef NO_SHMAT_RMID
 	    shmctl(xshminfo.shmid, IPC_RMID, 0);
+#endif /* !NO_SHMAT_RMID */
 	 }
-      };
+      }
 #endif /* NO_XSHM */
       
       /* no xshm */
@@ -236,45 +266,47 @@ void init_video(int *_width,int *_height,int *_bpp,int *_real_width) {
 	 image=XCreateImage(dpy,visual,*_bpp*8,ZPixmap,0,fb,width,height,8,0);
 	 if(image==NULL) logfatal('V',"XCreateImage failed");
 	 logprintf(LOG_INFO,'V',"using Xlib Images (slow)");
-      };
-   };
+      }
+   }
       
    /* get a colormap */   
    if(visual->c_class==PseudoColor&&cmap==None) {
       cmap=XCreateColormap(dpy,rootw,visual,AllocAll);
       if(cmap==None) logprintf(LOG_ERROR,'V',"X colormap came back as None.  Probably some strange visual.");
       else logprintf(LOG_DEBUG,'V',"cmap-id=%ld",cmap);
-   };
-};
-
+   }
+}
     
 void reset_video(void) {
-  if(dpy) {
-    if(grab_worked) 
-        XUngrabKeyboard(dpy,CurrentTime);
+   if(dpy) {
+      ungrab_keys();
 #ifndef NO_DGA
-    if(use_dga) XF86DGADirectVideo(dpy,scrn,0);
+      if(use_dga) XF86DGADirectVideo(dpy,scrn,0);
 #endif
-    if(win!=None) XDestroyWindow(dpy,win);
-    if(cmap!=None) XFreeColormap(dpy,cmap);
+      if(win!=None) XDestroyWindow(dpy,win);
+      if(cmap!=None) XFreeColormap(dpy,cmap);
 #ifndef NO_XSHM
-    if(use_shm) {
-      XShmDetach(dpy,&xshminfo);
-      shmdt(xshminfo.shmaddr);
-      /* shmctl(xshminfo.shmid,IPC_RMID,0); already done in init */
-      memset(&xshminfo,0,sizeof(xshminfo));
-    };
+      if(use_shm) {
+	 XShmDetach(dpy,&xshminfo);
+	 shmdt(xshminfo.shmaddr);
+#ifdef NO_SHMAT_RMID
+	 shmctl(xshminfo.shmid,IPC_RMID,0);
+#else
+	 /* already deleted in initialisation */
+#endif
+	 memset(&xshminfo,0,sizeof(xshminfo));
+      }
 #endif      
-    if(fballoc) safe_free(fballoc);
-    if(image) XFree(image);
-    image=NULL;
-    fballoc=fb=NULL;
-    cmap=None;
-    win=None;
-    XCloseDisplay(dpy);
-    dpy=NULL;
-  };
-};
+      if(fballoc) safe_free(fballoc);
+      if(image) XFree(image);
+      image=NULL;
+      fballoc=fb=NULL;
+      cmap=None;
+      win=None;
+      XCloseDisplay(dpy);
+      dpy=NULL;
+   }
+}
 
 void video_setpal(unsigned char idx,
 		  unsigned char red,
@@ -284,84 +316,82 @@ void video_setpal(unsigned char idx,
    if(cmap!=None) {
       XStoreColor(dpy,cmap,&xc);
       need_cmapinst=1;
-   };
-};
+   }
+}
 
 void *video_newframe(void) {
-  if(curpage) return fb+page2ofs;
-  return fb;
-};
+   if(curpage) return fb+page2ofs;
+   return fb;
+}
 void video_updateframe(void *v) {
 #ifndef NO_DGA
-  if(use_dga&&page2line) {
-    XF86DGASetViewPort(dpy,scrn,0,curpage*page2line);
-    if(curpage) curpage=0;
-    else curpage=1;
-  };
+   if(use_dga&&page2line) {
+      XF86DGASetViewPort(dpy,scrn,0,curpage*page2line);
+      if(curpage) curpage=0;
+      else curpage=1;
+   }
 #endif
-  if(need_map) {
-    if(win!=None)
-      XMapRaised(dpy,win);
-    XSync(dpy,False);
-    need_map=0;
-  };
-  if(grab_focus&&win!=None&&!grab_worked)
-    grab_worked=!XGrabKeyboard(dpy,win,False,
-			       GrabModeAsync,GrabModeAsync,
-			       CurrentTime);
-  if(need_cmapinst) {
-    need_cmapinst=0;
-    logprintf(LOG_DEBUG,'V',"Installing colormap");
-    if(win!=None) {
-      XSetWindowColormap(dpy,win,cmap);
-      XInstallColormap(dpy,cmap);
-    }
+   if(need_map) {
+      if(win!=None)
+	 XMapRaised(dpy,win);
+      XSync(dpy,False);
+      need_map=0;
+   }
+   if(grab_kbd==GRAB_ALWAYS && win!=None)
+      grab_keys(GrabModeAsync, GrabModeAsync);
+   if(need_cmapinst) {
+      need_cmapinst=0;
+      logprintf(LOG_DEBUG,'V',"Installing colormap");
+      if(win!=None) {
+	 XSetWindowColormap(dpy,win,cmap);
+	 XInstallColormap(dpy,cmap);
+      }
 #ifndef NO_DGA
-    else XF86DGAInstallColormap(dpy,scrn,cmap);
+      else XF86DGAInstallColormap(dpy,scrn,cmap);
 #endif
-  };
-  if(image) {
+   }
+   if(image) {
 #ifndef NO_XSHM      
       if(use_shm) 
-	XShmPutImage(dpy,win,DefaultGC(dpy,scrn),
-		     image,0,0,0,0,width,height,0);
+	 XShmPutImage(dpy,win,DefaultGC(dpy,scrn),
+		      image,0,0,0,0,width,height,0);
       else 
 #endif	
-	XPutImage(dpy,win,DefaultGC(dpy,scrn),
-		  image,0,0,0,0,width,height);
-   };
+	 XPutImage(dpy,win,DefaultGC(dpy,scrn),
+		   image,0,0,0,0,width,height);
+   }
   /* For the reasoning behind this, see comment in get_input() */
-  if(use_shm||use_dga) XSync(dpy,0);
-  else XFlush(dpy);
-};
+   if(use_shm||use_dga) XSync(dpy,0);
+   else XFlush(dpy);
+}
 
-void video_preinit(void) {};
+void video_preinit(void) {}
 
 void video_winstuff(const char *desc,int xdim,int ydim) {
-  char *argv[2] = { "dumb", NULL };
-  static char buf[32];
-  char *win_name = buf;
-  XTextProperty w_name_prop, i_name_prop;
-  XSizeHints size_hints;
-  XClassHint class_hint={"dumb","dumb"};
+   char *argv[2] = { "dumb", NULL };
+   static char buf[32];
+   char *win_name = buf;
+   XTextProperty w_name_prop, i_name_prop;
+   XSizeHints size_hints;
+   XClassHint class_hint={"dumb","dumb"};
   
-  sprintf(buf,"dumb: %s",desc);
+   sprintf(buf,"dumb: %s",desc);
   
-  XStringListToTextProperty(&win_name, 1, &w_name_prop);
-  XStringListToTextProperty(&win_name, 1, &i_name_prop);
+   XStringListToTextProperty(&win_name, 1, &w_name_prop);
+   XStringListToTextProperty(&win_name, 1, &i_name_prop);
   
-  size_hints.flags = PMinSize|PMaxSize;
-  size_hints.width= size_hints.min_width = size_hints.max_width =
-    xdim;
-  size_hints.height= size_hints.min_height = size_hints.max_height =
-    ydim;
+   size_hints.flags = PMinSize|PMaxSize;
+   size_hints.width= size_hints.min_width = size_hints.max_width =
+      xdim;
+   size_hints.height= size_hints.min_height = size_hints.max_height =
+      ydim;
   
-  if(win!=None)
-    XSetWMProperties(dpy, win, 
-		     &w_name_prop, &i_name_prop, 
-		     argv, 1,
-		     &size_hints, NULL, &class_hint);
-};
+   if(win!=None)
+      XSetWMProperties(dpy, win, 
+		       &w_name_prop, &i_name_prop, 
+		       argv, 1,
+		       &size_hints, NULL, &class_hint);
+}
 
 
 /* 
@@ -387,143 +417,85 @@ void get_input(PlayerInput *in) {
    n=XEventsQueued(dpy,QueuedAfterReading);
    while(n--) {
       XEvent event;
-      KeySym key;
-      int pressed = 1;
-      enum ctlkey ctlkey;
-      XNextEvent(dpy,&event);
+      XNextEvent(dpy, &event);
       //logprintf(LOG_DEBUG,'I',"Got XEvent");
-      key=XLookupKeysym(&event.xkey,0);
-      if(event.type==KeyRelease) { 
-	 //logprintf(LOG_DEBUG,'I',"Got KeyRelease");
-	 pressed=0;
-      }
-      else if(event.type==KeyPress); //logprintf(LOG_DEBUG,'I',"Got KeyPress");
-      else {
-	 logprintf(LOG_ERROR,'I',"Got some weird event type: %d",event.type);
-	 continue;
-      };
-      switch (key) {
-      case XK_Escape:
-	 ctlkey = CTLKEY_QUIT;
+      switch (event.type) {
+      case KeyPress:
+      case KeyRelease:
+	 handle_keyevent(&event.xkey);
 	 break;
-	
-      case XK_Up:
-      case XK_KP_8:
-      case XK_KP_Up:
-	 ctlkey = CTLKEY_MOVE_FORWARD;
+      case EnterNotify:
+      case LeaveNotify:
+	 handle_crossingevent(&event.xcrossing);
 	 break;
-      case XK_Down:
-      case XK_KP_2:
-      case XK_KP_Down:
-	 ctlkey = CTLKEY_MOVE_BACKWARD;
-	 break;
-
-      case XK_Left:
-      case XK_KP_4:
-      case XK_KP_Left:
-	 ctlkey = CTLKEY_TURN_LEFT;
-	 break;
-      case XK_Right:
-      case XK_KP_6:
-      case XK_KP_Right:
-	 ctlkey = CTLKEY_TURN_RIGHT;
-	 break;
-	
-      case XK_comma:
-      case XK_KP_1:
-      case XK_KP_End:
-	 ctlkey = CTLKEY_MOVE_LEFT;
-	 break;
-      case XK_period:
-      case XK_KP_3:
-      case XK_KP_Page_Down:
-	 ctlkey = CTLKEY_MOVE_RIGHT;
-	 break;
-
-      case XK_A:
-      case XK_a:
-	 ctlkey = CTLKEY_MOVE_UP;
-	 break;
-      case XK_Z:
-      case XK_z:
-	 ctlkey = CTLKEY_MOVE_DOWN;
-	 break;
-	
-      case XK_Page_Up:
-	 ctlkey = CTLKEY_LOOK_UP;
-	 break;
-      case XK_Page_Down:
-	 ctlkey = CTLKEY_LOOK_DOWN;
-	 break;
-      case XK_KP_9:
-      case XK_KP_Page_Up:
-	 ctlkey = CTLKEY_AIM_UP;
-	 break;
-      case XK_KP_7:
-      case XK_KP_Home:
-	 ctlkey = CTLKEY_AIM_DOWN;
-	 break;
-      case XK_KP_5:
-      case XK_KP_Begin:
-	 ctlkey = CTLKEY_CENTER_VIEW;
-	 break;
-	
-      case XK_Shift_L:
-      case XK_Shift_R:
-	 ctlkey = CTLKEY_RUN;
-	 break;
-      case XK_Alt_L:
-      case XK_Alt_R:
-      case XK_Meta_L:
-      case XK_Meta_R:
-      case XK_Mode_switch:
-      case XK_slash:
-	 ctlkey = CTLKEY_STRAFE;
-	 break;
-	
-      case XK_Control_L:
-      case XK_Control_R:
-	 ctlkey = CTLKEY_SHOOT;
-	 break;
-      case XK_X:
-      case XK_x:
-	 ctlkey = CTLKEY_SHOOT_SPECIAL;
-	 break;
-	
-      case XK_Q:
-      case XK_q:
-	 ctlkey = CTLKEY_PREVIOUS_WEAPON;
-	 break;
-      case XK_Tab:
-      case XK_W:
-      case XK_w:
-	 ctlkey = CTLKEY_NEXT_WEAPON;
-	break;
-#define NK(x) \
-      case XK_##x: \
-	 ctlkey = CTLKEY_WEAPON_##x; \
-	 break;
-      NK(0) NK(1) NK(2) NK(3) NK(4) NK(5) NK(6) NK(7) NK(8) NK(9)
-#undef NK
-
       default:
-	 // logprintf(LOG_DEBUG, 'I', "unknown keysym: %#08lx\n", (long) key);
-      	 ctlkey = CTLKEY_NONE;
-         break;
+	 logprintf(LOG_ERROR,'I',"Got some weird event type: %d",event.type);
       }
-      if (ctlkey != CTLKEY_NONE)
-	 ctlkey_press(ctlkey, pressed);
-   } /* while(n--) */
+   }
    ctlkey_calc_tick();
    ctlkey_get_player_input(in);
-};
+}
+
+static void
+handle_keyevent(XKeyEvent *ev)
+{
+   /* The parameter should be const but XLookupKeysym() isn't const in
+    * my headers and I don't want to insert casts.  And it doesn't
+    * matter because get_input() doesn't do anything with the event
+    * after passing it here.  */
+   KeySym key;
+   int pressed;
+   /* ev->type is either KeyPress or KeyRelease.  Otherwise
+    * get_input() wouldn't have called this function.  */
+   if (ev->type == KeyPress) {
+      // logprintf(LOG_DEBUG,'I',"Got KeyPress");
+      pressed = 1;
+   } else {
+      // logprintf(LOG_DEBUG,'I',"Got KeyRelease");
+      pressed = 0;
+   }
+   key = XLookupKeysym(ev, 0);
+   keymap_press_keycode(key, pressed);
+}
+
+/* I originally wanted to base this on FocusIn and FocusOut events so
+ * that DUMB would capture the keyboard even when the pointer was at
+ * the window frame created by the window manager.  But XGrabKeyboard
+ * sent FocusIn and FocusOut events of its own and it started ringing
+ * and was very slow and unreliable.  So I chose this as a compromise.
+ */
+static void
+handle_crossingevent(XCrossingEvent *ev)
+{
+   if (grab_kbd == GRAB_WHEN_POINTED) {
+      if (ev->type == EnterNotify) {
+	 // logprintf(LOG_DEBUG, 'I', "EnterNotify received\n");
+	 grab_keys(GrabModeAsync, GrabModeAsync);
+      } else {
+	 // logprintf(LOG_DEBUG, 'I', "LeaveNotify received\n");
+	 ungrab_keys();
+      }
+   }
+}
 
 void init_input(void) {
 #ifndef NO_XKB
    /* I rely on video being initialized before input.  */
    init_xkb();
 #endif
-   ctlkey_init();
+   keymap_init();
+   keymapconf_interpret_all(FIRST_KEYMAPCONF_ENTRY);
+   if (keymap_is_empty()) {
+      logprintf(LOG_INFO,'I',"Keymap is empty, installing defaults.");
+      keymap_install_defaults();
+   }
+}
+
+void reset_input(void) {
+   /* FIXME: If it becomes possible to save the configuration in the
+    * middle of the game, the conversion must be done each time.  */
+   keymapconf_make_all(FIRST_KEYMAPCONF_ENTRY);
+   keymap_reset();
 };
 
 #ifndef NO_XKB
@@ -564,9 +536,43 @@ init_xkb(void)
 }
 #endif /* ndef NO_XKB */
 
-void reset_input(void) {
-   ctlkey_reset();
-};
+static void 
+grab_keys(int pointer_mode, int keyboard_mode)
+{
+   static int complain_on_failure = 1;
+   if (grabbed)
+      return;
+   if(XGrabKeyboard(dpy, rootw, False,
+		    pointer_mode, keyboard_mode,
+		    CurrentTime)) {
+      /* Grab failed.  But don't complain all the time. */
+      if (complain_on_failure) {
+	 logprintf(LOG_ERROR,'I',"keyboard grab failed!");
+	 complain_on_failure = 0;
+      }
+   } else {
+      grabbed=1;
+      /* It worked now, so complain next time it doesn't. */
+      complain_on_failure = 1;
+   }
+}
+
+static void
+ungrab_keys(void)
+{
+   if (!grabbed)
+      return;
+   XUngrabKeyboard(dpy,CurrentTime);
+   grabbed=0;
+}
+
+const char *
+keymap_keycode_to_keyname(keymap_keycode keycode)
+{
+   /* X has separate keycodes and keysyms but keymap.h calls them all
+    * keycodes.  */
+   return XKeysymToString((KeySym) keycode);
+}
 
 // Local Variables:
 // c-basic-offset: 3

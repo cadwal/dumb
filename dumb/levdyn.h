@@ -42,6 +42,7 @@ typedef struct {
    int fanim,canim;
    fixed dark; /* 0 is infinite light (see forever), 1 is very dark */
    int fanimstate,canimstate;
+   int type;
    char sky,crush_effect,_spare1,_spare2;
    /* sky: bit 1 is ceiling, bit 2 floor */
 } SectorDyn;

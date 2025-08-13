@@ -33,7 +33,7 @@
 /*#define WATCHDOG*/
 
 #define DUMB "DUMB"
-#define VERSION "0.10a"
+#define VERSION "0.11"
 
 #ifdef __cplusplus
 #define BANNER (DUMB "++ " VERSION)
@@ -78,6 +78,7 @@ ConfItem mainconf[]={
    CONFL("master",NULL,0,"network play: master mode"),
    CONFB("single",NULL,0,"force single player mode"),
    CONFI("view-rotate",NULL,0,"angle to rotate view by",0),
+   CONFI("max-frames",NULL,0,"maximum frames to render",0),
    {NULL}
 };
 #define cnf_auto_save (mainconf[0].intval)
@@ -107,6 +108,7 @@ ConfItem mainconf[]={
 #define cnf_master (mainconf[24].listval)
 #define cnf_single (mainconf[25].intval)
 #define cnf_vt_rotate (mainconf[26].intval)
+#define cnf_maxframes (mainconf[27].intval)
 
 ConfModule dumbconf[]={
    {input_conf,"input","Input Driver"},
@@ -344,8 +346,6 @@ int main(int argc,char **argv) {
      if(i!=ld->player[ld->localplayer]) ldthingd(ld)[i].proto=NULL;
    
    td=ldthingd(ld)+(follow=ld->player[ld->localplayer]);
-   if (follow == -1)
-     logprintf(LOG_ERROR,'D',"Can't find player");
 
    init_view(&view);
    view.angle=0;
@@ -496,8 +496,8 @@ int main(int argc,char **argv) {
 	 
 	 /* back to ordinary main loop */
 	 if(tickspassed>MAXTICKS) { 
-	    logprintf(LOG_DEBUG,'D',"%d ticks passed: machine too slow?",
-		      tickspassed);
+	    logprintf(LOG_DEBUG,'D',"%d ticks passed with MAXTICKS=%d",
+		      tickspassed,MAXTICKS);
 	    tickspassed=MAXTICKS;
 	 };
 	 if(!slave) {
@@ -537,6 +537,7 @@ int main(int argc,char **argv) {
 
 	 if(master||slave) net_bufflush();
 	 frames++;
+	 if(cnf_maxframes&&frames>cnf_maxframes) break;
       };
 #ifdef WATCHDOG
    };

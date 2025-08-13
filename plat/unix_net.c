@@ -12,23 +12,37 @@
 
 #include <netdb.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include "lib/log.h"
 #include "lib/safem.h"
+#include "dumb/netplay.h"
 #include "plat/net.h"
 
 #define UDP_STATISTICS
 
 ConfItem net_conf[]={
    CONFI("udp-port",NULL,0,"UDP port to listen on",7777),
+   CONFS("broadcast",NULL,0,"IP broadcast address",NULL,32), 
    {NULL}
 };
 #define cnf_udp_port (net_conf[0].intval)
+#define cnf_broadcast (net_conf[1].strval&&net_conf[1].strval[0])
+#define cnf_bcast_addr (net_conf[1].strval)
 
+/* some local data */
 static int sock=-1;
 static unsigned char netbuf[NETBUF_LEN];
 
+/* address to send to for broadcasts */
+union SIA {
+   struct sockaddr sa;
+   struct sockaddr_in sin;
+};
+static union SIA bcast_sa;
+
 #ifdef UDP_STATISTICS
+static int bpktcount=0,bbytecount=0;
 static int pktcount=0,bytecount=0;
 #endif
 
@@ -58,38 +72,6 @@ void udp_reset_station(RemoteStation *rs) {
       safe_free(rs->addr);
    rs->addr=NULL;
    rs->addrlen=0;
-};
-
-void udp_init(void) {
-   union {
-      struct sockaddr sa;
-      struct sockaddr_in sin;
-   } sia;
-   if(sock>=0) net_reset();
-#ifdef UDP_STATISTICS
-   pktcount=0;
-   bytecount=0;
-#endif
-   /* make socket */
-   sock=socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
-   if(sock==-1) logfatal('N',"error %d creating UDP socket",errno);
-   /* name it */
-   memset(&sia,0,sizeof(sia));
-   sia.sin.sin_family=AF_INET;
-   sia.sin.sin_port=htons((unsigned)cnf_udp_port);
-   if(bind(sock,&sia.sa,sizeof(sia.sin)))
-      logfatal('N',"error %d binding UDP socket",errno);
-   if(fcntl(sock,F_SETFL,O_NONBLOCK)==-1)
-      logfatal('N',"error %d unblocking UDP socket",errno);
-};
-void udp_reset(void) {
-   if(sock>=0) close(sock);
-   sock=-1;
-#ifdef UDP_STATISTICS
-   if(pktcount)
-      logprintf(LOG_INFO,'N',"udp: %d packets, %d bytes, avg pktlen %d",
-		pktcount,bytecount,bytecount/pktcount);
-#endif
 };
 
 const unsigned char *udp_recpkt(size_t *len,int *station) {
@@ -126,15 +108,15 @@ const unsigned char *udp_recpkt(size_t *len,int *station) {
 	 };
       };
    };
-#if 1
+#if 0 /* sadly, broadcast breaks this :( */
    /* maybe a new station joining? */
    *station = nstations;
    *len = r;
-   printf("data from new station\n");
+   logprintf(LOG_DEBUG,'N',"data from new station (%08x)",sia.sin.sin_addr);
    return netbuf;
 #else
    /* didn't find anything! */
-   logprintf(LOG_ERROR,'N',"unclaimed packet (type=%c)",netbuf[0]);
+   /*logprintf(LOG_ERROR,'N',"unclaimed packet (type=%c)",netbuf[0]);*/
    return NULL;
 #endif
 };
@@ -158,6 +140,7 @@ int udp_waitpkt(int msec) {
    FD_SET(sock,fds);
    tv.tv_sec=msec/1000;
    tv.tv_usec=(msec%1000)*1000;
+   /* something about this call to select seems to break the HPUX version */
    ret = select(sock+1,fds,NULL,NULL,&tv);
    /*logprintf("got select = %d\n", ret);*/
    return ret<0;
@@ -189,7 +172,85 @@ void udp_sendpkt(RemoteStation *rs,const void *pkt,size_t len) {
    pktcount++;
    bytecount+=len;
 #endif
-   sendto(sock,pkt,len,0,rs->addr,rs->addrlen);
+   if(sendto(sock,pkt,len,0,rs->addr,rs->addrlen)==-1)
+      logprintf(LOG_ERROR,'N',"error (%d) in sendto sock=%d",
+		errno,sock);
+};
+
+void udp_castpkt(const void *pkt,size_t len) {
+#ifdef UDP_STATISTICS
+   bpktcount++;
+   bbytecount+=len;
+#endif
+   if(sendto(sock,pkt,len,0,&(bcast_sa.sa),sizeof(bcast_sa))==-1)
+      logprintf(LOG_ERROR,'N',"error (%d) in broadcast sendto sock=%d",
+		errno,sock);
+};
+
+void unix_gethostname(char *name,size_t l) {
+   gethostname(name,l);
+};
+
+void udp_init(void) {
+   union {
+      struct sockaddr sa;
+      struct sockaddr_in sin;
+   } sia;
+   if(sock>=0) net_reset();
+#ifdef UDP_STATISTICS
+   bpktcount=pktcount=0;
+   bbytecount=bytecount=0;
+#endif
+   /* make socket */
+   sock=socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
+   if(sock==-1) logfatal('N',"error %d creating UDP socket",errno);
+   /* name it */
+   memset(&sia,0,sizeof(sia));
+   sia.sin.sin_family=AF_INET;
+   sia.sin.sin_port=htons((unsigned)cnf_udp_port);
+   if(bind(sock,&sia.sa,sizeof(sia.sin)))
+      logfatal('N',"error %d binding UDP socket",errno);
+   if(fcntl(sock,F_SETFL,O_NONBLOCK)==-1)
+      logfatal('N',"error %d unblocking UDP socket",errno);
+   /* set up for broadcast */
+#ifndef NO_IP_BROADCAST
+   if(cnf_broadcast) {
+      int yes=1;
+      /* ask system for broadcast access */
+      if(setsockopt(sock,SOL_SOCKET,SO_BROADCAST,&yes,sizeof(yes)))
+	 logprintf(LOG_ERROR,'N',
+		   "udp: broadcast access denied (try running as root)");
+      else {
+	 /* fill in broadcast address */
+	 bcast_sa.sin.sin_family=AF_INET;
+	 bcast_sa.sin.sin_addr.s_addr=inet_addr(cnf_bcast_addr);
+	 bcast_sa.sin.sin_port=htons((unsigned)cnf_udp_port);
+	 /* turn on broadcast and slavecast functions */
+	 netdriver[0].slavecast=udp_castpkt;
+	 netdriver[0].broadcast=udp_castpkt;
+      };
+   };
+#endif
+};
+void udp_reset(void) {
+   if(sock>=0) close(sock);
+   sock=-1;
+#ifdef UDP_STATISTICS
+   if(bpktcount)
+      logprintf(LOG_INFO,'N',"udp broadcast: %d packets, %d bytes, avg len %d",
+		bpktcount,bbytecount,bbytecount/bpktcount);
+   if(pktcount)
+      logprintf(LOG_INFO,'N',"udp unicast:   %d packets, %d bytes, avg len %d",
+		pktcount,bytecount,bytecount/pktcount);
+#if 0
+   if(!bpktcount) return;
+   pktcount+=bpktcount;
+   bytecount+=bbytecount;
+   if(pktcount)
+      logprintf(LOG_INFO,'N',"udp total:     %d packets, %d bytes, avg len %d",
+		pktcount,bytecount,bytecount/pktcount);
+#endif
+#endif
 };
 
 NetDriver netdriver[2]={
@@ -198,7 +259,8 @@ NetDriver netdriver[2]={
     udp_init_station,udp_reset_station,
     udp_recpkt,udp_waitpkt,
     udp_sendpkt,
-    NULL,NULL},
+    NULL,NULL,
+    unix_gethostname},
    {NULL}
 };
 

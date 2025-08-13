@@ -14,6 +14,15 @@
 
 /*#define UPDMAP_DEBUG*/
 
+/* change sector types */
+void change_sector_type(LevData *ld,int sector,int type) {
+   SectorDyn *sd=ldsectord(ld)+sector;
+   /* shut down old sector type */
+   /* change type */
+   sd->type=type;
+   /* start up new type */
+};
+
 /* deal with ML_SECTOR events */
 static void do_sector_event(LevData *ld,MapEvent *me,int tickspassed) {
    SectorDyn *sd=ldsectord(ld)+me->entity,*mod=NULL;
@@ -25,6 +34,8 @@ static void do_sector_event(LevData *ld,MapEvent *me,int tickspassed) {
    if(me->model>=0) mod=ldsectord(ld)+me->model;
    switch(me->type) {
    case(ME_CEILING_TYPE):
+      if(mod) change_sector_type(ld,me->entity,mod->type);
+      /* fall through */
    case(ME_CEILING_TEX):
       if(mod) {
 #ifdef UPDMAP_DEBUG
@@ -38,6 +49,8 @@ static void do_sector_event(LevData *ld,MapEvent *me,int tickspassed) {
       me->type=ME_NONE;
       return;
    case(ME_FLOOR_TYPE):
+      if(mod) change_sector_type(ld,me->entity,mod->type);
+      /* fall through */
    case(ME_FLOOR_TEX):
       if(mod) {
 #ifdef UPDMAP_DEBUG

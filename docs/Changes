@@ -209,6 +209,28 @@ tweaked player speed a bit more (dumb/game.c)
 fixed player's ability to keep shooting after death
 fixed broadcast gmsgs in non-network mode
 fixed a bug with weapon selection: only rotate when wep_sel becomes 1
+fixed chainsaw (was too devastating)
 
 version 0.10a:
 ggi update from Andrew Apted (new arguments to init_video)
+
+version 0.11: 
+silent mode for XProtoThing 
+fixed bullets (broken by chainsaw fix in 0.10)
+check that both player AND weapon are ready before shooting (useitem.c)
+x11_video.c: DGA off by default
+laid foundations for sector types
+UDP broadcast support: use (eg.) --net-broadcast 150.203.231.255
+(the above "pre-0.11" was released as source patches on dumb-list)
+
+Kalle Niemtalo's patches to 0.10a.kn.4 (incl. autoconf support!)
+fixed aalib_video.c for new init_video() args
+fixed x11_video.c to work with NO_XSHM
+changed MAXTICKS message to be more accurate
+debugging on by default in Makefile.in
+big changes to netplay.c: keep packets 4-byte aligned for alpha/sparc/etc.
+netplay.c: give up on whole datagram after seeing a weird packet
+thing_take_damage(): bail out on dmg<=0
+Kalle's patches to save keymap info + lib/conf.* renovations
+My fixes to Kalle's patches :)
+skip collision checks if not moving in x / y plane (updthing.c)

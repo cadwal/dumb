@@ -101,6 +101,7 @@ void load_level(LevData *ld,const char *name,int d,int mp) {
       }
       /* OK, onto next lumptype */
    }
+   if(ld->player[0]<0) logprintf(LOG_ERROR,'M',"Uh-oh: no player!");
    /*logprintf(LOG_DEBUG,'M',"Done: %s",name);*/
 };
 

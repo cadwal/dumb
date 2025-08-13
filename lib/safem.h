@@ -2,12 +2,13 @@
 #ifndef SAFEM_H
 #define SAFEM_H
 
-/* both of these LOG_FATAL on error */
+/* all of these logfatal() on error */
 
 void *safe_realloc(void *p,size_t s);
 void *safe_calloc(size_t s1,size_t s2);
 void *safe_malloc(size_t size);
 void safe_free(void *ptr);
+char *safe_strdup(const char *s);
 
 #if defined(NO_MMAP)||defined(NO_MMAP_DEV_ZERO)
 

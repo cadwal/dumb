@@ -9,6 +9,7 @@
 #include "things.h"
 #include "levdyn.h"
 #include "levinfo.h"
+#include "updmap.h" /* for change_sector_type() */
 #include "animtex.h"
 #include "game.h"
 
@@ -72,6 +73,10 @@ LD_DYNDECL(Sector) {
       dyn->cent_x/=j;
       dyn->cent_y/=j;
    };
+   
+   /* set up initial sector type */
+   dyn->type=0;
+   change_sector_type(ld,lump-ldsector(ld),lump->type);
 };
 
 static Texture *get_wtex(const char *n) {

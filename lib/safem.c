@@ -1,6 +1,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 
 #ifndef NO_MMAP
@@ -65,6 +66,13 @@ void *safe_calloc(size_t l,size_t c) {
      logfatal('S',"Error %d allocating %lu bytes.",errno,(unsigned long)l*c);
    return p;
 }
+char *safe_strdup(const char *s) {
+   char *p=strdup(s);
+   if(p==NULL)
+      logfatal('S',"Error %d allocating %lu bytes.",errno,
+	       (unsigned long)strlen(s)+1);
+   return p;
+}
 
 void safe_free(void *p) {
    if(p==NULL) logprintf(LOG_ERROR,'S',"Attempt to free NULL.");
@@ -72,3 +80,7 @@ void safe_free(void *p) {
    /* *((char *)p)=0;*/ /* force a crash here, if p is bogus */
    free(p);
 }
+
+// Local Variables:
+// c-basic-offset: 3
+// End:

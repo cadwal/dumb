@@ -25,6 +25,8 @@ static XFontStruct *font,*lilfont,*chofont;
 
 static XPInstance inst[1];
 
+static int silent=0;
+
 #define RCOUNT 3
 
 static jmp_buf alarm_jb;
@@ -72,6 +74,7 @@ static void usage(const char *name)  {
    printf("Usage: %s [options]\n"
 	  "Where options are:\n"
 	  "\t-v\t\tVerbose: log to the screen.\n"
+	  "\t-s\t\tSilent: don't try to play sounds.\n"
 	  "\t-w <wadfile> [wadfile] [wadfile]...\n"
 	  "\t-l <logfile> [logfile] [logfile]...\n"
 	  "\t-d <display>\n",name);
@@ -96,6 +99,9 @@ int main(int argc,char **argv) {
 	 /* q = quiet */
       case('v'):
 	 quiet=0;
+	 break;
+      case('s'):
+	 silent=1;
 	 break;
 	 /* w = wad */
       case('w'):
@@ -238,7 +244,7 @@ void xproto_enter_phase(XPInstance *inst,int ph) {
    if(ph<0) ph=inst->curphase+1;
    inst->curphase=ph;
    inst->phcount=CURPHASE.wait;
-   if(CURPHASE.sound>=0) 
+   if(CURPHASE.sound>=0&&!silent) 
       play_dsound_local(CURPHASE.sound+CURPROTO.sound,0,0,0);
 };
 

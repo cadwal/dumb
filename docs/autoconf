@@ -1,0 +1,146 @@
+This corresponds to DUMB 0.09.kn.4, which has not been released
+because DUMB 0.10 was released before it.
+
+* Not Yet Implemented:
+ - cross compilation (endianness is one reason)
+ - srcdir
+ - make install
+ - full CFLAGS support
+ - all #ifdefs
+
+* Installation:
+
+Change to the dumb root directory (so that this file is
+./docs/autoconf).
+
+Run "./configure".  If you extracted it from a patch, you may have to
+make it executable first.  (man chmod)  A Makefile will be generated.
+
+Run "make".  Put the binaries to suitable places.  A future version
+will probably support "make install" to do this automatically.
+
+If you want special features, give parameters to "configure".  Use
+--help to get a list of options.  If you give options that
+"./configure" doesn't understand, it'll silently ignore them.  Sorry.
+
+* Main options
+
+--help
+  The most important option.  Gives you short descriptions for every
+  option.
+
+* Graphics options
+
+These options have three states: yes, no, autodetect.  Autodetect is
+the default.  It means "configure" will automatically detect if the
+required libraries are available.  You can disable graphics drivers
+with --without-<name> and force them to be used with --with-<name>.
+
+You can specify as many graphics drivers as you like.  You'll get a
+separate game binary for each of them.
+
+--with-aalib, --without-aalib
+  Force or disable use of the AALIB graphics library.
+
+--with-ggi, --without-ggi
+  Force or disable use of the Generic Graphics Interface.
+
+--with-grx20, --without-grx20
+  Force or disable use of the GRX20 graphics library.  I believe this
+  library is for DOS only, and "configure" doesn't run in DOS, so this
+  option is rather useless.
+
+--with-svgalib, --without-svgalib
+  Force or disable use of the SVGALIB (or VGALIB) graphics library.
+
+--with-x, --without-x
+  Force or disable use of the X Window System.  If X is used, you'll
+  also get binaries for the programs XProtoThing and XWad.  To force
+  --with-x, you may have to specify the X include and library
+  directories with --x-includes=DIR and --x-libraries=DIR, unless
+  "configure" can autodetect them.  (In which case you wouldn't need
+  to give --with-x either.)
+
+  The X graphics driver supports a few extensions.  Normally these are
+  enabled if the system you're compiling on has the required header
+  files, but you can disable them if they give you trouble:
+
+  --disable-dga
+    Disable use of the XFree86 Direct Graphics Access extension.
+
+  --disable-xshm
+    Disable use of the MIT Shared Memory extension.
+
+  --disable-xkb
+    Disable use of the X Keyboard extension.
+
+  These extensions are automatically disabled in runtime if the X
+  server doesn't support them or if you tell so in the command line or
+  in the configuration file.
+ 
+--with-dummy-video
+  The dummy video driver is automatically enabled if all other drivers
+  are disabled or unavailable.  Of course you can disable it too.
+
+* Sound options
+
+The sound drivers differ from the video drivers in that you can only
+have one of them enabled.  If you force one of them to be used, all
+others will be disabled.  As soon as "configure" finds a driver that
+it can use, it'll stop looking.
+
+--without-sound
+  Disable sound.  Overrides the options below.
+
+--with-uss, --without-uss
+  Use the Unix Sound System that was created by Hannu Savolainen for
+  Linux and has been ported to BSD at least.  There are free and
+  commercial versions of USS; DUMB doesn't care which you have.
+
+--with-mme, --without-mme
+  Use the MME library included in Digital Unix.  The interface seems
+  to stem from Microsoft Windows, so perhaps this driver could be used
+  in a Windows version of DUMB too.
+
+Both sound drivers support these options:
+
+--disable-16bit-sound
+  Force 8-bit sound.
+
+--disable-stereo-sound
+  Force mono sound.
+
+* Framebuffer options
+
+DUMB supports framebuffers that have 1, 2 or 4 bytes (8, 16 or 32
+bits) per pixel.  The renderer is compiled for each BPP value
+separately, the versions are all linked together, and DUMB will choose
+the right one when run.  If you don't need support for some BPP value,
+you can leave it out to speed up compilation:
+
+--disable-1bpp
+  Disable support of framebuffers with 1 byte (8 bits) per pixel.
+
+--disable-2bpp
+  Disable support of framebuffers with 2 bytes (16 bits) per pixel.
+
+--disable-4bpp
+  Disable support of framebuffers with 4 bytes (32 bits) per pixel.
+
+If you disable all BPPs, "configure" will warn you but continue.  The
+game can't then be played.
+
+* Networking
+
+This is like sound; you can only choose one of these options.
+Currently, only Unix networking (Berkeley sockets) is supported.
+
+--without-net
+  Disable networking.  Actually, this uses a dummy network driver, but
+  you don't have to care of that.
+
+--with-unix-net, --without-unix-net
+  Force or disable master-slave Unix networking.  This uses UDP
+  datagrams and system calls gethostbyname(), htons(), socket(),
+  bind(), fcntl(), close(), recvfrom(), select() and sendto().
+

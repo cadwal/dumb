@@ -6,7 +6,7 @@
 #include "lib/endian.h"
 
 typedef struct {
-   LE_int16 uas,las,mas;
+   LE_int16 uas,las,mas,_spare;
 } SideCode;
 
 typedef struct {

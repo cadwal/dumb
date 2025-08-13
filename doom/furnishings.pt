@@ -5,7 +5,6 @@
 
 #define StickToFloor  Mass 1000 YMoveOnly
 
-
 Proto TallTechPillar 48
   Sprite ELEC
   Phases Mundane

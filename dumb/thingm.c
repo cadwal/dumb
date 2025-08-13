@@ -10,7 +10,7 @@
 #include "things.h"
 #include "game.h"
 
-/*#define THINGM_DEBUG */
+/* #define THINGM_DEBUG */
 
 #define MAX_DELEV (FIXED_ONE/8)
 void player_apply_lookup(const LevData *ld,int th,int lookup) {
@@ -251,6 +251,8 @@ void thing_wake_others(const LevData *ld,int th,int tickspassed) {
 /* take damage, potentially ouching, dying, or exploding */
 void thing_take_damage(const LevData *ld,int th,int dmg) {
    ThingDyn *td=ldthingd(ld)+th;
+   /* bail out if dmg<=0 */
+   if(dmg<=0) return;
    /* check if we explode before checking hits */
    if(td->proto->flags&PT_EXPLOSIVE) {
       td->dx=td->dy=td->dz=0; /* stop explosions from being knocked around */
@@ -344,7 +346,8 @@ static void do_melee_damage(const LevData *ld,int th,fixed knockback) {
    int myowner;
    if(td->target<0||ttd->proto==NULL) return;
    dist=fix_pyth3d(td->x-ttd->x,td->y-ttd->y,td->z-ttd->z);
-   if(dist>td->proto->radius+ttd->proto->radius+MELEE_DISTANCE) {
+   if((dist>td->proto->radius+ttd->proto->radius+MELEE_DISTANCE)&&
+      !(td->proto->flags&PT_BULLET)) {
 #ifdef THINGM_DEBUG
       logprintf(LOG_DEBUG,'O',"melee: %d's attack on %d failed",th,td->target);
 #endif
@@ -474,18 +477,22 @@ void thing_enter_phase(LevData *ld,int th,int ph)  {
      spawn_or_hurl(ld,th,td->proto->spawn2);
 };
 
-int thing_send_sig(const LevData *ld,int th,ThingSignal ts)  {
+int thing_sig_ok(const LevData *ld,int th,ThingSignal ts)  {
    ThingDyn *td=ldthingd(ld)+th;
    /* if 
        1) we respond to this type of signal, and
        2) we aren't already pending a higher priority signal, and
        3) signals aren't locked out for this phase,
-      then
-       make ts pending
       */
    if(td->proto->signals[ts]>=0&& 
       td->pending_signal<ts&& 
       !(td->phase_tbl[td->phase].flags&TPH_NOSIGS))
+      return 1;
+   else return 0;
+};
+int thing_send_sig(const LevData *ld,int th,ThingSignal ts)  {
+   ThingDyn *td=ldthingd(ld)+th;
+   if(thing_sig_ok(ld,th,ts))
       td->pending_signal=ts;
    else return -1;
    return 0;

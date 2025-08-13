@@ -7,6 +7,8 @@
 #include "lib/log.h"
 #include "input.h"
 
+ConfItem input_conf[]={{NULL}};
+
 extern aa_context *aa_ctxt;
 #define aa aa_ctxt
 

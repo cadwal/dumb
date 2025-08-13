@@ -1,6 +1,24 @@
-/* Written by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+/* ctlkey_input.c: enum ctlkey and conversion from it to PlayerInput.
  *
- * I changed x11_input.c to use enum ctlkey as an intermediate step
+ * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA
+ * 02139, USA.
+ */
+
+/* I changed x11_input.c to use enum ctlkey as an intermediate step
  * between X keysyms and DUMB input states.  The mechanism seemed
  * generic enough to deserve a file of its own.  Here it is.
  *
@@ -21,27 +39,6 @@
 /* Define these to separate looking from aiming */
 /* #define COMPLEX_LOOKING */
 /* #define MAX_LOOK_ANGLE 64 */
-
-const char *const ctlkey_name[CTLKEY_ARRAY_SIZE] = {
-   "Quit",
-   "Move forward", "Move backward",
-   "Turn left", "Turn right",
-   "Turn around",
-   "Move left", "Move right",
-   "Jump / Swim/Fly up", "Duck / Swim/Fly down",
-   "Look up", "Look down",
-   "Aim up", "Aim down", "Center view",
-   "Run", "Strafe",
-   "Activate",
-   "Shoot",
-   "Shoot special",
-   "Select next weapon", "Select previous weapon",
-   "Select weapon 0", "Select weapon 1", "Select weapon 2", 
-   "Select weapon 3", "Select weapon 4", "Select weapon 5",
-   "Select weapon 6", "Select weapon 7", "Select weapon 8",
-   "Select weapon 9",
-   "Use item", "Next item", "Previous item"
-};
 
 static unsigned char keystate[CTLKEY_ARRAY_SIZE];
 static PlayerInput input;
@@ -66,6 +63,8 @@ ctlkey_reset(void)
 void
 ctlkey_press(enum ctlkey key, int pressed_flag)
 {
+   if (key == CTLKEY_NONE)
+      return; /* no error */
    if (keystate[key] == pressed_flag)
       return;
    keystate[key] = pressed_flag;
@@ -109,7 +108,8 @@ ctlkey_get_player_input(PlayerInput *dest)
 static void
 recalc_input(void)
 {
-   int left, right, i,x,y;
+   int left, right, i;
+   fixed x, y;
    input.quit = keystate[CTLKEY_QUIT];
    input.jump = (keystate[CTLKEY_MOVE_UP] 
 		 - keystate[CTLKEY_MOVE_DOWN]) * UNIT_SPEED;
@@ -119,48 +119,69 @@ recalc_input(void)
 		  - keystate[CTLKEY_PREVIOUS_WEAPON]);
    input.use = keystate[CTLKEY_USE_ITEM];
    input.s_sel = (keystate[CTLKEY_NEXT_ITEM]
-			 - keystate[CTLKEY_PREVIOUS_ITEM]);
+		  - keystate[CTLKEY_PREVIOUS_ITEM]);
    left = (keystate[CTLKEY_MOVE_LEFT]
 	   || (keystate[CTLKEY_STRAFE] 
 	       && keystate[CTLKEY_TURN_LEFT]));
    right = (keystate[CTLKEY_MOVE_RIGHT]
 	    || (keystate[CTLKEY_STRAFE] 
 		&& keystate[CTLKEY_TURN_RIGHT]));
-   input.sideways = (left - right) * UNIT_SPEED;
+   x = INT_TO_FIXED(left - right);
    if (keystate[CTLKEY_STRAFE])
       input.rotate = 0;
    else
       input.rotate = (keystate[CTLKEY_TURN_LEFT]
-			  - keystate[CTLKEY_TURN_RIGHT]) * UNIT_SPEED;
-   input.forward = (keystate[CTLKEY_MOVE_FORWARD]
-			- keystate[CTLKEY_MOVE_BACKWARD]) * UNIT_SPEED;
+		      - keystate[CTLKEY_TURN_RIGHT]) * UNIT_SPEED;
+   y = INT_TO_FIXED(keystate[CTLKEY_MOVE_FORWARD]
+		    - keystate[CTLKEY_MOVE_BACKWARD]);
 #ifdef COMPLEX_LOOKING
    /* input.lookup is handled in ctlkey_calc_tick() */
 #else
    input.lookup = (((keystate[CTLKEY_LOOK_UP] 
-		    || keystate[CTLKEY_AIM_UP])
-		   - (keystate[CTLKEY_LOOK_DOWN] 
-		      || keystate[CTLKEY_AIM_DOWN]))
+		     || keystate[CTLKEY_AIM_UP])
+		    - (keystate[CTLKEY_LOOK_DOWN] 
+		       || keystate[CTLKEY_AIM_DOWN]))
 		   * UNIT_SPEED);
 #endif   
    if (keystate[CTLKEY_RUN]) {
-      input.sideways *= 2;
+      x = FIXED_SCALE(x, 2);
+      y = FIXED_SCALE(y, 2);
       input.rotate *= 2;
-      input.forward *= 2;
    }
+   compress_square_to_circle(&x, &y);
+#if UNIT_SPEED == INT_TO_FIXED(1)
+   /* PlayerInput uses regular fixed-point */
+   input.sideways = x;
+   input.forward = y;
+#else
+   /* PlayerInput has its own scaling */
+   input.sideways = FIXED_TO_FLOAT(x)*UNIT_SPEED;
+   input.forward = FIXED_TO_FLOAT(y)*UNIT_SPEED;
+#endif
    for (i = 0; i <= 9; i++)
       input.select[i] = keystate[CTLKEY_WEAPON_0 + i];
-   /* The variables aren't actually fixed-point but this works anyway!  */
-   /* the to-ing and fro-ing with x and y is necessary on bigendian machines */
-   x=input.sideways;y=input.forward;
-   compress_square_to_circle(&x, &y);
-   input.sideways=x;input.forward=y;
 }
 
 static void
 compress_square_to_circle(fixed *x, fixed *y)
 {
-   /* Old coordinates: x, y
+   /* +-------*******-------+ (C,C)
+    * |    ***       **     |
+    * |  **             **  |
+    * | *          (x',y')*_+ (x,y)
+    * |*                _-+*|
+    * |*             _--   *|
+    * *           _--       *
+    * *          -          *
+    * *        (0,0)        *
+    * |*                   *|
+    * |*                   *|
+    * | *                 * |
+    * |  **             **  |
+    * |    ***       ***    |
+    * +-------*******-------+ (C,-C)
+    *
+    * Old coordinates: x, y
     * New coordinates: x', y'
     * Must find scale factor k such that x'=k*x and y'=k*y.
     * x=0 or y=0 ==> k=1 ==> x'=x and y'=y.
@@ -191,6 +212,61 @@ compress_square_to_circle(fixed *x, fixed *y)
    k = fixdiv(maxabs, r);
    *x = fixmul(*x, k);
    *y = fixmul(*y, k);
+}
+
+/* Ctlkey naming support */
+
+struct ctlkey_namepair {
+   const char *ugly;
+   const char *pretty;
+};
+
+static const struct ctlkey_namepair ctlkey_names[CTLKEY_ARRAY_SIZE] = {
+   { "quit", "Quit" },
+   { "move_forward", "Move forward" },
+   { "move_backward", "Move backward" },
+   { "turn_left", "Turn left" },
+   { "turn_right", "Turn right" },
+   { "turn_180", "Turn around" },
+   { "move_left", "Sidestep left" },
+   { "move_right", "Sidestep right" },
+   { "move_up", "Jump / Swim/Fly up" },
+   { "move_down", "Duck / Swim/Fly down" },
+   { "look_up", "Look up" },
+   { "look_down", "Look down" },
+   { "aim_up", "Aim up" },
+   { "aim_down", "Aim down" },
+   { "center_view", "Center view" },
+   { "run", "Run" },
+   { "strafe", "Strafe" },
+   { "activate", "Activate" },
+   { "shoot", "Shoot" },
+   { "shoot_special", "Shoot special" },
+   { "next_weapon", "Select next weapon" },
+   { "previous_weapon", "Select previous weapon" },
+   { "weapon_0", "Select weapon 0" },
+   { "weapon_1", "Select weapon 1" },
+   { "weapon_2", "Select weapon 2" },
+   { "weapon_3", "Select weapon 3" },
+   { "weapon_4", "Select weapon 4" },
+   { "weapon_5", "Select weapon 5" },
+   { "weapon_6", "Select weapon 6" },
+   { "weapon_7", "Select weapon 7" },
+   { "weapon_8", "Select weapon 8" },
+   { "weapon_9", "Select weapon 9" },
+   { "use_item", "Use item" },
+   { "next_item", "Next item" },
+   { "previous_item", "Previous item" }
+};
+
+const char *ctlkey_ugly_name(enum ctlkey key)
+{
+   return ctlkey_names[key].ugly;
+}
+
+const char *ctlkey_pretty_name(enum ctlkey key)
+{
+   return ctlkey_names[key].pretty;
 }
 
 // Local Variables:

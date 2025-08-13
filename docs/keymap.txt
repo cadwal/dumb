@@ -1,0 +1,41 @@
+Each ctlkey has two names: pretty and ugly.  The ugly name will be
+used in the keyboard configuration file and the pretty name will be
+shown to the player in the keyboard configuration menu.
+
+The ugly name consists of lower-case letters, numbers and underlines
+only.  This isn't strictly necessary but helps keep the name ugly.
+Ugly names closely follow the names of the enum ctlkey constants.
+
+Pretty names contain all kinds of characters for the player's
+pleasure.
+
+This separation has (at least) these advantages over using just one
+name per ctlkey:
+- Pretty names can be translated to the player's native language
+  and the old configuration files will still work.
+- Pretty names can be changed for aesthetic reasons and the old
+  configuration files will still work.
+- Pretty names might even be changed in the WAD.  Most probably the
+  weapon names.
+- Because the character set of ugly names is so limited, it is easy
+  for the game to parse the configuration file.
+- The configuration file looks more technical.
+
+As you might guess from the above, ugly names are used in the
+configuration file only.
+
+The pretty names are accessed with a function in ctlkey.h:
+	const char *ctlkey_pretty_name(enum ctlkey);
+All the translation hooks can be put to this function when the time
+comes.
+
+For symmetry, ugly names are accessed with a function too:
+	const char *ctlkey_ugly_name(enum ctlkey);
+
+Currently, pretty and ugly names are in the same static array in
+ctlkey.c.  But when we implement translations, we'll have to read the
+pretty names from a database.  We could key them on the ugly name or
+directly on the numeric index.  Or we could retain "default" pretty
+names and key the translated ones on them.  Then if there were names
+in WADs ("Select laser shotgun"), we could feed them to the
+translation database lookup too.

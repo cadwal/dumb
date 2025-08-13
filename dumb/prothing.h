@@ -92,7 +92,9 @@ typedef struct {
 #define PT_BLOCKING 0x1000000  /* object can get in the way */
 #define PT_BOGUS 0x2000000     /* object is bogus */
 #define PT_NOHURTO 0x4000000   /* don't damage my owner */
-#define PT_TURNWHENHITTING 0x8000000 /* weapon bogothing turns user when hitting */
+#define PT_TURNWHENHITTING 0x8000000 /* weapon bogot turns user when hitting */
+#define PT_BULLET 0x10000000   /* do melee damage like bullet */
+                               /* ie. skip range check in melee */
 
 void init_prothings(void);
 void reset_prothings(void);

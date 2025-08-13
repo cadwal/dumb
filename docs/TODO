@@ -10,7 +10,6 @@ multi-threaded sound driver
 make loops over things more efficient perhaps?
 finish off heretic protos
 implement sectortypes
-walking backwards in stairs should turn lookup sign (what about strafing?)
 X11: set icon in program, not in window manager config
 DOOM: make player pick up things farther away (like armor in E1M2)
 DOOM: fist
@@ -18,7 +17,6 @@ weapon numbering
 X11: KeymapNotify
 X11: turn autorepeat off when window has focus and XKB isn't available
 X11: use timestamps from keyboard events
-DOOM: chainsaw shouldn't reach that far and should make less damage
 sound shouldn't get through closed doors
 DOOM: light amplification visor
 light areas should be lighter, dark ones darker (0=almost impossible to see)
@@ -28,3 +26,5 @@ switching to previous weapon
 special shooting
 DOOM: rising staircases should be slower
 DOOM: staircase doesn't work in E1M8
+lib/conf.c: halt on bogus parameters to enumerated switches
+"Uff!" when the hero runs against a wall

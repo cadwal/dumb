@@ -1,8 +1,247 @@
+Fri Mar 13 16:23:55 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	This version has routines for saving the keymap to .dumbrc and
+	loading it back.  Only the X11 input driver uses my keymap system
+	so far.  So, if you are using X11, now you can finally edit the
+	keymap in the configuration file.
+
+	* dumb/dumb.c (VERSION): Update to "pre0.11.kn.1".
+
+	* dumb/dumb.c (main): Remove "Can't find player" check.  There's
+	one in dumb/levdata.c.
+
+	* Makefile.in (Makefile): New target.
+	* configure.in (@DUMB_CONFIGURE_WAS_RUN@): New substitution.
+
+	* Makefile.in (DEFS): Separate from PLATFLAGS to avoid telling
+ 	makedepend about X include directories.
+	(DEPFLAGS): New variable.
+	(depend): Use DEPFLAGS, not CFLAGS.
+	* Makefile.in: Update dependencies.
+
+	* Makefile.in (XDUMB_OBJS): Add plat/keymapconf.o.
+
+	* Makefile.in (distclean): Revise comment.  Rearrange.  Add
+ 	executables.
+	(docs/ifnames): Simplify header.
+
+	* aclocal.m4: New file.  Move feature test macros here from
+ 	configure.in.  
+	* Makefile.in (SRCDIST_STUFF): Add aclocal.m4.
+
+	* lib/conf.h: Add Local Variables section.
+ 	(enum conf_type): New.
+	(ConfItem): Separate type from flags.  Rearrange.
+	(CI_LIST, CI_INT, CI_STR, CI_BOOL, CI_ENUM): Delete.
+	(CONFE, CONFI, CONFS, CONFL, CONFB, CONFNB, CONFNS, CI_NOSAVE):
+ 	Update.
+	(conf_clear_list): Declare.
+	* lib/conf.c: Comment many functions.  Add Local Variables section.
+	(find_conf_file): Check !s[0].
+	(load_conf): Look at type, not flags.
+	(modhelp, swhelp, set_conf): Rearrange with switch.
+	(lookup_etype): Complain if the word given isn't found in the
+ 	list.
+	(set_conf): Always strdup list entries.
+	(conf_clear_list): New function.
+
+	* lib/endian.h (IB): Correct return value.  Was (int)i.
+
+	* plat/ctlkey_input.c (recalc_input): Check if
+	UNIT_SPEED==INT_TO_FIXED(1).
+	(compress_square_to_circle): Add diagram.
+
+	* plat/keymap.c (keymap_install_defaults): Publish.
+	(keymap_init): Don't call keymap_install_defaults().
+	(keymap_reset): Don't call keymap_debug_dump().
+	(keymap_is_empty, keymap_foreach_binding): New functions.
+	(keymap_debug_dump): #if 0.
+	* plat/keymap.h (keymap_is_empty, keymap_install_defaults,
+	keymap_foreach_binding): Declare.
+	* plat/keymapconf.c, plat/keymapconf.h: New files.
+	* plat/x11_video.c (input_conf): Include KEYMAPCONF_DEFS.
+	(FIRST_KEYMAPCONF_ENTRY): New macro.
+	(init_input): Interpret the keyboard configuration and install
+	defaults if empty.
+	(reset_input): Convert the keymap to lists for saving.
+
+Fri Mar  6 14:18:37 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* dumb/dumb.c (VERSION): Update to "0.10a.kn.4".
+	
+	* lib/safem.c: Add Local Variables section.
+	(safe_strdup): New function.
+	* lib/safem.h: Declare safe_strdup().  Change comment.
+
+	* plat/ctlkey_input.c, plat/ctlkey_input.h, plat/keymap.c,
+ 	plat/keymap.h: Add lengthy license notices.  WARNING: FSF's
+	address may be old.
+
+	* plat/ctlkey_input.c (recalc_input): Use x,y right from the
+ 	beginning, and declare them as fixed-point.
+
+	* plat/keymap.c: Update initial comments.  Perhaps they should be
+ 	moved to docs/keymap.txt.
+	(struct keymap_entry): Rename to struct keymap_binding.  Shuffle
+ 	contents.
+	(struct keymap_default_binding): New structure.
+	(keymap_clear_caches): Make public.
+	(keymap_install_defaults, keymap_bind_key, keymap_new_binding,
+ 	keymap_del_binding, keymap_set_capacity): New functions.
+	(keymap): Now a pointer to a dynamically allocated array.  The old
+ 	static list is now called keymap_defaults[].
+	(keymap_length, keymap_capacity): New variables.
+	(keymap_init): Reset new variables and call
+ 	keymap_install_defaults(), not keymap_clear_caches().
+	(keymap_reset): Free the keymap and its contents.
+	(keymap_keycode_to_ctlkey): Rename local variable "p" to
+ 	"binding".  Complain if keymap_keycode_to_keyname() returns NULL.
+	(keymap_clear_caches, keymap_find_keycode, keymap_find_keyname,
+ 	keymap_debug_dump): Terminate loop on i>=keymap_length, not
+ 	p->action==CTLKEY_NONE.
+	(keymap_press_keycode): Call ctlkey_press() even if
+ 	ctl==CTLKEY_NONE.
+	* plat/ctlkey_input.c (ctlkey_press): Allow key==CTLKEY_NONE.
+	* plat/ctlkey_input.h (ctlkey_press): Say that CTLKEY_NONE is
+	allowed.
+	* plat/keymap.h (keymap_clear_caches, keymap_bind_key): Declare.
+
+	* plat/keymap.c, plat/keymap.h: Separate and document the input
+	driver and configuration interfaces.
+
+Thu Mar  5 18:41:00 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* dumb/dumb.c (VERSION): Update to "0.10a.kn.3".
+	
+	* plat/x11_video.c (handle_crossingevent): Comment out logprintf()
+	calls.
+
+	* plat/keymap.c, plat/keymap.h: New files.
+	* plat/x11_video.c (handle_keyevent): Replace long switch with a
+	call to keymap_press_keycode().
+	(init_input): Call keymap_init(), not ctlkey_init().
+	(reset_input): Call keymap_reset(), not ctlkey_reset().
+	(keymap_keycode_to_keyname): New function.
+	* Makefile.in (XDUMB_OBJS): Add plat/keymap.o.
+	
+	* Makefile.in (TAGS): New target.
+	(distclean): Add TAGS to list of removed files.
+
+	* docs/TODO: Add "Uff!"
+
+	* dumb/updthing.c: Add Local Variables section.
+	(update_things): Add "fixed factor" in staircase part. 
+	* docs/TODO: Remove comment about walking backwards in stairs.
+
+	* plat/ctlkey_input.h: Fix confusing comment.
+
+	* Makefile.in: Rerun make depend after configuration and copy the
+ 	updated dependencies here.  But remove system header dependencies.
+  	Uh.  That was painful and error-prone.  Probably I shouldn't have
+ 	started that at all.
+	
+Thu Mar  5 13:29:14 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Makefile.in (BINARIES): Remove $(GAME).wad.
+
+	* docs/ctlkey.txt: Rename to docs/keymap.txt.
+
+	* plat/x11_video.c: Consistently reindent to tab=3 and remove
+ 	semicolons after closing braces.
+	(enum grab_choice_enum, grab_choices): Rename when-focused to
+ 	when-pointed.  See comment near handle_crossingevent().
+	(handle_keyevent): New function.  Separated from get_input().
+	(handle_crossingevent): New function.
+	(grab_keys, ungrab_keys): New functions.  Use instead of calling
+ 	XGrabKeyboard() and XUngrabKeyboard() directly.
+
+	Reasons for all those changes in plat/x11_video.c: I liked
+ 	--vid-grab-focus because it let me use Alt+arrow keys for strafing
+ 	without the window manager switching between virtual screens all
+ 	the time.  But I hated it when I couldn't switch back to Emacs and
+ 	type.  So I made the switch have three states (never,
+ 	when-focused, always) with "always" being the default as before.
+  	And I renamed the switch to --input-grab-kbd because it affected
+ 	input rather than video.  But then I got trouble implementing the
+ 	"when-focused" state, decided to base it on the mouse pointer
+ 	location instead of the real focus and renamed it to
+ 	"when-pointed".  
+
+	Old option             New option
+	--vid-grab-focus 0     --input-grab-kbd never
+	N/A                    --input-grab-kbd when-pointed
+	--vid-grab-focus 1     --input-grab-kbd always
+
+	* docs/TODO: Add one wish about conf.c.
+	
+Wed Mar  4 18:49:00 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* dumb/dumb.c (VERSION): Update to "0.10a.kn.2".
+	
+	* docs/ctlkey.txt: New file.
+	* plat/ctlkey_input.c (ctlkey_name): Rename to ctlkey_names[],
+	move near bottom of file and add ugly names.
+	(struct ctlkey_namepair): New structure. 
+	(ctlkey_ugly_name, ctlkey_pretty_name): New functions.
+	* plat/ctlkey_input.h (ctlkey_name): Remove.
+	(ctlkey_ugly_name, ctlkey_pretty_name): Declare new functions.
+
+	* plat/x11_video.c (video_conf, input_conf): Move "grab-focus"
+ 	from video_conf[] to input_conf[] and rename it to "grab-kbd".
+  	Change all references.  Make it enumerated with three values:
+ 	never, when-focused, always.
+	(grab_worked): Rename to "grabbed".
+	(init_video): Set grabbed=1 only if it really worked.
+	
+Wed Mar  4 10:34:32 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Synchronize with DUMB 0.10a.  Piece of cake.
+	* dumb/dumb.c (VERSION): Update to "0.10a.kn.1".
+	* pre-ac/Makefile: Copied from Makefile of DUMB 0.10a.
+
+	* Makefile.in (docs/ifnames): New target.
+	* docs/ifnames: Regenerate.
+
+	* docs/#README.netplay#: Remove.
+	
+Wed Mar  4 09:41:58 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* dumb/dumb.c (VERSION): Update to "0.09.kn.4".  I will not
+ 	distribute this version because Josh has already released 0.10a.
+
+	* Makefile.in (SRCDIST_STUFF): Replace "Makefile" with "configure
+	configure.in Makefile.in".  Divide to two lines with a backslash.
+	(distclean): New target.
+
+	* configure.in (--disable-16bit-sound, --disable-stereo-sound):
+	New options.
+	* docs/autoconf: Documented the new sound options.
+	
+Tue Mar  3 14:56:03 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Makefile, pre-ac/Makefile: Move old Makefile to the pre-ac
+ 	directory.  Instead of using it, you should run configure, which
+	produces the Makefile from Makefile.in.
+	* Makefile.in: New file.
+	* configure: New file.
+	* configure.in: New file.
+
+	* docs/autoconf: New file.
+	* docs/ifnames: New file.
+	
+	* docs/CHANGES.Niemitalo: Add "Rerun make depend" to previous
+ 	changes.
+
+	* render/render.c (//#define CHK_ACTIVE_COUNT): Remove trailing S
+	to make the name match the #ifdefs.  Still commented out however.
+
 Wed Feb 18 16:58:54 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
 
 	* dumb/dumb.c (VERSION): Update to "0.09.kn.3".
 	* docs/CHANGES.Niemitalo: Fix lower-case "version" in yesterday's
  	changes.
+
+	* Makefile: Rerun make depend.
 	
 	* doom/weapons.pt: Rearrange to match DOOM weapon numbering.
 

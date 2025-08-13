@@ -7,6 +7,8 @@
 
 void update_map(LevData *ld,int tickspassed);
 
+void change_sector_type(LevData *ld,int sector,int type);
+
 MapEvent *insert_event(LevData *ld,
 		       MapLumpType lumptype,
 		       MapEventType etype,

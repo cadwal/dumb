@@ -67,7 +67,7 @@ DECL_DECODE(Sector) {
 DECL_ENCODE(Thing) {
    const ThingDyn *d=dyn,*b=backup;
    ThingCode *c=code;
-   LE_int16 *c2=code;
+   LE_int32 *c2=code;
    int fm;
    /* don't update dead things */
    if(d->proto==NULL&&b->proto==NULL) return 0;
@@ -78,7 +78,7 @@ DECL_ENCODE(Thing) {
    /* other KLUDGE: phase change shortcut */
    if(fm>=THING_MAGIC_JELLYBEAN-sizeof(int)) {
       *c2=d->phase;
-      return sizeof(LE_int16);
+      return sizeof(LE_int32);
    };
    /* now we're ready to encode */
    c->x=d->x;
@@ -120,7 +120,7 @@ DECL_DECODE(Thing) {
    }
    /* or just a new phase? */
    else {
-      const LE_int16 *c=(const LE_int16 *)code;
+      const LE_int32 *c=(const LE_int32 *)code;
       d->phase=*c;
    };
 };

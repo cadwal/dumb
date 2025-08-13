@@ -1,4 +1,5 @@
 #include <stdarg.h>
+#include <stdlib.h>
 #include <math.h>
 #include <limits.h>
 #include <stdio.h>
@@ -7,6 +8,7 @@
 #include "lib/timer.h"
 #include "levdata.h"
 #include "gettable.h"
+#include "linetype.h"
 #include "things.h"
 
 #define SLIDE_BAILOUT 4
@@ -82,7 +84,7 @@ static void get_blockmaps(const LE_int16 **maps,
    *map=NULL;
 };
 
-extern inline double pyth_sq(fixed x,fixed y) {
+static double pyth_sq(fixed x,fixed y) {
    double dx=FIXED_TO_FLOAT(x),dy=FIXED_TO_FLOAT(y);
    return dx*dx+dy*dy;
 }; 
@@ -143,6 +145,19 @@ void thing_chk_collide(LevData *ld,int thingnum) {
 	 };
 };
 
+void sector_thing_effect(LevData *ld,int sector,int thing,int tickspassed) {
+   /*ThingDyn *td=ldthingd(ld)+thing;*/
+   SectorDyn *sd=ldsectord(ld)+sector;
+   const SectorType *st=lookup_sectortype(sd->type);
+   if(!st) return;
+   if(st->damage) {
+      int tmp=MSEC_PER_TICK*tickspassed*st->damage;
+      tmp+=random()&1023; /* not quite 1000, but faster */
+      tmp/=1024;
+      thing_take_damage(ld,thing,tmp);
+   };
+};
+
 void update_things(LevData *ld,int tickspassed)  {
    int thingnum;
    ThingDyn *td=ldthingd(ld);
@@ -195,10 +210,21 @@ void update_things(LevData *ld,int tickspassed)  {
       /* or has fallen off the map somehow */
       if(td->sector<0) continue;
 
+      /* apply sectortype effects, now we know sector is OK */
+      if(td->sector>=0&&ldsectord(ld)[td->sector].type)
+	 sector_thing_effect(ld,td->sector,thingnum,tickspassed);
+
       /* check if thing is static */
       if(td->proto->flags&PT_INF_MASS) {
-	 if(td->sector>=0&&td->proto->flags&PT_HANGING) 
+	 if(td->sector>=0) {
+	    if(td->proto->flags&PT_HANGING)
 	       td->z=ldsectord(ld)[td->sector].ceiling-td->proto->height;
+#if 0 
+	    /* profiling suggests not much gained by this */
+	    else if(td->proto->flags&PT_STUCKDOWN)
+	       td->z=ldsectord(ld)[td->sector].floor;
+#endif
+	 };
 	 continue;
       };
 
@@ -226,24 +252,22 @@ void update_things(LevData *ld,int tickspassed)  {
 	 continue;
       };
 
-#if 0
-      /* don't move more than our height vertically */
-      r=td->proto->height;
-      if(dz>=r) dz=r-1;
-      if(dz<=-r) dz=1-r;
-#endif
+      /* skip collision checking if we're only moving vertically */
+      if(dx==0&&dy==0) steps=0;
 
       /* if we're moving more than our radius horizontally, do it in steps */
-      r=td->proto->radius;
-      f=pyth_sq(dx,dy);
-      if(f>SQ(FIXED_TO_FLOAT(r)))  {
-	 s=FLOAT_TO_FIXED(sqrt(f));
-	 s=FIXED_TRUNC(fixdiv(s,r))+FIXED_ONE;
-	 dx=fixdiv(dx,s);
-	 dy=fixdiv(dy,s);
-	 steps=FIXED_TO_INT(s);
-      }
-      else steps=1;
+      else {
+	 r=td->proto->radius;
+	 f=pyth_sq(dx,dy);
+	 if(f>SQ(FIXED_TO_FLOAT(r)))  {
+	    s=FLOAT_TO_FIXED(sqrt(f));
+	    s=FIXED_TRUNC(fixdiv(s,r))+FIXED_ONE;
+	    dx=fixdiv(dx,s);
+	    dy=fixdiv(dy,s);
+	    steps=FIXED_TO_INT(s);
+	 }
+	 else steps=1;
+      };
 	 
       for(i=0;i<steps;i++) {
 #ifndef NO_BLOCKMAP
@@ -347,10 +371,14 @@ void update_things(LevData *ld,int tickspassed)  {
 	       if(!FIXED_PRODUCT_SIGN(tdist,dist)) continue;
 	       /* manipulate view when climbing or descending */
 	       if((td->proto->flags&PT_BEASTIE)&&jump_height<=climb_height) {
-		  if(step_height>6<<12) td->delev+=FIXED_ONE/32;
-		  else if(step_height<-(6<<12)) td->delev-=FIXED_ONE/32;
-		  else if(step_height>10<<12) td->delev+=FIXED_ONE/24;
-		  else if(step_height<-(10<<12)) td->delev-=FIXED_ONE/24;
+		  /* The purpose of this is to make the hero look down when
+		   * climbing stairways up backwards.  */
+		  fixed factor = fixcos(fix_vec2angle(dx,dy) - td->angle);
+		  //logprintf(LOG_DEBUG,'O',"climbing, factor=%d", (int) factor);
+		  if(step_height>6<<12) td->delev += factor/32;
+		  else if(step_height<-(6<<12)) td->delev -= factor/32;
+		  else if(step_height>10<<12) td->delev += factor/24;
+		  else if(step_height<-(10<<12)) td->delev -= factor/24;
 	       };
 	       /* take any "action on crossed" action for this wall */
 	       thing_hit_wall(ld,thingnum,wall,dist>0,Crossed);
@@ -442,6 +470,7 @@ void update_things(LevData *ld,int tickspassed)  {
       dx*=steps;
       dy*=steps;
       
+     
       /* check that I don't fall through floor, or rise through ceiling */
       if(ldsectord(ld)[td->sector].floor>maxfloor) 
 	 maxfloor=ldsectord(ld)[td->sector].floor;
@@ -495,3 +524,7 @@ void update_things(LevData *ld,int tickspassed)  {
 
    };
 };
+
+// Local Variables:
+// c-basic-offset: 3
+// End:

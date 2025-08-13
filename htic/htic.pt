@@ -15,6 +15,7 @@
 #include <monsters.pt>
 #include <furniture.pt>
 #include <doom/linetypes.pt>
+#include <doom/sectortypes.pt>
 #include <animtex.pt>
 #include <levels.pt>
 #include <ambient.pt>

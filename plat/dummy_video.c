@@ -12,7 +12,7 @@ static void *fb=NULL;
 void video_preinit(void) {
 };
 
-void init_video(int *width,int *height,int *bpp) {
+void init_video(int *width,int *height,int *bpp,int *real_width) {
    if(fb==NULL) fb=safe_calloc((*width)*(*height),*bpp);
 #ifdef FB_IN_GS /* FB_IN_GS is i386 only wizardry */
    /* make sure that gs overrides are harmless */
