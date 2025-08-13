@@ -39,8 +39,8 @@ fbrerender8(Pixel8 *fb,
       for (j=0; j < ysize; j++) {
 	for (i=0; i < xsize; i+=2) {
 	  int mul=i*xfact;
-	  unsigned register tmp;
-	  unsigned char register pix1=fb[i],pix2=fb[i+1];
+	  register unsigned tmp;
+	  register unsigned char pix1=fb[i],pix2=fb[i+1];
 	  tmp = ((unsigned int)pix1 + ((unsigned int)pix1 << 8)
 		 + ((unsigned int)pix2 << 16) + ((unsigned int)pix2 << 24));
 	  *((unsigned int*)(rendfb+mul+width))
@@ -89,7 +89,7 @@ fbrerender16(Pixel16 *fb,
       for (j=0; j < ysize; j++) {
 	for (i=0; i < xsize; i++) {
 	  int mul=i*xfact;
-	  unsigned short register pix1=fb[i];
+	  register unsigned short pix1=fb[i];
 	  *((unsigned int*)(rendfb+mul+width))
 	    = *((unsigned int*)(rendfb+mul))
 	    = ((unsigned int)pix1 + ((unsigned int)pix1 << 16));

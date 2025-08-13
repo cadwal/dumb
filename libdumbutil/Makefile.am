@@ -7,7 +7,7 @@ libdumbutil_a_SOURCES = confargs.c confeng.c conffile.c confhelp.c \
  confargs.h confdef.h confeng.h conffile.h confhelp.h \
  endiantypes.h fixed.h log.h safeio.h safem.h timer.h
 
-INCLUDES += -I$(top_srcdir)
+INCLUDES = -I$(top_srcdir)
 
 # mcount() in Debian GNU/Linux libc 5.4.33-3 seems to have a bug that
 # messes up parameters when using both -pg and

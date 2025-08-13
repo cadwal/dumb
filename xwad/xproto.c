@@ -159,12 +159,12 @@ int main(int argc,char **argv) {
    /* load wads */
    if(nwads>0) {
       i=0;
-      init_iwad(wadf[i++]);
-      while(i<nwads) init_pwad(wadf[i++]);
+      init_iwad(wadf[i++], NULL);
+      while(i<nwads) init_pwad(wadf[i++], NULL);
    }
    else {
-      init_iwad("doom2.wad");	/* FIXME: from .dumbrc or config.h */
-      init_pwad("doom4dum.wad");
+      init_iwad("doom2.wad", NULL);	/* FIXME: from .dumbrc */
+      init_pwad("doom4dum.wad", NULL);
    }
 
    /* init colormaps */
@@ -182,14 +182,14 @@ int main(int argc,char **argv) {
       XEvent ev;
       setjmp(alarm_jb);
       /*if(inst->rotate||inst->animate)*/ {
-#ifdef NO_SETITIMER
-	    alarm(1);
-#else
+#ifdef HAVE_SETITIMER
 	    struct itimerval itv;
 	    memset(&itv,0,sizeof(itv));
 	    itv.it_value.tv_usec=100000; /* 1/10 of a second */
 	    setitimer(ITIMER_REAL,&itv,NULL);
-#endif
+#else  /* !HAVE_SETITIMER */
+	    alarm(1);
+#endif /* !HAVE_SETITIMER */
 	    signal(SIGALRM,sigalarm_handler);
       }
       XNextEvent(dpy,&ev);

@@ -581,7 +581,7 @@ co-opt images from other objects (for explosions, for example).
 
 * Keywords by hierarchy
 
-This is from ptcomp.c of DUMB 0.12.
+This is from ptcomp.c of DUMB 0.12.1.
 
 ** (data types)
 *** <string>

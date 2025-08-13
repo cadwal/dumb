@@ -127,7 +127,7 @@ For XWad and XProtoThing:
 
 If you edit the source, you may need the following packages:
 - Autoconf version 2.12
-- automake (GNU automake) 1.2
+- automake (GNU automake) 1.3
 - GNU Make version 2.75
 - GNU m4 1.4
 
@@ -161,10 +161,9 @@ registers and the parameters are lost.  I have tweaked
 libdumbutil/Makefile.am to prevent this from happening.  When I get a
 fixed version of the library, I'll remove the hacks.
 
-Automake 1.2 has a bug that prevents it from noticing when
-AC_PROG_CXXCPP is used.  Then it won't add a CXXCPP=@CXXCPP@ line in
-Makefile.in.  I have added the line myself in doom/Makefile.am and
-htic/Makefile.am.  I may remove it again when the bug is fixed.
+Automake 1.2 had a bug that prevented it from noticing when
+AC_PROG_CXXCPP was used.  Then it didn't add a CXXCPP=@CXXCPP@ line in
+Makefile.in.  Automake 1.3 works fine.
 
 3.3 Configuring and compiling.
 

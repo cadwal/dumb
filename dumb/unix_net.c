@@ -118,11 +118,12 @@ udp_recpkt(size_t *len,int *station)
       struct sockaddr sa;
       struct sockaddr_in sin;
    } sia;
-   int sialen=sizeof(sia),r,i;
-   *len=0;*station=-1;
+   size_t sialen=sizeof(sia);
+   int r, i;
+   *len=0; *station=-1;
    r=recvfrom(sock,netbuf,NETBUF_LEN,0,&sia.sa,&sialen);
    if(r==-1) {
-      if(errno==EWOULDBLOCK); /* nothing to recieve */
+      if(errno==EWOULDBLOCK); /* nothing to receive */
       else if(errno==ECONNREFUSED); /* one of the stations we're talking
 				       to isn't listening.  Since there's
 				       no way to work out which, we just

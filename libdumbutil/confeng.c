@@ -14,7 +14,9 @@
 /* Find the ConfItem the name S refers to, and return its address or
  * NULL.  Parameter CONF points to an array of ConfModules, terminated
  * by name=NULL.  */
-ConfItem *conf_lookup_longname(const ConfModule *conf,const char *s) {
+ConfItem *
+conf_lookup_longname(const ConfModule *conf,const char *s)
+{
    ConfItem *ci;
    size_t l=0;
    while(conf->name) {
@@ -33,7 +35,9 @@ ConfItem *conf_lookup_longname(const ConfModule *conf,const char *s) {
 /* Find the ConfItem the character CH refers to, and return its
  * address or NULL.  Parameter CONF points to an array of ConfModules,
  * terminated by name=NULL.  */
-ConfItem *conf_lookup_shortname(const ConfModule *conf, char ch) {
+ConfItem *
+conf_lookup_shortname(const ConfModule *conf, char ch)
+{
    while(conf->name) {
       ConfItem *ci=conf->items;
       while(ci->name) {
@@ -45,7 +49,9 @@ ConfItem *conf_lookup_shortname(const ConfModule *conf, char ch) {
    return NULL;
 }
 
-static int lookup_etype(const ConfEnum *ce,const char *s) {
+static int
+lookup_etype(const ConfEnum *ce,const char *s)
+{
    int i;
    for(i=0;ce[i].name;i++)
       if(!strcasecmp(ce[i].name,s)) return i;
@@ -63,13 +69,12 @@ static int lookup_etype(const ConfEnum *ce,const char *s) {
  *
  * CONF_TYPE_LIST:
  * ci->listval may either be NULL or point to a realloc()able table of
- * pointers to strings.  There is a NULL pointer marking the end of
- * the table.  Some of the strings may be read-only constants and the
- * rest from strdup(); there's no way to know what is what.  This implies
- * that you can't remove them from the list without leaking memory.
- * [UPDATE] Now strings in the list are always allocated with strdup().
+ * pointers to strings.  The strings are allocated with strdup().
+ * There is a NULL pointer marking the end of the table.
  */
-void set_conf(ConfItem *ci,char *val,int dirt) {
+void
+set_conf(ConfItem *ci,char *val,int dirt)
+{
 #ifdef CONF_DEBUG
    printf("set_conf(%s,%s,%d)\n",ci->name,val?val:"<null>",dirt);
 #endif
@@ -155,7 +160,9 @@ conf_clear_list(ConfItem *ci)
    ci->dirtlvl = DIRT_MODF;
 }
 
-int conf_greatest_dirtlevel(const ConfModule *conf) {
+int
+conf_greatest_dirtlevel(const ConfModule *conf)
+{
    ConfItem *ci;
    int maxdirt=0;
    for(;conf->name;conf++) for(ci=conf->items;ci->name;ci++)

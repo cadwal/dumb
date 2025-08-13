@@ -1,26 +1,34 @@
+* Highest-priority queue:
+make a libdumbworld that both *dumb and XWad use
+separate renderer from rest of code again
+speed up rendering by checking recursively which sectors can be seen
+fix wall collision checks
+
+* Later:
 activation
 aim to monster nearest to screen center, not necessarily closest to player
 allow objects to award multiple gettables (eg. MegaSphere)
 armor should absorb damage
+BPP should always mean Bits Per Pixel
 configuration menus
 continuous sounds for moving sectors
 do something about music
 finish off heretic protos
 fix DGA
 fix end of level in network game
-fix wall collision checks!  (but not before the renderer has been sped up)
 flow control in aadumb (now it lags horribly at 9600bps)
 get rid of C++ on big-endian machines
+get rid of alarm(), use select() instead
+get rid of all arbitrary limits
 Guile scripts in wads
 idspispopd
 implement invincibility, light goggles, etc....
-implement sectortypes
+implement sectortypes (partially done)
 internationalize
-inventory items
+inventory items (may already have some of the code for this?)
 jumping instead of levitation
 light areas should be lighter, dark ones darker (0=almost impossible to see)
 loading & saving
-make a libdumbworld that both *dumb and XWad use
 make --dumb-xmul 3 --dumb-ymul 1 work
 make loops over things more efficient perhaps?
 mapping
@@ -33,14 +41,13 @@ rendcommon.c for bpp-independent code
 runtime choosing of sound bits & channels
 sectors above&below each other
 sector shouldn't give damage while player is in air
-separate renderer from rest of code again
 snapshot.ppm when BPP=1 (8 bits)
 sound shouldn't get through closed doors
 special shooting
-speed up rendering by checking recursively which sectors can be seen
 tunneling
 "Uff!" when the hero runs against a wall or falls
 use function keys for special commands, select weapons with numbers
+use regular fixed point instead of UNIT_SPEED
 weapon numbering
 write documents in Texinfo or something
 ctlkey: mouse
@@ -58,7 +65,7 @@ Doom: automate 666 effect
 Doom: backpack should double carrying capacity
 Doom: don't get Health>100% with medikits
 Doom: doors should crush corpses to bloodsplats
-Doom: imps should not be able to kill each other with fireballs
+Doom: imps should not be able to kill each other with fireballs (ImmuneToSuch)
 Doom: make player pick up things farther away (like armor in E1M2)
 Doom: monsters should be immune to radiation
 Doom: rising staircases should be slower

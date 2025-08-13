@@ -178,7 +178,7 @@ static int diffchk(const ThingData *t,const LevData *ld) {
       if(t->flags&THING_45) return 1;
       else return 0;
    }
-   logprintf(LOG_ERROR,'O',"diffchk: strange difficulty??? (%d)",
+   logprintf(LOG_ERROR,'O',"diffchk: strange difficulty?\?\? (%d)",
 	     ld->difficulty);
    return 0;
 }

@@ -1,4 +1,98 @@
+Sat Apr 11 09:58:39 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Released 0.12.1.
+
+	* dumb/aalib_input.c (get_input): Never change supports_release.
+  	Don't call isupper() and islower() if the event isn't a character.
+	(init_input): Initialize supports_release based on current AA-lib
+ 	keyboard driver flags.
+
+	* libdumbutil/safeio.c, libdumb/prothing.c, dumb/levdyn.c,
+ 	dumb/updmap.c: Change all occurrences of "???" to "?\?\?" to avoid
+ 	trigraph interpretation.
+
+	* libdumbutil/safeio.c (safe_open_path): Treat the path as empty
+ 	if it exists (path!=NULL) but has no directories (path[0]==NULL).
+
+	* dumb/unix_net.c (udp_recpkt): Change type of sialen from int to
+	size_t.  Reported by rhogan@mnsi.net.
+
+	* docs/dumb-0.12.1.lsm: Rename.  Doc fix.
+
+	* TODO: Move from docs/TODO.
+	
+	* dumb/dumb.c (mainconf): New entries: wadpath, doom-wad,
+ 	doom2-wad, doom4dum-wad.
+	(main): Get IWAD filenames from the configuration system.
+
+	* libdumbwad/wadio.c (WadFile): Make fname a pointer.
+	(reset_wad): Free wad->fname.
+	(check_sanity): Remove parameter fname.  Use wad->fname instead.
+  	Rewrite error messages.
+	(load_wad): Get wad->fname from safe_open_path().  Use wad->fname
+	in messages.
+	(init_iwad, init_pwad): New parameter path[].  All callers changed
+	to pass NULL if nothing else.
+	* dumb/dumb.c (main): Give cnf_wadpath to init_iwad() and
+ 	init_pwad().
+
+	* libdumbutil/safeio.h: Include <limits.h>.
+
+	* libdumbwad/wadio.c (O_BINARY): Always define unless already
+ 	defined, even in __MSDOS__.
+
+	* configure.in: Use DUMB_SYS_SHMAT_RMID and define
+ 	DUMB_CONFIG_SYS_SHMAT_RMID.
+	* acconfig.h (DUMB_CONFIG_SYS_SHMAT_RMID): New.
+	* dumb/x11_video.c: Use DUMB_CONFIG_SYS_SHMAT_RMID instead of
+ 	NO_SHMAT_RMID.
+
+	* libdumbutil/safeio.c (safe_mmap, safe_munmap, safe_read,
+ 	safe_open, safe_close): Use strerror().
+	(safe_open): Give open() a file mode parameter.
+
+	* xwad/savemap.c, xwad/xwad.c: Use HAVE_FORK instead of NO_FORK.
+  	* libdumbutil/safeio.c, libdumbwad/wadio.c: Use HAVE_MMAP instead
+ 	of NO_MMAP.
+
+	* tool/wadtool.c (catwad): Change int i to unsigned lumpnum.
+
+	* doom/Makefile.am (PLAYPAL.lump): Use $(DUMB_CONFIG_DOOM_WAD)
+	directly instead of $<.
+	* htic/Makefile.am (PLAYPAL.lump): Use $(DUMB_CONFIG_HERETIC_WAD)
+	directly instead of $<.
+
+	* docs/TODO: Doc fix.
+
+	* configure.in (CPPFLAGS): Include $X_CFLAGS right here.
+	* dumb/Makefile.am, xwad/Makefile.am: Don't refer to X_CFLAGS.
+	
+	* README: Nowadays we need Automake 1.3.
+	* libdumb/Makefile.am (MKDEP), dumb/Makefile.am (MKDEP),
+ 	tool/Makefile.am (MKDEP), doom/Makefile.am (CXXCPP),
+ 	htic/Makefile.am (CXXCPP): Remove.  Not necessary with Automake
+ 	1.3.
+
+	* dumb/le32_fbrerend.c (fbrerender8, fbrerender16): Move
+ 	"register" to beginning of declaration.
+
+	* tool/Makefile.am (INCLUDES), ptcomp/Makefile.am (INCLUDES),
+	xwad/Makefile.am (INCLUDES), libdumb/Makefile.am (INCLUDES),
+	libdumbwad/Makefile.am (INCLUDES), libdumbutil/Makefile.am
+	(INCLUDES): Don't use +=.
+
+	* configure.in: Look for doom*.wad instead of doom{,1,2}.wad, and
+ 	look in $datadir/doom/, $datadir/dumb/, /usr/local/games/lib/,
+ 	/usr/games/lib/, /usr/local/share/doom/, /usr/share/doom/,
+ 	/usr/local/share/dumb/ and /usr/share/dumb/ too.  Don't accept
+ 	doom4dum.wad.  Don't AC_DEFINE_UNQUOTED DUMB_CONFIG_DOOM_WAD.
+  	Similarly for heretic*.wad.
+	* acconfig.h: (DUMB_CONFIG_DOOM_WAD, DUMB_CONFIG_HERETIC_WAD):
+ 	Remove.
+
 Wed Apr  8 11:13:15 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Released 0.12.
 
 	* dumb/renderc.h (add_wall_events): Always assign event->texxofs
  	and event->texyofs.  Assign event->sidenum just once.
@@ -117,6 +211,8 @@ Thu Apr  2 21:21:38 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
 
 1998-04-02  Kalle Niemitalo  <tosi@stekt.oulu.fi>
 
+	* Released 0.12.beta2.
+
 	* acinclude.m4 (DUMB_SCAN_LIBS): New macro.
 	* configure.in: Check AC_PATH_X and AC_PATH_XTRA before other
 	libraries.  Use -lncurses and x libraries when looking for aalib.
@@ -148,6 +244,8 @@ Wed Apr  1 16:52:42 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
  	key) lead back to the normal game just like the normal exit.
 
 Tue Mar 31 13:57:21 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Released 0.12.beta1.
 
 	* dumb/dumb.c (main): Apply xmul patch from Marcus Sundberg:
 	Test (xmul==1 && ymul==1) instead of ((xmul & ymul) == 1).

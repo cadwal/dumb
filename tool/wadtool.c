@@ -35,10 +35,12 @@ typedef enum  {
    WriteRaw, WriteRawCurrent, SpitLump, ExtractLump /*, ExtractLumpAs*/
 } Mode;
 
-void catwad(WADWR *wr,FILE *fin) {
+void
+catwad(WADWR *wr,FILE *fin)
+{
    WadHeader hdr;
    WadDirEntry *dir;
-   int i;
+   unsigned lumpnum;
    char namebuf[12];
    rewind(fin);
    fread(&hdr,sizeof(hdr),1,fin);
@@ -46,17 +48,17 @@ void catwad(WADWR *wr,FILE *fin) {
    if(dir==NULL) return;
    fseek(fin,hdr.diroffset,SEEK_SET);
    fread(dir,sizeof(WadDirEntry),hdr.nlumps,fin);
-   for(i=0;i<hdr.nlumps;i++) {
-      strncpy(namebuf,dir[i].name,8);
+   for (lumpnum=0; lumpnum<hdr.nlumps; lumpnum++) {
+      strncpy(namebuf, dir[lumpnum].name, 8);
       namebuf[8]=0;
       printf("copying %s...\n",namebuf);
       wadwr_lump(wr,namebuf);
-      if(dir[i].size>0) {
+      if (dir[lumpnum].size > 0) {
 	 /* alright so this isn't a very efficient way of doing things! */
-	 void *buf=malloc(dir[i].size);
-	 fseek(fin,dir[i].offset,SEEK_SET);
-	 fread(buf,dir[i].size,1,fin);
-	 wadwr_write(wr,buf,dir[i].size);
+	 void *buf = malloc(dir[lumpnum].size);
+	 fseek(fin, dir[lumpnum].offset, SEEK_SET);
+	 fread(buf, dir[lumpnum].size, 1, fin);
+	 wadwr_write(wr, buf, dir[lumpnum].size);
 	 free(buf);
       }
    }
@@ -88,8 +90,8 @@ int main(int argc,char **argv) {
       default: usage();
       }
       else switch(mode)  {
-      case(ReadWad): init_iwad(argv[i]); break;
-      case(PatchWad): init_pwad(argv[i]); break;
+      case(ReadWad): init_iwad(argv[i], NULL); break;
+      case(PatchWad): init_pwad(argv[i], NULL); break;
       case(WriteIWad): 
 	 if(wr) wadwr_close(wr);
 	 wr=wadwr_open(argv[i],'I');

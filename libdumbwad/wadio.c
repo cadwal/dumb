@@ -17,7 +17,6 @@
 #include "wadstruct.h"
 #include "wadio.h"
 
-
 /* this enables hashing for lump names (fast!) */
 #define USE_HASHING
 
@@ -34,19 +33,20 @@
 
 #define WDEBUG(x) logprintf(LOG_DEBUG,'W',x)
 
-#ifndef __MSDOS__
+/* This is for MS-DOS.  */
+#ifndef O_BINARY
 #define O_BINARY 0
 #endif
 
-#ifdef NO_MMAP
-#define DO_BIG_MMAP 0
-#else
+#ifdef HAVE_MMAP
 #ifdef NO_BIG_MMAP
 #define DO_BIG_MMAP 0
 #else
 #define DO_BIG_MMAP 1
 #endif
-#endif
+#else  /* !HAVE_MMAP */
+#define DO_BIG_MMAP 0
+#endif /* !HAVE_MMAP */
 
 typedef struct _WadFile {
    struct _WadFile *next;
@@ -56,7 +56,7 @@ typedef struct _WadFile {
    const void *whole_map;
    const void *mapalloc;
    size_t maplen,wadlen;
-   char fname[PATH_MAX];
+   char *fname;
 } WadFile;
 
 #define WHOLEMAP_PTR(wad,off) ((const void *) ((const char *)(wad->whole_map)+off) )
@@ -147,7 +147,9 @@ void init_wadhashing(void) {
 
 int get_num_wads(void) {return nwads;}
 
-void reset_wad(void) {
+void
+reset_wad(void)
+{
 #ifdef USE_HASHING
    reset_wadhashing();
 #endif
@@ -157,26 +159,32 @@ void reset_wad(void) {
       wads=wad->next;
       if(wad->mapalloc) safe_munmap(wad->fname,wad->mapalloc,wad->maplen);
       if(wad->fd>=0) safe_close(wad->fname,wad->fd);
+      safe_free(wad->fname);
       safe_free(wad);
    }
    nwads=0;
 }
 
-static void check_sanity(const WadFile *wad,const char *fname) {
+static void
+check_sanity(const WadFile *wad)
+{
    int i;
    const WadDirEntry *wd=wad->dir;
    for(i=0;i<wad->nlumps;i++,wd++) {
       if(wd->name[0]==0) 
-	 logprintf(LOG_ERROR,'W',"check_sanity(%s,%d): nameless lump",
-		   fname,i);
+	 logprintf(LOG_ERROR,'W', "%s: lump %d has no name",
+		   wad->fname, i);
       if(wd->size==0) continue; /* don't worry about extent check for markers */
       if(wd->offset<sizeof(WadHeader)||wd->offset+wd->size>wad->wadlen)
-	 logprintf(LOG_FATAL,'W',"check_sanity(%s,%d): lump too big for wad",
-		   fname,i);
+	 logprintf(LOG_FATAL,'W', "%s: lump %d is too big for wad",
+		   wad->fname, i);
    }
 }
 
-static void load_wad(const char *fname,const char *_sig,int mapall) {
+static void
+load_wad(const char *fname, const char *_sig, const char *const path[],
+	 int mapall)
+{
    WadHeader whbuf;
    const WadHeader *wh=&whbuf;
    WadFile *wad=(WadFile*)safe_calloc(sizeof(WadFile),1);
@@ -184,50 +192,56 @@ static void load_wad(const char *fname,const char *_sig,int mapall) {
    reset_wadhashing();
 #endif
    wad->next=wads;
-   strncpy(wad->fname,fname,PATH_MAX);
    /* open the file */
-   wad->fd=safe_open(fname,O_RDONLY|O_BINARY,LOG_FATAL);
+   wad->fd=safe_open_path(fname, O_RDONLY|O_BINARY,LOG_FATAL, 
+			  path, &wad->fname);
    wad->wadlen=lseek(wad->fd,0,SEEK_END);
    lseek(wad->fd,0,SEEK_SET);
    if(wad->wadlen<sizeof(WadHeader)) 
-      logfatal('W',"%s is too short to be a valid wadfile",fname); 
+      logfatal('W',"%s is too short to be a valid wadfile", wad->fname); 
    /* now get the header.  how this is done will depend on our mm strategy */
    if(mapall) {
       wad->maplen=wad->wadlen;
-      wh=wad->whole_map=wad->mapalloc=safe_mmap(fname,wad->fd,0,wad->maplen);
+      wh=wad->whole_map=wad->mapalloc=safe_mmap(wad->fname, wad->fd, 0,
+						wad->maplen);
       logprintf(LOG_INFO,'W',"%s mapped at 0x%lx (%lu bytes)",
-		fname,(unsigned long)wh,(unsigned long)wad->maplen); 
+		wad->fname,(unsigned long)wh,(unsigned long)wad->maplen); 
    }
    else
-     safe_read(fname,wad->fd,&whbuf,sizeof(whbuf));
+     safe_read(wad->fname, wad->fd, &whbuf, sizeof (whbuf));
    /* deal to header */
    if(!memcmp(_sig,wh->sig,4));
    else
      logfatal('W',"Bad signature on %s: expecting %s, got %s",
-	      fname,_sig,wh->sig);
+	      wad->fname, _sig, wh->sig);
    wad->nlumps=wh->nlumps;
    if(wh->diroffset+wad->nlumps*sizeof(WadDirEntry)>wad->wadlen)
-      logfatal('W',"directory for %s would be beyond end of file",fname);
+      logfatal('W',"directory for %s would be beyond end of file", wad->fname);
    /* say what we've done */
    logprintf(LOG_INFO,'W',"%s %s: %d lumps dir @ %d",
-	     _sig,fname,(int)wad->nlumps,(int)wh->diroffset);
+	     _sig, wad->fname, (int)wad->nlumps, (int)wh->diroffset);
    /* load directory */
    if(wad->whole_map) 
      wad->dir=WHOLEMAP_PTR(wad,wh->diroffset);
    else 
-     wad->dir=safe_mmap(fname,wad->fd,wh->diroffset,
+     wad->dir=safe_mmap(wad->fname, wad->fd, wh->diroffset,
 			wh->nlumps*sizeof(WadDirEntry));
    wads=wad;
    nwads++;
-   check_sanity(wad,fname);
+   check_sanity(wad);
 }
 
-void init_iwad(const char *fname) {
+void
+init_iwad(const char *fname, const char *const path[])
+{
    reset_wad();
-   load_wad(fname,"IWAD",DO_BIG_MMAP);
+   load_wad(fname, "IWAD", path, DO_BIG_MMAP);
 }
-void init_pwad(const char *fname) {
-   load_wad(fname,"PWAD",DO_BIG_MMAP);
+
+void
+init_pwad(const char *fname, const char *const path[])
+{
+   load_wad(fname, "PWAD", path, DO_BIG_MMAP);
 }
 
 static WadFile *wadnum2file(int wadnum) {

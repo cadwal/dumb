@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(libdumb/texture.c)
-AM_INIT_AUTOMAKE(dumb, 0.12)
+AM_INIT_AUTOMAKE(dumb, 0.12.1)
 AM_CONFIG_HEADER(config.h)
 
 dnl --- Checks for programs.
@@ -21,6 +21,9 @@ AM_CONDITIONAL(DUMB_CONFIG_X, test -z "$no_x")
 if test -z "$no_x"; then
   # This variable is used in the aalib check.
   x_ldadd="$X_LIBS $X_PRE_LIBS -lX11 $X_POST_LIBS"
+  # Always have the X include directory in the search path, even if the
+  # file being compiled doesn't use X.
+  CPPFLAGS="$CPPFLAGS $X_CFLAGS"
 else
   x_ldadd=""
 fi
@@ -84,7 +87,13 @@ DUMB_MSG_REQUIRE_NO(ac_cv_func_setvbuf_reversed, [reversed setvbuf()])
 AC_TYPE_SIGNAL
 AC_FUNC_VPRINTF
 DUMB_MSG_REQUIRE_YES(ac_cv_func_vprintf, [vprintf()])
-AC_CHECK_FUNCS(strdup strstr)
+AC_CHECK_FUNCS(strdup strstr fork setitimer)
+
+dnl --- Checks for system services.
+DUMB_SYS_SHMAT_RMID
+if test "$dumb_cv_sys_shmat_rmid" = yes; then
+  AC_DEFINE(DUMB_CONFIG_SYS_SHMAT_RMID)
+fi
 
 dnl --- Video.
 dnl This is almost straight from info (automake)Conditionals ...
@@ -102,12 +111,8 @@ AC_SUBST(DUMB_DGA_LDADD) DUMB_DGA_LDADD=""
 AC_SUBST(DUMB_XKB_LDADD) DUMB_XKB_LDADD=""
 if test -z "$no_x"; then
   dumb_old_LIBS="$LIBS"
-  dumb_old_CPPFLAGS="$CPPFLAGS"
   # This is so that -L/usr/X11R6/lib comes before -lXext.
   LIBS="$LIBS $X_LIBS $X_PRE_LIBS"
-  # This may be required for getting the includes right.  I hope $X_CFLAGS
-  # doesn't contain anything $(CPP) wouldn't understand.
-  CPPFLAGS="$CPPFLAGS $X_CFLAGS"  
   DUMB_CHECK_HDR_LIB(X11/extensions/XShm.h, Xext, XShmCreateImage, 
    [-lX11 $X_EXTRA_LIBS],
    [AC_DEFINE(DUMB_CONFIG_XSHM)
@@ -123,7 +128,6 @@ if test -z "$no_x"; then
    [AC_DEFINE(DUMB_CONFIG_XKB)
     DUMB_XKB_LDADD="" # integrated in Xlib], [])
   LIBS="$dumb_old_LIBS"
-  CPPFLAGS="$dumb_old_CPPFLAGS"
 fi
 
 dnl --- DOOM and Heretic.
@@ -137,6 +141,8 @@ dnl
 dnl However, those files are needed at build time and I see no other
 dnl way to let the user say where they are.
 dnl
+# $datadir is usually '${prefix}/share'.  Expand it once.
+dumb_expanded_datadir=`eval "echo \"$datadir\""`
 AC_MSG_CHECKING(for doom.wad)
 AC_SUBST(DUMB_CONFIG_DOOM_WAD) DUMB_CONFIG_DOOM_WAD=""
 AC_ARG_WITH(doom-wad,
@@ -149,24 +155,45 @@ AC_ARG_WITH(doom-wad,
   fi
 fi],
 [# Look for the WAD in some places it might be in.
-for TESTWAD in `pwd`/doom{,1,2}.wad \
-	$srcdir/doom{,1,2}.wad \
-	`cd ..; pwd`/doom{,1,2}.wad \
-	/usr/games/doom/doom{,1}.wad \
-	/usr/games/doom2/doom2.wad \
-	/usr/local/games/doom/doom{,1}.wad \
-	/usr/local/games/doom2/doom2.wad
+#
+# The `pwd` is necessary for getting an absolute filename.  Could use
+# $PWD instead but I don't think that's as portable.
+#
+# In `cd ..; pwd`, the cd may fail.  In that case, the script will
+# look in the current directory again.  I could use `cd .. && pwd`
+# instead but then the script would look for the wad in the root
+# directory which is clearly wrong.
+for TESTWAD in $dumb_expanded_datadir/doom/doom*.wad \
+	$dumb_expanded_datadir/dumb/doom*.wad \
+	/usr/local/games/lib/doom/doom*.wad \
+	/usr/local/games/lib/doom2/doom*.wad \
+	/usr/local/games/doom/doom*.wad \
+	/usr/local/games/doom2/doom*.wad \
+	/usr/games/lib/doom/doom*.wad \
+	/usr/games/lib/doom2/doom*.wad \
+	/usr/games/doom/doom*.wad \
+	/usr/games/doom2/doom*.wad \
+	/usr/local/share/doom/doom*.wad \
+	/usr/share/doom/doom*.wad \
+	/usr/local/share/dumb/doom*.wad \
+	/usr/share/dumb/doom*.wad \
+	`pwd`/doom*.wad \
+	$srcdir/doom*.wad \
+	`cd ..; pwd`/doom*.wad
 do
   if test -f $TESTWAD; then
-    DUMB_CONFIG_DOOM_WAD=$TESTWAD
-    break
+    if echo $TESTWAD | grep 'doom4dum\.wad' >/dev/null; then
+      : # this isn't from Doom
+    else
+      DUMB_CONFIG_DOOM_WAD=$TESTWAD
+      break
+    fi
   fi
 done])
 if test -z "$DUMB_CONFIG_DOOM_WAD"; then
   AC_MSG_RESULT(not found)
 else
   AC_MSG_RESULT($DUMB_CONFIG_DOOM_WAD)
-  AC_DEFINE_UNQUOTED(DUMB_CONFIG_DOOM_WAD, "${DUMB_CONFIG_DOOM_WAD}")
 fi
 AM_CONDITIONAL(DUMB_CONFIG_DOOM, test -n "${DUMB_CONFIG_DOOM_WAD}")
 
@@ -183,10 +210,23 @@ AC_ARG_WITH(heretic-wad,
 fi],
 [# Look for the WAD in some places it might be in.
 # I don't know if there's a Unix version of Heretic but I try anyway.
-for TESTWAD in heretic.wad $srcdir/heretic.wad ../heretic.wad \
-	/usr/games/heretic/heretic.wad /usr/local/games/heretic/heretic.wad
+# The `pwd` thing is explained in the Doom section above.
+for TESTWAD in $dumb_expanded_datadir/heretic/heretic*.wad \
+	$dumb_expanded_datadir/dumb/heretic*.wad \
+	/usr/local/games/lib/heretic/heretic*.wad \
+	/usr/local/games/heretic/heretic*.wad \
+	/usr/games/lib/heretic/heretic*.wad \
+	/usr/games/heretic/heretic*.wad \
+	/usr/local/share/heretic/heretic*.wad \
+	/usr/share/heretic/heretic*.wad \
+	/usr/local/share/dumb/heretic*.wad \
+	/usr/share/dumb/heretic*.wad \
+	`pwd`/heretic*.wad \
+	$srcdir/heretic*.wad \
+	`cd ..; pwd`/heretic*.wad
 do
   if test -f $TESTWAD; then
+    # No need to test for htic4dum.wad.
     DUMB_CONFIG_HERETIC_WAD=$TESTWAD
     break
   fi
@@ -195,7 +235,6 @@ if test -z "$DUMB_CONFIG_HERETIC_WAD"; then
   AC_MSG_RESULT(not found)
 else
   AC_MSG_RESULT($DUMB_CONFIG_HERETIC_WAD)
-  AC_DEFINE(DUMB_CONFIG_HERETIC_WAD, $DUMB_CONFIG_HERETIC_WAD)
 fi
 AM_CONDITIONAL(DUMB_CONFIG_HERETIC, test -n "${DUMB_CONFIG_HERETIC_WAD}")
 

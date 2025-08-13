@@ -27,7 +27,7 @@ extern aa_context *aa_ctxt;
 /* When this is 0, get_input() assumes that the current AA-lib
  * keyboard driver doesn't send events with AA_RELEASE and therefore
  * internally releases the previous key whenever another one is
- * pressed.  If get_input() gets AA_RELEASE, it sets this to 1.  */
+ * pressed.  */
 static int supports_release;
 
 /* The key that is currently held down and will be assumed to have
@@ -59,18 +59,19 @@ get_input(PlayerInput *in)
 	 pressed = 0;
       } else
 	 pressed = 1;
-      /* FIXME: Is it compatible to call isupper() with non-characters?  */
-      if (isupper(ev)) {
-	 /* shifted */
-	 ev = tolower(ev);
-	 if (ticks_shift_held == -1)
-	    keymap_press_keycode(SHIFT_KEYCODE, 1);
-	 ticks_shift_held = 0;
-      } else if (islower(ev)) {
-	 /* not shifted */
-	 if (ticks_shift_held != -1)
-	    keymap_press_keycode(SHIFT_KEYCODE, 0);
-	 ticks_shift_held = -1;
+      if (ev >= CHAR_MIN && ev <= CHAR_MAX) {
+	 if (isupper(ev)) {
+	    /* shifted */
+	    ev = tolower(ev);
+	    if (ticks_shift_held == -1)
+	       keymap_press_keycode(SHIFT_KEYCODE, 1);
+	    ticks_shift_held = 0;
+	 } else if (islower(ev)) {
+	    /* not shifted */
+	    if (ticks_shift_held != -1)
+	       keymap_press_keycode(SHIFT_KEYCODE, 0);
+	    ticks_shift_held = -1;
+	 }
       }
       if (pressed) {
 	 if (!supports_release && held_key!=KEYMAP_NULL_KEYCODE) {
@@ -82,7 +83,7 @@ get_input(PlayerInput *in)
 	 ticks_held = 0;
       } else {
 	 keymap_press_keycode(ev, 0);
-	 supports_release = 1;
+	 held_key = KEYMAP_NULL_KEYCODE;
       }
    }
    if (!supports_release && cnf_autorelease 
@@ -107,7 +108,11 @@ init_input(void)
    if(aa==NULL)
       logfatal('I', "aalib_input must be initialised after aalib_video");
    aa_autoinitkbd(aa, AA_SENDRELEASE);
-   supports_release = 0;
+   supports_release = ((aa->kbddriver->flags & AA_SENDRELEASE) != 0);
+   logprintf(LOG_INFO,'I', 
+	     supports_release 
+	     ? "AA-lib keyboard driver supports AA_SENDRELEASE"
+	     : "AA-lib keyboard driver doesn't support AA_SENDRELEASE");
    held_key = KEYMAP_NULL_KEYCODE;
    ticks_shift_held = -1;
 }

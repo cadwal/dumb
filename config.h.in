@@ -42,7 +42,7 @@
 /* Define if the X Window System is missing or not being used.  */
 #undef X_DISPLAY_MISSING
 
-/* The name of this package.  */
+/* The name of this package, as a string constant.  */
 #undef PACKAGE
 
 /* What version of the package this is.  */
@@ -75,11 +75,9 @@
 /* Define to get 16-bit sound (instead of 8-bit).  */
 #undef DUMB_CONFIG_SOUND_16BIT
 
-/* Define as a string pointing to doom1.wad or doom.wad if you have DOOM.  */
-#undef DUMB_CONFIG_DOOM_WAD
-
-/* Define as a string pointing to heretic.wad if you have Heretic.  */
-#undef DUMB_CONFIG_HERETIC_WAD
+/* Define if shmat() can attach to shared memory segments already
+ * marked for deletion with shmctl(id, IPC_RMID, NULL).  */
+#undef DUMB_CONFIG_SYS_SHMAT_RMID
 
 /* The number of bytes in a int.  */
 #undef SIZEOF_INT
@@ -87,11 +85,17 @@
 /* The number of bytes in a long.  */
 #undef SIZEOF_LONG
 
+/* Define if you have the fork function.  */
+#undef HAVE_FORK
+
 /* Define if you have the getpagesize function.  */
 #undef HAVE_GETPAGESIZE
 
 /* Define if you have the select function.  */
 #undef HAVE_SELECT
+
+/* Define if you have the setitimer function.  */
+#undef HAVE_SETITIMER
 
 /* Define if you have the strdup function.  */
 #undef HAVE_STRDUP

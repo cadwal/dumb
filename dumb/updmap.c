@@ -349,7 +349,7 @@ void sector_crush_thing(LevData *ld,int sector,int thing) {
    me=find_active_event(ld,ML_SECTOR,ME_CEILING,sector);
    if(me==NULL) {
 #ifdef UPDMAP_DEBUG
-      logprintf(LOG_DEBUG,'M',"%d is being crushed, but not by sector %d ???",
+      logprintf(LOG_DEBUG,'M',"%d is being crushed, but not by sector %d ?\?\?",
 		thing,sector);
 #endif
       return;

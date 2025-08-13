@@ -1,8 +1,5 @@
 ## Process this file with automake to produce Makefile.in
 
-## This should be automatically added by Automake, but 1.2 has a bug.
-CXXCPP = @CXXCPP@
-
 if DUMB_CONFIG_HERETIC
 pkgdata_DATA = htic4dum.wad
 else
@@ -38,7 +35,7 @@ pt_preprocess = $(CXXCPP) -x c-header -I$(srcdir)
 # preprocess that.)
 
 PLAYPAL.lump: $(DUMB_CONFIG_HERETIC_WAD) $(wadtool)
-	$(wadtool) -r $< -x PLAYPAL
+	$(wadtool) -r $(DUMB_CONFIG_HERETIC_WAD) -x PLAYPAL
 
 # ../docs/dumblogo.ppm is searched in VPATH and $< refers to it.
 DUMBLOGO.lump: ../docs/dumblogo.ppm PLAYPAL.lump $(ppmtodumb)

@@ -1,8 +1,5 @@
 ## Process this file with automake to produce Makefile.in
 
-## This should be automatically added by Automake, but 1.2 has a bug.
-CXXCPP = @CXXCPP@
-
 if DUMB_CONFIG_DOOM
 pkgdata_DATA = doom4dum.wad
 else
@@ -27,7 +24,7 @@ pt_preprocess = $(CXXCPP) -x c-header -I$(srcdir)
 # assumes the .pt files are linker input and thus ignores them.  If
 # $(CXXCPP) is something else, -x c-header will cause it to fail.  In
 # that case, try this definition (which uses -lang-c++ because of //
-# comments and so needs GNU cpp):
+# comments and so requires GNU cpp):
 #
 # pt_preprocess = /lib/cpp -lang-c++ -I$(srcdir)
 #
@@ -37,7 +34,7 @@ pt_preprocess = $(CXXCPP) -x c-header -I$(srcdir)
 # preprocess that.)
 
 PLAYPAL.lump: $(DUMB_CONFIG_DOOM_WAD) $(wadtool)
-	$(wadtool) -r $< -x PLAYPAL
+	$(wadtool) -r $(DUMB_CONFIG_DOOM_WAD) -x PLAYPAL
 
 # ../docs/dumblogo.ppm is searched in VPATH and $< refers to it.
 DUMBLOGO.lump: ../docs/dumblogo.ppm PLAYPAL.lump $(ppmtodumb)

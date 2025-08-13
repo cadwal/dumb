@@ -10,6 +10,7 @@
 
 #include "libdumbutil/confdef.h"
 #include "libdumbutil/confargs.h"
+#include "libdumbutil/confeng.h"
 #include "libdumbutil/conffile.h"
 #include "libdumbutil/log.h"
 #include "libdumbutil/safem.h"
@@ -59,6 +60,10 @@ ConfItem mainconf[]={
    CONFB("auto-save-cfg",NULL,0,"save configuration after every run"),
    CONFNS("save-cfg",NULL,'S',"save configuration this time only"),
    CONFL("wad",NULL,'w',"specify wadfiles to load"),
+   CONFL("wadpath",NULL,'W',"directories in which to look for wads"),
+   CONFS("doom-wad",NULL,0,"filename of doom.wad","doom.wad",200),
+   CONFS("doom2-wad",NULL,0,"filename of doom2.wad","doom2.wad",200),
+   CONFS("doom4dum-wad",NULL,0,"filename of doom4dum.wad","doom4dum.wad",200),
    CONFS("map",NULL,'m',"set starting map","E1M1",9),
    CONFB("quiet",NULL,'q',"don't log to the screen"),
    CONFB("preview",NULL,0,"don't create any objects, just preview the map"),
@@ -89,31 +94,36 @@ ConfItem mainconf[]={
 #define cnf_auto_save (mainconf[0].intval)
 #define cnf_save (mainconf[1].intval)
 #define cnf_wad (mainconf[2].listval)
-#define cnf_map (mainconf[3].strval)
-#define cnf_quiet (mainconf[4].intval)
-#define cnf_preview (mainconf[5].intval)
-#define cnf_difficulty (mainconf[6].intval)
-#define cnf_silent (mainconf[7].intval)
-#define cnf_width (mainconf[8].intval)
-#define cnf_height (mainconf[9].intval)
-#define cnf_bpp (mainconf[10].intval)
-#define cnf_log (mainconf[11].strval)
-#define cnf_record (mainconf[12].strval)
-#define cnf_play (mainconf[13].strval)
-#define cnf_uncrowd (mainconf[14].intval)
-#define cnf_xhair (mainconf[15].intval)
-#define cnf_xmul (mainconf[16].intval)
-#define cnf_ymul (mainconf[17].intval)
-#define cnf_xlace (mainconf[18].intval)
-#define cnf_ylace (mainconf[19].intval)
-#define cnf_preload (mainconf[20].intval)
-#define cnf_vt_angle (mainconf[21].intval)
-#define cnf_vt_offset (mainconf[22].intval)
-#define cnf_slave (mainconf[23].listval)
-#define cnf_master (mainconf[24].listval)
-#define cnf_single (mainconf[25].intval)
-#define cnf_vt_rotate (mainconf[26].intval)
-#define cnf_maxframes (mainconf[27].intval)
+#define cnf_wadpath_entry (mainconf[3])
+#define cnf_wadpath ((const char *const *) cnf_wadpath_entry.listval)
+#define cnf_doom_wad (mainconf[4].strval)
+#define cnf_doom2_wad (mainconf[5].strval)
+#define cnf_doom4dum_wad (mainconf[6].strval)
+#define cnf_map (mainconf[7].strval)
+#define cnf_quiet (mainconf[8].intval)
+#define cnf_preview (mainconf[9].intval)
+#define cnf_difficulty (mainconf[10].intval)
+#define cnf_silent (mainconf[11].intval)
+#define cnf_width (mainconf[12].intval)
+#define cnf_height (mainconf[13].intval)
+#define cnf_bpp (mainconf[14].intval)
+#define cnf_log (mainconf[15].strval)
+#define cnf_record (mainconf[16].strval)
+#define cnf_play (mainconf[17].strval)
+#define cnf_uncrowd (mainconf[18].intval)
+#define cnf_xhair (mainconf[19].intval)
+#define cnf_xmul (mainconf[20].intval)
+#define cnf_ymul (mainconf[21].intval)
+#define cnf_xlace (mainconf[22].intval)
+#define cnf_ylace (mainconf[23].intval)
+#define cnf_preload (mainconf[24].intval)
+#define cnf_vt_angle (mainconf[25].intval)
+#define cnf_vt_offset (mainconf[26].intval)
+#define cnf_slave (mainconf[27].listval)
+#define cnf_master (mainconf[28].listval)
+#define cnf_single (mainconf[29].intval)
+#define cnf_vt_rotate (mainconf[30].intval)
+#define cnf_maxframes (mainconf[31].intval)
 
 ConfModule dumbconf[]={
    {input_conf,"input","Input Driver"},
@@ -268,14 +278,14 @@ main(int argc,char **argv)
 
    if(cnf_wad) {
       char **s=cnf_wad;
-      init_iwad(*(s++));
-      while(*s) init_pwad(*(s++));
+      init_iwad(*(s++), cnf_wadpath);
+      while(*s) init_pwad(*(s++), cnf_wadpath);
    } else if(*cnf_map=='E'||*cnf_map=='e') {
-     init_iwad("doom.wad");	/* FIXME: get these from .dumbrc */
-     init_pwad("doom4dum.wad");	/* or from config.h */
+      init_iwad(cnf_doom_wad, cnf_wadpath);
+      init_pwad(cnf_doom4dum_wad, cnf_wadpath);
    } else {
-     init_iwad("doom2.wad");
-     init_pwad("doom4dum.wad");
+      init_iwad(cnf_doom2_wad, cnf_wadpath);
+      init_pwad(cnf_doom4dum_wad, cnf_wadpath);
    }
    init_wadhashing();
    

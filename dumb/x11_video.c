@@ -262,14 +262,14 @@ init_video(int *_width,int *_height,int *_bpp,int *_real_width)
 	     * Perhaps there are systems in which the X server
 	     * occasionally needs to detach & reattach the shared
 	     * memory segment and the system doesn't allow attaching
-	     * to a deleted ID?  If so, define NO_SHMAT_RMID (or let
-	     * the "configure" script define it for you) to delay the
-	     * removal until DUMB exits.  But if DUMB gets a fatal
-	     * signal, the segment will be left there.
-	     */
-#ifndef NO_SHMAT_RMID
+	     * to a deleted ID?  If so, undefine
+	     * DUMB_CONFIG_SYS_SHMAT_RMID (or let the "configure"
+	     * script undefine it for you) to delay the removal until
+	     * DUMB exits.  But if DUMB gets a fatal signal, the
+	     * segment will be left there.  */
+#ifdef DUMB_CONFIG_SYS_SHMAT_RMID
 	    shmctl(xshminfo.shmid, IPC_RMID, 0);
-#endif /* !NO_SHMAT_RMID */
+#endif /* DUMB_CONFIG_SYS_SHMAT_RMID */
 	 }
       }
 #else  /* !DUMB_CONFIG_XSHM */
@@ -311,11 +311,11 @@ reset_video(void)
       if(use_shm) {
 	 XShmDetach(dpy,&xshminfo);
 	 shmdt(xshminfo.shmaddr);
-#ifdef NO_SHMAT_RMID
-	 shmctl(xshminfo.shmid,IPC_RMID,0);
-#else
+#ifdef DUMB_CONFIG_SYS_SHMAT_RMID
 	 /* already deleted in initialisation */
-#endif
+#else  /* !DUMB_CONFIG_SYS_SHMAT_RMID */
+	 shmctl(xshminfo.shmid,IPC_RMID,0);
+#endif /* !DUMB_CONFIG_SYS_SHMAT_RMID */
 	 memset(&xshminfo,0,sizeof(xshminfo));
       }
 #endif /* DUMB_CONFIG_XSHM */

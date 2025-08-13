@@ -22,6 +22,3 @@ XProtoThing_LDADD = $(LDADD) $(DUMB_CONFIG_SOUND_LDADD)
 LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
  ../libdumbutil/libdumbutil.a \
  $(X_LIBS) $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS)
-CFLAGS += $(X_CFLAGS)
-
-INCLUDES += -I$(top_srcdir)

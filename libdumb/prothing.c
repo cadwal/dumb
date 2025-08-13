@@ -50,7 +50,7 @@ Texture *find_phase_sprite(const ProtoThing *proto,
    const int idx=phase*8+(rot-'1');
    Texture **sp=get_sprite_table(proto);
    if(rot<'1'||rot>'8')
-     logprintf(LOG_FATAL,'O',"wanted rot %c for sprite %s phase %d???",
+     logprintf(LOG_FATAL,'O',"wanted rot %c for sprite %s phase %d?\?\?",
 	       rot,proto->sprite,phase);
    if(sp[idx]==NULL) {
       const ThingPhase *tp=find_thingphase(proto->phase_id,phase);

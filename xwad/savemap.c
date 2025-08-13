@@ -135,9 +135,9 @@ void save_level(XWadInstance *inst) {
    WADWR *w;
    char buf[16];
    garbage_collect(inst);
-#ifndef NO_FORK
+#ifdef HAVE_FORK
    if(!fork())
-#endif
+#endif /* HAVE_FORK */
    {
       int i;
       strcpy(buf,inst->mapname);
@@ -155,10 +155,10 @@ void save_level(XWadInstance *inst) {
       wadwr_lump(w,"SECTORS");
       wadwr_write(w,inst->sect,sizeof(SectorData)*inst->nsects);
       wadwr_lump(w,"BLOCKMAP");
-#ifdef NO_FORK
+#ifndef HAVE_FORK
       /* this may take a little while, make sure the map is finished drawing */
       XFlush(dpy);
-#endif
+#endif /* HAVE_FORK */
       /* do the blockmap */
       wrblkmap(w,inst);
       /* do the reject table */

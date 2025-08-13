@@ -71,7 +71,7 @@ static void setwmstuff(XWadInstance *inst,int set) {
    case(TT_WALL): strcpy(buf,"Wall"); break;
    case(TT_SPRITE): strcpy(buf,"Sprite"); break;
    case(TT_PATCH): strcpy(buf,"Patch"); break;
-   default: strcpy(buf,"???"); break;
+   default: strcpy(buf,"?\?\?"); break;
    }
    strcat(buf," Texture Browser");
 

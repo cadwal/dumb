@@ -6,10 +6,10 @@
 #include <unistd.h>
 #include <limits.h>
 
-#ifndef NO_FORK
+#ifdef HAVE_FORK
 #include <signal.h>
 #include <sys/wait.h>
-#endif
+#endif /* HAVE_FORK */
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -29,7 +29,7 @@ XFontStruct *msgfont,*detailfont,*lilfont;
 
 static XWadInstance inst[1];
 
-#ifndef NO_FORK
+#ifdef HAVE_FORK
 RETSIGTYPE sigchld_handler(int i) {
    int status;
    wait(&status);
@@ -37,7 +37,7 @@ RETSIGTYPE sigchld_handler(int i) {
    qmessage(inst,"Level Saved.");
    XFlush(dpy);
 }
-#endif
+#endif /* HAVE_FORK */
 
 static void usage(const char *name)  {
    printf("Usage: %s [options]\n"
@@ -146,7 +146,7 @@ int main(int argc,char **argv) {
    /* load wads */
    if(nwads>0) {
       i=0;
-      init_iwad(wadf[i++]);
+      init_iwad(wadf[i++], NULL);
       while(i<nwads) {
 	 /* if this PWAD has the same name as the level, back it up */
 	 if(mapname&&!wadmapcmp(wadf[i],mapname)) {
@@ -158,17 +158,17 @@ int main(int argc,char **argv) {
 	    strcpy(buf,wadf[i]);
 	    strcat(buf,"~");
 	    rename(wadf[i],buf);
-	    init_pwad(buf);
+	    init_pwad(buf, NULL);
 	 } 
 	 /* OK, load the PWAD */
-	 else init_pwad(wadf[i]);
+	 else init_pwad(wadf[i], NULL);
 	 i++;
       }
    }
    else if(*mapname=='E'||*mapname=='e')
-      init_iwad("doom.wad");	/* FIXME: from .dumbrc or config.h */
+      init_iwad("doom.wad", NULL);	/* FIXME: from .dumbrc */
    else
-      init_iwad("doom2.wad");
+      init_iwad("doom2.wad", NULL);
 
    /* init colormaps */
    init_colour();
@@ -179,10 +179,10 @@ int main(int argc,char **argv) {
    init_instance(inst);
    if(mapname&&*mapname) load_instance(inst,mapname);
 
-#ifndef NO_FORK
+#ifdef HAVE_FORK
    /* handle dying children */
    signal(SIGCHLD,sigchld_handler);
-#endif
+#endif /* HAVE_FORK */
 
    /* main loop */
    while(!inst->want_quit) {

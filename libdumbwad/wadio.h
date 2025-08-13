@@ -3,8 +3,8 @@
 #define WADIO_H
 
 void reset_wad(void);
-void init_iwad(const char *fname);
-void init_pwad(const char *fname);
+void init_iwad(const char *fname, const char *const *path);
+void init_pwad(const char *fname, const char *const *path);
 
 void init_wadhashing(void);
 void reset_wadhashing(void);

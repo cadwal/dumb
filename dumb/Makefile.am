@@ -112,11 +112,4 @@ ldumb_DEPENDENCIES = $(dependencies)
 xdumb_LDADD = $(LDADD) $(x_ldadd)
 xdumb_DEPENDENCIES = $(dependencies)
 
-# Now here's a hack...
-# I use -MM instead of -M in MKDEP.  This way, I get the dependencies
-# built even on machines that don't have all the header files used on
-# other machines.  The resulting dependency lists won't include system
-# headers but their locations wouldn't be portable anyway.
-MKDEP = gcc -MM $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
-
-INCLUDES += -I$(top_srcdir)
+INCLUDES = -I$(top_srcdir)

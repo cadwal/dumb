@@ -1,4 +1,4 @@
-/* The name of this package.  */
+/* The name of this package, as a string constant.  */
 #undef PACKAGE
 
 /* What version of the package this is.  */
@@ -31,8 +31,6 @@
 /* Define to get 16-bit sound (instead of 8-bit).  */
 #undef DUMB_CONFIG_SOUND_16BIT
 
-/* Define as a string pointing to doom1.wad or doom.wad if you have DOOM.  */
-#undef DUMB_CONFIG_DOOM_WAD
-
-/* Define as a string pointing to heretic.wad if you have Heretic.  */
-#undef DUMB_CONFIG_HERETIC_WAD
+/* Define if shmat() can attach to shared memory segments already
+ * marked for deletion with shmctl(id, IPC_RMID, NULL).  */
+#undef DUMB_CONFIG_SYS_SHMAT_RMID
