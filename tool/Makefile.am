@@ -12,8 +12,8 @@ else
 ppm_bin_programs = 
 endif
 
-bin_PROGRAMS = ptcomp wadtool mknulmap $(ppm_bin_programs)
-noinst_PROGRAMS = fixed_bm mkpnames $(x_noinst_programs)
+bin_PROGRAMS = wadtool mknulmap mkpnames $(ppm_bin_programs)
+noinst_PROGRAMS = fixed_bm $(x_noinst_programs)
 
 x_ldadd = $(X_LIBS) $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS)
 

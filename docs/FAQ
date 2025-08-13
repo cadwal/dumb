@@ -4,20 +4,14 @@ someone asks them.
 
 Q1. Why does it use -I. -I. -I.. -I.. when compiling?
 
-Q2. What does "VPATH build" mean?
-
-Q3. How do I do a VPATH build?
-
-Q4. How do I install DUMB in my home directory?
-
-Q5. What do xlace and ylace mean?
+Q2. What do xlace and ylace mean?
 
 * Q1. Why does it use -I. -I. -I.. -I.. when compiling?
 
 The first -I. isn't actually necessary but Automake puts it there.
 
 The second -I. refers to the source directory.  It differs from the
-first one when you are doing a VPATH build.
+first one when you are doing a VPATH build (see configure.txt).
 
 The first -I.. refers to the top build directory where config.h is.
 
@@ -25,70 +19,7 @@ The second -I.. refers to the top source directory so that #include
 "libdumbutil/fixed.h" works.  This is the only -I switch added by
 Makefile.am files of DUMB itself.
 
-* Q2. What does "VPATH build" mean?
-
-It means that you have the sources in one directory and you are
-compiling the program in another directory.
-
-The name comes from the VPATH variable that lets "make" find files in
-other directories.
-
-This can be useful in at least three circumstances:
-
-- You can't write to the source directory.  You may have the sources
-on a write-only medium like CD-ROM, or perhaps they are in
-/usr/local/src and you aren't root.
-
-- You want to configure and compile the software in many different
-ways in many different directories and don't want to copy the sources
-to each.
-
-- You just prefer to keep the source directory free of clutter.
-
-In all of these cases, you could instead use "ln" or "ln -s" to get
-the sources available in the build directory.  But it's easier and
-cleaner to use VPATH if your "make" supports it.
-
-* Q3. How do I do a VPATH build?
-
-1) You must have the sources in some directory.  In the following, I'll
-   call that directory /cdrom/sources/dumb-0.12.  DUMB must not
-   have been configured in that directory.
-
-2) Make somewhere a directory where you'll compile DUMB.
-
-    $ mkdir ~/dumb
-    $ cd ~/dumb
-
-3) Configure it.
-
-    $ /cdrom/sources/dumb-0.12/configure
-
-   Use configure --help to get a list of options it understands.  Look
-   at the directory options especially.  You'll need them if you
-   can't write to /usr/local/bin.
-
-   The configure script will look for the sources first in its own
-   directory and then in the parent directory.  If you have done
-   something tricky like moved the script, and it can't find the
-   sources, use --srcdir to tell it the location.
-
-   The script will produce config.h, Makefile, some other files and a
-   set of directories containing Makefiles.  These Makefiles will have
-   the VPATH variable correctly set.
-
-4) Run make, make install or whatever.  The sources are read from
-   where they are.  Compiled objects and linked programs are written
-   to the directories created by the configure script.
-
-* Q4. How do I install DUMB to my home directory?
-
-Give --prefix=$HOME to configure.  Then "make install" will put the
-binaries in $HOME/bin.
-
-Do not use --prefix=~.  The tilde won't be properly expanded.
-
-* Q5. What do xlace and ylace mean?
+* Q2. What do xlace and ylace mean?
 
       123
   RRRR--- 1 

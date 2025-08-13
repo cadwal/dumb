@@ -9,8 +9,10 @@
 #include "gettable.h"
 
 
-#define TARG_ARC \
-  (ldthingd(ld)[t].proto->aim_arc+ldthingd(ld)[t].proto->shootarc+FIXED_PI/16) 
+#define TARG_ARC				\
+   (ldthingd(ld)[t].proto->aim_arc		\
+    + ldthingd(ld)[t].proto->shootarc_h		\
+    + FIXED_PI/16) 
 
 /*#define TARG_ARC (FIXED_PI/4)*/
 

@@ -1,37 +1,46 @@
+activation
 aim to monster nearest to screen center, not necessarily closest to player
 allow objects to award multiple gettables (eg. MegaSphere)
 armor should absorb damage
-change sectortype too when changing texture (as with rising bridges)
-clear previous map events when switching levels!
 configuration menus
 continuous sounds for moving sectors
 do something about music
 finish off heretic protos
-fix wall collision checks!
+fix DGA
+fix end of level in network game
+fix wall collision checks!  (but not before the renderer has been sped up)
+flow control in aadumb (now it lags horribly at 9600bps)
 get rid of C++ on big-endian machines
 Guile scripts in wads
 idspispopd
 implement invincibility, light goggles, etc....
 implement sectortypes
 internationalize
+inventory items
 jumping instead of levitation
 light areas should be lighter, dark ones darker (0=almost impossible to see)
-make a libdumbworld that both dumb and XWad use
+loading & saving
+make a libdumbworld that both *dumb and XWad use
+make --dumb-xmul 3 --dumb-ymul 1 work
 make loops over things more efficient perhaps?
 mapping
+mipmapping
 monsters should be smarter
 moving vertices, sideways opening & hinged doors
 multi-threaded sound driver
+network games that anyone can join
+rendcommon.c for bpp-independent code
 runtime choosing of sound bits & channels
-scrolling walls
 sectors above&below each other
 sector shouldn't give damage while player is in air
+separate renderer from rest of code again
 snapshot.ppm when BPP=1 (8 bits)
 sound shouldn't get through closed doors
 special shooting
-speed up rendering by checking recursively which sectors can be seen?
-switching to previous weapon
-"Uff!" when the hero runs against a wall
+speed up rendering by checking recursively which sectors can be seen
+tunneling
+"Uff!" when the hero runs against a wall or falls
+use function keys for special commands, select weapons with numbers
 weapon numbering
 write documents in Texinfo or something
 ctlkey: mouse
@@ -45,13 +54,16 @@ AA-lib: special handling for AA_RESIZE and AA_MOUSE
 AA-lib: more parameters
 AA-lib: mouse
 AA-lib: use real ticks in autorelease
-DOOM: automate 666 effect
-DOOM: doors should crush corpses to bloodsplats
-DOOM: make player pick up things farther away (like armor in E1M2)
-DOOM: monsters should be immune to radiation
-DOOM: rising staircases should be slower
-DOOM: spheres & suit shouldn't expire so fast
-DOOM: staircase doesn't work in E1M8
+Doom: automate 666 effect
+Doom: backpack should double carrying capacity
+Doom: don't get Health>100% with medikits
+Doom: doors should crush corpses to bloodsplats
+Doom: imps should not be able to kill each other with fireballs
+Doom: make player pick up things farther away (like armor in E1M2)
+Doom: monsters should be immune to radiation
+Doom: rising staircases should be slower
+Doom: spheres & suit shouldn't expire so fast
+Doom: staircase doesn't work in E1M8
 keymap: alternative keynames; recognize both Shift_L and Shift_R as Shift
 keymap: conditional entries like X11:KP_Up AA:8
 keymap: keymap_keyname_to_keycode()

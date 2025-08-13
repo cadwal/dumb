@@ -736,7 +736,7 @@ Proto Baron 3003
   Beastie Blocking SkirtCliffs
   Splat BloodSplat
   Shoots BaronFireBall ImmuneToSuch
-  Damage 2
+  Damage 20
   Becomes DeadBaron
 
 Proto HellKnight 69

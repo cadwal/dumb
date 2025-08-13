@@ -1,12 +1,15 @@
 						       -*- outline -*-
-This corresponds to DUMB 0.12.beta1.
+This corresponds to DUMB 0.12.
+
+You should also read ../INSTALL for general installation instructions.
+This configure.txt lists mostly DUMB-specific options.
 
 * Not Yet Implemented
 
 Cross compilation (because of endianness, setvbuf(), having to run
-ptcomp)
+ptcomp).
 
-All #ifdefs (see docs/ifnames)
+All #ifdefs.
 
 * Installation
 
@@ -16,13 +19,64 @@ Change to the dumb root directory (so that this file is
 Run "./configure".  A Makefile will be generated.
 
 Run "make install".  It'll build everything and install the binaries
-in /usr/local/bin unless you told "configure" to use another
-directory.
+in /usr/local/bin and patch WADs in /usr/local/share unless you told
+"configure" to use other directories.
 
 If you want special features, give parameters to "configure".  Use
 --help to get a list of options.  If you give --with or --enable
-options that "./configure" doesn't understand, it'll silently ignore
+options that "configure" doesn't understand, it'll silently ignore
 them.  Sorry.
+
+It's good to have CFLAGS="-O2 -g -Wall" in the environment when
+running the script.  Otherwise it will assume "-g -O2" and the
+compiler won't warn you if there's something suspicious.
+
+If you have installed AA-lib or something else in your home directory
+and want DUMB to use it, put these in the environment:
+	LDFLAGS=-L$HOME/lib
+	CPPFLAGS=-I$HOME/include
+
+To install DUMB in your home directory, give --prefix=$HOME to
+"configure".  Then "make install" will put the binaries in $HOME/bin.
+Do not use --prefix=~.  The tilde won't be properly expanded.
+
+* VPATH build
+
+It is possible to compile DUMB in one directory while having the
+sources in another directory.
+
+This is called a VPATH build.  The name comes from the VPATH variable
+that lets "make" find files in other directories.
+
+To do it:
+
+1) You must have the sources in some directory.  In the following,
+   I'll call that directory /cdrom/sources/dumb-0.12.  DUMB must not
+   have been configured in that directory.
+
+2) Make somewhere a directory where you'll compile DUMB.
+
+    $ mkdir ~/dumb
+    $ cd ~/dumb
+
+3) Configure it.
+
+    $ /cdrom/sources/dumb-0.12/configure
+
+   You can use all the usual parameters.
+
+   The configure script will look for the sources first in its own
+   directory and then in the parent directory.  If you have done
+   something tricky like moved the script, and it can't find the
+   sources, use --srcdir=DIRECTORY to tell it the location.
+
+   The script will produce config.h, Makefile, some other files and a
+   set of directories containing Makefiles.  These Makefiles will have
+   the VPATH variable correctly set.
+
+4) Run make, make install or whatever.  The sources are read from
+   where they are.  Compiled objects and linked executables are
+   written to the directories created by the configure script.
 
 * Main options
 
@@ -34,7 +88,7 @@ them.  Sorry.
 
 There used to be a lot more options but I removed them.  If you need
 the ability to force/disable a graphics driver on the command line,
-please write to tosi@stekt.oulu.fi.
+please write to me at tosi@stekt.oulu.fi.
 
 For each graphics system found, a separate DUMB executable will be built:
 
@@ -115,11 +169,15 @@ file names but I couldn't find any other way of implementing this.
   Use doom*.wad from FILE.  It is an error if the file doesn't exist
   or is unreadable or a directory.
 
-  If this option isn't given, "configure" will look for doom.wad and
-  doom1.wad in some obvious places.  See configure.in for the list.
+  FILE must be an absolute filename.  Relative ones will cause an
+  error when compiling the patch WADs.
+
+  If this option isn't given, "configure" will look for doom1.wad,
+  doom.wad and doom2.wad in some obvious places.  See configure.in for
+  the list.
 
 --without-doom-wad
-  Don't look for doom.wad.  
+  Don't look for doom*.wad.  
 
 --with-heretic-wad=FILE
 --without-heretic-wad
@@ -127,20 +185,20 @@ file names but I couldn't find any other way of implementing this.
 
 * Framebuffer options
 
-DUMB supports framebuffers that have 1, 2 or 4 bytes (8, 16 or 32
-bits) per pixel.  The renderer is compiled for each BPP value
-separately, the versions are all linked together, and DUMB will choose
-the right one when run.  If you don't need support for some BPP value,
-you can leave it out to speed up compilation:
+DUMB supports framebuffers that have 8, 16 or 32 bits per pixel.  The
+renderer is compiled for each BPP value separately, the versions are
+all linked together, and DUMB will choose the right one when run.  If
+you don't need support for some BPP value, you can leave it out to
+speed up compilation:
 
---disable-1bpp
-  Disable support of framebuffers with 1 byte (8 bits) per pixel.
+--disable-8bpp
+  Disable support of framebuffers with 8 bits per pixel.
 
---disable-2bpp
-  Disable support of framebuffers with 2 bytes (16 bits) per pixel.
+--disable-16bpp
+  Disable support of framebuffers with 16 bits per pixel.
 
---disable-4bpp
-  Disable support of framebuffers with 4 bytes (32 bits) per pixel.
+--disable-32bpp
+  Disable support of framebuffers with 32 bits per pixel.
 
 If you disable all BPPs, "configure" will warn you but continue.  The
 game can't then be played.  But tools like ptcomp will work.

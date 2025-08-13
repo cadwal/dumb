@@ -50,7 +50,6 @@ NORMAL_UNINSTALL = true
 PRE_UNINSTALL = true
 POST_UNINSTALL = true
 CC = @CC@
-CPP = @CPP@
 CXX = @CXX@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
@@ -121,7 +120,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = gtar
+TAR = tar
 GZIP = --best
 SOURCES = $(XWad_SOURCES) $(XProtoThing_SOURCES)
 OBJECTS = $(XWad_OBJECTS) $(XProtoThing_OBJECTS)
@@ -258,15 +257,15 @@ xproto.o xproto.lo: xproto.c ../config.h ../libdumbutil/log.h \
 	xtexture.h
 xtexture.o xtexture.lo: xtexture.c ../config.h xtexture.h \
 	../libdumb/texture.h ../libdumbwad/wadio.h
+xwadctls.o xwadctls.lo: xwadctls.c ../config.h xwad.h \
+	../libdumbutil/fixed.h ../libdumbwad/wadstruct.h \
+	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h controls.h \
+	choose.h
 xwad.o xwad.lo: xwad.c ../config.h ../libdumbutil/log.h \
 	../libdumbutil/safem.h ../libdumbwad/wadio.h xwad.h \
 	../libdumbutil/fixed.h ../libdumbwad/wadstruct.h \
 	../libdumbutil/endiantypes.h controls.h choose.h colour.h \
 	disphash.h
-xwadctls.o xwadctls.lo: xwadctls.c ../config.h xwad.h \
-	../libdumbutil/fixed.h ../libdumbwad/wadstruct.h \
-	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h controls.h \
-	choose.h
 
 info:
 dvi:

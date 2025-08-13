@@ -3,7 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef __cplusplus
+extern "C" {
 #include <ppm.h>
+}
+#else
+#include <ppm.h>
+#endif
 
 int main(int argc,char **argv) {
    pixel **pix;

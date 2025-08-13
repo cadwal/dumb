@@ -51,7 +51,7 @@ typedef struct {
    LE_int32 sound;
    LE_flags32 flags;
    LE_int32 /* fixed */ speed;
-   LE_int32 /* fixed */ shootarc,see_arc,aim_arc; 
+   LE_int32 /* fixed */ shootarc_h, shootarc_v, see_arc, aim_arc; 
    LE_int16 shootnum;
    LE_int16 artitype;
    LE_int16 artinum;

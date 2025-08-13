@@ -457,10 +457,10 @@ LineType Floor-SR-UpNext-Blaze 132
 
 /* texture-changing floors that go up */
 
-LineType Floor-W1L-UpNext-TX  22
+LineType Floor-W1L-UpNext-TXP  22
   _LockOutLines AllowPlayer OnCrossed
   Action Sector Floor Up To NextHighestFloor Slow MoveSounds
-  Action Sector FloorTexture TriggerModel
+  Action Sector FloorType TriggerModel
 
 LineType Floor-WRL-UpNext-TX  95
   _LockOutLines Repeatable AllowPlayer OnCrossed
@@ -861,6 +861,11 @@ LineType Teleport-WR-Monster 126
   SpotType TeleSpot
   Action Thing Teleport TeleportDelay SpawnType TeleportFog
 
+
+/* Scrolling textures */
+
+LineType Scrolling 48
+  Scroll -20/sec 0/sec
 
 #undef Slow
 #undef Fast

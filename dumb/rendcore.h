@@ -216,7 +216,7 @@ static void draw_wall(Active_wall *active,
    if (top > pend2) top = pend2;
 
    /* if there's nothing more to do, skip costly ray-intersect */
-   if(!do_lower&&!do_upper&&!do_middle) return; 
+   if (!do_lower && !do_upper && !do_middle) return; 
      
 #ifdef USE_COLORMAP
    dark=fixdiv(ldsectord(ld)[front].dark,z);
@@ -234,17 +234,17 @@ static void draw_wall(Active_wall *active,
 				       WALL_LENGTH_IN_TEXELS(wall)));
       tex_col-=WALL_LENGTH_IN_TEXELS(wall);
    }
-   tex_col-=SIDE_XOFFSET_IN_TEXELS(side);
-   tex_yoffset=SIDE_YOFFSET_IN_TEXELS(side);
+   tex_col -= active->texxofs;
+   tex_yoffset = active->texyofs;
 
    if(WALL_ISPOSTER(wall)) 
       scale=fixdiv(INT_TO_FIXED(ldsided(ld)[side].mtex->height),
 		   REGION_CEILING(front)-REGION_FLOOR(front));
 		   
    if (z <= FIXED_EPSILON)
-     tex_dy = 0;
+      tex_dy = 0;
    else
-     tex_dy = fixdiv(scale,FIXED_SCALE(z, view_height));
+      tex_dy = fixdiv(scale,FIXED_SCALE(z, view_height));
    
    if (do_lower)
       draw_wall_segment(pstart1, pend1,

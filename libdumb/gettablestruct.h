@@ -14,10 +14,11 @@ typedef struct {
    LE_int16 bulletkind;
    LE_int16 special;
    LE_int16 bogotype;
-   LE_int16 _spare1;
+   LE_int16 weaponnumber;	/* which key to press; 0=none, 1...10 */
    LE_int16 decay;
    LE_int16 usenum,bulletadd;
-   LE_int32 _spare2;
+   LE_int16 replaceweapon;	/* gettable number to replace/disable */
+   LE_int16 _spare2;
    char iconname[10];
    char string[GK_MSG_LEN];
    char iconanim,_spare;
@@ -35,6 +36,8 @@ typedef struct {
 #define GK_LOCAL 0x0040        /* loose this type between levels */
 #define GK_REVANIM 0x0080 
 
-
-
 #endif
+
+// Local Variables:
+// c-basic-offset: 3
+// End:

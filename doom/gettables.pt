@@ -333,15 +333,6 @@ Gettable Suit
   PowerUpTimeout
   PickupSound DSGETPOW
 
-Gettable Berserk
-  Icon PSTRA0
-  IconPos 80 6
-  Collect 300
-  GotThe Message BESERK_STRENGTH___CHARGE
-  PowerUp SuperStrength
-  PowerUpTimeout
-  PickupSound DSGETPOW
-
 Gettable Invincibility
   Icon PINVA0 Anim D Timing 100msec
   IconPos 114 6
@@ -383,14 +374,6 @@ Proto Invisibility 2024
   Size 24 20
   StickToFloor
   Gets Invisibility PowerUpQty
-
-Proto Berserk 2023
-  Sprite PSTR
-  Phases Mundane
-  Size 32 20
-  StickToFloor
-  Gets Health 100
-  Gets Berserk PowerUpQty
 
 Proto Suit 2025
   Sprite SUIT

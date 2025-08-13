@@ -13,4 +13,15 @@ const SectorType *lookup_sectortype(int id);
 
 fixed get_term_type(const LevData *ld,LT_TermType ltt,int sector);
 
+void linetype_ticks_passed(int tickspassed);
+
+struct LineTypeOffsets {
+   int xofs, yofs;
+};
+extern struct LineTypeOffsets *ltofs;
+
 #endif
+
+// Local Variables:
+// c-basic-offset: 3
+// End:

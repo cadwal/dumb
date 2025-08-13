@@ -10,7 +10,7 @@ doom.pt.  Accordingly, I've created this file to explain how to do
 it.  It's in question and answer format:
 
 
-*** 1. What is ptcomp?  What is doom/doom.pt?  What is game/protos.pt?
+* 1. What is ptcomp?  What is doom/doom.pt?  What is game/protos.pt?
 
 DUMB levels contain instructions for placing objects (sometimes called
 "things") into maps.  These objects might be bonuses, like Doom's
@@ -45,7 +45,7 @@ source files are passed through the C preprocessor before being
 compiled, so they may include other files.
 
 
-*** 2. What sort of information is specified in the .pt files?
+* 2. What sort of information is specified in the .pt files?
 
 At the moment, three distinct kinds.
 
@@ -107,7 +107,7 @@ which are types of stuff that players can collect through interacting
 with certain objects.  [NEED EXAMPLE HERE] 
 
 
-*** 3. How do I go about creating a new Proto?
+* 3. How do I go about creating a new Proto?
 
 I think it's probably best to explain this by looking at some
 examples.  Here's the Proto def. for a blue health bonus in Doom:
@@ -281,7 +281,7 @@ Proto Imp 3001
   Become2 ExImp
 
 
-*** 4. What are the keywords usuable in the .pt sources?
+* 4. What are the keywords usuable in the .pt sources?
 
 Here is a complete list, as of 9/9/97:
 
@@ -579,10 +579,259 @@ Sprite <stem>
 Override the normal sprite stem for this phase.  This is useful to
 co-opt images from other objects (for explosions, for example).
 
+* Keywords by hierarchy
 
+This is from ptcomp.c of DUMB 0.12.
 
-
-
-
-
-
+** (data types)
+*** <string>
+*** <integer>
+*** <phasetable>
+*** <phase>
+*** <proto>
+*** <arc>
+<integer>
+<integer>deg
+<integer>pi
+<integer>pi/<integer>
+*** <gettable>
+*** <time>
+<integer>
+<integer>sec
+<integer>msec
+<integer>hsec
+<integer>ticks
+*** <speed>
+<integer>
+<integer>/sec
+<integer>/msec
+<integer>/hsec
+<integer>/tick
+*** <sound>
+*** <char>
+*** <lumptype>
+**** Sector
+**** Side
+**** Thing
+*** <eventtype>
+**** Ceiling
+**** CeilingTexture
+**** CeilingType
+**** Floor
+**** FloorTexture
+**** FloorType
+**** Darkness | Light
+**** SwitchOn
+**** SwitchOff
+**** Teleport
+**** SecretLevel
+**** NewLevel
+*** <termtype>
+**** Floor
+**** LowestFloor | LIF
+**** LowestAdjacentFloor | LEF
+**** HighestFloor | HIF
+**** HighestAdjacentFloor | HEF
+**** NextHighestFloor | nhEF
+**** NextLowestFloor | nlEF
+**** Ceiling
+**** LowestCeiling | LIC
+**** LowestAdjacentCeiling | LEC
+**** HighestCeiling | HIC
+**** HighestAdjacentCeiling | HEC
+**** NextHighestCeiling | nhEC
+**** NextLowestCeiling | nlEC
+**** FloorPlusSLT
+**** FloorMinusSLT
+**** OrigFloor
+**** OrigCeiling
+**** One
+**** Zero
+**** DarkestSector
+**** DarkestAdjacentSector
+**** LightestSector
+**** LightestAdjacentSector
+**** VeryDark
+**** VeryLight
+** Proto <name:string> [<id:integer>]
+*** Phases <phasetable>
+*** SigDetect <phase>
+*** SigFight <phase>
+*** SigShoot <phase>
+*** SigSpecial <phase>
+*** SigOuch <phase>
+*** SigDie <phase>
+*** SigExplode <phase>
+*** SigReanimate <phase>
+*** SigInit <phase>
+*** Splat <proto>
+*** Shoots <proto> | Spawns <proto>
+*** Spawn2 <proto>
+*** Becomes <proto>
+*** Become2 <proto>
+*** Sprite <string5>
+*** Damage <integer>
+*** Speed <integer>
+*** Mass <integer>
+*** Hits <integer>
+*** Shooter
+*** Beastie
+*** Explosive
+*** ZCenter
+*** Phantom
+*** SkirtCliffs
+*** CanFly | Flying
+*** PInvis
+*** BulletKludge
+*** FastShoot
+*** Hanging
+*** YMoveOnly
+*** Player
+*** Target
+*** BulletProof
+*** FloatsUp
+*** ZPegged
+*** Bouncy
+*** Blocking
+*** Bogus
+*** SpawnSpot
+*** NoHurtOwner
+*** TurnWhenHitting
+*** BulletAttack
+*** SeeArc <arc>
+*** AimArc <arc>
+*** ShootMany <shootnum:integer> <horiz:arc> [<vert:arc=horiz/8>]
+*** ShootPara <shootnum:integer> <width:integer>
+*** Size <radius:integer> <height:integer>
+*** Gets <gettable> <howmany:integer>
+** PhaseTable <name:string>
+*** Default
+*** Phase <name:string> <spritephase:char>
+*** SigDetect
+*** SigFight
+*** SigShoot
+*** SigSpecial
+*** SigOuch
+*** SigDie
+*** SigExplode
+*** SigReanimate
+*** SigInit
+*** Glow
+*** NoGlow
+*** Destroy
+*** NoDestroy
+*** NoSigs
+*** Sigs
+*** Strategy
+*** NoStrategy
+*** HeatSeek
+*** NoHeatSeek
+*** Shoot
+*** NoShoot
+*** Explode
+*** NoExplode
+*** Melee
+*** NoMelee
+*** Spawn2
+*** NoSpawn2
+*** RSpawn2
+*** NoRSpawn2
+*** Idle
+*** NoIdle
+*** BFGEffect
+*** NoBFGEffect
+*** Spawn
+*** NoSpawn
+*** Become
+*** Become2
+*** Duration <time>
+*** RndDuration <time>
+*** Goto <phase>
+*** Sound <sound>
+*** SpritePh <spritephase:char>
+*** Sprite <string4>
+** Gettable <name:string>
+*** XCenter
+*** YCenter
+*** WepSel
+*** SpeSel
+*** GotThe
+*** GotA
+*** Local
+*** KeyType <integer>
+*** Decay <integer>
+*** Timing <time>
+*** Sound <sound>
+*** PickupSound <sound>
+*** Special <integer>
+*** Collect <integer>
+*** Initial <integer>
+*** Usenum <integer>
+*** AddAmmo <integer>
+*** Ammo <gettable>
+*** Bogotype <proto>
+*** Icon <string9>
+*** Anim <char>
+*** RevAnim <char>
+*** Message <string>
+*** IconPos <xo:integer> <yo:integer>
+** LineType <name:string> <id:integer> | SectorType <name:string> <id:integer>
+*** Action <lumptype> <eventtype>
+*** KeyType <integer>
+*** Damage <integer>
+*** SpotType <proto>
+*** Repeatable
+*** AllowPlayer
+*** AllowMonster
+*** OnThumped
+*** OnCrossed
+*** OnActivated
+*** OnDamaged
+*** FrontOnly
+*** Scroll <dx:speed> <dy:speed>
+*** WaitFor <eventtype>
+*** Manual
+*** ManualF
+*** DonutOuter
+*** DonutInner
+*** Stair
+*** UnqueueAll
+*** FastCrush
+*** SlowCrush
+*** NoCrush
+*** [TriggerModel]
+*** NumericModel
+*** Delay <time>
+*** Plus <integer>
+*** Minus <integer>
+*** To <termtype>
+*** BackTo <termtype>
+*** Speed <speed>
+*** Up
+*** Down
+*** SpawnType <proto>
+*** Sound <sound>
+*** ContSound <sound>
+*** StartSound <sound>
+*** StopSound <sound>
+** SoundType <name:string>
+*** Bend <integer>
+*** BendConst <integer>
+*** Chance <integer>
+*** Random <sound> | Redir <sound>
+** AnimTexture <name:string> | (SwitchTexture | SwTexture) <name: string>
+*** Flat
+*** Parm <integer>
+*** Duration <time>
+*** To <integer>
+*** Tag
+*** Texture <string>
+** Level <name:string>
+*** Music <string>
+*** Sky <string>
+*** StartGame
+*** EndGame
+*** Secret <string>
+*** Next <string>
+** TimeUnits <time>
+** DefaultSpeed <speed>

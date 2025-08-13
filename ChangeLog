@@ -1,3 +1,120 @@
+Wed Apr  8 11:13:15 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* dumb/renderc.h (add_wall_events): Always assign event->texxofs
+ 	and event->texyofs.  Assign event->sidenum just once.
+
+	* doom/weapons.pt (Gettable BerserkFist): Join with Gettable
+	Berserk from doom/gettables.pt.  Make local to level.
+	* doom/gettables.pt (Proto Berserk): Get only 1 of Berserk.  Move
+ 	to doom/weapons.pt.
+
+	* configure.in: Temporarily add $X_CFLAGS to $CPPFLAGS when
+ 	looking for extension headers.
+
+	* configure.in: Look for the C++ preprocessor.
+	* doom/Makefile.am, htic/Makefile.am: Use $(CXXCPP), not $(CPP).
+
+	* tool/dark2trans.c: Wrap #include <ppm.h> in extern "C" if
+ 	compiling as C++.
+
+	* libdumbutil/safem.c: Use #ifdef HAVE_MMAP, not #ifndef NO_MMAP.
+	(safe_vcalloc): Use MAP_NORESERVE if available.  Always use
+ 	DEV_ZERO if MAP_ANONYMOUS isn't defined.  Compare mmap() result to
+ 	MAP_FAILED, not NULL.  Use strerror().
+	(safe_vfree, safe_realloc): Use "%p" and strerror().
+	(safe_malloc, safe_calloc, safe_strdup): Use strerror().
+
+Mon Apr  6 10:04:53 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* doom/monsters.pt (Proto Baron): Increase damage from 2 to 20.
+	* doom/missiles.pt (Proto BaronFireBall): Increase damage from 7
+ 	to 15.
+
+	* doom/Makefile.am, htic/Makefile.am: Make pt_preprocess use
+ 	$(CPP).
+
+	* ptcomp/: New directory.
+	* Makefile.am (SUBDIRS): Add ptcomp.
+	* configure.in (AC_OUTPUT): Add ptcomp.
+	* tool/ptcomp.c: Move to ptcomp/ptcomp.c.
+	* tool/Makefile.am (bin_PROGRAMS): Remove ptcomp.
+	* ptcomp/ptcomp.c (main): Use perror().  Return EXIT_FAILURE if
+ 	failed to open some file.
+	* ptcomp/parm.c (speed_units): Change error message.
+	(parm_str, parm_msg): Change type of string length to size_t.
+	* ptcomp/soundcomp.c (soundcomp): Rename from secomp().
+
+	* libdumb/gettablestruct.h (_spare1): Rename to weaponnumber.
+	(_spare2): Split to replaceweapon and _spare2.
+	* doom/weapons.pt: Replace _WeaponNumber and _ReplacesWeapon
+	macros with keywords WeaponNumber and ReplaceWeapon.
+	* tool/ptcomp.c (gettcomp): Support WeaponNumber and ReplaceWeapon.
+
+Sun Apr  5 08:20:22 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* tool/ptcomp.c (gettcomp): Remove dead code.
+
+	* dumb/bangbang.c (thing_shoot): Separate parameter arc to
+ 	horiz_arc and vert_arc.
+	* libdumb/prothingstruct.h (ProtoThing): Separate shootarc to
+ 	shootarc_h and shootarc_v.
+	* tool/ptcomp.c (protocomp): Extra parameter in ShootMany.  Clear
+	shootarc_v in ShootPara.
+	(parm_arc_opt): New function.
+	* doom/weapons.pt (Proto HeldSuperShotgun): Add vertical arc in
+ 	ShootMany.
+
+	* docs/README.ptcomp: Doc fix.
+
+	* dumb/linetype.h (struct LineTypeOffsets): New structure.
+	(ltofs): New variable.
+
+	* libdumb/linetypestruct.h (LineType): Add scrolldx, scrolldy.
+	(LT_SCROLL): New macro.
+	* tool/ptcomp.c (speed_units): Accept and skip sign in s.
+	(ltcomp): Support "Scroll".
+	* dumb/linetype.c (init_ltscroll, linetype_ticks_passed): New
+ 	functions.
+	(struct LineTypeOffsets): New structure.
+	(ltofs, scrollers, nscrollers): New variables.
+	* dumb/dumb.c (main): Call linetype_ticks_passed().
+
+	* doom/linetypes.pt (Floor-W1L-UpNext-TX): Rename to
+ 	Floor-W1L-UpNext-TXP and change FloorTexture to FloorType.  This
+	is used in Doom's E1M5 for a bridge rising from slime.
+
+	* dumb/game.c (process_input): Support switching to previous weapon.
+	* dumb/gettable.c (rotate_selection): New parameter DIR.  All
+ 	callers changed.  Wrap in both directions.
+
+	* docs/dumb-0.12.lsm, docs/FAQ, docs/autoconf: Doc fixes.
+
+	* docs/autoconf: Rename to docs/configure.txt.
+
+	* tool/Makefile.am (bin_PROGRAMS): Install mkpnames.
+
+	* doom/weapons.pt: Add "Phases Fist".
+
+Fri Apr  3 12:27:18 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* configure.in: Make nonexecutable.  Fix gethostbyname() error
+ 	message.
+
+Thu Apr  2 21:21:38 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* doom/weapons.pt (_ReplacesWeapon): New no-op macro.
+	(Proto BerserkFist): New.
+	(Gettable Fist): New.
+	(Gettable BerserkFist): Rename from BrassKnuckles.  Initial 0.
+	Use _ReplacesWeapon.  Change message.
+	(Gettable Chainsaw): Use _ReplacesWeapon.
+
+	* doom/weapons.pt (_WeaponNumber): New no-op macro.
+	(Gettable BrassKnuckles, Chainsaw, Pistol, Shotgun, SuperShotgun,
+	Chaingun, RocketLauncher, PlasmaRifle, BFG): Add weapon numbers.
+
+	* configure.in: Bump version number to 0.12.
+
 1998-04-02  Kalle Niemitalo  <tosi@stekt.oulu.fi>
 
 	* acinclude.m4 (DUMB_SCAN_LIBS): New macro.

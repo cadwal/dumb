@@ -50,7 +50,6 @@ NORMAL_UNINSTALL = true
 PRE_UNINSTALL = true
 POST_UNINSTALL = true
 CC = @CC@
-CPP = @CPP@
 CXX = @CXX@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
@@ -75,8 +74,8 @@ VERSION = @VERSION@
 @DUMB_CONFIG_LIBPPM_TRUE@ppm_bin_programs = dark2trans ppmtodumb
 @DUMB_CONFIG_LIBPPM_FALSE@ppm_bin_programs = 
 
-bin_PROGRAMS = ptcomp wadtool mknulmap $(ppm_bin_programs)
-noinst_PROGRAMS = fixed_bm mkpnames $(x_noinst_programs)
+bin_PROGRAMS = wadtool mknulmap mkpnames $(ppm_bin_programs)
+noinst_PROGRAMS = fixed_bm $(x_noinst_programs)
 
 x_ldadd = $(X_LIBS) $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS)
 
@@ -119,12 +118,6 @@ X_CFLAGS = @X_CFLAGS@
 X_LIBS = @X_LIBS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_PRE_LIBS = @X_PRE_LIBS@
-ptcomp_SOURCES = ptcomp.c
-ptcomp_OBJECTS =  ptcomp.o
-ptcomp_LDADD = $(LDADD)
-ptcomp_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
-../libdumbutil/libdumbutil.a
-ptcomp_LDFLAGS = 
 wadtool_SOURCES = wadtool.c
 wadtool_OBJECTS =  wadtool.o
 wadtool_LDADD = $(LDADD)
@@ -137,6 +130,12 @@ mknulmap_LDADD = $(LDADD)
 mknulmap_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
 ../libdumbutil/libdumbutil.a
 mknulmap_LDFLAGS = 
+mkpnames_SOURCES = mkpnames.c
+mkpnames_OBJECTS =  mkpnames.o
+mkpnames_LDADD = $(LDADD)
+mkpnames_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
+../libdumbutil/libdumbutil.a
+mkpnames_LDFLAGS = 
 dark2trans_SOURCES = dark2trans.c
 dark2trans_OBJECTS =  dark2trans.o
 dark2trans_DEPENDENCIES =  ../libdumb/libdumb.a \
@@ -153,12 +152,6 @@ fixed_bm_LDADD = $(LDADD)
 fixed_bm_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
 ../libdumbutil/libdumbutil.a
 fixed_bm_LDFLAGS = 
-mkpnames_SOURCES = mkpnames.c
-mkpnames_OBJECTS =  mkpnames.o
-mkpnames_LDADD = $(LDADD)
-mkpnames_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
-../libdumbutil/libdumbutil.a
-mkpnames_LDFLAGS = 
 mkdfnt_SOURCES = mkdfnt.c
 mkdfnt_OBJECTS =  mkdfnt.o
 mkdfnt_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
@@ -172,10 +165,10 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = gtar
+TAR = tar
 GZIP = --best
-SOURCES = ptcomp.c wadtool.c mknulmap.c dark2trans.c ppmtodumb.c fixed_bm.c mkpnames.c mkdfnt.c
-OBJECTS = ptcomp.o wadtool.o mknulmap.o dark2trans.o ppmtodumb.o fixed_bm.o mkpnames.o mkdfnt.o
+SOURCES = wadtool.c mknulmap.c mkpnames.c dark2trans.c ppmtodumb.c fixed_bm.c mkdfnt.c
+OBJECTS = wadtool.o mknulmap.o mkpnames.o dark2trans.o ppmtodumb.o fixed_bm.o mkdfnt.o
 
 default: all
 
@@ -236,10 +229,6 @@ distclean-compile:
 
 maintainer-clean-compile:
 
-ptcomp: $(ptcomp_OBJECTS) $(ptcomp_DEPENDENCIES)
-	@rm -f ptcomp
-	$(LINK) $(ptcomp_LDFLAGS) $(ptcomp_OBJECTS) $(ptcomp_LDADD) $(LIBS)
-
 wadtool: $(wadtool_OBJECTS) $(wadtool_DEPENDENCIES)
 	@rm -f wadtool
 	$(LINK) $(wadtool_LDFLAGS) $(wadtool_OBJECTS) $(wadtool_LDADD) $(LIBS)
@@ -247,6 +236,10 @@ wadtool: $(wadtool_OBJECTS) $(wadtool_DEPENDENCIES)
 mknulmap: $(mknulmap_OBJECTS) $(mknulmap_DEPENDENCIES)
 	@rm -f mknulmap
 	$(LINK) $(mknulmap_LDFLAGS) $(mknulmap_OBJECTS) $(mknulmap_LDADD) $(LIBS)
+
+mkpnames: $(mkpnames_OBJECTS) $(mkpnames_DEPENDENCIES)
+	@rm -f mkpnames
+	$(LINK) $(mkpnames_LDFLAGS) $(mkpnames_OBJECTS) $(mkpnames_LDADD) $(LIBS)
 
 dark2trans: $(dark2trans_OBJECTS) $(dark2trans_DEPENDENCIES)
 	@rm -f dark2trans
@@ -259,10 +252,6 @@ ppmtodumb: $(ppmtodumb_OBJECTS) $(ppmtodumb_DEPENDENCIES)
 fixed_bm: $(fixed_bm_OBJECTS) $(fixed_bm_DEPENDENCIES)
 	@rm -f fixed_bm
 	$(LINK) $(fixed_bm_LDFLAGS) $(fixed_bm_OBJECTS) $(fixed_bm_LDADD) $(LIBS)
-
-mkpnames: $(mkpnames_OBJECTS) $(mkpnames_DEPENDENCIES)
-	@rm -f mkpnames
-	$(LINK) $(mkpnames_LDFLAGS) $(mkpnames_OBJECTS) $(mkpnames_LDADD) $(LIBS)
 
 mkdfnt: $(mkdfnt_OBJECTS) $(mkdfnt_DEPENDENCIES)
 	@rm -f mkdfnt
@@ -316,7 +305,7 @@ ptcomp.o ptcomp.lo: ptcomp.c ../libdumbutil/timer.h ../libdumbutil/log.h \
 	../libdumb/gettablestruct.h ../libdumb/levinfostruct.h \
 	../libdumb/linetypestruct.h ../libdumb/prothingstruct.h \
 	../libdumb/levdatanums.h
-wadtool.o wadtool.lo: wadtool.c ../config.h ../libdumbutil/log.h \
+wadtool.o wadtool.lo: wadtool.c ../libdumbutil/log.h \
 	../libdumbwad/wadio.h ../libdumbwad/wadwr.h \
 	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h
 

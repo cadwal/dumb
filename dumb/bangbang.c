@@ -365,18 +365,21 @@ static int thing_shoot_single(LevData *ld,int shooter,int bullet_id,
    return i;
 }
 
-void thing_shoot(LevData *ld,int th,int bullet_id,
-		 fixed angle,fixed elev,fixed arc,int num,int para) 
+void 
+thing_shoot(LevData *ld, int th, int bullet_id,
+	    fixed angle, fixed elev, fixed horiz_arc, fixed vert_arc,
+	    int num, int para) 
 {
    while(num-->0) {
       fixed a=0,e=0;
-      if(arc>FIXED_EPSILON) {
-	 a=(rand()%arc)-arc/2;
-	 e=(rand()%(arc/8))-arc/16;
-      }
+      if (horiz_arc > FIXED_EPSILON)
+	 a = (rand() % horiz_arc) - horiz_arc/2;
+      if (vert_arc > FIXED_EPSILON)
+	 e = (rand() % vert_arc) - vert_arc/2;
       thing_shoot_single(ld,th,bullet_id,angle+a,elev+e);
    }
 }
 
-
-
+// Local Variables:
+// c-basic-offset: 3
+// End:

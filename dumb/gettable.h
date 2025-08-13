@@ -18,7 +18,7 @@ void update_gettables(LevData *ld,int ticks);
 
 void pickup_gettable(LevData *ld,int plnum,int type,int num);
 
-void rotate_selection(LevData *ld,int plnum,int type);
+void rotate_selection(LevData *ld,int plnum,int type, int dir);
 void use_selection(int type,LevData *ld,int plnum);
 
 /* return 0 if use failed */

@@ -1,3 +1,51 @@
+* Changes in DUMB 0.12.
+
+** Switching to previous weapon.
+
+I think DUMB 0.10a supports this too if playing a network game where
+the master is DUMB 0.12.  I haven't tried it, though.
+
+** Format of LINETYPE, PROTOS and GETTABLE changed.
+
+To add the features below, I had to change the format of the LINETYPE
+and PROTOS lumps.  Binary data compiled with previous versions of
+ptcomp is not compatible with DUMB 0.12.  But the source is, so all
+you have to do is recompile.
+
+In GETTABLE, I just used some of the spare fields, so they should be
+compatible.
+
+The structures inherited from Doom are still the same.  
+
+I haven't changed the network protocol either.  DUMB 0.13 will
+probably change it too, to be able to support function keys.
+
+** Scrolling walls.
+
+As in Doom, walls scroll if their linetypes scroll.  You make a
+linetype scroll by adding a Scroll line in its definition.  "Scroll"
+takes two parameters: horizontal and vertical speed.  Any number of
+linetypes can scroll.
+
+The keyword is accepted in sectortypes too but there it has no effect.
+
+The current scrolling implementation has a minor bug: after a texture
+has been scrolled by 524288 pixels, a counter will wrap around and the
+texture will jump to a new position unless its width and height are
+exact powers of two.
+
+** Doom super shotgun blast made as tall as it is wide.
+
+The ShootArc keyword in ProtoThing definitions now accepts an optional
+third argument: the vertical shoot arc.  If it isn't given, it
+defaults to 1/8 of the horizontal arc.
+
+** DUMB runs on Solaris.
+
+** Ptcomp error messages are in form FILE:LINE: TEXT.
+
+This makes it easy to handle them in the Compilation mode of Emacs.
+
 * Changes in DUMB 0.12.beta2.
 
 ** Distribution under GNU Library General Public License not allowed.

@@ -15,8 +15,9 @@ int new_thing(const LevData *ld,int proto_id,fixed x,fixed y,fixed z);
 void thing_take_damage(const LevData *ld,int th,int dmg);
 int thing_hurl(LevData *ld,int hurler,int missile_id,
 	       fixed angle,fixed elevation,fixed arc,int num,int para);
-void thing_shoot(LevData *ld,int shooter,int bullet_id,
-		 fixed angle,fixed elevation,fixed arc,int num,int para);
+void thing_shoot(LevData *ld, int shooter, int bullet_id,
+		 fixed angle, fixed elevation, fixed horiz_arc, fixed vert_arc,
+		 int num, int para);
 int thing_can_shoot_at(const LevData *ld,int looker,int target);
 void thing_wake_others(const LevData *ld,int th,int tickspassed);
 void thing_find_enemy(const LevData *ld,int th);

@@ -9,8 +9,8 @@ libdumbutil_a_SOURCES = confargs.c confeng.c conffile.c confhelp.c \
 
 INCLUDES += -I$(top_srcdir)
 
-# The combination of GCC 2.7.2.1 and Linux libc 5.4.33 seems to have a
-# bug that messes up parameters when using both -pg and
+# mcount() in Debian GNU/Linux libc 5.4.33-3 seems to have a bug that
+# messes up parameters when using both -pg and
 # __attribute__((regparm)).  So I have a special set of CFLAGS for
 # fixed.c.
 fixed_CFLAGS = -O2

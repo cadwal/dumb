@@ -86,18 +86,24 @@ static void set_bogot(LevData *ld,int pl,const Gettable *gt) {
    }
 }
 
-void rotate_selection(LevData *ld,int pl,int type) {
+/* dir must be either +1 or -1 */
+void
+rotate_selection(LevData *ld,int pl,int type, int dir)
+{
    int i=PLSEL(pl)[type];
    int loops=-1;
    while(1) {
-      i++;
+      i += dir;
       /* check bailout */
       if(loops++>ngetts) {
 	 i=-1;
 	 break;
       }
       /* wrap around if necessary */
-      if(i>=ngetts||i<0) i=0;
+      if (i>=ngetts)
+	 i=0;
+      else if (i<0)
+	 i=ngetts-1;
       /* check selectable */
       if(type==0&&!(gett[i].flags&GK_WEPSELECT)) continue;
       if(type==1&&!(gett[i].flags&GK_SPESELECT)) continue;
@@ -116,12 +122,12 @@ void use_selection(int type,LevData *ld,int pl) {
    int *cd=PLCOUNT(pl)+PLSEL(pl)[type];
    int *cb=PLCOUNT(pl)+PLSEL(pl)[type];
    if(PLSEL(pl)[type]<0) {
-      rotate_selection(ld,pl,type);
+      rotate_selection(ld,pl,type, +1);
       return;
    }
    if(gt->bulletkind>=0) cb=PLCOUNT(pl)+gt->bulletkind;
    if(cd[0]<1||cb[0]<gt->usenum) {
-      rotate_selection(ld,pl,type);
+      rotate_selection(ld,pl,type, +1);
       return;
    }
    set_bogot(ld,pl,gett+PLSEL(pl)[type]);
@@ -300,3 +306,6 @@ void reset_gettables(void) {
    gettxt=NULL;
 }
 
+// Local Variables:
+// c-basic-offset: 3
+// End:

@@ -9,6 +9,7 @@
 #include "libdumbwad/wadio.h"
 #include "libdumb/view.h"
 #include "levdyn.h"
+#include "linetype.h"
 #include "render.h"
 #include "things.h"
 
@@ -56,6 +57,7 @@ typedef struct {
    short sidenum;
    short backsect;
    short endcol;
+   short texxofs, texyofs;
 } Wall_start;
 
 #define MAX_WALL_EVENTS 64
@@ -70,6 +72,7 @@ typedef struct {
    short sidenum;
    short backsect;
    short endcol;
+   short texxofs, texyofs;
 #ifdef FAST_FLATS
    short mincrow,maxcrow,minfrow,maxfrow;
 #endif
@@ -431,8 +434,9 @@ static void clip_walls(void) {
 /* Add a wall to the event list--one event is added for the start of the
 **   wall, and another is added to mark the end of the wall.
 */
-static void add_wall_events(int wall,
-			    fixed x1, fixed px1, fixed x2, fixed px2)
+static void
+add_wall_events(int wall,
+		fixed x1, fixed px1, fixed x2, fixed px2)
 {
    int fb1, fb2;
    fixed z1, z2;
@@ -477,11 +481,9 @@ static void add_wall_events(int wall,
       event = &start_events[fb1].events[start_events[fb1].n_events];
       event->z = z1;
       event->dz = fixdiv(z2 - z1, INT_TO_FIXED(fb2 - fb1));
-      event->sidenum = sidenum;
       event->backsect=ldline(ld)[wall].side[1];
       event->endcol=fb2;
       start_events[fb1].n_events++;
-
    } else {
       if(start_events[fb2].n_events>=MAX_WALL_EVENTS)
 	 logfatal('R',"Too many wall start_events column=%d",fb2);
@@ -497,7 +499,12 @@ static void add_wall_events(int wall,
    /* event init stuff that doesn't depend on wall's sense */
    event->wall=wall;
    event->sidenum=sidenum;
-   if(event->backsect>=0) event->backsect=ldside(ld)[event->backsect].sector;
+   if (event->backsect >= 0)
+      event->backsect = ldside(ld)[event->backsect].sector;
+   event->texxofs = (SIDE_XOFFSET_IN_TEXELS(sidenum)
+		     + ltofs[ldline(ld)[wall].type].xofs);
+   event->texyofs = (SIDE_YOFFSET_IN_TEXELS(sidenum)
+		     + ltofs[ldline(ld)[wall].type].yofs);
 }
 
 static void add_objects(void) {

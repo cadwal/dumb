@@ -116,7 +116,7 @@ PhaseTable HeldRocketLauncher
 
   Default Duration 60msec
   Default NoSigs
-  Phase SHOOT   A  _OverlaySprite(MISFA0) SigShoot 
+  Phase SHOOT   A  _OverlaySprite(MISFA0) SigShoot
   Phase -       A  _OverlaySprite(MISFB0)
   Phase -       A  _OverlaySprite(MISFC0) Sound DSRLAUNC
   Phase -       A  _OverlaySprite(MISFD0) Shoot
@@ -164,6 +164,15 @@ Proto Fist 991
   NoHurtOwner
   Damage 1
 
+Proto BerserkFist
+  Phases Fist
+  Sprite PUNG
+  AimArc 45deg
+  Size 32 56
+  Bogus
+  NoHurtOwner
+  Damage 20
+
 Proto HeldChainsaw
   Sprite SAWG
   AimArc 45deg
@@ -205,7 +214,7 @@ Proto HeldSuperShotgun
   Bogus Shooter
   NoHurtOwner
   Shoots Bullet
-  ShootMany 10 15deg
+  ShootMany 10 15deg 15deg
 
 Proto HeldPlasmaRifle
   Sprite PLSG
@@ -241,11 +250,35 @@ Proto HeldChainsaw
 
 /* now gettable entries for weapons */
 
+Gettable Fist
+  Initial 1
+  Collect 1
+  UseNum 0
+  WepSel
+  WeaponNumber 1
+  Bogotype Fist
+
+Gettable Berserk
+  Icon PSTRA0
+  IconPos 80 6
+  Initial 0
+  Collect 1
+  Local
+  UseNum 0
+  WepSel
+  WeaponNumber 1
+  ReplaceWeapon Fist
+  Bogotype BerserkFist
+  GotThe Message BESERK_STRENGTH___CHARGE
+  PickupSound DSGETPOW
+
 Gettable Chainsaw
   Initial 0
   Collect 1
   UseNum 0
   WepSel
+  WeaponNumber 1
+  ReplaceWeapon Fist
   Bogotype HeldChainsaw
   GotThe Message CHAINSAW..._FIND_SOME_MEAT!
   PickupSound DSWPNUP
@@ -254,34 +287,26 @@ Gettable Pistol
   Initial 1
   Collect 1
   WepSel
+  WeaponNumber 2
   Bogotype HeldPistol
   Ammo Bullet
   GotThe Message PISTOL
   PickupSound DSWPNUP
 
-Gettable BrassKnuckles
-  Initial 1
-  Collect 1
-  Usenum 0
-  WepSel
-  Bogotype Fist
-  GotThe Message BRASS_KNUCKLES
-  PickupSound DSWPNUP
-
-/* 3a - shotgun */
 Gettable Shotgun
   Collect 1
   WepSel
+  WeaponNumber 3
   Bogotype HeldShotgun
   Ammo Shell
   AddAmmo 6
   GotThe Message SHOTGUN
   PickupSound DSWPNUP
 
-/* 3b - super shotgun */
 Gettable SuperShotgun
   Collect 1
   WepSel
+  WeaponNumber 3
   Bogotype HeldSuperShotgun
   UseNum 2
   Ammo Shell
@@ -289,20 +314,20 @@ Gettable SuperShotgun
   GotThe Message SUPER_SHOTGUN
   PickupSound DSWPNUP
 
-/* 4 - chaingun */
 Gettable Chaingun
   Collect 1
   WepSel
+  WeaponNumber 4
   Bogotype HeldChaingun
   Ammo Bullet
   AddAmmo 20
   GotThe Message CHAINGUN
   PickupSound DSWPNUP
 
-/* 5 - rocket launcher */
 Gettable RocketLauncher
   Collect 1
   WepSel
+  WeaponNumber 5
   Bogotype HeldRocketLauncher
   Ammo Rocket
   AddAmmo 2
@@ -310,10 +335,10 @@ Gettable RocketLauncher
   GotThe Message ROCKET_LAUNCHER
   PickupSound DSWPNUP
 
-/* 6 - plasma rifle */
 Gettable PlasmaRifle
   Collect 1
   WepSel
+  WeaponNumber 6
   Bogotype HeldPlasmaRifle
   Ammo Cell
   AddAmmo 40
@@ -321,10 +346,10 @@ Gettable PlasmaRifle
   GotThe Message PLASMA_RIFLE
   PickupSound DSWPNUP
 
-/* 7 - BFG-9000 */
 Gettable BFG
   Collect 1
   WepSel
+  WeaponNumber 7
   Bogotype HeldBFG
   Ammo Cell
   AddAmmo 100
@@ -340,6 +365,14 @@ Proto Chainsaw 2005
   Size 62 24
   Gets Chainsaw 1
   StickToFloor
+
+Proto Berserk 2023
+  Sprite PSTR
+  Phases Mundane
+  Size 32 20
+  StickToFloor
+  Gets Health 100
+  Gets Berserk 1 /* from weapons.pt */
 
 Proto Shotgun 2001
   Sprite SHOT
@@ -387,4 +420,3 @@ Proto BFG9000 2006
 #undef StickToFloor
 #undef _OverlaySprite
 #undef _ContSound
-

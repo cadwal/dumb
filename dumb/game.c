@@ -59,7 +59,9 @@ void slave_input(LevData *ld,const PlayerInput *in,int tickspassed) {
    send_input(ld,in,tickspassed);
    if(in->quit) net_bufflush();
 }
-void process_input(LevData *ld,const PlayerInput *in,int tickspassed,int pl) {
+void
+process_input(LevData *ld,const PlayerInput *in,int tickspassed,int pl)
+{
    int cheated=0;
    /* this function called only on master */
    ThingDyn *td=ldthingd(ld)+ld->player[pl];
@@ -131,9 +133,9 @@ void process_input(LevData *ld,const PlayerInput *in,int tickspassed,int pl) {
 
    /* selection */
    if(in->w_sel&&!(ld->plflags[pl]&PLF_WSEL))
-      rotate_selection(ld,pl,0);
+      rotate_selection(ld,pl,0, in->w_sel>0 ? +1 : -1);
    if(in->s_sel&&!(ld->plflags[pl]&PLF_SSEL))
-      rotate_selection(ld,pl,1);
+      rotate_selection(ld,pl,1, in->w_sel>0 ? +1 : -1);
    
    if(in->w_sel) ld->plflags[pl]|=PLF_WSEL;
    else ld->plflags[pl]&=~PLF_WSEL;

@@ -50,7 +50,6 @@ NORMAL_UNINSTALL = true
 PRE_UNINSTALL = true
 POST_UNINSTALL = true
 CC = @CC@
-CPP = @CPP@
 CXX = @CXX@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
@@ -70,7 +69,7 @@ RANLIB = @RANLIB@
 VERSION = @VERSION@
 
 EXTRA_DIST = FAQ README.fixbm README.netplay README.ptcomp README.textures \
- TODO autoconf dumb-0.12.beta2.lsm dumblogo.ppm keymap.txt log-classes \
+ TODO configure.txt dumb-0.12.lsm dumblogo.ppm keymap.txt log-classes \
  xrosella.xpm
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
@@ -80,7 +79,7 @@ DIST_COMMON =  Makefile.am Makefile.in TODO
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = gtar
+TAR = tar
 GZIP = --best
 default: all
 

@@ -411,11 +411,12 @@ static void do_shoot(LevData *ld,int th) {
     * no such weapon yet, though */
    if(td->proto->flags&PT_SHOOTER) 
       thing_shoot(ld,th,td->proto->spawn1,angle,elev,
-		  td->proto->shootarc,td->proto->shootnum,
+		  td->proto->shootarc_h, td->proto->shootarc_v, 
+		  td->proto->shootnum,
 		  td->proto->flags&PT_PARA_SHOOT);
    else
       thing_hurl(ld,th,td->proto->spawn1,angle,elev,
-		  td->proto->shootarc,td->proto->shootnum,
+		  td->proto->shootarc_h,td->proto->shootnum,
 		  td->proto->flags&PT_PARA_SHOOT);
 }
 

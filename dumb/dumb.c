@@ -469,6 +469,7 @@ skip:
 	    fflush(frec);
 	 }
 	 tickspassed=read_timer();
+	 linetype_ticks_passed(tickspassed);
 	 
 	 if(slave) slave_input(ld,&in,tickspassed);
 	 else process_input(ld,&in,tickspassed,ld->localplayer);

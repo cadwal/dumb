@@ -52,6 +52,7 @@ typedef struct {
    LE_flags32 flags;
    LE_int16 sound,damage;
    LE_int16 keytype,spottype;
+   LE_int32 scrolldx, scrolldy; /* pixel/tick == 1<<12 */
    LT_Action action[MAX_LT_ACTIONS];
 } LineType,SectorType;
 
@@ -62,8 +63,12 @@ typedef struct {
 #define LT_ON_CROSSED 0x0010
 #define LT_ON_ACTIVATED 0x0020
 #define LT_ON_DAMAGED 0x0040
-#define LT_FRONT_ONLY 0x0080      /* only allow activation from in front */
+#define LT_FRONT_ONLY 0x0080	/* only allow activation from in front */
 
-#define ST_SECRET 0x10000         /* player gets credit for entering sector */
+#define ST_SECRET 0x10000	/* player gets credit for entering sector */
 
 #endif
+
+// Local Variables:
+// c-basic-offset: 3
+// End:

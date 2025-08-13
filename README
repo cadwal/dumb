@@ -12,7 +12,7 @@ with the DUMB distribution; it is in the file COPYING.
 The DUMB sources are a derived work of "wt", by Chris Laurel et al.
 "wt" is also distributed under the GPL.  The parts of DUMB that are
 not derived from "wt" were written by Josh Parsons.  He holds
-copyright on them, and on DUMB as a whole.  Currently, DUMB is
+copyright on them, and on DUMB as a whole.  Since April 1998, DUMB is
 maintained by Kalle Niemitalo.
 
 Versions 0.06 to 0.12.beta1 of DUMB had a claim that you could
@@ -114,9 +114,9 @@ You always need:
   too.
 
 For big-endian machines:
-- GNU C++ compiler or another one that accepts -x c++ -fenum-int-equiv
-  to compile .c files as C++.  C++ libraries are not needed.  This C++
-  compilation is actually a hack that we should get rid of.
+- GNU C++ compiler that accepts -x c++ -fenum-int-equiv to compile .c
+  files as C++.  C++ libraries are not needed.  This C++ compilation
+  is actually a hack that we should get rid of.
 
 To build doom4dum.wad and htic4dum.wad:
 - netpbm (Release 7 December 1993, but some files seem to be from
@@ -132,8 +132,8 @@ If you edit the source, you may need the following packages:
 - GNU m4 1.4
 
 Supported but not required:
-- AA-lib                        <aalib.h>
-- GGI                           <ggi/libggi.h>
+- AA-lib 1.2                    <aalib.h>
+- GGI 0.0.9 (Dali)              <ggi/libggi.h>
 - grx20 for DOS                 <grx20.h>
 - MIT-SHM extension             <X11/extensions/XShm.h>
 - MME sound for Digital Unix    <mme/mme_api.h>
@@ -143,7 +143,30 @@ Supported but not required:
 - XKEYBOARD extension           <X11/XKBlib.h>
 
 
-3.2 Configuring and compiling.
+3.2 Bugs in other software.
+
+Some other programs or libraries have bugs that can cause problems
+when compiling DUMB.  The ones I know of are listed below.  I have
+reported them to the authors.
+
+There's a bug in aalib.h of AA-lib 1.2 that prevents it from working
+when compiled as C++.  Line 186 of aalib.h:
+	typedef struct aa_hardwareparams aa_hardware_params;
+This must be changed to:
+	typedef struct aa_hardware_params aa_hardware_params;
+
+Debian GNU/Linux libc5-dev_5.4.33-6 has a bug that prevents profiling
+functions that take register parameters: mcount() overwrites the
+registers and the parameters are lost.  I have tweaked
+libdumbutil/Makefile.am to prevent this from happening.  When I get a
+fixed version of the library, I'll remove the hacks.
+
+Automake 1.2 has a bug that prevents it from noticing when
+AC_PROG_CXXCPP is used.  Then it won't add a CXXCPP=@CXXCPP@ line in
+Makefile.in.  I have added the line myself in doom/Makefile.am and
+htic/Makefile.am.  I may remove it again when the bug is fixed.
+
+3.3 Configuring and compiling.
 
 Before you can do either, you'll need to unpack the archive you got
 DUMB in (you must have done this already, or else how would you be
@@ -158,8 +181,8 @@ are in dumb-game-<version>.zip  If you have this file, unpack it too.
 You should get a directory called something like "dumb-0.12", with a
 configure script, some other files and several subdirectories in it.
 Change to the directory and run the script.  (See the files INSTALL
-and docs/autoconf for the options you can give to it.)  It'll create
-config.h and some Makefiles.
+and docs/configure.txt for the options you can give to it.)  It'll
+create config.h and some Makefiles.
 
 The configure script should work on pretty much all machines; if it
 doesn't, I'd like to hear.
@@ -201,7 +224,7 @@ If you have netpbm:
 
 If you have Doom or Doom II and the script found its IWAD:
 - doom4dum.wad, a patch wad that patches Doom and Doom II's IWADs to
-  work with Dumb.
+  work with DUMB.
 
 If you have Heretic and the script found its IWAD:
 - htic4dum.wad, a similar (but less complete) patch for Heretic.
@@ -213,18 +236,20 @@ Whatever you have, you get:
 - ptcomp, a program for compiling textual ProtoThing etc. definitions
   to lumps for inclusion in WADs,
 - wadtool, a WAD copy/extract program,
-- mkpnames... "mkpnames is used to compile metatexture information
-  into the PNAMES and TEXTURE1 lumps used by dumb."  But it seems
-  unused.
+- mkpnames, a metatexture compiler you need if you make textures of your
+  own.  The dumb-game package uses this too.
 
 
-3.3 Installing and uninstalling DUMB.
+3.4 Installing and uninstalling DUMB.
 
 When compilation is complete, the produced executables and WADs are in
 the subdirectories.  You can play them from there or you can run "make
 install" to copy them to their official places.
 
-Programs fixed_bm, mkdfnt and mkpnames won't be installed.
+The installed executables contain full debug information by default.
+If you don't like that, use "make install-strip".
+
+Programs fixed_bm and mkdfnt won't be installed.
 
 If you later change your mind (oh no!), you can run "make uninstall"
 to remove them if you still have the sources left.
@@ -239,10 +264,9 @@ Doom, Doom II, or Heretic levels, or you can make up your own level
 with your own graphics and objects, and play with that.
 
 The way DUMB works at the moment, you move around with the arrow keys.
-Q and W cycle through the weapons (although currently both in the same
-direction), A and Z levitate you up and down, Ctrl shoots, Shift runs,
-Alt strafes.  You can also use the numeric keypad (highly
-recommended):
+Q and W cycle through the weapons, A and Z levitate you up and down,
+Ctrl shoots, Shift runs, Alt strafes.  You can also use the numeric
+keypad (highly recommended):
 
 	7: aim down,      8: walk forward,   9: aim up,
 	4: turn left,                        6: turn right,
@@ -254,9 +278,9 @@ Some alternative keys have been defined primarily for use with AA-lib:
 	h: turn left,	j: backward,	k: forward,	l: turn right,
    	, or <: sidestep left,	   	. or >: sidestep right.
 
-These are letters so they can be used with Shift to move faster.
-However, the AA-lib driver doesn't yet support strafing with Meta or
-firing with Control.
+Most of these are letters so they can be used with Shift to move
+faster.  However, the AA-lib driver doesn't yet support strafing with
+Meta or firing with Control.
 
 Numbers outside the number pad should select weapons but currently
 they are used for various cheats and special functions:
@@ -271,10 +295,10 @@ In the X11 and AA-lib versions, you can reconfigure all the keys with
 options like --keymap-next-weapon Tab.  You can also put the
 corresponding definitions in the .dumbrc configuration file.
 
-With GGI and SVGAlib, you can't change the bindings except by editing
-the source and recompiling.  But those versions let you use a mouse.
-If you are using SVGAlib, you may need to tell DUMB about your mouse
-type: use
+With GGI and SVGAlib, you can't currently change the bindings except
+by editing the source and recompiling.  But those versions let you use
+a mouse.  If you are using SVGAlib, you may need to tell DUMB about
+your mouse type: use
 
   ldumb --input-mouse-type <type>
 
@@ -385,7 +409,7 @@ buttons extends the selection over several entities.
 
 You can drag vertices around with the left button too, but only if the
 drag starts on top of a vertex (this is to stop you dragging things
-when you only wanted to select them.
+when you only wanted to select them).
 
 To get the hang of it, start by making a room.  Hold down shift and
 click the middle mouse button on the vertices of a convex polygon.
@@ -462,6 +486,7 @@ Snailmail: Kalle Niemitalo
 
 If you are in the mood of sending postcards saying how great DUMB is,
 please send them to Josh instead.]
+
 
 Should you wish to contact me, my email address is:
 

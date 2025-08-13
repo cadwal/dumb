@@ -50,7 +50,6 @@ NORMAL_UNINSTALL = true
 PRE_UNINSTALL = true
 POST_UNINSTALL = true
 CC = @CC@
-CPP = @CPP@
 CXX = @CXX@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
@@ -76,8 +75,8 @@ libdumbutil_a_SOURCES = confargs.c confeng.c conffile.c confhelp.c \
  confargs.h confdef.h confeng.h conffile.h confhelp.h \
  endiantypes.h fixed.h log.h safeio.h safem.h timer.h
 
-# The combination of GCC 2.7.2.1 and Linux libc 5.4.33 seems to have a
-# bug that messes up parameters when using both -pg and
+# mcount() in Debian GNU/Linux libc 5.4.33-3 seems to have a bug that
+# messes up parameters when using both -pg and
 # __attribute__((regparm)).  So I have a special set of CFLAGS for
 # fixed.c.
 fixed_CFLAGS = -O2
@@ -107,7 +106,7 @@ DIST_COMMON =  Makefile.am Makefile.in
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-TAR = gtar
+TAR = tar
 GZIP = --best
 SOURCES = $(libdumbutil_a_SOURCES)
 OBJECTS = $(libdumbutil_a_OBJECTS)

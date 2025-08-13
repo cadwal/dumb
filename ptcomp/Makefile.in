@@ -1,0 +1,301 @@
+# Makefile.in generated automatically by automake 1.2 from Makefile.am
+
+# Copyright (C) 1994, 1995, 1996, 1997 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy, distribute and modify it.
+
+
+SHELL = /bin/sh
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
+
+NORMAL_INSTALL = true
+PRE_INSTALL = true
+POST_INSTALL = true
+NORMAL_UNINSTALL = true
+PRE_UNINSTALL = true
+POST_UNINSTALL = true
+CC = @CC@
+CXX = @CXX@
+DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
+DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
+DUMB_CONFIG_SOUND = @DUMB_CONFIG_SOUND@
+DUMB_CONFIG_SOUND_LDADD = @DUMB_CONFIG_SOUND_LDADD@
+DUMB_DGA_LDADD = @DUMB_DGA_LDADD@
+DUMB_FBREREND_SOURCES = @DUMB_FBREREND_SOURCES@
+DUMB_NETWORK_LDADD = @DUMB_NETWORK_LDADD@
+DUMB_NETWORK_SOURCES = @DUMB_NETWORK_SOURCES@
+DUMB_RENDER_SOURCES = @DUMB_RENDER_SOURCES@
+DUMB_XKB_LDADD = @DUMB_XKB_LDADD@
+DUMB_XSHM_LDADD = @DUMB_XSHM_LDADD@
+LN_S = @LN_S@
+MAKEINFO = @MAKEINFO@
+PACKAGE = @PACKAGE@
+RANLIB = @RANLIB@
+VERSION = @VERSION@
+
+bin_PROGRAMS = ptcomp
+
+ptcomp_SOURCES = ptcomp.c globals.h token.c token.h parm.c parm.h \
+ animcomp.c animcomp.h gettcomp.c gettcomp.h licomp.c licomp.h \
+ ltcomp.c ltcomp.h phasecomp.c phasecomp.h protocomp.c protocomp.h \
+ soundcomp.c soundcomp.h
+
+# Don't use srcdir or top_srcdir here!
+LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
+ ../libdumbutil/libdumbutil.a
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../config.h
+CONFIG_CLEAN_FILES = 
+PROGRAMS =  $(bin_PROGRAMS)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I..
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+X_CFLAGS = @X_CFLAGS@
+X_LIBS = @X_LIBS@
+X_EXTRA_LIBS = @X_EXTRA_LIBS@
+X_PRE_LIBS = @X_PRE_LIBS@
+ptcomp_OBJECTS =  ptcomp.o token.o parm.o animcomp.o gettcomp.o licomp.o \
+ltcomp.o phasecomp.o protocomp.o soundcomp.o
+ptcomp_LDADD = $(LDADD)
+ptcomp_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
+../libdumbutil/libdumbutil.a
+ptcomp_LDFLAGS = 
+CFLAGS = @CFLAGS@
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+LINK = $(CC) $(CFLAGS) $(LDFLAGS) -o $@
+DIST_COMMON =  Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = tar
+GZIP = --best
+SOURCES = $(ptcomp_SOURCES)
+OBJECTS = $(ptcomp_OBJECTS)
+
+default: all
+
+.SUFFIXES:
+.SUFFIXES: .c .o
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps ptcomp/Makefile
+
+Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+mostlyclean-binPROGRAMS:
+
+clean-binPROGRAMS:
+	test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+
+distclean-binPROGRAMS:
+
+maintainer-clean-binPROGRAMS:
+
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(bindir)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo "  $(INSTALL_PROGRAM) $$p $(bindir)/`echo $$p|sed '$(transform)'`"; \
+	     $(INSTALL_PROGRAM) $$p $(bindir)/`echo $$p|sed '$(transform)'`; \
+	  else :; fi; \
+	done
+
+uninstall-binPROGRAMS:
+	$(NORMAL_UNINSTALL)
+	list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  rm -f $(bindir)/`echo $$p|sed '$(transform)'`; \
+	done
+
+.c.o:
+	$(COMPILE) -c $<
+
+mostlyclean-compile:
+	rm -f *.o core
+
+clean-compile:
+
+distclean-compile:
+	rm -f *.tab.c
+
+maintainer-clean-compile:
+
+ptcomp: $(ptcomp_OBJECTS) $(ptcomp_DEPENDENCIES)
+	@rm -f ptcomp
+	$(LINK) $(ptcomp_LDFLAGS) $(ptcomp_OBJECTS) $(ptcomp_LDADD) $(LIBS)
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES)
+	here=`pwd` && cd $(srcdir) && mkid -f$$here/ID $(SOURCES) $(HEADERS)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES)
+	tags=; \
+	here=`pwd`; \
+	test -z "$(ETAGS_ARGS)$(SOURCES)$(HEADERS)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $(SOURCES) $(HEADERS) -o $$here/TAGS)
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = ptcomp
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  test -f $(distdir)/$$file \
+	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	  || cp -p $$d/$$file $(distdir)/$$file; \
+	done
+animcomp.o animcomp.lo: animcomp.c ../config.h ../libdumbutil/safem.h \
+	../libdumbutil/timer.h ../libdumb/animtexstruct.h token.h \
+	globals.h parm.h ../libdumbutil/fixed.h animcomp.h
+gettcomp.o gettcomp.lo: gettcomp.c ../config.h ../libdumbutil/safem.h \
+	../libdumb/gettablestruct.h ../libdumbutil/endiantypes.h \
+	token.h globals.h parm.h ../libdumbutil/fixed.h gettcomp.h \
+	protocomp.h soundcomp.h
+licomp.o licomp.lo: licomp.c ../config.h ../libdumbutil/safem.h \
+	../libdumb/levinfostruct.h ../libdumbutil/endiantypes.h token.h \
+	globals.h parm.h ../libdumbutil/fixed.h licomp.h
+ltcomp.o ltcomp.lo: ltcomp.c ../config.h ../libdumbutil/safem.h \
+	../libdumb/levdatanums.h ../libdumb/linetypestruct.h \
+	../libdumbutil/endiantypes.h ../libdumbutil/fixed.h token.h \
+	globals.h parm.h ltcomp.h protocomp.h soundcomp.h
+parm.o parm.lo: parm.c ../config.h ../libdumbutil/timer.h parm.h \
+	../libdumbutil/fixed.h token.h
+phasecomp.o phasecomp.lo: phasecomp.c ../config.h ../libdumbutil/safem.h \
+	token.h globals.h parm.h ../libdumbutil/fixed.h phasecomp.h \
+	../libdumb/prothingstruct.h ../libdumbutil/endiantypes.h \
+	soundcomp.h
+protocomp.o protocomp.lo: protocomp.c ../config.h ../libdumbutil/safem.h \
+	../libdumb/prothingstruct.h ../libdumbutil/endiantypes.h \
+	../libdumbutil/fixed.h token.h globals.h parm.h gettcomp.h \
+	phasecomp.h protocomp.h
+ptcomp.o ptcomp.lo: ptcomp.c ../config.h ../libdumbutil/log.h token.h \
+	globals.h parm.h ../libdumbutil/fixed.h animcomp.h gettcomp.h \
+	licomp.h ltcomp.h phasecomp.h ../libdumb/prothingstruct.h \
+	../libdumbutil/endiantypes.h protocomp.h soundcomp.h
+soundcomp.o soundcomp.lo: soundcomp.c ../config.h ../libdumbutil/safem.h \
+	../libdumb/dsound.h ../libdumbutil/fixed.h \
+	../libdumbutil/endiantypes.h ../libdumb/view.h token.h \
+	globals.h parm.h soundcomp.h
+token.o token.lo: token.c ../config.h ../libdumbutil/safem.h token.h
+
+info:
+dvi:
+check: all
+	$(MAKE)
+installcheck:
+install-exec: install-binPROGRAMS
+	@$(NORMAL_INSTALL)
+
+install-data: 
+	@$(NORMAL_INSTALL)
+
+install: install-exec install-data all
+	@:
+
+uninstall: uninstall-binPROGRAMS
+
+all: Makefile $(PROGRAMS)
+
+install-strip:
+	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' INSTALL_SCRIPT='$(INSTALL_PROGRAM)' install
+installdirs:
+	$(mkinstalldirs)  $(bindir)
+
+
+mostlyclean-generic:
+	test -z "$(MOSTLYCLEANFILES)" || rm -f $(MOSTLYCLEANFILES)
+
+clean-generic:
+	test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+
+distclean-generic:
+	rm -f Makefile $(DISTCLEANFILES)
+	rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+
+maintainer-clean-generic:
+	test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
+	test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
+mostlyclean:  mostlyclean-binPROGRAMS mostlyclean-compile \
+		mostlyclean-tags mostlyclean-generic
+
+clean:  clean-binPROGRAMS clean-compile clean-tags clean-generic \
+		mostlyclean
+
+distclean:  distclean-binPROGRAMS distclean-compile distclean-tags \
+		distclean-generic clean
+	rm -f config.status
+
+maintainer-clean:  maintainer-clean-binPROGRAMS maintainer-clean-compile \
+		maintainer-clean-tags maintainer-clean-generic \
+		distclean
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+.PHONY: default mostlyclean-binPROGRAMS distclean-binPROGRAMS \
+clean-binPROGRAMS maintainer-clean-binPROGRAMS uninstall-binPROGRAMS \
+install-binPROGRAMS mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir info dvi installcheck \
+install-exec install-data install uninstall all installdirs \
+mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+
+
+INCLUDES += -I$(top_srcdir)
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

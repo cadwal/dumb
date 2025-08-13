@@ -48,7 +48,7 @@ Proto CacoFireBall 8005
 Proto BaronFireBall 8006
   Sprite BAL7
   Phases FireBall
-  Damage 7
+  Damage 15
   Size 19 16
   Explosive EnergyBall ZCenter BulletProof EnergyProof
   NoHurtOwner
