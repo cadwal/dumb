@@ -18,7 +18,9 @@ XProtoThing_SOURCES = xproto.c choose.c colour.c controls.c disphash.c \
 
 XProtoThing_LDADD = $(LDADD) $(DUMB_CONFIG_SOUND_LDADD)
 
-# Don't use srcdir or top_srcdir here!
+# DUMB libraries are in the build tree, so don't use $(srcdir).
 LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
  ../libdumbutil/libdumbutil.a \
- $(X_LIBS) $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS)
+ $(X_LIBS) $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS) $(INTLLIBS)
+
+INCLUDES = -I$(top_srcdir)

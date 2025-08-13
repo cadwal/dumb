@@ -1,3 +1,24 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * libdumbutil/confdef.h: How to define configuration items.
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
+
 #ifndef CONFDEF_H
 #define CONFDEF_H
 
@@ -15,7 +36,7 @@ enum conf_type {
 };
 
 typedef struct {
-   const char *name, *menuname;
+   const char *name, *menuname;	/* will be translated when used */
    char shortname;
    const char *help;
    enum conf_type type;
@@ -30,30 +51,33 @@ typedef struct {
 } ConfItem;
 
 #define CONFI(n,mn,sn,h,df) {n,mn,sn,h,CONF_TYPE_INT,NULL,0,0, \
-    df,NULL,NULL,DIRT_NONE} /* integer(df) */
+    df,NULL,NULL,DIRT_NONE}	/* integer(df) */
 #define CONFB(n,mn,sn,h) {n,mn,sn,h,CONF_TYPE_BOOL,NULL,0,0, \
-    0,NULL,NULL,DIRT_NONE} /* boolean(false) */
+    0,NULL,NULL,DIRT_NONE}	/* boolean(false) */
 #define CONFNB(n,mn,sn,h) {n,mn,sn,h,CONF_TYPE_BOOL,NULL,0,0, \
-    1,NULL,NULL,DIRT_NONE} /* boolean(true) */
+    1,NULL,NULL,DIRT_NONE}	/* boolean(true) */
 #define CONFNS(n,mn,sn,h) {n,mn,sn,h,CONF_TYPE_BOOL,NULL,0,CI_NOSAVE, \
-    0,NULL,NULL,DIRT_NONE} /* boolean(false), no save */
+    0,NULL,NULL,DIRT_NONE}	/* boolean(false), no save */
 #define CONFE(n,mn,sn,h,df,e) {n,mn,sn,h,CONF_TYPE_ENUM,e,0,0, \
-    df,NULL,NULL,DIRT_NONE} /* enum(df) */
+    df,NULL,NULL,DIRT_NONE}	/* enum(df) */
 #define CONFS(n,mn,sn,h,df,l) {n,mn,sn,h,CONF_TYPE_STR,NULL,l,0, \
-    0,df,NULL,DIRT_NONE} /* string(df) */
+    0,df,NULL,DIRT_NONE}	/* string(df) */
 #define CONFL(n,mn,sn,h) {n,mn,sn,h,CONF_TYPE_LIST,NULL,0,0, \
-    0,NULL,NULL,DIRT_NONE} /* list({}) */
+    0,NULL,NULL,DIRT_NONE}	/* list({}) */
+
+#define CONFITEM_END {NULL}
+#define CONFENUM_END {NULL}
 
 typedef struct {
    ConfItem *items;
-   const char *name,*desc;
+   const char *name, *desc;
 } ConfModule;
 
 /* ConfItem::dirtlvl */
-#define DIRT_NONE 0  /* value is built-in default */ 
-#define DIRT_ARGS 1  /* value was specified on the command line */
-#define DIRT_FILE 2  /* value loaded from config file */
-#define DIRT_MODF 3  /* value modified (eg. from menu) */
+#define DIRT_NONE 0		/* value is built-in default */
+#define DIRT_ARGS 1		/* value was specified on the command line */
+#define DIRT_FILE 2		/* value loaded from config file */
+#define DIRT_MODF 3		/* value modified (eg. from menu) */
 
 /* ConfItem::flags */
 #define CI_NOSAVE 0x01

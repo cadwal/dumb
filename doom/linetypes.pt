@@ -26,10 +26,10 @@ DefaultSpeed 60/sec             /* 60 pixels per second */
 /* sounds work differently in different games that share the same linetypes */
 
 #if defined(DOOM)
-#define DoorOpenSound Sound DSDOROPN 
-#define DoorCloseSound Sound DSDORCLS 
-#define BDoorOpenSound Sound DSBDOPN 
-#define BDoorCloseSound Sound DSBDCLS 
+#define DoorOpenSound Sound DSDOROPN
+#define DoorCloseSound Sound DSDORCLS
+#define BDoorOpenSound Sound DSBDOPN
+#define BDoorCloseSound Sound DSBDCLS
 #define SwitchOnSound Sound DSSWTCHN
 #define SwitchOffSound Sound DSSWTCHX
 #define LiftSounds StartSound DSPSTART StopSound DSPSTOP
@@ -47,13 +47,13 @@ DefaultSpeed 60/sec             /* 60 pixels per second */
 #define StairSounds StopSound PSTOP
 #else
 #define DoorOpenSound
-#define DoorCloseSound  
-#define BDoorOpenSound  
-#define BDoorCloseSound 
-#define SwitchOnSound 
+#define DoorCloseSound
+#define BDoorOpenSound
+#define BDoorCloseSound
+#define SwitchOnSound
 #define SwitchOffSound
-#define LiftSounds 
-#define MoveSounds 
+#define LiftSounds
+#define MoveSounds
 #define StairSounds
 #endif
 
@@ -67,17 +67,17 @@ LineType ManualDoor-SR 1
 
 LineType ManualDoor-SR-RKey 28
   Repeatable AllowPlayer OnThumped KeyType 1
-  Action Sector OpenDoor DoorOpenSound Manual 
+  Action Sector OpenDoor DoorOpenSound Manual
   Action Sector CloseDoor DoorCloseSound Manual DoorCloseDelay
 
 LineType ManualDoor-SR-YKey 27
   Repeatable AllowPlayer OnThumped KeyType 3
-  Action Sector OpenDoor DoorOpenSound Manual 
+  Action Sector OpenDoor DoorOpenSound Manual
   Action Sector CloseDoor DoorCloseSound Manual DoorCloseDelay
 
 LineType ManualDoor-SR-BKey 26
   Repeatable AllowPlayer OnThumped KeyType 2
-  Action Sector OpenDoor DoorOpenSound Manual 
+  Action Sector OpenDoor DoorOpenSound Manual
   Action Sector CloseDoor DoorCloseSound Manual DoorCloseDelay
 
 
@@ -85,26 +85,26 @@ LineType ManualDoor-SR-BKey 26
 
 LineType ManualDoor-S1 31
   AllowPlayer OnThumped
-  Action Sector OpenDoor DoorOpenSound Manual 
+  Action Sector OpenDoor DoorOpenSound Manual
 
 LineType ManualDoor-S1-BKey 32
   AllowPlayer OnThumped KeyType 2
-  Action Sector OpenDoor DoorOpenSound Manual 
+  Action Sector OpenDoor DoorOpenSound Manual
 
 LineType ManualDoor-S1-RKey 33
   AllowPlayer OnThumped KeyType 1
-  Action Sector OpenDoor DoorOpenSound Manual 
+  Action Sector OpenDoor DoorOpenSound Manual
 
 LineType ManualDoor-S1-YKey 34
   AllowPlayer OnThumped KeyType 3
-  Action Sector OpenDoor DoorOpenSound Manual 
+  Action Sector OpenDoor DoorOpenSound Manual
 
 
 /* Shoot-to-open manual door */
 
 LineType ManualDoor-GR 46
   Repeatable AllowPlayer OnDamaged
-  Action Sector OpenDoor DoorOpenSound Manual 
+  Action Sector OpenDoor DoorOpenSound Manual
   Action Sector CloseDoor DoorCloseSound Manual DoorCloseDelay
 
 
@@ -124,24 +124,24 @@ LineType ManualDoor-S1-Blaze 118
 
 LineType RemoteDoor-W1 4
   AllowPlayer OnCrossed
-  Action Sector OpenDoor DoorOpenSound 
+  Action Sector OpenDoor DoorOpenSound
   Action Sector CloseDoor DoorCloseSound DoorCloseDelay
 
 LineType RemoteDoor-S1 29
   AllowPlayer OnThumped OnActivated
-  Action Sector OpenDoor DoorOpenSound 
+  Action Sector OpenDoor DoorOpenSound
   Action Sector CloseDoor DoorCloseSound DoorCloseDelay
   Action Side SwitchOn SwitchOnSound ManualF
   Action Side SwitchOff SwitchOffSound ManualF DoorCloseDelay
 
 LineType RemoteDoor-WR 90
   Repeatable AllowPlayer OnCrossed
-  Action Sector OpenDoor DoorOpenSound 
+  Action Sector OpenDoor DoorOpenSound
   Action Sector CloseDoor DoorCloseSound DoorCloseDelay
 
 LineType RemoteDoor-SR 63
   Repeatable AllowPlayer OnThumped OnActivated
-  Action Sector OpenDoor DoorOpenSound 
+  Action Sector OpenDoor DoorOpenSound
   Action Sector CloseDoor DoorCloseSound DoorCloseDelay
   Action Side SwitchOn SwitchOnSound ManualF
   Action Side SwitchOff SwitchOffSound ManualF DoorCloseDelay
@@ -151,20 +151,20 @@ LineType RemoteDoor-SR 63
 
 LineType RemoteDoor-W1-Open 2
   AllowPlayer OnCrossed
-  Action Sector OpenDoor DoorOpenSound 
+  Action Sector OpenDoor DoorOpenSound
 
 LineType RemoteDoor-S1-Open 103
   AllowPlayer OnThumped OnActivated
-  Action Sector OpenDoor DoorOpenSound 
+  Action Sector OpenDoor DoorOpenSound
   Action Side SwitchOn SwitchOnSound ManualF
 
 LineType RemoteDoor-WR-Open 86
   Repeatable AllowPlayer OnCrossed
-  Action Sector OpenDoor DoorOpenSound 
+  Action Sector OpenDoor DoorOpenSound
 
 LineType RemoteDoor-SR-Open 61
   Repeatable AllowPlayer OnThumped OnActivated
-  Action Sector OpenDoor DoorOpenSound 
+  Action Sector OpenDoor DoorOpenSound
   Action Side SwitchOn SwitchOnSound ManualF
   Action Side SwitchOff SwitchOffSound ManualF SwitchOffDelay
 
@@ -205,73 +205,73 @@ LineType RemoteDoor-WR-CloseOpen 76
 
 
 /* remote blaze doors: open / close */
- 
+
 LineType RemoteDoor-W1-Blaze 108
   AllowPlayer OnCrossed
-  Action Sector OpenDoor Turbo BDoorOpenSound 
+  Action Sector OpenDoor Turbo BDoorOpenSound
   Action Sector CloseDoor Turbo BDoorCloseSound DoorCloseDelay
 
 
 LineType RemoteDoor-WR-Blaze 111
   Repeatable AllowPlayer OnCrossed
-  Action Sector OpenDoor Turbo BDoorOpenSound 
+  Action Sector OpenDoor Turbo BDoorOpenSound
   Action Sector CloseDoor Turbo BDoorCloseSound DoorCloseDelay
 
 LineType RemoteDoor-S1-Blaze 105
   AllowPlayer OnThumped OnActivated
-  Action Sector OpenDoor Turbo BDoorOpenSound 
+  Action Sector OpenDoor Turbo BDoorOpenSound
   Action Sector CloseDoor Turbo BDoorCloseSound DoorCloseDelay
   Action Side SwitchOn SwitchOnSound ManualF
   Action Side SwitchOff SwitchOffSound ManualF DoorCloseDelay
 
-LineType RemoteDoor-SR-Blaze 114  
+LineType RemoteDoor-SR-Blaze 114
   Repeatable AllowPlayer OnThumped OnActivated
-  Action Sector OpenDoor Turbo BDoorOpenSound 
+  Action Sector OpenDoor Turbo BDoorOpenSound
   Action Sector CloseDoor Turbo BDoorCloseSound DoorCloseDelay
   Action Side SwitchOn SwitchOnSound ManualF
   Action Side SwitchOff SwitchOffSound ManualF DoorCloseDelay
 
 /* remote blaze doors: open only */
 
-LineType RemoteDoor-W1-Blaze-Open 109  
+LineType RemoteDoor-W1-Blaze-Open 109
   AllowPlayer OnCrossed
-  Action Sector OpenDoor Turbo BDoorOpenSound 
+  Action Sector OpenDoor Turbo BDoorOpenSound
 
-LineType RemoteDoor-S1-Blaze-Open 112  
+LineType RemoteDoor-S1-Blaze-Open 112
   AllowPlayer OnThumped OnActivated
-  Action Sector OpenDoor Turbo BDoorOpenSound 
+  Action Sector OpenDoor Turbo BDoorOpenSound
   Action Side SwitchOn SwitchOnSound ManualF
 
 #ifdef HERETIC
-LineType RemoteDoor-WR-Blaze-Open 100  
+LineType RemoteDoor-WR-Blaze-Open 100
 #else
-LineType RemoteDoor-WR-Blaze-Open 106  
+LineType RemoteDoor-WR-Blaze-Open 106
 #endif
   Repeatable AllowPlayer OnCrossed
-  Action Sector OpenDoor Turbo BDoorOpenSound 
+  Action Sector OpenDoor Turbo BDoorOpenSound
 
-LineType RemoteDoor-SR-Blaze-Open 115  
+LineType RemoteDoor-SR-Blaze-Open 115
   Repeatable AllowPlayer OnThumped OnActivated
-  Action Sector OpenDoor Turbo BDoorOpenSound 
+  Action Sector OpenDoor Turbo BDoorOpenSound
   Action Side SwitchOn SwitchOnSound ManualF
   Action Side SwitchOff SwitchOffSound ManualF SwitchOffDelay
 
 /* remote blaze doors: close only */
 
-LineType RemoteDoor-W1-Blaze-Close 110  
+LineType RemoteDoor-W1-Blaze-Close 110
   AllowPlayer OnCrossed
   Action Sector CloseDoor Turbo BDoorCloseSound
 
-LineType RemoteDoor-S1-Blaze-Close 113  
+LineType RemoteDoor-S1-Blaze-Close 113
   AllowPlayer OnThumped OnActivated
   Action Sector CloseDoor Turbo BDoorCloseSound
   Action Side SwitchOn SwitchOnSound ManualF
 
-LineType RemoteDoor-WR-Blaze-Close 107  
+LineType RemoteDoor-WR-Blaze-Close 107
   Repeatable AllowPlayer OnCrossed
   Action Sector CloseDoor Turbo BDoorCloseSound
 
-LineType RemoteDoor-SR-Blaze-Close 116  
+LineType RemoteDoor-SR-Blaze-Close 116
   Repeatable AllowPlayer OnThumped OnActivated
   Action Sector CloseDoor Turbo BDoorCloseSound
   Action Side SwitchOn SwitchOnSound ManualF
@@ -279,38 +279,38 @@ LineType RemoteDoor-SR-Blaze-Close 116
 
 /* remote doors: key activated */
 
-LineType RemoteDoor-S1-Blaze-BKey 133  
+LineType RemoteDoor-S1-Blaze-BKey 133
   AllowPlayer OnThumped OnActivated KeyType 2
-  Action Sector OpenDoor Turbo BDoorOpenSound 
+  Action Sector OpenDoor Turbo BDoorOpenSound
   Action Side SwitchOn SwitchOnSound ManualF
 
-LineType RemoteDoor-SR-Blaze-BKey 99  
+LineType RemoteDoor-SR-Blaze-BKey 99
   Repeatable AllowPlayer OnThumped OnActivated KeyType 2
-  Action Sector OpenDoor Turbo BDoorOpenSound 
+  Action Sector OpenDoor Turbo BDoorOpenSound
   Action Sector CloseDoor Turbo BDoorCloseSound DoorCloseDelay
   Action Side SwitchOn SwitchOnSound ManualF
   Action Side SwitchOff SwitchOffSound ManualF DoorCloseDelay
 
-LineType RemoteDoor-S1-Blaze-RKey 135  
+LineType RemoteDoor-S1-Blaze-RKey 135
   AllowPlayer OnThumped OnActivated KeyType 1
-  Action Sector OpenDoor Turbo BDoorOpenSound 
+  Action Sector OpenDoor Turbo BDoorOpenSound
   Action Side SwitchOn SwitchOnSound ManualF
 
-LineType RemoteDoor-SR-Blaze-RKey 134  
+LineType RemoteDoor-SR-Blaze-RKey 134
   Repeatable AllowPlayer OnThumped OnActivated KeyType 1
-  Action Sector OpenDoor Turbo BDoorOpenSound 
+  Action Sector OpenDoor Turbo BDoorOpenSound
   Action Sector CloseDoor Turbo BDoorCloseSound DoorCloseDelay
   Action Side SwitchOn SwitchOnSound ManualF
   Action Side SwitchOff SwitchOffSound ManualF DoorCloseDelay
 
-LineType RemoteDoor-S1-Blaze-YKey 137  
+LineType RemoteDoor-S1-Blaze-YKey 137
   AllowPlayer OnThumped OnActivated KeyType 3
-  Action Sector OpenDoor Turbo BDoorOpenSound 
+  Action Sector OpenDoor Turbo BDoorOpenSound
   Action Side SwitchOn SwitchOnSound ManualF
 
-LineType RemoteDoor-SR-Blaze-YKey 136  
+LineType RemoteDoor-SR-Blaze-YKey 136
   Repeatable AllowPlayer OnThumped OnActivated KeyType 3
-  Action Sector OpenDoor Turbo BDoorOpenSound 
+  Action Sector OpenDoor Turbo BDoorOpenSound
   Action Sector CloseDoor Turbo BDoorCloseSound DoorCloseDelay
   Action Side SwitchOn SwitchOnSound ManualF
   Action Side SwitchOff SwitchOffSound ManualF DoorCloseDelay
@@ -345,7 +345,7 @@ LineType Lift-SR 62
 LineType Lift-W1-Blaze 121
   AllowPlayer OnCrossed
   Action Sector LiftDown Turbo LiftSounds
-  
+
 LineType Lift-S1-Blaze 122
   AllowPlayer OnThumped OnActivated
   Action Sector LiftDown Turbo LiftSounds
@@ -380,36 +380,36 @@ LineType Floor-S1-Up 101
   AllowPlayer OnThumped OnActivated
   Action Sector Floor Up To LowestCeiling Slow MoveSounds
   Action Side SwitchOn SwitchOnSound ManualF
-  
-LineType Floor-SR-Up  64 
+
+LineType Floor-SR-Up  64
   Repeatable AllowPlayer OnThumped OnActivated
   Action Sector Floor Up To LowestCeiling Slow MoveSounds
   Action Side SwitchOn SwitchOnSound ManualF
   Action Side SwitchOff SwitchOffSound ManualF SwitchOffDelay
 
-LineType Floor-G1-Up  24 
+LineType Floor-G1-Up  24
   _LockOutLines AllowPlayer OnDamaged
   Action Sector Floor Up To LowestCeiling Slow MoveSounds
 
 
 LineType Floor-W1L-MostlyUp  56
   AllowPlayer OnCrossed
-  Action Sector Floor Up To LowestCeiling Minus 8 
+  Action Sector Floor Up To LowestCeiling Minus 8
                       Slow SlowCrush MoveSounds
 
 LineType Floor-WRL-MostlyUp  94
   _LockOutLines Repeatable AllowPlayer OnCrossed
-  Action Sector Floor Up To LowestCeiling Minus 8 
+  Action Sector Floor Up To LowestCeiling Minus 8
                       Slow SlowCrush MoveSounds
 
 LineType Floor-S1-MostlyUp  55
   AllowPlayer OnThumped OnActivated
-  Action Sector Floor Up To LowestCeiling Minus 8 
+  Action Sector Floor Up To LowestCeiling Minus 8
                       Slow SlowCrush MoveSounds
   Action Side SwitchOn SwitchOnSound ManualF
   Action Side SwitchOff SwitchOffSound ManualF SwitchOffDelay
 
-LineType Floor-SR-MostlyUp  65 
+LineType Floor-SR-MostlyUp  65
   Repeatable AllowPlayer OnThumped OnActivated
   Action Sector Floor Up To LowestCeiling Minus 8 Slow SlowCrush MoveSounds
   Action Side SwitchOn SwitchOnSound ManualF
@@ -457,10 +457,10 @@ LineType Floor-SR-UpNext-Blaze 132
 
 /* texture-changing floors that go up */
 
-LineType Floor-W1L-UpNext-TXP  22
+LineType Floor-W1L-UpNext-TX  22
   _LockOutLines AllowPlayer OnCrossed
   Action Sector Floor Up To NextHighestFloor Slow MoveSounds
-  Action Sector FloorType TriggerModel
+  Action Sector FloorTexture TriggerModel
 
 LineType Floor-WRL-UpNext-TX  95
   _LockOutLines Repeatable AllowPlayer OnCrossed
@@ -545,7 +545,7 @@ LineType Floor-W1-Down  19
   AllowPlayer OnCrossed
   Action Sector Floor Down To HighestAdjacentFloor Slow MoveSounds
 
-LineType Floor-WR-Down  83 
+LineType Floor-WR-Down  83
   Repeatable AllowPlayer OnCrossed
   Action Sector Floor Down To HighestAdjacentFloor Slow MoveSounds
 
@@ -563,7 +563,7 @@ LineType Floor-SR-Down  45
 
 LineType Floor-W1-MostlyDown  36
   AllowPlayer OnCrossed
-  Action Sector Floor Down To HighestAdjacentFloor Plus 8 
+  Action Sector Floor Down To HighestAdjacentFloor Plus 8
          Fast MoveSounds
 
 LineType Floor-WR-MostlyDown  98
@@ -597,7 +597,7 @@ LineType Floor-S1-FarDown  23
   AllowPlayer OnThumped OnActivated
   Action Sector Floor Down To LowestAdjacentFloor Slow MoveSounds
   Action Side SwitchOn SwitchOnSound ManualF
-  
+
 LineType Floor-SR-FarDown  60
   Repeatable AllowPlayer OnThumped OnActivated
   Action Sector Floor Down To LowestAdjacentFloor Slow MoveSounds
@@ -610,7 +610,7 @@ LineType Floor-W1-FarDown-NXP  37
   AllowPlayer OnCrossed
   Action Sector Floor Down To LowestAdjacentFloor Slow MoveSounds
   Action Sector FloorType NumericModel WaitFor Floor
-  
+
 LineType Floor-WR-FarDown-NXP  84
   Repeatable AllowPlayer OnCrossed
   Action Sector Floor Down To LowestAdjacentFloor Slow MoveSounds
@@ -619,7 +619,7 @@ LineType Floor-WR-FarDown-NXP  84
 
 /* floors that go bump in the night */
 
-LineType Floor-S1-Donut    9  
+LineType Floor-S1-Donut    9
   AllowPlayer OnThumped OnActivated
   Action Sector Floor Down To LowestFloor Slow MoveSounds DonutInner
   Action Sector FloorType NumericModel
@@ -627,9 +627,9 @@ LineType Floor-S1-Donut    9
   Action Sector FloorType NumericModel DonutOuter
 
 
-/* Floors that go up by their Shortest Lower Texture */ 
+/* Floors that go up by their Shortest Lower Texture */
 
-LineType Floor-W1-Up-SLT  30  
+LineType Floor-W1-Up-SLT  30
   AllowPlayer OnCrossed
   Action Sector Floor Up To FloorPlusSLT MoveSounds
 
@@ -703,9 +703,9 @@ LineType Ceiling-WR-MostlyDown  72
 #define CeilingStop Ceiling Up To OrigCeiling UnqueueAll
 
 LineType CrushingCeiling-W1   6
-  _LockOutLines AllowPlayer OnCrossed 
+  _LockOutLines AllowPlayer OnCrossed
   Action Sector CeilingMove SlowCrush MoveSounds
- 
+
 LineType CrushingCeiling-W1-Heavy  25
   _LockOutLines AllowPlayer OnCrossed
   Action Sector CeilingMoveFast FastCrush MoveSounds
@@ -715,7 +715,7 @@ LineType CrushingCeiling-WR-Heavy  73
   Action Sector CeilingMoveFast FastCrush MoveSounds
 
 LineType CrushingCeiling-WR  77
-  Repeatable _LockOutLines AllowPlayer OnCrossed 
+  Repeatable _LockOutLines AllowPlayer OnCrossed
   Action Sector CeilingMove SlowCrush MoveSounds
 
 LineType CrushingCeiling-W1-Heavy 141
@@ -733,7 +733,7 @@ LineType CrushingCeiling-WR  74
 
 /** Stairs **/
 
-LineType Stair-W1  8  
+LineType Stair-W1  8
   AllowPlayer OnCrossed
   Action Sector Floor Stair Up To Floor Plus 8 Slow StairSounds
 
@@ -758,12 +758,12 @@ LineType Stair-S1-High 127
 
 /** Lights **/
 
-/* light is a bit tricky: first of all, the internal value in 
+/* light is a bit tricky: first of all, the internal value in
    SectorDyn that we're manipulating is "darkness", a fixed point
    quantity that varies between 1 (completely dark) and 0 (see forever).
    The speed values for the "Darkness" eventtype are given in 65536ths
    of this. You have to specify a speed, as otherwise the default speed
-   for moving surfaces will be used, which is likely to be inappropriate */ 
+   for moving surfaces will be used, which is likely to be inappropriate */
 
 #define LightOn Darkness Down To Zero Speed 2048
 #define LightOff Darkness Up To One Speed 2048
@@ -773,15 +773,15 @@ LineType Stair-S1-High 127
 LineType Light-W1-On  13
   AllowPlayer OnCrossed
   Action Sector LightOn
-  
+
 LineType Light-W1-Off  35
   AllowPlayer OnCrossed
   Action Sector LightOff
-  
+
 LineType Light-W1-On-HE  12
   AllowPlayer OnCrossed
   Action Sector LightHE
-  
+
 LineType Light-W1-Off-LE 104
   AllowPlayer OnCrossed
   Action Sector LightLE
@@ -789,15 +789,15 @@ LineType Light-W1-Off-LE 104
 //  LineType Light-W1-Blink  17
 //    AllowPlayer OnCrossed
 //    Action Sector LightBlink
-//  
-LineType Light-WR-On  81  
+//
+LineType Light-WR-On  81
   Repeatable AllowPlayer OnCrossed
   Action Sector LightOn
-  
+
 LineType Light-WR-Off  79
   Repeatable AllowPlayer OnCrossed
   Action Sector LightOff
- 
+
 LineType Light-WR-On-HE  80
   Repeatable AllowPlayer OnCrossed
   Action Sector LightHE
@@ -810,7 +810,7 @@ LineType Light-SR-On-Clunk 138
   Action Sector LightOn
   Action Side SwitchOn SwitchOnSound ManualF
   Action Side SwitchOff SwitchOffSound ManualF SwitchOffDelay
-  
+
 LineType Light-SR-Off-Clunk 139
   Repeatable AllowPlayer OnThumped OnActivated
   Action Sector LightOff
@@ -842,7 +842,7 @@ LineType Exit-W1-Secret 124
 /* Teleporters */
 
 LineType Teleport-W1 39
-  AllowPlayer AllowMonster OnCrossed FrontOnly 
+  AllowPlayer AllowMonster OnCrossed FrontOnly
   SpotType TeleSpot
   Action Thing Teleport TeleportDelay SpawnType TeleportFog
 
@@ -852,7 +852,7 @@ LineType Teleport-WR 97
   Action Thing Teleport TeleportDelay SpawnType TeleportFog
 
 LineType Teleport-W1-Monster 125
-  AllowMonster OnCrossed FrontOnly 
+  AllowMonster OnCrossed FrontOnly
   SpotType TeleSpot
   Action Thing Teleport TeleportDelay SpawnType TeleportFog
 
@@ -873,15 +873,15 @@ LineType Scrolling 48
 
 #undef OpenDoor
 #undef CloseDoor
-#undef LiftUp   
-#undef LiftDown  
+#undef LiftUp
+#undef LiftDown
 
 #undef _LockOutLines
 
 #undef DoorCloseDelay
-#undef DoorLongDelay 
-#undef LiftUpDelay    
-#undef SwitchOffDelay 
+#undef DoorLongDelay
+#undef LiftUpDelay
+#undef SwitchOffDelay
 #undef TeleportDelay
-#undef ExitDelay 
+#undef ExitDelay
 

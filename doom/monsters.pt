@@ -8,7 +8,7 @@
 #define OuchRate     400msec
 #define DieRate      100msec
 #define ExplodeRate  120msec
-#define RespawnRate  300msec 
+#define RespawnRate  300msec
 
 // IDEA: (for archvile when passing over a dead body)
 #define SigResurrect
@@ -60,14 +60,14 @@ SoundType DSPLPAIN Chance 3
 
 PhaseTable Player
   Default Duration NormalRate
-  Phase INIT    A   
-  Phase -	B   
-  Phase -	C   
+  Phase INIT    A
+  Phase -	B
+  Phase -	C
   Phase -	D   Goto INIT
 
   /* player shooting needs to be like this because the actual shooting
      is done asychronously by a bogothing */
-  Phase SHOOT   F   Glow SigShoot 
+  Phase SHOOT   F   Glow SigShoot
   Phase -	E   Duration OuchRate Goto INIT
 
   Phase OUCH    G   NoSigs SigOuch Sound DSPLPAIN Duration OuchRate Goto INIT
@@ -341,7 +341,7 @@ PhaseTable Zombie
   Default Duration DieRate
   Default NoSigs
   Phase DIE     G       SigDie Sound DSPODTH*
-  Phase -       H       
+  Phase -       H
   Phase -       I	Spawn2
   Phase -       J
   Phase -       K
@@ -379,7 +379,7 @@ PhaseTable ZombieSarg
   Default Duration DieRate
   Default NoSigs
   Phase DIE     G       SigDie Sound DSPODTH*
-  Phase -       H       
+  Phase -       H
   Phase -       I	Spawn2
   Phase -       J
   Phase -       K
@@ -557,7 +557,7 @@ PhaseTable Demon
 
   Phase SIGHT   A	SigDetect Sound DSSGTSIT
 
-  Phase MOVE    A	
+  Phase MOVE    A
   Phase -       B       Strategy
   Phase -       C       Strategy
   Phase -       D       Strategy Goto MOVE Sound DSDMACT
@@ -565,17 +565,17 @@ PhaseTable Demon
   Default Duration 250msec
   Phase FIGHT   E       SigFight
   Phase -       F	Melee Sound DSSGTATK
-  Phase -       G       
+  Phase -       G
   Phase -       E
   Phase -       F	Melee Sound DSSGTATK
-  Phase -       G       
+  Phase -       G
   Phase -	E	Goto MOVE
 
   Phase OUCH    H       SigOuch Sound DSDMPAIN Goto MOVE
 
   Default Duration DieRate
   Default NoSigs
-  Phase DIE     I       SigDie 
+  Phase DIE     I       SigDie
   Phase -       J
   Phase -       K	Sound DSSGTDTH
   Phase -       L
@@ -648,7 +648,7 @@ PhaseTable Cacodemon
   Default Duration DieRate
   Default NoSigs
 
-  Phase DIE     F       SigDie 
+  Phase DIE     F       SigDie
   Phase -       G
   Phase -       H	Sound DSCACDTH
   Phase -       I
@@ -721,7 +721,7 @@ PhaseTable Baron
   Default Duration DieRate
   Default NoSigs
   Phase DIE     I       SigDie Sound DSBRSDTH
-  Phase -       J	
+  Phase -       J
   Phase -       K
   Phase -       L
   Phase -       M
@@ -794,7 +794,7 @@ PhaseTable Revenant
   Phase -       F       Strategy Sound DSSKEACT Goto MOVE
 
   Phase FIGHT   G       SigFight Sound DSSKFGT*
-  Phase -       H       
+  Phase -       H
   Phase -       I       Melee Goto MOVE
 
   Phase SHOOT   J       SigShoot Duration 500msec Sound DSFIRSHT
@@ -864,7 +864,7 @@ PhaseTable Mancubus
   Phase -       F       Strategy Goto MOVE
 
   Phase SHOOT   G       SigShoot Sound DSMANATK
-  Phase -       H       
+  Phase -       H
   Phase -       I       Shoot Glow Goto MOVE
 
   Default Duration OuchRate
@@ -892,7 +892,7 @@ Proto Mancubus 67
   Beastie Blocking SkirtCliffs
   Splat BloodSplat
   Shoots MancFireBall ImmuneToSuch
-  ShootPara 2 48 
+  ShootPara 2 48
   Becomes DeadMancubus
   Speed 8
 
@@ -1011,7 +1011,7 @@ PhaseTable LostSoul
   Phase -       D       Strategy
   Phase -       C       Strategy
   Phase -       C       Strategy
-  Phase -       D       Strategy 
+  Phase -       D       Strategy
   Phase -       D       Strategy Melee Goto MOVE
 
   Default Duration OuchRate
@@ -1250,7 +1250,7 @@ PhaseTable Cyberdemon
   Phase SIGHT   A       SigDetect Sound DSCYBSIT
 
   Phase MOVE    A
-  Phase -       B       Strategy Sound DSHOOF 
+  Phase -       B       Strategy Sound DSHOOF
   Phase -       C
   Phase -       D       Strategy Sound DSHOOF Goto MOVE
 
@@ -1289,14 +1289,14 @@ Proto Cyberdemon 16
 PhaseTable Barrel
   Default Duration NormalRate
 
-  Phase IDLE    A	
+  Phase IDLE    A
   Phase -       B       Goto IDLE
 
   Default Duration 250msec
   Default NoSigs
   Default Sprite BEXP
 
-  Phase BOOM    A       SigDie 
+  Phase BOOM    A       SigDie
   Phase -       B       Sound DSBAREXP
   Phase -       C       Glow Explode
   Phase -       D       Glow
@@ -1314,7 +1314,7 @@ Proto Barrel 2035
 #undef NormalRate
 #undef DieRate
 #undef OuchRate
-#undef ExplodeRate 
+#undef ExplodeRate
 #undef RespawnRate
 
 #undef SigResurrect

@@ -57,9 +57,12 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+CATALOGS = @CATALOGS@
+CATOBJEXT = @CATOBJEXT@
 CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+DATADIRNAME = @DATADIRNAME@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
 DUMB_CONFIG_SOUND = @DUMB_CONFIG_SOUND@
@@ -71,10 +74,27 @@ DUMB_NETWORK_SOURCES = @DUMB_NETWORK_SOURCES@
 DUMB_RENDER_SOURCES = @DUMB_RENDER_SOURCES@
 DUMB_XKB_LDADD = @DUMB_XKB_LDADD@
 DUMB_XSHM_LDADD = @DUMB_XSHM_LDADD@
+GENCAT = @GENCAT@
+GMOFILES = @GMOFILES@
+GMSGFMT = @GMSGFMT@
+GT_NO = @GT_NO@
+GT_YES = @GT_YES@
+INCLUDE_LOCALE_H = @INCLUDE_LOCALE_H@
+INSTOBJEXT = @INSTOBJEXT@
+INTLDEPS = @INTLDEPS@
+INTLLIBS = @INTLLIBS@
+INTLOBJS = @INTLOBJS@
+l = @l@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
+MKINSTALLDIRS = @MKINSTALLDIRS@
+MSGFMT = @MSGFMT@
 PACKAGE = @PACKAGE@
+POFILES = @POFILES@
+POSUB = @POSUB@
 RANLIB = @RANLIB@
+USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
+USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 
 noinst_LIBRARIES = libdumbwad.a
@@ -194,13 +214,17 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
-loadlump.o: loadlump.c ../config.h ../libdumbutil/safeio.h \
-	../libdumbutil/safem.h ../libdumbutil/log.h wadstruct.h \
-	../libdumbutil/endiantypes.h wadio.h
-wadio.o: wadio.c ../config.h ../libdumbutil/safeio.h \
-	../libdumbutil/safem.h ../libdumbutil/log.h wadstruct.h \
-	../libdumbutil/endiantypes.h wadio.h
-wadwr.o: wadwr.c ../config.h ../libdumbutil/log.h wadwr.h wadstruct.h \
+loadlump.o: loadlump.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/safeio.h ../libdumbutil/safem.h \
+	../libdumbutil/log.h wadstruct.h ../libdumbutil/endiantypes.h \
+	wadio.h
+wadio.o: wadio.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/safeio.h ../libdumbutil/safem.h \
+	../libdumbutil/log.h wadstruct.h ../libdumbutil/endiantypes.h \
+	wadio.h
+wadwr.o: wadwr.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/safem.h ../libdumbutil/log.h \
+	../libdumbutil/align.h wadwr.h wadstruct.h \
 	../libdumbutil/endiantypes.h
 
 info:

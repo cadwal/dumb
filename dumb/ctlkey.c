@@ -1,7 +1,6 @@
 /* DUMB: A Doom-like 3D game engine.
- * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
- * ctlkey.c: enum ctlkey and conversion from it to PlayerInput.
+ * dumb/ctlkey.c: enum ctlkey and conversion from it to PlayerInput.
  * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,9 +14,9 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; see the file COPYING.  If not, write to
- * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111, USA.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
  */
 
 /* I changed x11_video.c to use enum ctlkey as an intermediate step
@@ -39,6 +38,8 @@
 
 #include <string.h>		/* memset() */
 
+#include "libdumbutil/dumb-nls.h"
+
 #include "libdumbutil/fixed.h"
 #include "libdumbutil/log.h"
 #include "ctlkey.h"
@@ -54,10 +55,10 @@ static int need_recalc;
 static void recalc_input(void);
 static void compress_square_to_circle(fixed *x, fixed *y);
 
-void 
+void
 ctlkey_init(void)
 {
-   memset(&keystate, 0, sizeof (keystate));
+   memset(&keystate, 0, sizeof(keystate));
    /* memset(&input, 0, sizeof (input)); recalced anyway */
    need_recalc = 1;
 }
@@ -71,12 +72,12 @@ void
 ctlkey_press(enum ctlkey key, int pressed_flag)
 {
    if (key == CTLKEY_NONE)
-      return; /* no error */
+      return;			/* no error */
    if (keystate[key] == pressed_flag)
       return;
    keystate[key] = pressed_flag;
    need_recalc = 1;
-#ifdef COMPLEX_LOOKING   
+#ifdef COMPLEX_LOOKING
    if (key == CTLKEY_CENTER_VIEW && pressed_flag)
       input.lookup = 0;
    if ((key == CTLKEY_LOOK_UP || key == CTLKEY_LOOK_DOWN) && !pressed_flag)
@@ -88,9 +89,9 @@ void
 ctlkey_calc_tick(void)
 {
 #ifdef COMPLEX_LOOKING
-   int aim_speed = ((keystate[CTLKEY_AIM_UP] 
+   int aim_speed = ((keystate[CTLKEY_AIM_UP]
 		     || keystate[CTLKEY_LOOK_UP])
-		    - (keystate[CTLKEY_AIM_DOWN] 
+		    - (keystate[CTLKEY_AIM_DOWN]
 		       || keystate[CTLKEY_LOOK_DOWN])) * 3;
    if (keystate[CTLKEY_RUN])
       aim_speed *= 3;
@@ -102,7 +103,7 @@ ctlkey_calc_tick(void)
 #endif
 }
 
-void 
+void
 ctlkey_get_player_input(PlayerInput *dest)
 {
    if (need_recalc) {
@@ -118,20 +119,20 @@ recalc_input(void)
    int left, right, i;
    fixed x, y;
    input.quit = keystate[CTLKEY_QUIT];
-   input.jump = (keystate[CTLKEY_MOVE_UP] 
+   input.jump = (keystate[CTLKEY_MOVE_UP]
 		 - keystate[CTLKEY_MOVE_DOWN]) * UNIT_SPEED;
    input.action = keystate[CTLKEY_ACTIVATE];
    input.shoot = keystate[CTLKEY_SHOOT];
-   input.w_sel = (keystate[CTLKEY_NEXT_WEAPON] 
+   input.w_sel = (keystate[CTLKEY_NEXT_WEAPON]
 		  - keystate[CTLKEY_PREVIOUS_WEAPON]);
    input.use = keystate[CTLKEY_USE_ITEM];
    input.s_sel = (keystate[CTLKEY_NEXT_ITEM]
 		  - keystate[CTLKEY_PREVIOUS_ITEM]);
    left = (keystate[CTLKEY_MOVE_LEFT]
-	   || (keystate[CTLKEY_STRAFE] 
+	   || (keystate[CTLKEY_STRAFE]
 	       && keystate[CTLKEY_TURN_LEFT]));
    right = (keystate[CTLKEY_MOVE_RIGHT]
-	    || (keystate[CTLKEY_STRAFE] 
+	    || (keystate[CTLKEY_STRAFE]
 		&& keystate[CTLKEY_TURN_RIGHT]));
    x = INT_TO_FIXED(left - right);
    if (keystate[CTLKEY_STRAFE])
@@ -144,12 +145,12 @@ recalc_input(void)
 #ifdef COMPLEX_LOOKING
    /* input.lookup is handled in ctlkey_calc_tick() */
 #else
-   input.lookup = (((keystate[CTLKEY_LOOK_UP] 
+   input.lookup = (((keystate[CTLKEY_LOOK_UP]
 		     || keystate[CTLKEY_AIM_UP])
-		    - (keystate[CTLKEY_LOOK_DOWN] 
+		    - (keystate[CTLKEY_LOOK_DOWN]
 		       || keystate[CTLKEY_AIM_DOWN]))
 		   * UNIT_SPEED);
-#endif   
+#endif
    if (keystate[CTLKEY_RUN]) {
       x = FIXED_SCALE(x, 2);
       y = FIXED_SCALE(y, 2);
@@ -162,8 +163,8 @@ recalc_input(void)
    input.forward = y;
 #else
    /* PlayerInput has its own scaling */
-   input.sideways = FIXED_TO_FLOAT(x)*UNIT_SPEED;
-   input.forward = FIXED_TO_FLOAT(y)*UNIT_SPEED;
+   input.sideways = FIXED_TO_FLOAT(x) * UNIT_SPEED;
+   input.forward = FIXED_TO_FLOAT(y) * UNIT_SPEED;
 #endif
    for (i = 0; i <= 9; i++)
       input.select[i] = keystate[CTLKEY_WEAPON_0 + i];
@@ -221,31 +222,32 @@ compress_square_to_circle(fixed *x, fixed *y)
    *y = fixmul(*y, k);
 }
 
-static const char *const ctlkey_pretty_names[CTLKEY_ARRAY_SIZE] = {
-   "Quit",
-   "Move forward", "Move backward",
-   "Turn left", "Turn right",
-   "Turn around",
-   "Sidestep left", "Sidestep right",
-   "Jump / Swim/Fly up", "Duck / Swim/Fly down",
-   "Look up", "Look down",
-   "Aim up", "Aim down", "Center view",
-   "Run", "Strafe",
-   "Activate",
-   "Shoot",
-   "Shoot special",
-   "Select next weapon", "Select previous weapon",
-   "Select weapon 0", "Select weapon 1", "Select weapon 2",
-   "Select weapon 3", "Select weapon 4", "Select weapon 5",
-   "Select weapon 6", "Select weapon 7", "Select weapon 8",
-   "Select weapon 9",
-   "Use item", "Next item", "Previous item"
+static const char *const ctlkey_pretty_names[CTLKEY_ARRAY_SIZE] =
+{
+   N_("Quit"),
+   N_("Move forward"), N_("Move backward"),
+   N_("Turn left"), N_("Turn right"),
+   N_("Turn around"),
+   N_("Sidestep left"), N_("Sidestep right"),
+   N_("Jump / Swim/Fly up"), N_("Duck / Swim/Fly down"),
+   N_("Look up"), N_("Look down"),
+   N_("Aim up"), N_("Aim down"), N_("Center view"),
+   N_("Run"), N_("Strafe"),
+   N_("Activate"),
+   N_("Shoot"),
+   N_("Shoot special"),
+   N_("Select next weapon"), N_("Select previous weapon"),
+   N_("Select weapon 0"), N_("Select weapon 1"), N_("Select weapon 2"),
+   N_("Select weapon 3"), N_("Select weapon 4"), N_("Select weapon 5"),
+   N_("Select weapon 6"), N_("Select weapon 7"), N_("Select weapon 8"),
+   N_("Select weapon 9"),
+   N_("Use item"), N_("Next item"), N_("Previous item")
 };
 
 const char *
 ctlkey_pretty_name(enum ctlkey key)
 {
-   return ctlkey_pretty_names[key];
+   return _(ctlkey_pretty_names[key]);
 }
 
 // Local Variables:

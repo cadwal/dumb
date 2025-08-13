@@ -7,7 +7,7 @@ can run ./fixbm directly.
 Basically, fixbm sees how many basic arithmetic operations it can do
 in a set period of time.  The numbers reported are the number of
 operations, so, the higher the better.  You can compare the
-performance of different builds of DUMB, or DUMB on different platforms.  
+performance of different builds of DUMB, or DUMB on different platforms.
 You can also compare the performance of the fixed point ops with
 equivalent (unoptimized) floating point ops.  If you consistently
 get lower numbers for "Fixed: " than "Float: ", you should report it

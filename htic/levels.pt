@@ -4,36 +4,36 @@
  **/
 
 
-Level E1M1  Music MUS_E1M1  Sky SKY1  StartGame     
-Level E1M2  Music MUS_E1M2  Sky SKY1     
-Level E1M3  Music MUS_E1M3  Sky SKY1  
-Level E1M4  Music MUS_E1M4  Sky SKY1     
-Level E1M5  Music MUS_E1M5  Sky SKY1     
-Level E1M6  Music MUS_E1M6  Sky SKY1  Secret E1M9   
-Level E1M7  Music MUS_E1M7  Sky SKY1     
+Level E1M1  Music MUS_E1M1  Sky SKY1  StartGame
+Level E1M2  Music MUS_E1M2  Sky SKY1
+Level E1M3  Music MUS_E1M3  Sky SKY1
+Level E1M4  Music MUS_E1M4  Sky SKY1
+Level E1M5  Music MUS_E1M5  Sky SKY1
+Level E1M6  Music MUS_E1M6  Sky SKY1  Secret E1M9
+Level E1M7  Music MUS_E1M7  Sky SKY1
 Level E1M8  Music MUS_E1M8  Sky SKY1  EndGame
 Level E1M9  Music MUS_E1M9  Sky SKY1  Next E1M7
-				  
+
 Level E2M1  Music MUS_E2M1  Sky SKY2  StartGame
-Level E2M2  Music MUS_E2M2  Sky SKY2   
-Level E2M3  Music MUS_E2M3  Sky SKY2   
-Level E2M4  Music MUS_E2M4  Sky SKY2  Secret E2M9 
-Level E2M5  Music MUS_E2M5  Sky SKY2  
-Level E2M6  Music MUS_E2M6  Sky SKY2   
-Level E2M7  Music MUS_E2M7  Sky SKY2   
+Level E2M2  Music MUS_E2M2  Sky SKY2
+Level E2M3  Music MUS_E2M3  Sky SKY2
+Level E2M4  Music MUS_E2M4  Sky SKY2  Secret E2M9
+Level E2M5  Music MUS_E2M5  Sky SKY2
+Level E2M6  Music MUS_E2M6  Sky SKY2
+Level E2M7  Music MUS_E2M7  Sky SKY2
 Level E2M8  Music MUS_E2M8  Sky SKY2  EndGame
 Level E2M9  Music MUS_E2M9  Sky SKY2  Next E2M5
-				  
-Level E3M1  Sky SKY3  StartGame 
-Level E3M2  Music MUS_E3M2  Sky SKY3   
-Level E3M3  Music MUS_E3M3  Sky SKY3   
+
+Level E3M1  Sky SKY3  StartGame
+Level E3M2  Music MUS_E3M2  Sky SKY3
+Level E3M3  Music MUS_E3M3  Sky SKY3
 Level E3M4  Sky SKY3  Secret E3M9
-Level E3M5  Sky SKY3   
+Level E3M5  Sky SKY3
 Level E3M6  Sky SKY3
-Level E3M7  Sky SKY3   
+Level E3M7  Sky SKY3
 Level E3M8  Sky SKY3  EndGame
 Level E3M9  Sky SKY3  Next E3M5
 
 Level E4M1  Sky SKY1  StartGame Next E1M1
 
-   
+

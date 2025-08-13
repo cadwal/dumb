@@ -17,7 +17,7 @@ else
 fi])])
 
 dnl Usage:
-dnl DUMB_TEST_MULTICHOICE(testvar, class, vartail, checkingname, 
+dnl DUMB_TEST_MULTICHOICE(testvar, class, vartail, checkingname,
 dnl                       forceaction, testaction)
 
 AC_DEFUN(DUMB_TEST_MULTICHOICE,
@@ -37,7 +37,7 @@ AC_DEFUN(DUMB_TEST_MULTICHOICE,
   esac
 fi])
 
-dnl Usage: 
+dnl Usage:
 dnl DUMB_SYS_SHMAT_RMID
 dnl
 dnl Cache variable: dumb_cv_sys_shmat_rmid
@@ -121,7 +121,7 @@ else
 fi])])
 
 dnl Usage:
-dnl DUMB_CHECK_HDR_LIB(headerfile, lib, libfunction, otherlibs, 
+dnl DUMB_CHECK_HDR_LIB(headerfile, lib, libfunction, otherlibs,
 dnl                    yesaction, noaction)
 AC_DEFUN(DUMB_CHECK_HDR_LIB,
  [AC_CHECK_HEADER([$1],
@@ -138,7 +138,7 @@ dnl Usage:
 dnl DUMB_SCAN_LIBS(function, scanlist, foundaction, notfoundaction)
 dnl
 dnl When FOUNDACTION is taken, $library contains the name
-dnl of the library where the function was found, prepended with -l.  
+dnl of the library where the function was found, prepended with -l.
 dnl Or $library may be empty if no extra libraries are needed.
 AC_DEFUN(DUMB_SCAN_LIBS,
  [library=""
@@ -154,4 +154,43 @@ AC_DEFUN(DUMB_SCAN_LIBS,
     else
       $4
     fi])])
- 
+
+dnl Usage:
+dnl DUMB_C_ATTR_REGPARM
+dnl
+dnl Check if __attribute__((regparm(3))) compiles to working code.
+dnl If it does, define ATTR_REGPARM as that.
+dnl If not, define ATTR_REGPARM as empty.
+dnl When cross compiling, assume it doesn't work.
+dnl
+dnl At least Debian GNU/Linux libc 5.4.33-3 has a bug in mcheck() that
+dnl causes the attribute to garble parameters when profiling (gcc -p).
+dnl This bug is detected and ATTR_REGPARM defined as empty.
+dnl
+dnl Cache variable: dumb_cv_c_attr_regparm
+AC_DEFUN(DUMB_C_ATTR_REGPARM,
+  [AC_MSG_CHECKING(how to pass parameters in registers)
+  AC_CACHE_VAL(dumb_cv_c_attr_regparm,
+    [AC_TRY_RUN(
+[int func(int a, int b, int c, int d) __attribute__((regparm(3)));
+int main() {
+  if (func(123, 456, 789, 1998) == 123+456+789+1998)
+    exit(0);
+  else
+    exit(1);
+}
+/* GCC 2.7.2.1 docs say that a call that precedes the function's definition
+ * can't be inlined.  Good.  */
+int func(int a, int b, int c, int d)
+{
+  return a+b+c+d;
+}],
+      dumb_cv_c_attr_regparm="__attribute__((regparm(3)))",
+      dumb_cv_c_attr_regparm="",
+      dumb_cv_c_attr_regparm="")])
+  if test -z "$dumb_cv_c_attr_regparm"; then
+    AC_MSG_RESULT(no)
+  else
+    AC_MSG_RESULT($dumb_cv_c_attr_regparm)
+  fi
+  AC_DEFINE_UNQUOTED(ATTR_REGPARM, $dumb_cv_c_attr_regparm)])

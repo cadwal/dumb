@@ -1,8 +1,5 @@
-"char cl" parameters to logprintf.
-These correspond to DUMB 0.09.kn.2.
-
-'A': AnimTex
-dumb/animtex.c
+"char cl" parameters to logprintf().
+These correspond to DUMB 0.12.2.
 
 'B': Banner
 dumb/banner.c
@@ -24,68 +21,70 @@ dumb/game.c
 dumb/gettable.c
 
 'I': Input
-plat/aalib_input.c
-plat/linux_input.c
-plat/x11_video.c
+dumb/aalib_input.c
+dumb/keymap.c
+dumb/keymapconf.c
+dumb/linux_input.c
+dumb/x11_video.c
 
 'L': Log
-dumb/log.c
-
-'M': ?
-xwad/xproto.c
-xwad/xwad.c
+libdumbutil/log.c
 
 'M': Map?
+libdumblevel/loaddoom.c
+libdumblevel/observer.c
 dumb/levdata.c
+dumb/levdyn.c
 dumb/levinfo.c
+dumb/linetype.c
 dumb/termtype.c
 dumb/thinghit.c
 dumb/updmap.c
 xwad/mapcon.c
+xwad/xproto.c
+xwad/xwad.c
 
 'N': Net
 dumb/netio.c
 dumb/netplay.c
-plat/unix_net.c
+dumb/unix_net.c
 
 'O': Object?
 dumb/bangbang.c
 dumb/levdyn.c
-dumb/prothing.c
 dumb/thingm.c
 dumb/updthing.c
+libdumb/prothing.c
 
-'P': Ptcomp?
-tool/ptcomp.c
+'P': Ptcomp
+ptcomp/animcomp.c
 
 'R': Render
-render/rendcore.c
-render/render.c
-render/view.c
+libdumb/view.c
 
 'S': Safe
-lib/safeio.c
-lib/safem.c
+libdumbutil/safeio.c
+libdumbutil/safem.c
 
 'S': Sound
-dumb/dsound.c
-plat/linux_sound.c
-plat/mme_sound.c
+libdumb/dsound.c
+libdumb/linux_sound.c
+libdumb/mme_sound.c
 
 'T': Texture
-dumb/texture.c
+libdumb/texture.c
 
 'U': Use
 dumb/useitem.c
 
 'V': Video
-plat/dosvideo.c
-plat/ggi_video.c
-plat/linux_video.c
-plat/vgagl_video.c
-plat/x11_video.c
+dumb/dosvideo.c
+dumb/ggi_video.c
+dumb/linux_video.c
+dumb/vgagl_video.c
+dumb/x11_video.c
 
-'W': Wad
-plat/wadtool.c
-wad/loadlump.c
-wad/wadio.c
+'W': WAD
+libdumbwad/loadlump.c
+libdumbwad/wadio.c
+tool/wadtool.c

@@ -9,16 +9,59 @@
    So far, not much is implemented.
 */
 
+/* warning: not all of these are tested!  Some are quite arcane */
+
+#define VFast Speed 3072
+#define Fast Speed 2048
+#define Slow Speed 1024
+#define VSlow Speed 512
+
+#define OpenDoor  Ceiling Up To LowestAdjacentCeiling Minus 4
+#define CloseDoor Ceiling Down To Floor NoCrush
+
+
 SectorType RandomOff 1
+  Action Sector Darkness Up To VeryDark VFast
+                            BackTo LightestSector VSlow
+
 SectorType BlinkFast 2
+  Action Sector Darkness Up To VeryDark Fast
+			    BackTo LightestSector Fast
+
 SectorType BlinkSlow 3
-SectorType Oscillate 8 
+  Action Sector Darkness Up To VeryDark Slow
+			    BackTo LightestSector Slow
+
+
+/* oscillate actually looks more or less like what doom does */
+
+SectorType Oscillate 8
+  Action Sector Darkness Up To VeryDark Slow BackTo VeryLight Slow
+
+
+/* at the moment, no different between synchronous and async. blinking */
+
 SectorType BlinkFastSync 12
+  Action Sector Darkness Up To VeryDark Fast
+			    BackTo LightestSector Fast
 SectorType BlinkSlowSync 13
+  Action Sector Darkness Up To VeryDark Slow
+			    BackTo LightestSector Slow
+
+
+/* what is this supposed to do? */
+
 SectorType Flicker 17
+  Action Sector Darkness Up To VeryDark Fast
+                            BackTo VeryLight VFast
+
+
+/* damage-doing sectortypes */
 
 SectorType BlinkFastDamageLarge 4
   Damage 10
+  Action Sector Darkness Up To VeryDark Fast
+			    BackTo LightestSector Fast
 
 SectorType DamageMedium 5
   Damage 5
@@ -31,3 +74,20 @@ SectorType DamageLarge 16
 
 SectorType DamageWeird 11
   Damage 10
+
+
+/* door-opening sectortypes */
+
+SectorType MagicDoorOpen 10
+  Action Sector OpenDoor Delay 30sec
+
+SectorType MagicDoorClose 14
+  Action Sector CloseDoor Delay 300sec
+
+#undef OpenDoor
+#undef CloseDoor
+
+#undef VSlow
+#undef Slow
+#undef Fast
+#undef VFast

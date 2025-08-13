@@ -2,27 +2,12 @@
 Actually, I made these questions up.  But here they are, in case
 someone asks them.
 
-Q1. Why does it use -I. -I. -I.. -I.. when compiling?
+Q1. What do xlace and ylace mean?
 
-Q2. What do xlace and ylace mean?
-
-* Q1. Why does it use -I. -I. -I.. -I.. when compiling?
-
-The first -I. isn't actually necessary but Automake puts it there.
-
-The second -I. refers to the source directory.  It differs from the
-first one when you are doing a VPATH build (see configure.txt).
-
-The first -I.. refers to the top build directory where config.h is.
-
-The second -I.. refers to the top source directory so that #include
-"libdumbutil/fixed.h" works.  This is the only -I switch added by
-Makefile.am files of DUMB itself.
-
-* Q2. What do xlace and ylace mean?
+* Q1. What do xlace and ylace mean?
 
       123
-  RRRR--- 1 
+  RRRR--- 1
   RRRR--- 2
   RRRR--- 3
   RRRR--- 4

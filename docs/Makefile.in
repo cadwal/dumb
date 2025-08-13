@@ -57,9 +57,12 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+CATALOGS = @CATALOGS@
+CATOBJEXT = @CATOBJEXT@
 CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+DATADIRNAME = @DATADIRNAME@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
 DUMB_CONFIG_SOUND = @DUMB_CONFIG_SOUND@
@@ -71,15 +74,33 @@ DUMB_NETWORK_SOURCES = @DUMB_NETWORK_SOURCES@
 DUMB_RENDER_SOURCES = @DUMB_RENDER_SOURCES@
 DUMB_XKB_LDADD = @DUMB_XKB_LDADD@
 DUMB_XSHM_LDADD = @DUMB_XSHM_LDADD@
+GENCAT = @GENCAT@
+GMOFILES = @GMOFILES@
+GMSGFMT = @GMSGFMT@
+GT_NO = @GT_NO@
+GT_YES = @GT_YES@
+INCLUDE_LOCALE_H = @INCLUDE_LOCALE_H@
+INSTOBJEXT = @INSTOBJEXT@
+INTLDEPS = @INTLDEPS@
+INTLLIBS = @INTLLIBS@
+INTLOBJS = @INTLOBJS@
+l = @l@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
+MKINSTALLDIRS = @MKINSTALLDIRS@
+MSGFMT = @MSGFMT@
 PACKAGE = @PACKAGE@
+POFILES = @POFILES@
+POSUB = @POSUB@
 RANLIB = @RANLIB@
+USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
+USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 
-EXTRA_DIST = FAQ README.fixbm README.netplay README.ptcomp README.textures \
- configure.txt dumb-0.12.1.lsm dumblogo.ppm keymap.txt log-classes \
- xrosella.xpm
+EXTRA_DIST = FAQ README.fixbm README.netplay README.ptcomp \
+ dumb-0.13.0.lsm dumblogo.ppm xrosella.xpm keymap.txt log-classes \
+ Install-FAQ configure.txt contrib.html source.html template.c \
+ dumb-autoins.el indent.pro
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -173,7 +194,13 @@ maintainer-clean
 #
 # File             What it's about
 # ----             ---------------
+# Install-FAQ      Installing DUMB
 # configure.txt    Configuration before compilation
+# contrib.html     Contributing to DUMB
+# source.html      Roadmap to DUMB source code
+# template.c       Template for new C source files
+# dumb-autoins.el  Like template.c but with Emacs Lisp automation
+# indent.pro       Instructions for GNU indent (not automatically read)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

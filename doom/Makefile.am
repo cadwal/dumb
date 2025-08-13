@@ -15,6 +15,8 @@ d4d_lumps = $(d4d_pt_lumps) COLORM16.lump COLORM32.lump DUMBLOGO.lump
 d4d_sources = doom.pt animtex.pt furnishings.pt generic.pt gettables.pt \
  levels.pt linetypes.pt missiles.pt monsters.pt sectortypes.pt weapons.pt
 
+# Always use the latest versions.  Use full filenames so targets can
+# depend on them and be rebuilt if the executables change.
 wadtool = ../tool/wadtool
 ppmtodumb = ../tool/ppmtodumb
 ptcomp = ../ptcomp/ptcomp

@@ -1,8 +1,9 @@
 ## Process this file with automake to produce Makefile.in
 
-EXTRA_DIST = FAQ README.fixbm README.netplay README.ptcomp README.textures \
- configure.txt dumb-0.12.1.lsm dumblogo.ppm keymap.txt log-classes \
- xrosella.xpm
+EXTRA_DIST = FAQ README.fixbm README.netplay README.ptcomp \
+ dumb-0.13.0.lsm dumblogo.ppm xrosella.xpm keymap.txt log-classes \
+ Install-FAQ configure.txt contrib.html source.html template.c \
+ dumb-autoins.el indent.pro
 
 # TODO: Install some documents.
 #
@@ -10,4 +11,10 @@ EXTRA_DIST = FAQ README.fixbm README.netplay README.ptcomp README.textures \
 #
 # File             What it's about
 # ----             ---------------
+# Install-FAQ      Installing DUMB
 # configure.txt    Configuration before compilation
+# contrib.html     Contributing to DUMB
+# source.html      Roadmap to DUMB source code
+# template.c       Template for new C source files
+# dumb-autoins.el  Like template.c but with Emacs Lisp automation
+# indent.pro       Instructions for GNU indent (not automatically read)

@@ -1,7 +1,10 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(libdumb/texture.c)
-AM_INIT_AUTOMAKE(dumb, 0.12.1)
+AC_INIT(libdumb/dsound.h)
+AM_INIT_AUTOMAKE(dumb, 0.13.0)
 AM_CONFIG_HEADER(config.h)
+
+# $datadir is usually '${prefix}/share'.  Expand it once.
+dumb_expanded_datadir=`eval "echo \"$datadir\""`
 
 dnl --- Checks for programs.
 AC_PROG_CC
@@ -13,6 +16,37 @@ AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_LN_S
+
+dnl AM_GNU_GETTEXT wants this and it must be called before AC_TRY_COMPILE.
+AC_ISC_POSIX
+
+dnl --- Checks for typedefs, structures, and compiler characteristics.
+AC_PROG_GCC_TRADITIONAL
+AC_C_CONST
+AC_C_INLINE
+AC_C_BIGENDIAN
+DUMB_C_ATTR_REGPARM
+AC_TYPE_SIZE_T
+AC_CHECK_SIZEOF(int, 0)
+AC_CHECK_SIZEOF(long, 0)
+AC_MSG_CHECKING(which fbrerend to use)
+fbrerend="generic"
+if test $ac_cv_c_bigendian = no; then
+  if test $ac_cv_sizeof_long -ge 8; then
+    fbrerend=le64
+  elif test $ac_cv_sizeof_int -ge 4; then
+    fbrerend=le32
+  fi
+fi
+AC_MSG_RESULT($fbrerend)
+AC_SUBST(DUMB_FBREREND_SOURCES)
+DUMB_FBREREND_SOURCES="${fbrerend}_fbrerend.c"
+
+dnl --- Internationalization.
+ALL_LINGUAS="fi"
+AM_GNU_GETTEXT
+AC_OUTPUT_COMMANDS([sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in >po/Makefile])
+AC_DEFINE_UNQUOTED(LOCALEDIR, "${dumb_expanded_datadir}/locale")
 
 dnl --- Checks for libraries.
 AC_PATH_X
@@ -27,15 +61,15 @@ if test -z "$no_x"; then
 else
   x_ldadd=""
 fi
-AC_CHECK_LIB(ppm, ppm_readppm, dumb_have_libppm=yes, dumb_have_libppm=no, 
+AC_CHECK_LIB(ppm, ppm_readppm, dumb_have_libppm=yes, dumb_have_libppm=no,
   -lpgm -lpbm)
 AM_CONDITIONAL(DUMB_CONFIG_LIBPPM, test "$dumb_have_libppm" = "yes")
 AC_CHECK_LIB(m, sin, ,
   [AC_MSG_ERROR([DUMB requires the math library])])
-DUMB_CHECK_HDR_LIB_YESNO(aalib.h, aa, aa_renderpalette, [-lncurses $x_ldadd], 
+DUMB_CHECK_HDR_LIB_YESNO(aalib.h, aa, aa_renderpalette, [-lncurses $x_ldadd],
  dumb_have_aalib)
 AM_CONDITIONAL(DUMB_CONFIG_AALIB, test "$dumb_have_aalib" = "yes")
-DUMB_CHECK_HDR_LIB_YESNO(ggi/libggi.h, ggi, ggiSetGraphMode, [], 
+DUMB_CHECK_HDR_LIB_YESNO(ggi/libggi.h, ggi, ggiSetGraphMode, [],
  dumb_have_ggi)
 AM_CONDITIONAL(DUMB_CONFIG_GGI, test "$dumb_have_ggi" = "yes")
 DUMB_CHECK_HDR_LIB_YESNO(vga.h, vga, vga_setmode, [],
@@ -55,27 +89,6 @@ DUMB_MSG_REQUIRE_YES(ac_cv_header_limits_h, [limits.h])
 DUMB_MSG_REQUIRE_YES(ac_cv_header_sys_time_h, [sys/time.h])
 DUMB_MSG_REQUIRE_YES(ac_cv_header_unistd_h, [unistd.h])
 dnl sys/ioctl.h is needed for sound only.
-
-dnl --- Checks for typedefs, structures, and compiler characteristics.
-AC_PROG_GCC_TRADITIONAL
-AC_C_CONST
-AC_C_INLINE
-AC_C_BIGENDIAN
-AC_TYPE_SIZE_T
-AC_CHECK_SIZEOF(int, 0)
-AC_CHECK_SIZEOF(long, 0)
-AC_MSG_CHECKING(which fbrerend to use)
-fbrerend="generic"
-if test $ac_cv_c_bigendian = no; then
-  if test $ac_cv_sizeof_long -ge 8; then
-    fbrerend=le64
-  elif test $ac_cv_sizeof_int -ge 4; then
-    fbrerend=le32
-  fi
-fi
-AC_MSG_RESULT($fbrerend)
-AC_SUBST(DUMB_FBREREND_SOURCES)
-DUMB_FBREREND_SOURCES="${fbrerend}_fbrerend.c"
 
 dnl --- Checks for library functions.
 dnl DUMB only uses if(memcmp(...)) and if(!(memcmp(...)) and doesn't care of
@@ -113,11 +126,11 @@ if test -z "$no_x"; then
   dumb_old_LIBS="$LIBS"
   # This is so that -L/usr/X11R6/lib comes before -lXext.
   LIBS="$LIBS $X_LIBS $X_PRE_LIBS"
-  DUMB_CHECK_HDR_LIB(X11/extensions/XShm.h, Xext, XShmCreateImage, 
+  DUMB_CHECK_HDR_LIB(X11/extensions/XShm.h, Xext, XShmCreateImage,
    [-lX11 $X_EXTRA_LIBS],
    [AC_DEFINE(DUMB_CONFIG_XSHM)
     DUMB_XSHM_LDADD="-lXext"], [])
-  # This may cause -lXext to be given twice 
+  # This may cause -lXext to be given twice
   # but I don't think that's a problem.
   DUMB_CHECK_HDR_LIB(X11/extensions/xf86dga.h, Xxf86dga, XF86DGADirectVideo,
    [-lXext -lX11 $X_EXTRA_LIBS],
@@ -141,8 +154,6 @@ dnl
 dnl However, those files are needed at build time and I see no other
 dnl way to let the user say where they are.
 dnl
-# $datadir is usually '${prefix}/share'.  Expand it once.
-dumb_expanded_datadir=`eval "echo \"$datadir\""`
 AC_MSG_CHECKING(for doom.wad)
 AC_SUBST(DUMB_CONFIG_DOOM_WAD) DUMB_CONFIG_DOOM_WAD=""
 AC_ARG_WITH(doom-wad,
@@ -253,7 +264,6 @@ dnl even without --without-sound.
 dumb_sound_oss="autodetect"
 dumb_sound_mme="autodetect"
 dumb_sound_specified=""
-dumb_sound_options=""
 AC_SUBST(DUMB_CONFIG_SOUND) DUMB_CONFIG_SOUND=""
 AC_SUBST(DUMB_CONFIG_SOUND_LDADD) DUMB_CONFIG_SOUND_LDADD=""
 DUMB_ARG_HELP(
@@ -280,7 +290,7 @@ DUMB_TEST_MULTICHOICE(DUMB_CONFIG_SOUND, sound, oss, OSS,
 DUMB_TEST_MULTICHOICE(DUMB_SOUND, sound, mme, MME,
   DUMB_CONFIG_SOUND="mme"
   DUMB_CONFIG_SOUND_LDADD="-lmme",
-  DUMB_CHECK_HDR_LIB(mme/mme_api.h, mme, waveOutGetNumDevs, [], 
+  DUMB_CHECK_HDR_LIB(mme/mme_api.h, mme, waveOutGetNumDevs, [],
     DUMB_CONFIG_SOUND="mme"
     DUMB_CONFIG_SOUND_LDADD="-lmme", []))
 AC_MSG_CHECKING(which sound driver to use)
@@ -288,28 +298,6 @@ if test -z "$DUMB_CONFIG_SOUND"; then
   DUMB_CONFIG_SOUND="dummy"
 fi
 AC_MSG_RESULT($DUMB_CONFIG_SOUND)
-AC_MSG_CHECKING(for sound bit/channel options)
-DUMB_ARG_HELP(
-  [                          The following options apply to both OSS and MME:])
-AC_ARG_ENABLE(16bit-sound,
-  [  --disable-16bit-sound   - force 8-bit sound [16-bit]], ,
-  enable_16bit_sound="yes")
-AC_ARG_ENABLE(stereo-sound,
-  [  --disable-stereo-sound  - force mono sound [stereo]], ,
-  enable_stereo_sound="yes")
-if test "$enable_16bit_sound" = "no"; then
-  dumb_sound_options="$dumb_sound_options 8-bit"
-else
-  dumb_sound_options="$dumb_sound_options 16-bit"
-  AC_DEFINE(DUMB_CONFIG_SOUND_16BIT)
-fi
-if test "$enable_stereo_sound" = "no"; then
-  dumb_sound_options="$dumb_sound_options mono"
-else
-  dumb_sound_options="$dumb_sound_options stereo"
-  AC_DEFINE(DUMB_CONFIG_SOUND_STEREO)
-fi
-AC_MSG_RESULT($dumb_sound_options)
 
 dnl --- Networking.
 dnl Because only Unix and dummy networking are supported,
@@ -323,7 +311,7 @@ AC_CHECK_HEADER(sys/socket.h,
 # First check for them without anything special and then try extra libraries.
 dumb_network="unix"
 DUMB_NETWORK_LDADD=""
-DUMB_SCAN_LIBS(socket, socket, 
+DUMB_SCAN_LIBS(socket, socket,
   [DUMB_NETWORK_LDADD="$DUMB_NETWORK_LDADD $library"],
   [AC_MSG_WARN([you have socket.h but no socket()])
    dumb_network=""])
@@ -338,7 +326,7 @@ if test -z "$dumb_network"; then
 fi
 DUMB_NETWORK_SOURCES="${dumb_network}_net.c"
 AC_SUBST(DUMB_NETWORK_SOURCES)
-AC_SUBST(DUMB_NETWORK_LDADD) 
+AC_SUBST(DUMB_NETWORK_LDADD)
 AC_MSG_RESULT($dumb_network)
 if test "$dumb_network" = unix; then
   # We'll manage even without select() but use it if it exists.
@@ -392,9 +380,11 @@ if test "$ac_cv_c_bigendian" = "yes"; then
 fi
 
 dnl --- Output.
-AC_OUTPUT(Makefile libdumbutil/Makefile libdumbwad/Makefile libdumb/Makefile
-  dumb/Makefile xwad/Makefile ptcomp/Makefile tool/Makefile 
-  doom/Makefile htic/Makefile docs/Makefile)
+AC_OUTPUT(Makefile libmissing/Makefile libdumbutil/Makefile
+  libdumbwad/Makefile libdumbworldb/Makefile libdumbrender/Makefile
+  libdumb/Makefile dumb/Makefile xwad/Makefile ptcomp/Makefile
+  tool/Makefile doom/Makefile htic/Makefile test/Makefile docs/Makefile
+  intl/Makefile po/Makefile.in)
 
 dnl Local Variables:
 dnl comment-start: "dnl "

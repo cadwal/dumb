@@ -57,9 +57,12 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+CATALOGS = @CATALOGS@
+CATOBJEXT = @CATOBJEXT@
 CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+DATADIRNAME = @DATADIRNAME@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
 DUMB_CONFIG_SOUND = @DUMB_CONFIG_SOUND@
@@ -71,10 +74,27 @@ DUMB_NETWORK_SOURCES = @DUMB_NETWORK_SOURCES@
 DUMB_RENDER_SOURCES = @DUMB_RENDER_SOURCES@
 DUMB_XKB_LDADD = @DUMB_XKB_LDADD@
 DUMB_XSHM_LDADD = @DUMB_XSHM_LDADD@
+GENCAT = @GENCAT@
+GMOFILES = @GMOFILES@
+GMSGFMT = @GMSGFMT@
+GT_NO = @GT_NO@
+GT_YES = @GT_YES@
+INCLUDE_LOCALE_H = @INCLUDE_LOCALE_H@
+INSTOBJEXT = @INSTOBJEXT@
+INTLDEPS = @INTLDEPS@
+INTLLIBS = @INTLLIBS@
+INTLOBJS = @INTLOBJS@
+l = @l@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
+MKINSTALLDIRS = @MKINSTALLDIRS@
+MSGFMT = @MSGFMT@
 PACKAGE = @PACKAGE@
+POFILES = @POFILES@
+POSUB = @POSUB@
 RANLIB = @RANLIB@
+USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
+USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 
 @DUMB_CONFIG_X_TRUE@x_noinst_programs = mkdfnt
@@ -84,15 +104,15 @@ VERSION = @VERSION@
 @DUMB_CONFIG_LIBPPM_FALSE@ppm_bin_programs = 
 
 bin_PROGRAMS = wadtool mknulmap mkpnames $(ppm_bin_programs)
-noinst_PROGRAMS = fixed_bm $(x_noinst_programs)
+noinst_PROGRAMS = $(x_noinst_programs)
 
 x_ldadd = $(X_LIBS) $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS)
 
 ppm_ldadd = -lppm -lpgm -lpbm
 
-# Don't use srcdir or top_srcdir here!
+# DUMB libraries are in the build tree, so don't use $(srcdir).
 LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
- ../libdumbutil/libdumbutil.a
+ ../libdumbutil/libdumbutil.a $(INTLLIBS)
 
 mkdfnt_LDADD = $(LDADD) $(x_ldadd)
 
@@ -101,9 +121,6 @@ ppmtodumb_LDADD = $(LDADD) $(ppm_ldadd)
 dark2trans_LDADD = $(LDADD) $(ppm_ldadd)
 
 INCLUDES = -I$(top_srcdir)
-
-# fixed_bm should not be optimized because that's cheating.
-fixed_bm_CFLAGS = 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -146,12 +163,6 @@ ppmtodumb_OBJECTS =  ppmtodumb.o
 ppmtodumb_DEPENDENCIES =  ../libdumb/libdumb.a \
 ../libdumbwad/libdumbwad.a ../libdumbutil/libdumbutil.a
 ppmtodumb_LDFLAGS = 
-fixed_bm_SOURCES = fixed_bm.c
-fixed_bm_OBJECTS =  fixed_bm.o
-fixed_bm_LDADD = $(LDADD)
-fixed_bm_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
-../libdumbutil/libdumbutil.a
-fixed_bm_LDFLAGS = 
 mkdfnt_SOURCES = mkdfnt.c
 mkdfnt_OBJECTS =  mkdfnt.o
 mkdfnt_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
@@ -167,8 +178,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP = --best
-SOURCES = wadtool.c mknulmap.c mkpnames.c dark2trans.c ppmtodumb.c fixed_bm.c mkdfnt.c
-OBJECTS = wadtool.o mknulmap.o mkpnames.o dark2trans.o ppmtodumb.o fixed_bm.o mkdfnt.o
+SOURCES = wadtool.c mknulmap.c mkpnames.c dark2trans.c ppmtodumb.c mkdfnt.c
+OBJECTS = wadtool.o mknulmap.o mkpnames.o dark2trans.o ppmtodumb.o mkdfnt.o
 
 all: Makefile $(PROGRAMS)
 
@@ -255,10 +266,6 @@ ppmtodumb: $(ppmtodumb_OBJECTS) $(ppmtodumb_DEPENDENCIES)
 	@rm -f ppmtodumb
 	$(LINK) $(ppmtodumb_LDFLAGS) $(ppmtodumb_OBJECTS) $(ppmtodumb_LDADD) $(LIBS)
 
-fixed_bm: $(fixed_bm_OBJECTS) $(fixed_bm_DEPENDENCIES)
-	@rm -f fixed_bm
-	$(LINK) $(fixed_bm_LDFLAGS) $(fixed_bm_OBJECTS) $(fixed_bm_LDADD) $(LIBS)
-
 mkdfnt: $(mkdfnt_OBJECTS) $(mkdfnt_DEPENDENCIES)
 	@rm -f mkdfnt
 	$(LINK) $(mkdfnt_LDFLAGS) $(mkdfnt_OBJECTS) $(mkdfnt_LDADD) $(LIBS)
@@ -299,18 +306,21 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
-dark2trans.o: dark2trans.c ../config.h
-mkdfnt.o: mkdfnt.c ../config.h
+dark2trans.o: dark2trans.c ../config.h ../libdumbutil/dumb-nls.h
+mkdfnt.o: mkdfnt.c ../config.h ../libdumbutil/dumb-nls.h
 mknulmap.o: mknulmap.c ../config.h ../libdumbutil/safem.h \
 	../libdumbutil/log.h ../libdumbwad/wadwr.h \
-	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h
-mkpnames.o: mkpnames.c ../config.h ../libdumbutil/endiantypes.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
+	../libdumbutil/dumb-nls.h
+mkpnames.o: mkpnames.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/endiantypes.h ../libdumbutil/align.h \
 	../libdumbwad/wadstruct.h
-ppmtodumb.o: ppmtodumb.c ../config.h ../libdumbwad/wadstruct.h \
-	../libdumbutil/endiantypes.h
-wadtool.o: wadtool.c ../config.h ../libdumbutil/log.h \
-	../libdumbwad/wadio.h ../libdumbwad/wadwr.h \
+ppmtodumb.o: ppmtodumb.c ../config.h ../libdumbutil/dumb-nls.h \
 	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h
+wadtool.o: wadtool.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbwad/wadio.h \
+	../libdumbwad/wadwr.h ../libdumbwad/wadstruct.h \
+	../libdumbutil/endiantypes.h
 
 info:
 dvi:
@@ -378,8 +388,6 @@ install-exec install-data install uninstall all installdirs \
 mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
-fixed_bm.o: fixed_bm.c
-	$(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(fixed_bm_CFLAGS) -c $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -1,7 +1,6 @@
 /* DUMB: A Doom-like 3D game engine.
- * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
- * keyname.h: Names of ASCII characters for keymapping.
+ * dumb/keyname.h: Names of ASCII characters for keymapping.
  * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,9 +14,9 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; see the file COPYING.  If not, write to
- * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111, USA.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
  */
 
 #ifndef KEYNAME_H
@@ -32,3 +31,7 @@
 const char *keyname_of_char(char ch);
 
 #endif
+
+// Local Variables:
+// c-basic-offset: 3
+// End:

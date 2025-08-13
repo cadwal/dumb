@@ -25,7 +25,7 @@ slaves don't have to know about each other, only about their master.
 Effectively, there are three modes that DUMB can run in, and three
 major tasks to be performed:
 
-	           Game Management  Broadcasting Updates  Rendering  
+	           Game Management  Broadcasting Updates  Rendering
 Non-Network Mode        YES                 NO               YES
 Master Mode             YES                 YES              YES
 Slave Mode              NO                  NO               YES
@@ -136,13 +136,13 @@ DUMB's network protocol.
 The extremely efficiency-minded may like to try disabling
 synchronisation by giving the "--netplay-async" option to both master
 and slaves.  This will allow the master to run at full tilt, and
-inhibit slaves from sending any "Ack" packets.  
+inhibit slaves from sending any "Ack" packets.
 
 To synchronise or not to synchronise is always a big question in
-multi-player realtime games.  I admit to being a synchroniser.  
+multi-player realtime games.  I admit to being a synchroniser.
 NB: synchronous play does NOT mean that a network game runs as fast as
 the slowest machine!  It just means that the game runs as fast as
-possible, while keeping response time for players within a certain 
+possible, while keeping response time for players within a certain
 maximum.
 
 You can fine tune some of the synchronisation parameters with the

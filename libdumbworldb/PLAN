@@ -1,0 +1,132 @@
+Design goals
+============
+
+Ability to load and save Doom levels.
+
+Fast access to data needed by renderer.
+
+Fast insertion and deletion of vertices/sides/lines/sectors.
+
+Support for both the game and the editor.
+
+Preview window in XWad.
+
+
+Possible implementations for THINGS
+===================================
+
+Two sets of things
+------------------
+
+Separate initial things (which contain existence data) and game
+things (which don't).
+
+When a level starts, those initial things that exist are copied to
+game things.
+
+When a level is restarted, it must be reloaded, as vertices may have
+moved.  It does not make sense to cache the initial things from the
+last run.  So the initial things can be discarded as soon as they have
+been copied to game things.
+
+When starting a preview in XWad, the initial things must be copied to
+game things.  Moving things in the preview game won't move them in the
+map.  Things added while the preview is on won't appear immediately in
+the preview unless the program does special tricks to convert them to
+game things.
+
+Changing the existence data of an initial thing or removing it
+altogether doesn't affect the preview.
+
+
+One set of things
+-----------------
+
+Things always contain existence data; things whose data says they
+don't exist aren't drawn or moved.
+
+When saving the game, we might drop those things that don't exist.
+Would it be better not to?
+
+This seems to give better interactive behavior to XWad.  When shooting
+a missile, you could in principle see it move on the map.  (Provided
+the observer system is implemented.)  And things added on the map
+would immediately appear in the game.
+
+
+Decision
+--------
+
+There's one set of things.  All things contain existence information.
+There's a function (dwdb_set_difficulty) to delete all things
+that shouldn't exist.
+
+
+Changing the thing list gives problems
+======================================
+
+Things, like other map objects, are currently chained in a
+doubly-linked list.  The purpose of this is to be able to iterate
+through the list without stopping to check whether a thing has been
+deleted.
+
+When a thing is deleted, it is taken out of the usual list and put in
+a free list.  Because of this, the next_in_chain member in the thing
+structure now points to another free thing.
+
+The thing list may need to be changed for several reasons:
+
+1. The user adds/removes things in the editor.
+
+2. The game world is being updated and it's a thing's turn to move.
+   It decides to explode.  (Or rather, it was an explosion that
+   decides to disappear.)  The thing must then be deleted from the
+   list.
+
+3. The game world is being updated and one thing somehow deletes
+   another.  (Can this happen?)
+
+4. The game world is being updated and a sector somehow deletes a
+   thing.  (Can this happen?)
+
+5. The game world is being updated and a thing shoots a missile.  A
+   new thing has to be created.
+
+When the game world is being updated, there has to be a pointer that
+points to each thing in turn and asks it to update itself.  Now, if it
+is possible for this thing to delete itself, the next_in_chain member
+must be retrieved before the deletion.  Otherwise updating would
+continue in the free-thing list.
+
+What if the thing being updated decides to delete the next thing?
+This would make the already retrieved next_in_chain value point to a
+deleted thing.  To avoid this, things may never delete other things
+directly.  Instead, they must set a flag so that the thing deletes
+itself when its turn comes.
+
+The editor may delete things freely because no update loop is running
+at that time.
+
+Adding new things in the chain is no problem.  They are added to the
+beginning of the chain so they won't be updated in that pass.
+
+
+Deleted, active and sleeping things
+===================================
+
+To further speed up processing, existing (not deleted) things are
+divided in two groups: ACTIVE and SLEEPING.  Only active things are
+processed in the update loop.  So adding a million sleeping things
+shouldn't affect the speed of the loop at all.
+
+Putting a previously active thing to sleep is analogous to deleting
+it.  It may only be done by the thing itself.
+
+Waking up a previously sleeping thing is analogous to creating a new
+thing.  It is safe to do at any time.  So if the player shoots in a
+room, all monsters in that room can be woken up by the player update
+routine.
+
+Note that thing animation is not done by the renderer (rotation is,
+though).  Animating a thing requires updating it.  Thus the thing
+can't sleep.

@@ -16,6 +16,8 @@ h4d_lumps = $(h4d_pt_lumps) COLORM16.lump COLORM32.lump DUMBLOGO.lump
 h4d_sources = htic.pt ambient.pt animtex.pt furniture.pt generic.pt \
  gettables.pt keys.pt levels.pt missiles.pt monsters.pt weapons.pt
 
+# Always use the latest versions.  Use full filenames so targets can
+# depend on them and be rebuilt if the executables change.
 wadtool = ../tool/wadtool
 ppmtodumb = ../tool/ppmtodumb
 ptcomp = ../ptcomp/ptcomp

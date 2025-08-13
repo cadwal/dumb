@@ -1,7 +1,6 @@
 /* DUMB: A Doom-like 3D game engine.
- * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
- * keymap.h: Key mapping from keycodes and keynames to enum ctlkey.
+ * dumb/keymap.h: Key mapping from keycodes and keynames to enum ctlkey.
  * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,9 +14,9 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; see the file COPYING.  If not, write to
- * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111, USA.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
  */
 
 #ifndef KEYMAP_H
@@ -65,19 +64,19 @@ void keymap_clear_caches(void);
 
 /* Define this function in your input driver.  It is called when a key
  * is pressed and keymap.c doesn't yet know what its keycode means.
- * The pointer returned must be valid until it's freed with 
- * keymap_free_keyname().  
+ * The pointer returned must be valid until it's freed with
+ * keymap_free_keyname().
  * KEYCODE is a keycode previously given as argument to
  * keymap_keycode_to_ctlkey().
- * This function must not return NULL; if the input driver gave keymap.c 
- * a keycode, it should have _some_ name for that.  On the other hand, 
- * returning NULL makes keymap.c just print an error message, so don't 
+ * This function must not return NULL; if the input driver gave keymap.c
+ * a keycode, it should have _some_ name for that.  On the other hand,
+ * returning NULL makes keymap.c just print an error message, so don't
  * panic.  */
 const char *keymap_keycode_to_keyname(keymap_keycode keycode);
 
 /* Define this function in your input driver.  It is called when ctlkey.c
  * has finished using the pointer returned by keymap_keycode_to_keyname().
- * It is guaranteed that ctlkey.c will call this before calling 
+ * It is guaranteed that ctlkey.c will call this before calling
  * keymap_keycode_to_keyname() again.
  * The parameter may lose "const" in the future if that makes things simpler.
  */
@@ -116,9 +115,13 @@ void keymap_bind_key(const char *keyname, enum ctlkey action);
  *
  * Currently, it is safe to longjmp() out of the loop, but that might
  * change in the future.  */
-void keymap_foreach_binding(void (*fn)(const char *keyname, 
-				       enum ctlkey action,
-				       void *extra),
+void keymap_foreach_binding(void (*fn) (const char *keyname,
+					enum ctlkey action,
+					void *extra),
 			    void *extra);
 
 #endif
+
+// Local Variables:
+// c-basic-offset: 3
+// End:

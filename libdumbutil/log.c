@@ -1,3 +1,24 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * libdumbutil/log.c: Logging.
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
+
 #include <config.h>
 
 #include <stdarg.h>
@@ -6,100 +27,153 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#include "log.h"
+#include "libdumbutil/dumb-nls.h"
 
-typedef struct _LogFile {
-   struct _LogFile *next;
-   int lvl;
-   char cl[32];
-   FILE *f,*falloc;
+#include "log.h"
+#include "safem.h"
+
+/* Even C++ allows using the same name for the typedef and the structure,
+ * if they refer to the same thing.  */
+typedef struct LogFile {
+   struct LogFile *next;
+   enum log_level lvl;
+   char *classes;
+   FILE *f;
+   unsigned flags;
 } LogFile;
 
-static LogFile *logs=NULL;
-static int errors=0;
+/* LogFile::flags */
+#define LOGF_CLOSE 0x0001
 
-static void log_cleanup(void) { 
-   while(logs!=NULL) {
-      if(logs->falloc) fclose(logs->falloc);
-      logs=logs->next;
+static LogFile *logs = NULL;
+static int errors = 0;
+
+static void log_cleanup(void);
+static void add_logfile(enum log_level, const char *classes,
+			FILE *stream, unsigned flags);
+
+static void
+log_cleanup(void)
+{
+   while (logs != NULL) {
+      LogFile *del = logs;
+      logs = logs->next;
+      if (del->flags & LOGF_CLOSE)
+	 fclose(del->f);
+      safe_free(del->classes);
+      safe_free(del);
    }
 }
 
-void log_stream(FILE *f,int lvl,const char *cl) {
-   LogFile *log=(LogFile*)calloc(sizeof(LogFile),1);
-   log->lvl=lvl;
-   if(cl==NULL) cl="*";
-   strncpy(log->cl,cl,31);
-   log->f=f;
-   log->falloc=NULL;
-   log->next=logs;
-   logs=log;
+static void
+add_logfile(enum log_level lvl, const char *classes,
+	    FILE *stream, unsigned flags)
+{
+   LogFile *log = (LogFile *) safe_malloc(sizeof(LogFile));
+   log->lvl = lvl;
+   if (classes == NULL)
+      classes = "*";
+   log->classes = safe_strdup(classes);
+   log->f = stream;
+   log->flags = flags;
+   log->next = logs;
+   logs = log;
 }
-void log_file(const char *fname,int lvl,const char *cl) {
-   FILE *f=fopen(fname,"a");
-   LogFile *log;
-   if(f==NULL) {
-      logprintf(LOG_ERROR,'L',"Error %d opening logfile '%s'",errno,fname);
+
+void
+log_stream(FILE *f, enum log_level lvl, const char *cl)
+{
+   add_logfile(lvl, cl, f, 0);
+}
+
+void
+log_file(const char *fname, enum log_level lvl, const char *cl)
+{
+   FILE *f = fopen(fname, "a");
+   if (f == NULL) {
+      logprintf(LOG_ERROR, 'L', _("%s: opening log file: %s"), fname,
+		strerror(errno));
       return;
    }
-   log=(LogFile*)calloc(sizeof(LogFile),1);
-   log->lvl=lvl;
-   if(cl==NULL) cl="*";
-   strncpy(log->cl,cl,31);
-   log->f=f;
-   log->falloc=f;
-   log->next=logs;
-   logs=log;
+   add_logfile(lvl, cl, f, LOGF_CLOSE);
 }
 
-void log_exit(void) { 
-   logprintf(LOG_INFO,'L',"Normal exit.");
+void
+log_exit(void)
+{
+   logprintf(LOG_INFO, 'L', _("Normal exit."));
    log_cleanup();
    exit(0);
 }
 
-void log_chkerror(int maxerrs) {
-   if(errors>maxerrs) logprintf(LOG_FATAL,'L',"%d errors occured.",errors);
+void
+log_chkerror(int maxerrs)
+{
+   if (errors > maxerrs)
+      logprintf(LOG_FATAL, 'L', _("%d errors occured."), errors);
 }
 
-static int log_ok(const LogFile *log,int l,char c) {
-   if(l>log->lvl) return 0;
-   if(*log->cl=='*') return 1;
-   else if(*log->cl=='!') return strchr(log->cl,c)==NULL;
-   else return strchr(log->cl,c)!=NULL;
+static int
+log_ok(const LogFile *log, int l, char c)
+{
+   if (l > (int) log->lvl)
+      return 0;
+   else if (*log->classes == '*')
+      return 1;
+   else if (*log->classes == '!')
+      return strchr(log->classes, c) == NULL;
+   else
+      return strchr(log->classes, c) != NULL;
 }
 
-void do_logfatal(void) {
-   logprintf(LOG_INFO,'L',"A fatal error occured.");
-   perror("perror");
+void
+do_logfatal(void)
+{
+   logprintf(LOG_INFO, 'L', _("A fatal error occured."));
+   /* strerror(errno) should always be called as part of the log
+    * message, and then the following line could be removed.  */
+   perror(_("System error message (may be unrelated)"));
    log_cleanup();
-   exit(1);
+   exit(EXIT_FAILURE);
 }
 
-void logvprintf(int lvl,char cl,const char *fmt,va_list argl) {
-   LogFile *log=logs;
-   if(lvl<0) return;
-   while(log) {
-      if(log_ok(log,lvl,cl)) {
-	 vfprintf(log->f,fmt,argl);
-	 fputc('\n',log->f);
+void
+logvprintf(int lvl, char cl, const char *fmt, va_list argl)
+{
+   LogFile *log;
+   if (lvl < 0)
+      return;
+   for (log = logs; log != NULL; log = log->next) {
+      if (log_ok(log, lvl, cl)) {
+	 vfprintf(log->f, fmt, argl);
+	 fputc('\n', log->f);
       }
-      log=log->next;
    }
-   if(lvl==LOG_FATAL) do_logfatal();
-   if(lvl==LOG_ERROR) errors++;
+   if (lvl == LOG_FATAL)
+      do_logfatal();
+   if (lvl == LOG_ERROR)
+      errors++;
 }
 
-void logprintf(int lvl,char cl,const char *fmt,...) {
+void
+logprintf(int lvl, char cl, const char *fmt,...)
+{
    va_list ap;
-   va_start(ap,fmt);
-   logvprintf(lvl,cl,fmt,ap);
+   va_start(ap, fmt);
+   logvprintf(lvl, cl, fmt, ap);
    va_end(ap);
 }
-void logfatal(char cl,const char *fmt,...) {
+
+void
+logfatal(char cl, const char *fmt,...)
+{
    va_list ap;
-   va_start(ap,fmt);
-   logvprintf(LOG_FATAL,cl,fmt,ap);
+   va_start(ap, fmt);
+   logvprintf(LOG_FATAL, cl, fmt, ap);
    va_end(ap);
-   exit(1); /* should never get here */
+   exit(EXIT_FAILURE);		/* should never get here */
 }
+
+// Local Variables:
+// c-basic-offset: 3
+// End:

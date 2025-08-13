@@ -1,0 +1,3375 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 1998-06-12 20:37+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+
+#. FIXME: halt the program if given from cmdline
+#. FIXME: stderr
+#: libdumbutil/confeng.c:89
+#, c-format
+msgid "`%s' is not an option.  I'll use `%s' instead.\n"
+msgstr ""
+
+#. FIXME: show module name too
+#: libdumbutil/confeng.c:117 libdumbutil/confeng.c:137
+#, c-format
+msgid "switch requires an argument -- %s\n"
+msgstr ""
+
+#: libdumbutil/confeng.c:174
+#, c-format
+msgid "internal error: set_conf(): strange type %d\n"
+msgstr ""
+
+#: libdumbutil/conffile.c:110
+#, c-format
+msgid ""
+"; %s\n"
+"; this file was created automatically, but you can modify it if you want\n"
+msgstr ""
+
+#: libdumbutil/conffile.c:122
+#, c-format
+msgid ""
+"\n"
+"; Module `%s': %s\n"
+msgstr ""
+
+#: libdumbutil/conffile.c:127
+#, c-format
+msgid "internal error: save_conf(): strange type %d, treating as int\n"
+msgstr ""
+
+#: libdumbutil/confhelp.c:53
+#, c-format
+msgid "`%s' is not a switch I recognise\n"
+msgstr ""
+
+#: libdumbutil/confhelp.c:73
+#, c-format
+msgid ""
+"I don't understand your command line.  The token which is causing trouble\n"
+"is `%s'.\n"
+"\n"
+msgstr ""
+
+#: libdumbutil/confhelp.c:76
+#, c-format
+msgid ""
+"usage: %s [switch [parameter]] [switch [parameter]]...\n"
+"\n"
+"For a list of all switches available, invoke %s -? all\n"
+"\n"
+"Or, for switches relating to a particular module, %s -? <module>\n"
+"where module is one of: all"
+msgstr ""
+
+#: libdumbutil/confhelp.c:85
+#, c-format
+msgid ""
+"\n"
+"\n"
+"For information on a particular switch: %s -? <switch>\n"
+"\n"
+msgstr ""
+
+#: libdumbutil/confhelp.c:94
+#, c-format
+msgid "Module `%s': %s\n"
+msgstr ""
+
+#: libdumbutil/confhelp.c:96
+msgid "<no configurable items>\n"
+msgstr ""
+
+#: libdumbutil/confhelp.c:102
+msgid " <integer>"
+msgstr ""
+
+#: libdumbutil/confhelp.c:107
+msgid " <enum>"
+msgstr ""
+
+#: libdumbutil/confhelp.c:110
+msgid " <string>"
+msgstr ""
+
+#: libdumbutil/confhelp.c:113
+msgid " <list>"
+msgstr ""
+
+#: libdumbutil/confhelp.c:116
+#, c-format
+msgid " <internal error: strange type %d>"
+msgstr ""
+
+#: libdumbutil/confhelp.c:122
+#, c-format
+msgid " (short form -%c)"
+msgstr ""
+
+#: libdumbutil/confhelp.c:131
+#, c-format
+msgid ""
+"Help for %s:\n"
+"  `%s'\n"
+msgstr ""
+
+#: libdumbutil/confhelp.c:134 libdumbutil/confhelp.c:138
+#: libdumbutil/confhelp.c:142 libdumbutil/confhelp.c:149
+#: libdumbutil/confhelp.c:153
+#, c-format
+msgid "  Type=%s\n"
+msgstr ""
+
+#: libdumbutil/confhelp.c:134
+msgid "Integer"
+msgstr ""
+
+#: libdumbutil/confhelp.c:135 libdumbutil/confhelp.c:139
+#, c-format
+msgid "  Default=%d\n"
+msgstr ""
+
+#: libdumbutil/confhelp.c:138
+msgid "Boolean"
+msgstr ""
+
+#: libdumbutil/confhelp.c:142
+msgid "Enumerated"
+msgstr ""
+
+#: libdumbutil/confhelp.c:143 libdumbutil/confhelp.c:150
+#, c-format
+msgid "  Default=%s\n"
+msgstr ""
+
+#: libdumbutil/confhelp.c:144
+msgid "  Values="
+msgstr ""
+
+#: libdumbutil/confhelp.c:149
+msgid "String"
+msgstr ""
+
+#: libdumbutil/confhelp.c:153
+msgid "List"
+msgstr ""
+
+#: libdumbutil/confhelp.c:156
+#, c-format
+msgid "  Type=%d (internal error)\n"
+msgstr ""
+
+#: libdumbutil/confhelp.c:160
+#, c-format
+msgid "  Short Form=-%c\n"
+msgstr ""
+
+#: libdumbutil/confhelp.c:162
+#, c-format
+msgid "  Maxlen=%d\n"
+msgstr ""
+
+#: libdumbutil/confhelp.c:164
+msgid "  Cannot be saved in a config file.\n"
+msgstr ""
+
+#: libdumbutil/log.c:94
+#, c-format
+msgid "%s: opening log file: %s"
+msgstr ""
+
+#: libdumbutil/log.c:104
+msgid "Normal exit."
+msgstr ""
+
+#: libdumbutil/log.c:113
+#, c-format
+msgid "%d errors occured."
+msgstr ""
+
+#: libdumbutil/log.c:132
+msgid "A fatal error occured."
+msgstr ""
+
+#. strerror(errno) should always be called as part of the log
+#. * message, and then the following line could be removed.
+#: libdumbutil/log.c:135
+msgid "System error message (may be unrelated)"
+msgstr ""
+
+#: libdumbutil/safeio.c:54
+#, c-format
+msgid "%s: mmap %lu bytes: %s"
+msgstr ""
+
+#: libdumbutil/safeio.c:57
+#, c-format
+msgid "mmap %lu bytes: %s"
+msgstr ""
+
+#: libdumbutil/safeio.c:67
+#, c-format
+msgid "%s: munmapping %lu bytes: %s"
+msgstr ""
+
+#: libdumbutil/safeio.c:82
+#, c-format
+msgid "%s: seeking to %u: %s"
+msgstr ""
+
+#: libdumbutil/safeio.c:87
+#, c-format
+msgid "%s: short read (%lu<%lu): %s"
+msgstr ""
+
+#: libdumbutil/safeio.c:106
+#, c-format
+msgid "%s: short read (%d<%lu): %s"
+msgstr ""
+
+#: libdumbutil/safeio.c:119
+#, c-format
+msgid "%s: opening: %s"
+msgstr ""
+
+#: libdumbutil/safeio.c:130
+#, c-format
+msgid "%s: closing: %s"
+msgstr ""
+
+#: libdumbutil/safem.c:70
+#, c-format
+msgid "mmapping %lu zero bytes: %s"
+msgstr ""
+
+#: libdumbutil/safem.c:82
+#, c-format
+msgid "%s: mmapping %lu bytes: %s"
+msgstr ""
+
+#: libdumbutil/safem.c:92
+#, c-format
+msgid "munmapping %lu bytes @ %p: %s"
+msgstr ""
+
+#: libdumbutil/safem.c:116
+#, c-format
+msgid "out of memory reallocating %lu bytes (old=%p)"
+msgstr ""
+
+#: libdumbutil/safem.c:132 libdumbutil/safem.c:142
+#, c-format
+msgid "out of memory allocating %lu bytes"
+msgstr ""
+
+#: libdumbutil/safem.c:160
+msgid "Attempt to free NULL."
+msgstr ""
+
+#: libdumbwad/loadlump.c:69
+msgid "Bad lumpnum in load_lump"
+msgstr ""
+
+#: libdumbwad/loadlump.c:78 libdumbwad/loadlump.c:103
+#: libdumbwad/loadlump.c:130 libdumbwad/loadlump.c:146
+msgid "a lump"
+msgstr ""
+
+#: libdumbwad/loadlump.c:98
+msgid "Bad lumpnum in free_lump"
+msgstr ""
+
+#: libdumbwad/wadio.c:185
+#, c-format
+msgid "wad hashtable: %d entries unused, max chain %d"
+msgstr ""
+
+#: libdumbwad/wadio.c:225
+#, c-format
+msgid "%s: lump %d has no name"
+msgstr ""
+
+#: libdumbwad/wadio.c:231
+#, c-format
+msgid "%s: lump %d is too big for wad"
+msgstr ""
+
+#: libdumbwad/wadio.c:253
+#, c-format
+msgid "%s is too short to be a valid wadfile"
+msgstr ""
+
+#: libdumbwad/wadio.c:259
+#, c-format
+msgid "%s mapped at %p (%lu bytes)"
+msgstr ""
+
+#: libdumbwad/wadio.c:265
+#, c-format
+msgid "Bad signature on %s: expecting %s, got %.4s"
+msgstr ""
+
+#: libdumbwad/wadio.c:269
+#, c-format
+msgid "directory for %s would be beyond end of file"
+msgstr ""
+
+#. say what we've done
+#: libdumbwad/wadio.c:272
+#, c-format
+msgid "%s %s: %d lumps dir @ %d"
+msgstr ""
+
+#: libdumbwad/wadio.c:384
+#, c-format
+msgid "Can't find lump marker %s (lump %s)"
+msgstr ""
+
+#: libdumbwad/wadio.c:393
+#, c-format
+msgid "Can't find lump %s:%s"
+msgstr ""
+
+#: libdumbwad/wadio.c:396
+#, c-format
+msgid "Can't find lump %s"
+msgstr ""
+
+#: libdumbwad/wadio.c:402
+#, c-format
+msgid "Can't find end-marker %s"
+msgstr ""
+
+#. didn't find one, fail
+#: libdumbwad/wadio.c:411
+#, c-format
+msgid "End-marker %s occurs before lump %s"
+msgstr ""
+
+#: libdumbwad/wadio.c:443 libdumbwad/wadio.c:453
+#, c-format
+msgid "Bad lumpnum (%x) in get_lump_*"
+msgstr ""
+
+#: libdumbwad/wadwr.c:63 libdumbwad/wadwr.c:125
+#, c-format
+msgid "%s: can't open: %s"
+msgstr ""
+
+#: libdumbwad/wadwr.c:76 libdumbwad/wadwr.c:89 libdumbwad/wadwr.c:95
+#: libdumbwad/wadwr.c:154
+#, c-format
+msgid "%s: short write: %s"
+msgstr ""
+
+#: libdumbwad/wadwr.c:92
+#, c-format
+msgid "%s: can't rewind: %s"
+msgstr ""
+
+#: libdumbwad/wadwr.c:164
+#, c-format
+msgid "%s: can't get position: %s"
+msgstr ""
+
+#: libdumbwad/wadwr.c:170
+#, c-format
+msgid "%s: can't align: %s"
+msgstr ""
+
+#: libdumb/dsound.c:58
+msgid "couldn't find SOUNDS lump"
+msgstr ""
+
+#: libdumb/dsound.c:63
+#, c-format
+msgid "Loaded %d sounds"
+msgstr ""
+
+#: libdumb/dsound.c:115
+#, c-format
+msgid "play_dsound got bad sound id (%d)"
+msgstr ""
+
+#: libdumb/prothing.c:83
+#, c-format
+msgid "wanted rot %c for sprite %s phase %d???"
+msgstr ""
+
+#: libdumb/prothing.c:103
+#, c-format
+msgid "Can't find sprite %s, ph=%d (%c) rot=%c"
+msgstr ""
+
+#: libdumb/prothing.c:124
+#, c-format
+msgid "Can't find ThingPhase id=%d"
+msgstr ""
+
+#: libdumb/texture.c:158
+msgid "Bad BPP value in paste_pict"
+msgstr ""
+
+#: libdumb/texture.c:178
+msgid "Bad BPP value in paste_jpatch"
+msgstr ""
+
+#: libdumb/texture.c:213
+#, c-format
+msgid "npnames=%d (should be %d)"
+msgstr ""
+
+#: libdumb/texture.c:231
+msgid "No metatexture lumps in WAD"
+msgstr ""
+
+#: libdumb/texture.c:238 libdumb/texture.c:242
+#, c-format
+msgid "%s has %d wall textures"
+msgstr ""
+
+#: libdumb/texture.c:337
+msgid "Can't find any sprites in WAD"
+msgstr ""
+
+#: libdumb/texture.c:353
+#, c-format
+msgid "too short sprite: %s"
+msgstr ""
+
+#: libdumb/texture.c:362
+#, c-format
+msgid "Init %d sprites"
+msgstr ""
+
+#: libdumb/texture.c:382
+#, c-format
+msgid "Bad lumpnum for texture %s in load_sprite()"
+msgstr ""
+
+#: libdumb/texture.c:421
+#, c-format
+msgid "Can't find sprite texture %s"
+msgstr ""
+
+#: libdumb/texture.c:470
+msgid "Can't find any flats in WAD"
+msgstr ""
+
+#: libdumb/texture.c:508
+#, c-format
+msgid "funny length (%d) for flat %s"
+msgstr ""
+
+#: libdumb/texture.c:513
+#, c-format
+msgid "Init %d flats"
+msgstr ""
+
+#: libdumb/texture.c:568
+#, c-format
+msgid "Can't find flat texture %s"
+msgstr ""
+
+#: libdumb/texture.c:620
+#, c-format
+msgid "Patchnum %d (%s) doesn't exist"
+msgstr ""
+
+#: libdumb/texture.c:624
+#, c-format
+msgid "loading patchnum %d (%s)"
+msgstr ""
+
+#: libdumb/texture.c:647
+#, c-format
+msgid "init_walltexs(): %d textures"
+msgstr ""
+
+#: libdumb/texture.c:681
+#, c-format
+msgid "Can't find wall texture %s"
+msgstr ""
+
+#: libdumb/texture.c:696
+#, c-format
+msgid "wtex \"%s\" is unaligned with offset %ld!"
+msgstr ""
+
+#: libdumb/texture.c:708
+#, c-format
+msgid "using one-patch kludge for %s"
+msgstr ""
+
+#: libdumb/texture.c:715
+#, c-format
+msgid "load_walltex %s at %d bpp"
+msgstr ""
+
+#: libdumb/texture.c:724
+#, c-format
+msgid "%s: %d patches"
+msgstr ""
+
+#: libdumb/texture.c:735
+#, c-format
+msgid "Can't make sense of patch #%d, texture %s"
+msgstr ""
+
+#: libdumb/texture.c:739
+#, c-format
+msgid "%s: loaded"
+msgstr ""
+
+#: libdumb/texture.c:769
+#, c-format
+msgid "found font %s already loaded"
+msgstr ""
+
+#: libdumb/texture.c:775
+msgid "Too many fonts"
+msgstr ""
+
+#. OK, now set up each character to be loaded when needed
+#: libdumb/texture.c:781
+#, c-format
+msgid "Loading font #%d (%s)"
+msgstr ""
+
+#: libdumb/texture.c:810
+#, c-format
+msgid "Request for bad fontnum (%d)"
+msgstr ""
+
+#: libdumb/texture.c:812
+#, c-format
+msgid "Request for bad font char (%d:%d)"
+msgstr ""
+
+#: libdumb/texture.c:853
+msgid "too many misc textures"
+msgstr ""
+
+#: libdumb/texture.c:880
+#, c-format
+msgid "get_texture_num: unsupported texture type (%d)"
+msgstr ""
+
+#: libdumb/texture.c:899
+#, c-format
+msgid "get_texture_bynum: unsupported texture type (%d)"
+msgstr ""
+
+#: libdumb/texture.c:919
+#, c-format
+msgid "count_textures: unsupported texture type (%d)"
+msgstr ""
+
+#: libdumb/texture.c:933
+msgid "init_textures(): done"
+msgstr ""
+
+#: libdumb/texture.c:970
+#, c-format
+msgid "Strange texture type (0x%x) in free_texels"
+msgstr ""
+
+#: libdumb/texture.c:981
+#, c-format
+msgid "Strange BPP value (%d) in load_texels"
+msgstr ""
+
+#: libdumb/texture.c:1002
+#, c-format
+msgid "Strange texture type (0x%x) in load_texels"
+msgstr ""
+
+#: libdumb/linux_sound.c:50
+msgid "Sound device file to open"
+msgstr ""
+
+#: libdumb/linux_sound.c:51
+msgid "Maximum allowed bits per channel"
+msgstr ""
+
+#: libdumb/linux_sound.c:52
+msgid "Force monaural sound"
+msgstr ""
+
+#: libdumb/linux_sound.c:133
+#, c-format
+msgid "init_sound: fd=%d fragsize=%d (%d bytes)"
+msgstr ""
+
+#: libdumb/linux_sound.c:136
+#, c-format
+msgid "init_sound: speed=%d window=%d (%f seconds) slush=%d"
+msgstr ""
+
+#: libdumb/linux_sound.c:156
+#, c-format
+msgid "init_sound: can't get sound format list: %s"
+msgstr ""
+
+#: libdumb/linux_sound.c:168
+msgid "init_sound: no supported formats found"
+msgstr ""
+
+#: libdumb/linux_sound.c:173
+#, c-format
+msgid "init_sound: set format failed: %s"
+msgstr ""
+
+#: libdumb/linux_sound.c:185
+msgid "init_sound: driver changed the format to something we don't support"
+msgstr ""
+
+#: libdumb/linux_sound.c:194
+#, c-format
+msgid "init_sound: set stereo failed: %s"
+msgstr ""
+
+#: libdumb/linux_sound.c:201
+msgid "init_sound: mono not available, using stereo"
+msgstr ""
+
+#: libdumb/linux_sound.c:202
+msgid "init_sound: stereo not available, using mono"
+msgstr ""
+
+#: libdumb/linux_sound.c:208
+#, c-format
+msgid "init_sound: set fragsize failed: %s"
+msgstr ""
+
+#: libdumb/linux_sound.c:216
+#, c-format
+msgid "init_sound: set speed failed: %s"
+msgstr ""
+
+#: libdumb/linux_sound.c:222
+#, c-format
+msgid "init_sound: sample rate %d Hz not available, using %d Hz"
+msgstr ""
+
+#: libdumb/linux_sound.c:277
+msgid "poll_sound: underrun detected"
+msgstr ""
+
+#: libdumb/mme_sound.c:49
+msgid "Bits per channel"
+msgstr ""
+
+#: libdumb/mme_sound.c:50
+msgid "Stereo sound instead of mono"
+msgstr ""
+
+#: libdumb/mme_sound.c:122
+msgid "init_sound: no sounddevice present"
+msgstr ""
+
+#: libdumb/mme_sound.c:130
+msgid "Failed to allocate PCMWAVEFORMAT struct"
+msgstr ""
+
+#: libdumb/mme_sound.c:154
+#, c-format
+msgid "waveOutOpen failed - status = %d\n"
+msgstr ""
+
+#: libdumb/mme_sound.c:160
+msgid "Failed to allocate WAVEHDR struct"
+msgstr ""
+
+#: libdumb/mme_sound.c:178
+msgid "Failed to allocate shared audio buffer"
+msgstr ""
+
+#: libdumb/mme_sound.c:185
+#, c-format
+msgid "init_sound: mme_handle=%d fragsize=%d (%ld bytes)"
+msgstr ""
+
+#: libdumb/mme_sound.c:189
+#, c-format
+msgid "init_sound: speed=%d window=%d slush=%d"
+msgstr ""
+
+#: libdumb/mme_sound.c:259
+msgid "waveOutWrite failed"
+msgstr ""
+
+#: libdumb/dos_sound.c:83
+#, c-format
+msgid "Couldn't initialize sound: %s"
+msgstr ""
+
+#: libdumb/dos_sound.c:87
+#, c-format
+msgid "Sound driver: %s (%s)"
+msgstr ""
+
+#: libdumb/sound_mix.c:111
+#, c-format
+msgid "sndmix_sample_size: strange format %d"
+msgstr ""
+
+#: libdumb/sound_mix.c:128
+msgid "sndmix_play_sound: out of slots (sound discarded)"
+msgstr ""
+
+#: libdumb/sound_mix.c:157
+#, c-format
+msgid "sndmix_calc_frag: strange format %d"
+msgstr ""
+
+#: dumb/aalib_video.c:52
+msgid "very fast (but not as perfect)"
+msgstr ""
+
+#: dumb/aalib_video.c:54 dumb/x11_video.c:74 dumb/x11_video.c:79
+#: dumb/x11_video.c:105
+msgid "<disabled at compile time>"
+msgstr ""
+
+#: dumb/aalib_video.c:56
+msgid "brightness (0-255)"
+msgstr ""
+
+#: dumb/aalib_video.c:57
+msgid "contrast (0-255)"
+msgstr ""
+
+#. TODO: make configuration system support floating point directly
+#: dumb/aalib_video.c:59
+msgid "gamma (1000 corresponds to 1.0)"
+msgstr ""
+
+#: dumb/aalib_video.c:60
+msgid "multiply factor for dim color (ditto)"
+msgstr ""
+
+#: dumb/aalib_video.c:61
+msgid "multiply factor for bold color (ditto)"
+msgstr ""
+
+#: dumb/aalib_video.c:62
+msgid "dithering type"
+msgstr ""
+
+#: dumb/aalib_video.c:63
+msgid "range of random value to add to each pixel (0-inf)"
+msgstr ""
+
+#: dumb/aalib_video.c:64
+msgid "invert the whole screen"
+msgstr ""
+
+#: dumb/aalib_video.c:65
+msgid "name of the font you use"
+msgstr ""
+
+#: dumb/aalib_video.c:66
+msgid "use the normal attribute"
+msgstr ""
+
+#: dumb/aalib_video.c:67
+msgid "use the bold (double bright) attribute"
+msgstr ""
+
+#: dumb/aalib_video.c:68
+msgid "use the boldfont attribute"
+msgstr ""
+
+#: dumb/aalib_video.c:69
+msgid "use the dim (half bright) attribute"
+msgstr ""
+
+#: dumb/aalib_video.c:70
+msgid "use the reverse attribute"
+msgstr ""
+
+#: dumb/aalib_video.c:71
+msgid "use all 256 characters"
+msgstr ""
+
+#: dumb/aalib_video.c:72
+msgid "use eight-bit ASCII"
+msgstr ""
+
+#: dumb/aalib_video.c:152
+msgid "AA-lib initialisation failed"
+msgstr ""
+
+#: dumb/aalib_video.c:234
+#, c-format
+msgid "AA-lib doesn't know of font `%s'"
+msgstr ""
+
+#: dumb/aalib_video.c:236
+msgid "The following fonts are available:"
+msgstr ""
+
+#: dumb/aalib_input.c:42
+msgid "ticks to pass before key autorelease or 0"
+msgstr ""
+
+#: dumb/aalib_input.c:43
+msgid "ticks to pass before shift autorelease or 0"
+msgstr ""
+
+#: dumb/aalib_input.c:134
+msgid "aalib_input must be initialised after aalib_video"
+msgstr ""
+
+#: dumb/aalib_input.c:139
+msgid "AA-lib keyboard driver supports AA_SENDRELEASE"
+msgstr ""
+
+#: dumb/aalib_input.c:140
+msgid "AA-lib keyboard driver doesn't support AA_SENDRELEASE"
+msgstr ""
+
+#: dumb/dumb.c:78
+msgid "got SIGALRM: renderer must have gotten stuck..."
+msgstr ""
+
+#: dumb/dumb.c:86
+msgid "save configuration after every run"
+msgstr ""
+
+#: dumb/dumb.c:87
+msgid "save configuration this time only"
+msgstr ""
+
+#: dumb/dumb.c:88
+msgid "specify wadfiles to load"
+msgstr ""
+
+#: dumb/dumb.c:89
+msgid "directories in which to look for wads"
+msgstr ""
+
+#: dumb/dumb.c:90
+msgid "filename of doom.wad"
+msgstr ""
+
+#: dumb/dumb.c:91
+msgid "filename of doom2.wad"
+msgstr ""
+
+#: dumb/dumb.c:92
+msgid "filename of doom4dum.wad"
+msgstr ""
+
+#: dumb/dumb.c:93
+msgid "set starting map"
+msgstr ""
+
+#: dumb/dumb.c:94
+msgid "don't log to the screen"
+msgstr ""
+
+#: dumb/dumb.c:95
+msgid "don't create any objects, just preview the map"
+msgstr ""
+
+#: dumb/dumb.c:96
+msgid "set difficulty level"
+msgstr ""
+
+#: dumb/dumb.c:97
+msgid "disable sound"
+msgstr ""
+
+#: dumb/dumb.c:98
+msgid "video width"
+msgstr ""
+
+#: dumb/dumb.c:99
+msgid "video height"
+msgstr ""
+
+#: dumb/dumb.c:100
+msgid "video depth (in bytes/pixel)"
+msgstr ""
+
+#: dumb/dumb.c:101
+msgid "log to this file"
+msgstr ""
+
+#: dumb/dumb.c:102
+msgid "record player actions to file"
+msgstr ""
+
+#: dumb/dumb.c:103
+msgid "playback player actions from file"
+msgstr ""
+
+#: dumb/dumb.c:104
+msgid "hide gettables and banners"
+msgstr ""
+
+#: dumb/dumb.c:105
+msgid "show a crosshair in the center of the view"
+msgstr ""
+
+#: dumb/dumb.c:106
+msgid "multiply the pixels x size"
+msgstr ""
+
+#: dumb/dumb.c:107
+msgid "multiply the pixels y size"
+msgstr ""
+
+#: dumb/dumb.c:108
+msgid "skip pixels when multiplying x size"
+msgstr ""
+
+#: dumb/dumb.c:109
+msgid "skip pixels when multiplying y size"
+msgstr ""
+
+#: dumb/dumb.c:110
+msgid "load textures before game starts"
+msgstr ""
+
+#: dumb/dumb.c:111
+msgid "angle from forward of player view"
+msgstr ""
+
+#: dumb/dumb.c:112
+msgid "offset from center of player view"
+msgstr ""
+
+#: dumb/dumb.c:113
+msgid "network play: slave mode"
+msgstr ""
+
+#: dumb/dumb.c:114
+msgid "network play: master mode"
+msgstr ""
+
+#: dumb/dumb.c:115
+msgid "force single player mode"
+msgstr ""
+
+#: dumb/dumb.c:116
+msgid "angle to rotate view by"
+msgstr ""
+
+#: dumb/dumb.c:117
+msgid "maximum frames to render"
+msgstr ""
+
+#: dumb/dumb.c:156
+msgid "Input Driver"
+msgstr ""
+
+#: dumb/dumb.c:157
+msgid "Video Driver"
+msgstr ""
+
+#: dumb/dumb.c:158
+msgid "Sound Driver"
+msgstr ""
+
+#: dumb/dumb.c:159
+msgid "Network Driver"
+msgstr ""
+
+#: dumb/dumb.c:160
+msgid "Network Play"
+msgstr ""
+
+#: dumb/dumb.c:161
+msgid "General Game Control"
+msgstr ""
+
+#: dumb/dumb.c:162
+msgid "Player Interface"
+msgstr ""
+
+#: dumb/dumb.c:163
+msgid "Keyboard Mapping"
+msgstr ""
+
+#: dumb/dumb.c:214
+msgid "Preloading wall textures"
+msgstr ""
+
+#: dumb/dumb.c:224
+msgid "Preloading floor/ceiling textures"
+msgstr ""
+
+#: dumb/dumb.c:232
+msgid "Preloading sprites"
+msgstr ""
+
+#: dumb/dumb.c:302
+#, c-format
+msgid "Read configuration from %s"
+msgstr ""
+
+#: dumb/dumb.c:344
+msgid "network mode: slave"
+msgstr ""
+
+#: dumb/dumb.c:350
+msgid "network mode: master"
+msgstr ""
+
+#: dumb/dumb.c:426
+#, c-format
+msgid "Unsupported BPP=%d"
+msgstr ""
+
+#: dumb/dumb.c:445
+msgid "Can't find sector for player"
+msgstr ""
+
+#.
+#. * if(testarg) {
+#. * 	 tdraw=get_misc_texture(testarg);
+#. * 	 logprintf(LOG_DEBUG, 'D', _("texture %s: real=%dx%d log=%dx%d"),
+#. * 		   tdraw->name, tdraw->width, tdraw->height,
+#. * 		   1 << tdraw->log2width,
+#. * 		   1 << tdraw->log2height);
+#. * }
+#.
+#. fill all video pages with our startup screen
+#.
+#. * if(have_lump("TITLEPIC")&&have_lump("DUMBLOGO")) {
+#. * 	 int i;
+#. * 	 Texture *t1=get_misc_texture("TITLEPIC");
+#. * 	 Texture *t2=get_misc_texture("DUMBLOGO");
+#. * 	 for(i=0;i<4;i++) {
+#. * 	    fb=video_newframe();
+#. * 	    draw_center(fb,t1);
+#. * 	    draw_center(fb,t2);
+#. * 	    video_updateframe(fb);
+#. * 	 }
+#. * }
+#.
+#: dumb/dumb.c:500
+msgid "starting game"
+msgstr ""
+
+#: dumb/dumb.c:539
+msgid "Demo ran out..."
+msgstr ""
+
+#: dumb/dumb.c:579
+msgid "saving snapshot..."
+msgstr ""
+
+#: dumb/dumb.c:607
+msgid "snapshot done"
+msgstr ""
+
+#: dumb/dumb.c:611
+#, c-format
+msgid "%d ticks passed with MAXTICKS=%d"
+msgstr ""
+
+#: dumb/dumb.c:641
+msgid "WARNING: this system is running faster than the timer resolution"
+msgstr ""
+
+#: dumb/dumb.c:644
+msgid "Try running DUMB in a larger window."
+msgstr ""
+
+#: dumb/dumb.c:647
+msgid "YOU DIED.  TOO BAD..."
+msgstr ""
+
+#: dumb/dumb.c:663
+#, c-format
+msgid "%d frames, %d seconds, %f fps"
+msgstr ""
+
+#: dumb/dumb.c:689
+#, c-format
+msgid "Saving config to %s"
+msgstr ""
+
+#: dumb/animtex.c:72 dumb/animtex.c:93
+#, c-format
+msgid "Bad AnimTexNum (%d)"
+msgstr ""
+
+#: dumb/banner.c:86
+msgid "too many banners"
+msgstr ""
+
+#: dumb/banner.c:96
+#, c-format
+msgid "init banner %d"
+msgstr ""
+
+#: dumb/game.c:64
+msgid "processor timing overcompensation tweak"
+msgstr ""
+
+#: dumb/game.c:65
+msgid "forward speed"
+msgstr ""
+
+#: dumb/game.c:66
+msgid "strafe speed"
+msgstr ""
+
+#: dumb/game.c:67
+msgid "turning speed"
+msgstr ""
+
+#: dumb/game.c:68
+msgid "jumping speed"
+msgstr ""
+
+#: dumb/game.c:108
+#, c-format
+msgid "PLAYER %d WARPED"
+msgstr ""
+
+#: dumb/game.c:115
+#, c-format
+msgid "PLAYER %d CHEATED"
+msgstr ""
+
+#: dumb/game.c:122
+#, c-format
+msgid "PLAYER %d WIBBLED LOUDLY"
+msgstr ""
+
+#: dumb/game.c:129
+#, c-format
+msgid "PLAYER %d RETURNED"
+msgstr ""
+
+#: dumb/game.c:136
+#, c-format
+msgid "PLAYER %d SMASHES PUMPKINS"
+msgstr ""
+
+#: dumb/gettable.c:197
+#, c-format
+msgid "Strange gettable type=%d num=%d"
+msgstr ""
+
+#: dumb/gettable.c:209
+#, c-format
+msgid "YOU GOT THE %s!"
+msgstr ""
+
+#: dumb/gettable.c:211
+#, c-format
+msgid "THAT %s WOULD BE WASTED..."
+msgstr ""
+
+#: dumb/gettable.c:214
+#, c-format
+msgid "GOT A %s."
+msgstr ""
+
+#: dumb/gettable.c:361
+#, c-format
+msgid "init %d gettables"
+msgstr ""
+
+#: dumb/updmap.c:101 dumb/updmap.c:116
+#, c-format
+msgid "copying ceiling texture from %d to %d"
+msgstr ""
+
+#: dumb/updmap.c:131 dumb/updmap.c:146
+#, c-format
+msgid "copying floor texture from %d to %d"
+msgstr ""
+
+#: dumb/updmap.c:161
+#, c-format
+msgid "sector event terminated OK s=%d type=%d"
+msgstr ""
+
+#: dumb/updmap.c:181
+#, c-format
+msgid "do_sector_event: strange eventtype (%d)"
+msgstr ""
+
+#: dumb/updmap.c:198 dumb/updmap.c:207
+#, c-format
+msgid "sector %d has no center?"
+msgstr ""
+
+#: dumb/updmap.c:230
+#, c-format
+msgid "do_thing_event: teleporting %d"
+msgstr ""
+
+#: dumb/updmap.c:240
+#, c-format
+msgid "do_thing_event: strange eventtype (%d)"
+msgstr ""
+
+#: dumb/updmap.c:256
+#, c-format
+msgid "do_side_event: switching %d on"
+msgstr ""
+
+#: dumb/updmap.c:266
+#, c-format
+msgid "do_side_event: switching %d off"
+msgstr ""
+
+#: dumb/updmap.c:273
+#, c-format
+msgid "do_side_event: strange eventtype (%d)"
+msgstr ""
+
+#: dumb/updmap.c:300
+#, c-format
+msgid "No free event in insert_event(%d,%d,%d)"
+msgstr ""
+
+#: dumb/updmap.c:429
+#, c-format
+msgid "event %d passed its stop date"
+msgstr ""
+
+#: dumb/updmap.c:444
+#, c-format
+msgid "event %d entering stage %d entity %d"
+msgstr ""
+
+#: dumb/updmap.c:464
+#, c-format
+msgid "Strange lumptype %d in um_events"
+msgstr ""
+
+#: dumb/updmap.c:495
+#, c-format
+msgid "%d is being crushed, but not by sector %d ???"
+msgstr ""
+
+#: dumb/levdata.c:85
+#, c-format
+msgid "Loading %s: difficulty=%d"
+msgstr ""
+
+#: dumb/levdata.c:102
+#, c-format
+msgid "Loading %s grain=%d align=%d"
+msgstr ""
+
+#: dumb/levdata.c:106
+#, c-format
+msgid "levdata: %s will not be aligned correctly"
+msgstr ""
+
+#: dumb/levdata.c:123
+#, c-format
+msgid "Init %d %s"
+msgstr ""
+
+#: dumb/levdata.c:139
+msgid "Uh-oh: no player!"
+msgstr ""
+
+#: dumb/levdata.c:160
+#, c-format
+msgid "Freeing level data for %s"
+msgstr ""
+
+#: dumb/levdata.c:175
+#, c-format
+msgid "Pre-freeing %s for %s"
+msgstr ""
+
+#: dumb/levdata.c:239
+#, c-format
+msgid "bad maplumptype (%d) in apply_update()"
+msgstr ""
+
+#: dumb/levdata.c:241
+#, c-format
+msgid "no decode func for maplumptype %d"
+msgstr ""
+
+#: dumb/levdata.c:243
+#, c-format
+msgid "out of range item (%d) in apply_update()"
+msgstr ""
+
+#: dumb/levdata.c:258
+msgid "got plinfo_update for player with no plinfo?"
+msgstr ""
+
+#: dumb/levdyn.c:184
+msgid "Ran out of thing slots"
+msgstr ""
+
+#: dumb/levdyn.c:202
+#, c-format
+msgid "Couldn't find protothing ID=%d"
+msgstr ""
+
+#: dumb/levdyn.c:237
+#, c-format
+msgid "diffchk: strange difficulty??? (%d)"
+msgstr ""
+
+#: dumb/levinfo.c:46
+msgid "warning: no LEVINFO lump for this game"
+msgstr ""
+
+#: dumb/levinfo.c:52
+#, c-format
+msgid "Init %d levels"
+msgstr ""
+
+#: dumb/levinfo.c:92
+msgid "bogus levinfo pointer in levinfo_load"
+msgstr ""
+
+#: dumb/levinfo.c:124
+#, c-format
+msgid "no levinfo for %s, so can't find next level"
+msgstr ""
+
+#: dumb/linetype.c:69
+#, c-format
+msgid "Loaded %d linetypes, of which %d scrolling"
+msgstr ""
+
+#: dumb/linetype.c:72
+msgid "Failed to find LINETYPE in wad"
+msgstr ""
+
+#: dumb/linetype.c:80
+#, c-format
+msgid "Loaded %d sectortypes"
+msgstr ""
+
+#: dumb/linetype.c:82
+msgid "Failed to find SECTTYPE in wad"
+msgstr ""
+
+#: dumb/netio.c:66
+msgid "too many stations"
+msgstr ""
+
+#: dumb/netio.c:97
+msgid "network driver doesn't know how to gethostname()?"
+msgstr ""
+
+#: dumb/netio.c:162
+#, c-format
+msgid "packet length not a multiple of 4 (type=%c len=%lu)"
+msgstr ""
+
+#: dumb/netplay.c:41
+msgid "msec to wait for slaves to init"
+msgstr ""
+
+#: dumb/netplay.c:42
+msgid "msec to wait for slaves to catch up"
+msgstr ""
+
+#: dumb/netplay.c:43
+msgid "msec to wait for master"
+msgstr ""
+
+#: dumb/netplay.c:44
+msgid "msec to allow slaves to get behind"
+msgstr ""
+
+#: dumb/netplay.c:45
+msgid "run network asychronously"
+msgstr ""
+
+#: dumb/netplay.c:46
+msgid "time between sending acks"
+msgstr ""
+
+#: dumb/netplay.c:86
+#, c-format
+msgid "sending slave-init to %s (station %d)"
+msgstr ""
+
+#: dumb/netplay.c:97
+msgid "sending slave-init packets..."
+msgstr ""
+
+#. say what's going on
+#: dumb/netplay.c:110
+msgid "waiting for slaves to initialise"
+msgstr ""
+
+#: dumb/netplay.c:132
+msgid "all slaves up"
+msgstr ""
+
+#: dumb/netplay.c:151
+msgid "sending init-request"
+msgstr ""
+
+#: dumb/netplay.c:166
+msgid "waiting for slave init info from master"
+msgstr ""
+
+#: dumb/netplay.c:345
+#, c-format
+msgid "waiting for slave '%s' (%d) to catch up"
+msgstr ""
+
+#: dumb/netplay.c:349
+#, c-format
+msgid "slave '%s' (%d) seems to be dead"
+msgstr ""
+
+#: dumb/netplay.c:401
+#, c-format
+msgid "inconsistent packet length %d > %lu"
+msgstr ""
+
+#: dumb/netplay.c:444
+#, c-format
+msgid "init request from %s ignored"
+msgstr ""
+
+#: dumb/netplay.c:448
+#, c-format
+msgid "got init request: setting up new station %d"
+msgstr ""
+
+#: dumb/netplay.c:457
+#, c-format
+msgid "init pkt length mismatch: got %d, expecting %lu"
+msgstr ""
+
+#: dumb/netplay.c:462
+#, c-format
+msgid "protocol version mismatch: got %d, expecting %d"
+msgstr ""
+
+#: dumb/netplay.c:474
+#, c-format
+msgid "strange packet type (%c) in netplay_poll()"
+msgstr ""
+
+#: dumb/netplay.c:483
+#, c-format
+msgid "station %s (%d) lives!"
+msgstr ""
+
+#: dumb/termtype.c:247
+#, c-format
+msgid "unimplemented LT_TermType %d"
+msgstr ""
+
+#: dumb/thinghit.c:104
+#, c-format
+msgid "find_spot: found %d"
+msgstr ""
+
+#: dumb/thinghit.c:107
+msgid "find_spot: no spot found"
+msgstr ""
+
+#: dumb/thinghit.c:128
+#, c-format
+msgid "boss tag effect on sector %d"
+msgstr ""
+
+#: dumb/thinghit.c:287
+#, c-format
+msgid "strange WallHitType (%d) in thing_hit_wall()"
+msgstr ""
+
+#: dumb/thinghit.c:298
+#, c-format
+msgid "player is not allowed to activate type %d"
+msgstr ""
+
+#: dumb/thinghit.c:306
+#, c-format
+msgid "non-player is not allowed to activate type %d"
+msgstr ""
+
+#: dumb/thinghit.c:316
+msgid "YOU NEED A KEY!"
+msgstr ""
+
+#: dumb/thinghit.c:323
+#, c-format
+msgid "line %d is having something done to it by thing %d"
+msgstr ""
+
+#: dumb/thinghit.c:351
+msgid "tried manual action on wall with no back?"
+msgstr ""
+
+#: dumb/thinghit.c:357
+msgid "tried manual_f action on wall with no front?"
+msgstr ""
+
+#: dumb/thinghit.c:396
+#, c-format
+msgid "strange lumptype (%d) while performing actions"
+msgstr ""
+
+#: dumb/thingm.c:118
+#, c-format
+msgid "Obj %d is heatseeking %d"
+msgstr ""
+
+#: dumb/thingm.c:232
+#, c-format
+msgid "thing %d is out to get %d!"
+msgstr ""
+
+#: dumb/thingm.c:343
+#, c-format
+msgid "thing %d took %d damage (%d/%d hits)"
+msgstr ""
+
+#: dumb/thingm.c:444
+#, c-format
+msgid "melee: %d's attack on %d failed"
+msgstr ""
+
+#: dumb/thingm.c:531
+#, c-format
+msgid "Thing %d becomes type %d; old type was %d"
+msgstr ""
+
+#: dumb/ctlkey.c:227 xwad/xproctls.c:174 xwad/xwadctls.c:527
+msgid "Quit"
+msgstr ""
+
+#: dumb/ctlkey.c:228
+msgid "Move forward"
+msgstr ""
+
+#: dumb/ctlkey.c:228
+msgid "Move backward"
+msgstr ""
+
+#: dumb/ctlkey.c:229
+msgid "Turn left"
+msgstr ""
+
+#: dumb/ctlkey.c:229
+msgid "Turn right"
+msgstr ""
+
+#: dumb/ctlkey.c:230
+msgid "Turn around"
+msgstr ""
+
+#: dumb/ctlkey.c:231
+msgid "Sidestep left"
+msgstr ""
+
+#: dumb/ctlkey.c:231
+msgid "Sidestep right"
+msgstr ""
+
+#: dumb/ctlkey.c:232
+msgid "Jump / Swim/Fly up"
+msgstr ""
+
+#: dumb/ctlkey.c:232
+msgid "Duck / Swim/Fly down"
+msgstr ""
+
+#: dumb/ctlkey.c:233
+msgid "Look up"
+msgstr ""
+
+#: dumb/ctlkey.c:233
+msgid "Look down"
+msgstr ""
+
+#: dumb/ctlkey.c:234
+msgid "Aim up"
+msgstr ""
+
+#: dumb/ctlkey.c:234
+msgid "Aim down"
+msgstr ""
+
+#: dumb/ctlkey.c:234
+msgid "Center view"
+msgstr ""
+
+#: dumb/ctlkey.c:235
+msgid "Run"
+msgstr ""
+
+#: dumb/ctlkey.c:235
+msgid "Strafe"
+msgstr ""
+
+#: dumb/ctlkey.c:236
+msgid "Activate"
+msgstr ""
+
+#: dumb/ctlkey.c:237 xwad/xproctls.c:141
+msgid "Shoot"
+msgstr ""
+
+#: dumb/ctlkey.c:238
+msgid "Shoot special"
+msgstr ""
+
+#: dumb/ctlkey.c:239
+msgid "Select next weapon"
+msgstr ""
+
+#: dumb/ctlkey.c:239
+msgid "Select previous weapon"
+msgstr ""
+
+#: dumb/ctlkey.c:240
+msgid "Select weapon 0"
+msgstr ""
+
+#: dumb/ctlkey.c:240
+msgid "Select weapon 1"
+msgstr ""
+
+#: dumb/ctlkey.c:240
+msgid "Select weapon 2"
+msgstr ""
+
+#: dumb/ctlkey.c:241
+msgid "Select weapon 3"
+msgstr ""
+
+#: dumb/ctlkey.c:241
+msgid "Select weapon 4"
+msgstr ""
+
+#: dumb/ctlkey.c:241
+msgid "Select weapon 5"
+msgstr ""
+
+#: dumb/ctlkey.c:242
+msgid "Select weapon 6"
+msgstr ""
+
+#: dumb/ctlkey.c:242
+msgid "Select weapon 7"
+msgstr ""
+
+#: dumb/ctlkey.c:242
+msgid "Select weapon 8"
+msgstr ""
+
+#: dumb/ctlkey.c:243
+msgid "Select weapon 9"
+msgstr ""
+
+#: dumb/ctlkey.c:244
+msgid "Use item"
+msgstr ""
+
+#: dumb/ctlkey.c:244
+msgid "Next item"
+msgstr ""
+
+#: dumb/ctlkey.c:244
+msgid "Previous item"
+msgstr ""
+
+#: dumb/updthing.c:452
+#, c-format
+msgid "climbing, factor=%d"
+msgstr ""
+
+#: dumb/keymap.c:164
+#, c-format
+msgid "NULL keyname for keycode 0x%08lX"
+msgstr ""
+
+#: dumb/keymap.c:175
+#, c-format
+msgid "No action for keyname \"%s\""
+msgstr ""
+
+#: dumb/keymap.c:278
+msgid "--- begin keymap debug dump"
+msgstr ""
+
+#: dumb/keymap.c:284
+msgid "--- end keymap debug dump"
+msgstr ""
+
+#: dumb/keymap.c:323
+msgid "attempt to resize keymap under its length"
+msgstr ""
+
+#: dumb/keymapconf.c:36
+msgid "Keys to quit DUMB"
+msgstr ""
+
+#: dumb/keymapconf.c:37
+msgid "Keys to move forward"
+msgstr ""
+
+#: dumb/keymapconf.c:38
+msgid "Keys to move backward"
+msgstr ""
+
+#: dumb/keymapconf.c:39
+msgid "Keys to turn left"
+msgstr ""
+
+#: dumb/keymapconf.c:40
+msgid "Keys to turn right"
+msgstr ""
+
+#: dumb/keymapconf.c:41 dumb/keymapconf.c:55
+msgid "(not implemented)"
+msgstr ""
+
+#: dumb/keymapconf.c:42
+msgid "Keys to sidestep left"
+msgstr ""
+
+#: dumb/keymapconf.c:43
+msgid "Keys to sidestep right"
+msgstr ""
+
+#: dumb/keymapconf.c:44
+msgid "Keys to jump / swim/fly up"
+msgstr ""
+
+#: dumb/keymapconf.c:45
+msgid "Keys to duck / swim/fly down"
+msgstr ""
+
+#: dumb/keymapconf.c:46
+msgid "Keys to look up"
+msgstr ""
+
+#: dumb/keymapconf.c:47
+msgid "Keys to look down"
+msgstr ""
+
+#: dumb/keymapconf.c:48
+msgid "Keys to aim up"
+msgstr ""
+
+#: dumb/keymapconf.c:49
+msgid "Keys to aim down"
+msgstr ""
+
+#: dumb/keymapconf.c:50
+msgid "Keys to look straight ahead"
+msgstr ""
+
+#: dumb/keymapconf.c:51
+msgid "Keys to hold to move faster"
+msgstr ""
+
+#: dumb/keymapconf.c:52
+msgid "Keys to hold to sidestep instead of turning"
+msgstr ""
+
+#: dumb/keymapconf.c:53
+msgid "Keys to activate switches and doors"
+msgstr ""
+
+#: dumb/keymapconf.c:54
+msgid "Keys to shoot with the selected weapon"
+msgstr ""
+
+#: dumb/keymapconf.c:56
+msgid "Keys to select the next weapon"
+msgstr ""
+
+#: dumb/keymapconf.c:57
+msgid "Keys to select the previous weapon"
+msgstr ""
+
+#: dumb/keymapconf.c:58
+msgid "Keys to select weapon 0"
+msgstr ""
+
+#: dumb/keymapconf.c:59
+msgid "Keys to select weapon 1"
+msgstr ""
+
+#: dumb/keymapconf.c:60
+msgid "Keys to select weapon 2"
+msgstr ""
+
+#: dumb/keymapconf.c:61
+msgid "Keys to select weapon 3"
+msgstr ""
+
+#: dumb/keymapconf.c:62
+msgid "Keys to select weapon 4"
+msgstr ""
+
+#: dumb/keymapconf.c:63
+msgid "Keys to select weapon 5"
+msgstr ""
+
+#: dumb/keymapconf.c:64
+msgid "Keys to select weapon 6"
+msgstr ""
+
+#: dumb/keymapconf.c:65
+msgid "Keys to select weapon 7"
+msgstr ""
+
+#: dumb/keymapconf.c:66
+msgid "Keys to select weapon 8"
+msgstr ""
+
+#: dumb/keymapconf.c:67
+msgid "Keys to select weapon 9"
+msgstr ""
+
+#: dumb/keymapconf.c:68
+msgid "Keys to use the selected item"
+msgstr ""
+
+#: dumb/keymapconf.c:69
+msgid "Keys to select the next item"
+msgstr ""
+
+#: dumb/keymapconf.c:70
+msgid "Keys to select the previous item"
+msgstr ""
+
+#: dumb/keymapconf.c:92
+msgid "Keymap is empty, installing defaults."
+msgstr ""
+
+#: dumb/renderc.h:321
+#, c-format
+msgid "init_renderer fb dimensions (%d,%d) view (%d,%d) bpp=%d"
+msgstr ""
+
+#: dumb/renderc.h:503
+#, c-format
+msgid "fb1=%d fb2=%d for wall %d"
+msgstr ""
+
+#: dumb/renderc.h:536 dumb/renderc.h:546
+#, c-format
+msgid "Too many wall start_events column=%d"
+msgstr ""
+
+#: dumb/renderc.h:649
+msgid "Too many obj start_events"
+msgstr ""
+
+#: dumb/renderc.h:702
+#, c-format
+msgid "active_count=%d at rw_column %d"
+msgstr ""
+
+#: dumb/renderc.h:705
+#, c-format
+msgid "active_obj_count=%d at rw_column %d"
+msgstr ""
+
+#: dumb/renderc.h:715
+#, c-format
+msgid "Too many active objects (%d)"
+msgstr ""
+
+#: dumb/rendcore.h:89 dumb/rendcore.h:175 dumb/rendcore.h:408
+#, c-format
+msgid "start=%d end=%d"
+msgstr ""
+
+#: dumb/rendcore.h:90
+msgid "problems with fb coords in draw_wall_segment"
+msgstr ""
+
+#: dumb/rendcore.h:176
+msgid "problems with fb coords in draw_sky_segment"
+msgstr ""
+
+#: dumb/rendcore.h:409
+msgid "problems with fb coords in draw_obj"
+msgstr ""
+
+#: dumb/rendcore.h:412
+#, c-format
+msgid "Column (%d) off edge of sprite (width=%d)"
+msgstr ""
+
+#: dumb/unix_net.c:54
+msgid "UDP port to listen on"
+msgstr ""
+
+#: dumb/unix_net.c:55
+msgid "IP broadcast address"
+msgstr ""
+
+#: dumb/unix_net.c:100
+msgid "Host-specific port numbers will be ignored when broadcasting"
+msgstr ""
+
+#: dumb/unix_net.c:104
+#, c-format
+msgid "Invalid port number `%s' -- assuming %d"
+msgstr ""
+
+#: dumb/unix_net.c:118
+#, c-format
+msgid "gethostbyname() failed for '%s': errno=%d"
+msgstr ""
+
+#. nothing to receive
+#. one of the stations we're talking
+#. to isn't listening.  Since there's
+#. no way to work out which, we just
+#. muddle on
+#. FIXME: h_errno?
+#: dumb/unix_net.c:165
+#, c-format
+msgid "error (%d) in recvfrom sock=%d"
+msgstr ""
+
+#: dumb/unix_net.c:188
+#, c-format
+msgid "data from new station (%08x)"
+msgstr ""
+
+#: dumb/unix_net.c:236
+#, c-format
+msgid "error %d blocking UDP socket"
+msgstr ""
+
+#: dumb/unix_net.c:240
+#, c-format
+msgid "error (%d) in peek recvfrom sock=%d"
+msgstr ""
+
+#: dumb/unix_net.c:244 dumb/unix_net.c:303
+#, c-format
+msgid "error %d unblocking UDP socket"
+msgstr ""
+
+#: dumb/unix_net.c:257
+#, c-format
+msgid "error (%d) in sendto sock=%d"
+msgstr ""
+
+#: dumb/unix_net.c:269
+#, c-format
+msgid "error (%d) in broadcast sendto sock=%d"
+msgstr ""
+
+#: dumb/unix_net.c:295
+#, c-format
+msgid "error %d creating UDP socket"
+msgstr ""
+
+#: dumb/unix_net.c:301
+#, c-format
+msgid "error %d binding UDP socket"
+msgstr ""
+
+#: dumb/unix_net.c:315
+msgid "udp: broadcast access denied (try running as root)"
+msgstr ""
+
+#: dumb/unix_net.c:338
+#, c-format
+msgid "udp broadcast: %d packets, %d bytes, avg len %d"
+msgstr ""
+
+#: dumb/unix_net.c:342
+#, c-format
+msgid "udp unicast:   %d packets, %d bytes, avg len %d"
+msgstr ""
+
+#: dumb/unix_net.c:351
+#, c-format
+msgid "udp total:     %d packets, %d bytes, avg len %d"
+msgstr ""
+
+#: dumb/dummy_input.c:32
+msgid "dummy input: always quit"
+msgstr ""
+
+#: dumb/ggi_video.c:117
+msgid "GGI: ggiOpen failed."
+msgstr ""
+
+#: dumb/ggi_video.c:153 dumb/linux_video.c:152 dumb/vgagl_video.c:138
+#, c-format
+msgid "Bad BPP (%d) in init_video"
+msgstr ""
+
+#: dumb/ggi_video.c:157
+msgid "GGI: SetGraphMode failed."
+msgstr ""
+
+#: dumb/ggi_video.c:167
+#, c-format
+msgid "init_video in copying mode pagelen=%d"
+msgstr ""
+
+#: dumb/ggi_video.c:436
+#, c-format
+msgid "Unused key: Latin sym=%04x (%c)\n"
+msgstr ""
+
+#: dumb/ggi_video.c:588
+#, c-format
+msgid "Unused key: Special sym=%04x\n"
+msgstr ""
+
+#: dumb/linux_video.c:39
+msgid "maximum pages to use for flipping"
+msgstr ""
+
+#: dumb/linux_video.c:40
+msgid "minimum pages to use for flipping"
+msgstr ""
+
+#: dumb/linux_video.c:161
+msgid "No linear framebuf? Try running as root (not just suid root)"
+msgstr ""
+
+#: dumb/linux_video.c:172
+#, c-format
+msgid "Too little video RAM, or no linear fb: linearlen=%d pagelen=%d"
+msgstr ""
+
+#: dumb/linux_video.c:184
+#, c-format
+msgid "init_video in copying mode linearlen=%d pagelen=%d npages=%d"
+msgstr ""
+
+#: dumb/linux_video.c:190
+#, c-format
+msgid "init_video in flipping mode linearlen=%d pagelen=%d npages=%d"
+msgstr ""
+
+#: dumb/dos_input.c:37 dumb/linux_input.c:54
+msgid "disable mouse support"
+msgstr ""
+
+#: dumb/linux_input.c:55
+msgid "mouse type"
+msgstr ""
+
+#: dumb/linux_input.c:56
+msgid "mouse device"
+msgstr ""
+
+#: dumb/linux_input.c:194
+msgid "Console open failed"
+msgstr ""
+
+#: dumb/linux_input.c:196
+msgid "Console in raw mode"
+msgstr ""
+
+#: dumb/x11_video.c:72
+msgid "allow use of XFree86's DGA extension"
+msgstr ""
+
+#: dumb/x11_video.c:77
+msgid "allow use of the MIT shared memory extension"
+msgstr ""
+
+#: dumb/x11_video.c:103
+msgid "allow use of the XKeyboard extension"
+msgstr ""
+
+#: dumb/x11_video.c:107
+msgid "grab the keyboard focus while DUMB runs"
+msgstr ""
+
+#: dumb/x11_video.c:174
+#, c-format
+msgid "Shm Attaches=%d"
+msgstr ""
+
+#: dumb/x11_video.c:192
+msgid "x11_video: Can't open default display"
+msgstr ""
+
+#: dumb/x11_video.c:210
+#, c-format
+msgid "DGA viewport=%d,%d,%d"
+msgstr ""
+
+#. FIXME: Is this fatal or not?
+#: dumb/x11_video.c:216
+msgid "X server doesn't support DGA"
+msgstr ""
+
+#: dumb/x11_video.c:228
+msgid "using XF86-DGA"
+msgstr ""
+
+#: dumb/x11_video.c:248
+msgid "XCreateWindow failed"
+msgstr ""
+
+#: dumb/x11_video.c:250
+#, c-format
+msgid "win-id=%ld"
+msgstr ""
+
+#: dumb/x11_video.c:273
+msgid "XShmCreateImage failed"
+msgstr ""
+
+#: dumb/x11_video.c:276
+msgid "shmget failed"
+msgstr ""
+
+#: dumb/x11_video.c:285
+msgid "XShm disabled: are we not local?"
+msgstr ""
+
+#: dumb/x11_video.c:294
+msgid "using XShm"
+msgstr ""
+
+#: dumb/x11_video.c:324
+msgid "XCreateImage failed"
+msgstr ""
+
+#: dumb/x11_video.c:325
+msgid "using Xlib Images (slow)"
+msgstr ""
+
+#: dumb/x11_video.c:334
+msgid "X colormap came back as None.  Probably some strange visual."
+msgstr ""
+
+#: dumb/x11_video.c:337
+#, c-format
+msgid "cmap-id=%ld"
+msgstr ""
+
+#: dumb/x11_video.c:423
+msgid "Installing colormap"
+msgstr ""
+
+#: dumb/x11_video.c:510
+msgid "Got XEvent"
+msgstr ""
+
+#: dumb/x11_video.c:521
+#, c-format
+msgid "Got some weird event type: %d"
+msgstr ""
+
+#: dumb/x11_video.c:541
+msgid "Got KeyPress"
+msgstr ""
+
+#: dumb/x11_video.c:544
+msgid "Got KeyRelease"
+msgstr ""
+
+#: dumb/x11_video.c:562
+msgid "EnterNotify received\n"
+msgstr ""
+
+#: dumb/x11_video.c:565
+msgid "LeaveNotify received\n"
+msgstr ""
+
+#: dumb/x11_video.c:575
+msgid "x11_input must be initialised after x11_video"
+msgstr ""
+
+#: dumb/x11_video.c:600
+#, c-format
+msgid "XKB %d.%d in Xlib is incompatible with our %d.%d"
+msgstr ""
+
+#: dumb/x11_video.c:610
+#, c-format
+msgid "XKB %d.%d in X server is incompatible with our %d.%d"
+msgstr ""
+
+#: dumb/x11_video.c:617
+msgid "X server does not support DetectableAutorepeat"
+msgstr ""
+
+#: dumb/x11_video.c:620
+msgid "DetectableAutorepeat enabled via XKB"
+msgstr ""
+
+#: dumb/x11_video.c:635
+msgid "keyboard grab failed!"
+msgstr ""
+
+#: dumb/vgagl_video.c:142
+#, c-format
+msgid "VGA-linear=%x"
+msgstr ""
+
+#: dumb/vgagl_video.c:146
+#, c-format
+msgid "GL-flipmode=%d"
+msgstr ""
+
+#. FIXME: It shouldn't be necessary to put default values in the string.
+#: dumb/dos_input.c:39
+msgid "mouse sensitivity x-axis (4)"
+msgstr ""
+
+#: dumb/dos_input.c:40
+msgid "mouse sensitivity y-axis (2)"
+msgstr ""
+
+#: dumb/dos_input.c:142
+msgid "Can't initialize mouse! Missing driver?"
+msgstr ""
+
+#: dumb/dos_video.c:39
+msgid "dont try to use page flipping"
+msgstr ""
+
+#: dumb/dos_video.c:41
+msgid "use VESA 2.0 linear modes (UniVBE preferred)"
+msgstr ""
+
+#: dumb/dos_video.c:97 dumb/dos_video.c:100 dumb/dos_video.c:123
+#, c-format
+msgid "Can't initialize video: %s"
+msgstr ""
+
+#: dumb/dos_video.c:120
+msgid "Using page flipping"
+msgstr ""
+
+#: dumb/dos_video.c:134
+msgid "Using double buffering"
+msgstr ""
+
+#: dumb/dos_video.c:140
+msgid "Using two-stage double buffering"
+msgstr ""
+
+#: dumb/dos_video.c:142
+#, c-format
+msgid "Video mode: %s (%s)"
+msgstr ""
+
+#. logprintf(LOG_DEBUG, 'C', _("child returned %d"), status);
+#: xwad/xwad.c:62
+msgid "Level Saved."
+msgstr ""
+
+#: xwad/xwad.c:70
+#, c-format
+msgid ""
+"Usage: %s [options]\n"
+"Where options are:\n"
+"\t-v\t\tVerbose: log to the screen.\n"
+"\t-w <wadfile> [wadfile] [wadfile]...\n"
+"\t-l <logfile> [logfile] [logfile]...\n"
+"\t-m <mapname>\n"
+"\t-d <display>\n"
+msgstr ""
+
+#: tool/mkdfnt.c:108 xwad/xproto.c:192 xwad/xwad.c:172
+#, c-format
+msgid "Can't open display %s"
+msgstr ""
+
+#: tool/mkdfnt.c:108 xwad/xproto.c:193 xwad/xwad.c:172
+msgid "<default>"
+msgstr ""
+
+#: xwad/connect.c:398 xwad/xwadctls.c:174
+msgid "You must select exactly two lines."
+msgstr ""
+
+#: xwad/connect.c:402
+msgid "Lines don't cross."
+msgstr ""
+
+#: xwad/connect.c:423
+#, c-format
+msgid "first vertex is %d, angle %f"
+msgstr ""
+
+#: xwad/connect.c:446
+#, c-format
+msgid "  vertex %d, angle is %f"
+msgstr ""
+
+#: xwad/connect.c:460
+#, c-format
+msgid "connecting %d -> %d"
+msgstr ""
+
+#: xwad/connect.c:465
+#, c-format
+msgid "%d and %d are already connected"
+msgstr ""
+
+#: xwad/connect.c:482
+msgid "No vertices were connected."
+msgstr ""
+
+#: xwad/connect.c:484
+msgid "Some vertices were not connected."
+msgstr ""
+
+#: xwad/connect.c:498
+msgid "There must be exactly two lines connected to the selected vertex."
+msgstr ""
+
+#: xwad/connect.c:607
+msgid "You must select two one-sided sector boundaries."
+msgstr ""
+
+#: xwad/connect.c:663
+msgid "Sector does not seem corridor-like."
+msgstr ""
+
+#: xwad/mapcon.c:161
+msgid "No Create function for this mode yet!"
+msgstr ""
+
+#: xwad/tchoose.c:109
+msgid "Flat"
+msgstr ""
+
+#: xwad/tchoose.c:112
+msgid "Wall"
+msgstr ""
+
+#: xwad/tchoose.c:115
+msgid "Sprite"
+msgstr ""
+
+#: xwad/tchoose.c:118
+msgid "Patch"
+msgstr ""
+
+#: xwad/tchoose.c:124
+msgid " Texture Browser"
+msgstr ""
+
+#: xwad/tchoose.c:231
+msgid "OK!"
+msgstr ""
+
+#: xwad/tchoose.c:232
+msgid "Cancel"
+msgstr ""
+
+#: xwad/tchoose.c:233
+msgid "Preview"
+msgstr ""
+
+#: xwad/xwadctls.c:528
+msgid "BigMap"
+msgstr ""
+
+#: xwad/xwadctls.c:529
+msgid "VerMode"
+msgstr ""
+
+#: xwad/xwadctls.c:531
+msgid "Load:"
+msgstr ""
+
+#: xwad/xwadctls.c:533
+msgid "LineMode"
+msgstr ""
+
+#: xwad/xwadctls.c:535
+msgid "Save As:"
+msgstr ""
+
+#: xwad/xwadctls.c:537
+msgid "SectMode"
+msgstr ""
+
+#: xwad/xwadctls.c:539
+msgid "Prev"
+msgstr ""
+
+#: xwad/xwadctls.c:540
+msgid "Next"
+msgstr ""
+
+#: xwad/xwadctls.c:541
+msgid "ThingMode"
+msgstr ""
+
+#: xwad/xwadctls.c:543
+msgid "Grid:"
+msgstr ""
+
+#: xwad/xwadctls.c:545
+msgid "Sprites"
+msgstr ""
+
+#: xwad/xwadctls.c:553
+msgid "Zoom In"
+msgstr ""
+
+#: xwad/xwadctls.c:554
+msgid "Zoom Out"
+msgstr ""
+
+#: xwad/xwadctls.c:555
+msgid "Scale:"
+msgstr ""
+
+#: xwad/xwadctls.c:573 xwad/xwadctls.c:652
+msgid "Vertex #"
+msgstr ""
+
+#: xwad/xwadctls.c:575 xwad/xwadctls.c:610
+msgid "X-coord"
+msgstr ""
+
+#: xwad/xwadctls.c:576 xwad/xwadctls.c:611
+msgid "Y-coord"
+msgstr ""
+
+#: xwad/xwadctls.c:577
+msgid "Connect"
+msgstr ""
+
+#: xwad/xwadctls.c:578
+msgid "CCW"
+msgstr ""
+
+#: xwad/xwadctls.c:579
+msgid "JoinLines"
+msgstr ""
+
+#: xwad/xwadctls.c:588
+msgid "Sect #"
+msgstr ""
+
+#: xwad/xwadctls.c:590
+msgid "FloorLvl"
+msgstr ""
+
+#: xwad/xwadctls.c:591
+msgid "CeilingLvl"
+msgstr ""
+
+#: xwad/xwadctls.c:592
+msgid "Floor"
+msgstr ""
+
+#: xwad/xwadctls.c:593
+msgid "Ceiling"
+msgstr ""
+
+#: xwad/xwadctls.c:594
+msgid "Light"
+msgstr ""
+
+#: xwad/xwadctls.c:595 xwad/xwadctls.c:619 xwad/xwadctls.c:649
+msgid "Type"
+msgstr ""
+
+#: xwad/xwadctls.c:596 xwad/xwadctls.c:646
+msgid "Tag"
+msgstr ""
+
+#: xwad/xwadctls.c:597
+msgid "Stairs"
+msgstr ""
+
+#: xwad/xwadctls.c:598
+msgid "BigStairs"
+msgstr ""
+
+#: xwad/xwadctls.c:608
+msgid "Thing #"
+msgstr ""
+
+#: xwad/xwadctls.c:612
+msgid "Easy"
+msgstr ""
+
+#: xwad/xwadctls.c:613 xwad/xwadctls.c:644
+msgid "Delete"
+msgstr ""
+
+#: xwad/xwadctls.c:614
+msgid "Medium"
+msgstr ""
+
+#: xwad/xwadctls.c:615
+msgid "Multi"
+msgstr ""
+
+#: xwad/xwadctls.c:616
+msgid "Hard"
+msgstr ""
+
+#: xwad/xwadctls.c:617
+msgid "Deaf"
+msgstr ""
+
+#: xwad/xwadctls.c:618
+msgid "Angle"
+msgstr ""
+
+#: xwad/xwadctls.c:642
+msgid "Line #"
+msgstr ""
+
+#: xwad/xwadctls.c:647
+msgid "VerFlip"
+msgstr ""
+
+#: xwad/xwadctls.c:650
+msgid "SideFlip"
+msgstr ""
+
+#: xwad/xwadctls.c:656
+msgid "Impassible"
+msgstr ""
+
+#: xwad/xwadctls.c:657
+msgid "TwoSided"
+msgstr ""
+
+#: xwad/xwadctls.c:658
+msgid "M-Impass"
+msgstr ""
+
+#: xwad/xwadctls.c:660
+msgid "UnpUpper"
+msgstr ""
+
+#: xwad/xwadctls.c:661
+msgid "UnpLower"
+msgstr ""
+
+#: xwad/xwadctls.c:662
+msgid "Secret"
+msgstr ""
+
+#: xwad/xwadctls.c:664
+msgid "BlockSnd"
+msgstr ""
+
+#: xwad/xwadctls.c:665
+msgid "NoMap"
+msgstr ""
+
+#: xwad/xwadctls.c:666
+msgid "ForceMap"
+msgstr ""
+
+#: xwad/xwadctls.c:668
+msgid "Poster"
+msgstr ""
+
+#: xwad/xwadctls.c:670
+msgid "Crossing"
+msgstr ""
+
+#: xwad/xwadctls.c:672
+msgid "Split"
+msgstr ""
+
+#: xwad/xwadctls.c:673
+msgid "MkSector"
+msgstr ""
+
+#: xwad/xwadctls.c:674
+msgid "Corridor"
+msgstr ""
+
+#: xwad/xwadctls.c:676
+msgid "Side #"
+msgstr ""
+
+#: xwad/xwadctls.c:677
+msgid "Sector #"
+msgstr ""
+
+#: xwad/xwadctls.c:678
+msgid "Offset"
+msgstr ""
+
+#: xwad/xwadctls.c:679
+msgid "Texture"
+msgstr ""
+
+#: xwad/xwadctls.c:680
+msgid "U-Texture"
+msgstr ""
+
+#: xwad/xwadctls.c:681
+msgid "L-Texture"
+msgstr ""
+
+#: xwad/xproto.c:106
+#, c-format
+msgid ""
+"Usage: %s [options]\n"
+"Where options are:\n"
+"\t-v\t\tVerbose: log to the screen.\n"
+"\t-s\t\tSilent: don't try to play sounds.\n"
+"\t-w <wadfile> [wadfile] [wadfile]...\n"
+"\t-l <logfile> [logfile] [logfile]...\n"
+"\t-d <display>\n"
+msgstr ""
+
+#: xwad/xproto.c:369
+msgid "no PROTOS lump in wad"
+msgstr ""
+
+#: xwad/xproto.c:372
+msgid "no protos"
+msgstr ""
+
+#: xwad/xproctls.c:98
+msgid "RotState:"
+msgstr ""
+
+#: xwad/xproctls.c:100
+msgid "Rotate"
+msgstr ""
+
+#: xwad/xproctls.c:101 xwad/xproctls.c:106
+msgid "Advance"
+msgstr ""
+
+#: xwad/xproctls.c:103
+msgid "Phase:"
+msgstr ""
+
+#: xwad/xproctls.c:105 xwad/xproctls.c:146
+msgid "Animate"
+msgstr ""
+
+#: xwad/xproctls.c:108
+msgid "Sprite:"
+msgstr ""
+
+#: xwad/xproctls.c:110
+msgid "SpriteSize:"
+msgstr ""
+
+#: xwad/xproctls.c:138
+msgid "Init"
+msgstr ""
+
+#: xwad/xproctls.c:139
+msgid "Detect"
+msgstr ""
+
+#: xwad/xproctls.c:140
+msgid "Fight"
+msgstr ""
+
+#: xwad/xproctls.c:142
+msgid "Special"
+msgstr ""
+
+#: xwad/xproctls.c:143
+msgid "Ouch"
+msgstr ""
+
+#: xwad/xproctls.c:144
+msgid "Die"
+msgstr ""
+
+#: xwad/xproctls.c:145
+msgid "Explode"
+msgstr ""
+
+#: xwad/xproctls.c:172
+msgid "ID:"
+msgstr ""
+
+#: ptcomp/ptcomp.c:96
+msgid ""
+"Usage: ptcomp <dir>\n"
+"\n"
+"ptcomp is used to compile .pt files into the PHASES,\n"
+"PROTOS, and GETTABLE lumps used by DUMB.  It reads .pt\n"
+"source from the standard input, and writes its output\n"
+"into files of the form <dir>/PROTOS.lump\n"
+"\n"
+msgstr ""
+
+#: ptcomp/ptcomp.c:113
+msgid "stdin"
+msgstr ""
+
+#: ptcomp/ptcomp.c:114
+msgid "ptcomp: compiling...\n"
+msgstr ""
+
+#. fclose(fin);
+#: ptcomp/ptcomp.c:119
+msgid "ptcomp: writing...\n"
+msgstr ""
+
+#: ptcomp/token.c:134
+#, c-format
+msgid "syntax error near token `%s'\n"
+msgstr ""
+
+#: ptcomp/token.c:144
+msgid "fatal error\n"
+msgstr ""
+
+#: ptcomp/parm.c:49
+msgid "string parameter expected"
+msgstr ""
+
+#: ptcomp/parm.c:59
+msgid "character parameter expected"
+msgstr ""
+
+#: ptcomp/parm.c:68
+msgid "integer parameter expected"
+msgstr ""
+
+#: ptcomp/parm.c:77
+msgid "floating-point parameter expected"
+msgstr ""
+
+#: ptcomp/parm.c:86
+msgid "time parameter expected"
+msgstr ""
+
+#: ptcomp/parm.c:95
+msgid "speed parameter expected"
+msgstr ""
+
+#: ptcomp/parm.c:104
+msgid "arc parameter expected"
+msgstr ""
+
+#: ptcomp/parm.c:155
+msgid "strange timing unit"
+msgstr ""
+
+#: ptcomp/parm.c:176
+msgid "strange speed unit"
+msgstr ""
+
+#: ptcomp/parm.c:206
+msgid "strange arc unit"
+msgstr ""
+
+#: ptcomp/animcomp.c:76
+msgid "name expected after AnimTex"
+msgstr ""
+
+#: ptcomp/animcomp.c:98
+msgid "To must exceed Parm"
+msgstr ""
+
+#: ptcomp/animcomp.c:114
+msgid "Tag must come before any Texture"
+msgstr ""
+
+#: ptcomp/animcomp.c:145
+#, c-format
+msgid "%5d animtexes\n"
+msgstr ""
+
+#: ptcomp/gettcomp.c:77
+msgid "name expected after Gettable"
+msgstr ""
+
+#: ptcomp/gettcomp.c:150
+#, c-format
+msgid "%5d gettables\n"
+msgstr ""
+
+#: ptcomp/gettcomp.c:161
+msgid "gettable name parameter expected"
+msgstr ""
+
+#: ptcomp/gettcomp.c:167
+msgid "gettable name unrecognised"
+msgstr ""
+
+#: ptcomp/licomp.c:75
+msgid "name expected after Level"
+msgstr ""
+
+#: ptcomp/licomp.c:105
+#, c-format
+msgid "%5d levinfos\n"
+msgstr ""
+
+#: ptcomp/licomp.c:124
+#, c-format
+msgid "unrecognised levelname: %s\n"
+msgstr ""
+
+#: ptcomp/ltcomp.c:75
+msgid "name expected after Line/SectorType"
+msgstr ""
+
+#: ptcomp/ltcomp.c:80
+msgid "ID expected after Line/SectorType"
+msgstr ""
+
+#: ptcomp/ltcomp.c:111
+#, c-format
+msgid "ID %d (%s) not unique (clashes with %s)\n"
+msgstr ""
+
+#: ptcomp/ltcomp.c:125
+msgid "too many actions"
+msgstr ""
+
+#: ptcomp/ltcomp.c:128
+msgid "lumptype expected after Action"
+msgstr ""
+
+#: ptcomp/ltcomp.c:132
+msgid "eventtype expected after Action"
+msgstr ""
+
+#: ptcomp/ltcomp.c:174
+#, c-format
+msgid "%5d linetypes\n"
+msgstr ""
+
+#: ptcomp/ltcomp.c:183
+#, c-format
+msgid "%5d sectortypes\n"
+msgstr ""
+
+#: ptcomp/ltcomp.c:274
+msgid "termtype parameter expected"
+msgstr ""
+
+#: ptcomp/ltcomp.c:288
+msgid "strange lumptype"
+msgstr ""
+
+#: ptcomp/ltcomp.c:322
+msgid "strange eventtype"
+msgstr ""
+
+#: ptcomp/ltcomp.c:332
+msgid "eventtype expected after WaitFor"
+msgstr ""
+
+#: ptcomp/phasecomp.c:76
+msgid "name expected after PhaseTable"
+msgstr ""
+
+#: ptcomp/phasecomp.c:205
+#, c-format
+msgid "%5d phase tables\n"
+msgstr ""
+
+#: ptcomp/phasecomp.c:227
+msgid "phase table name parameter expected"
+msgstr ""
+
+#: ptcomp/phasecomp.c:230
+msgid "phase table name unrecognised"
+msgstr ""
+
+#: ptcomp/phasecomp.c:240
+msgid "you need to specify a phasetable first"
+msgstr ""
+
+#: ptcomp/phasecomp.c:242
+msgid "phase name parameter expected"
+msgstr ""
+
+#: ptcomp/phasecomp.c:246
+msgid "phase name unrecognised"
+msgstr ""
+
+#: ptcomp/protocomp.c:88
+msgid "name expected after Proto"
+msgstr ""
+
+#: ptcomp/protocomp.c:234
+#, c-format
+msgid "%5d protos: sorting"
+msgstr ""
+
+#: ptcomp/protocomp.c:237
+msgid ", writing"
+msgstr ""
+
+#: ptcomp/protocomp.c:241
+#, c-format
+msgid "warning: proto %s (%d) has no phasetable\n"
+msgstr ""
+
+#: ptcomp/protocomp.c:254
+msgid "proto name parameter expected"
+msgstr ""
+
+#: ptcomp/protocomp.c:260
+msgid "proto name unrecognised"
+msgstr ""
+
+#: ptcomp/protocomp.c:272
+#, c-format
+msgid "ID %d not unique (clashes with %s)\n"
+msgstr ""
+
+#: ptcomp/soundcomp.c:64
+msgid "name expected after SoundType"
+msgstr ""
+
+#: ptcomp/soundcomp.c:80
+msgid "too many sound redirects"
+msgstr ""
+
+#: ptcomp/soundcomp.c:93
+#, c-format
+msgid "%5d sounds\n"
+msgstr ""
+
+#: ptcomp/soundcomp.c:104
+msgid "sound name parameter expected"
+msgstr ""
+
+#: ptcomp/soundcomp.c:121
+msgid "soundtype redefined"
+msgstr ""
+
+#. " -X <s> <d>   : copy lump <s> to raw file <d>\n"
+#: tool/wadtool.c:44
+msgid ""
+"Usage:  wadtool <option> <file> <file>... <option> <file>...\n"
+"\n"
+"Options:\n"
+" -r <wadfile> : read this file as an IWAD\n"
+" -p <wadfile> : read these files as PWADs\n"
+" -w <wadfile> : start writing output to this PWAD\n"
+" -W <wadfile> : start writing output to this IWAD\n"
+" -D <dir>     : start writing output to this directory\n"
+" -c <wadfile> : copy all lumps in this wadfile (without patching)\n"
+" -l <lump>    : copy these lumps to the current wad\n"
+" -L <lump>    : spit out an empty lump\n"
+" -x <lump>    : copy these lumps to raw files\n"
+" -f <rawfile> : copy raw file to lump (guessing lumpname)\n"
+" -F <rawfile> : copy raw file to lump (adding to current)\n"
+" -n <s> <d>   : copy lump 's' to lump 'd'\n"
+msgstr ""
+
+#: tool/wadtool.c:86
+#, c-format
+msgid "copying *(%s) -> %s(%s)\n"
+msgstr ""
+
+#: tool/wadtool.c:197
+#, c-format
+msgid "copying %s -> %s(%s)"
+msgstr ""
+
+#: tool/wadtool.c:220 tool/wadtool.c:250
+#, c-format
+msgid "copying *(%s) -> %s(%s)"
+msgstr ""
+
+#: tool/wadtool.c:237
+#, c-format
+msgid "copying *(%s) -> %s"
+msgstr ""
+
+#: tool/mknulmap.c:90
+msgid "Usage: mknulmap <filename> <mapname>\n"
+msgstr ""
+
+#: tool/mkpnames.c:82
+#, c-format
+msgid "%s:%d: patch with no texture (ignored)\n"
+msgstr ""
+
+#: tool/mkpnames.c:156
+msgid ""
+"Usage: mkpnames <source> <pnames.lump> <textures.lump> [option]\n"
+"\n"
+"mkpnames is used to compile metatexture information\n"
+"into the PNAMES and TEXTURE1 lumps used by DUMB.\n"
+"The only option is -d, which prints debugging info.\n"
+"\n"
+msgstr ""
+
+#: tool/mkpnames.c:188
+#, c-format
+msgid "%s:%d: syntax error (ignoring)\n"
+msgstr ""
+
+#: tool/mkpnames.c:193
+msgid "mkpnames: couldn't open the files specified\n"
+msgstr ""
+
+#: tool/mkpnames.c:212
+#, c-format
+msgid "mkpnames: %ld pnames, %d textures\n"
+msgstr ""
+
+#: tool/dark2trans.c:50
+msgid ""
+"usage: dark2trans <minimum pixel brightness>\n"
+"\n"
+msgstr ""
+
+#: tool/ppmtodumb.c:59
+#, c-format
+msgid ""
+"Usage: ppmtodumb [option [argument]]...\n"
+"\n"
+"ppmtodumb is a filter used to convert graphic files from the\n"
+"portable pixmap format (PPM) to DUMB's internal formats.\n"
+"It usually reads an input file from standard input and writes\n"
+"its output to standard output.\n"
+"\n"
+"The options are:\n"
+"  -M <playpal>  : read the playpal data from <playpal>,\n"
+"                  rather than from %s\n"
+"  -m            : create a playpal\n"
+"  -c            : create a colormap\n"
+"  -2            : 2 byte pixels\n"
+"  -4            : 4 byte pixels\n"
+"  -f            : create a 64x64 flat-format graphic\n"
+"  -p            : create a transparent patch\n"
+"  -P            : create a non-transparent patch\n"
+"  -i            : turn on id compatibility\n"
+"\n"
+msgstr ""
+
+#: tool/ppmtodumb.c:109
+msgid "can't open playpal"
+msgstr ""
+
+#: tool/ppmtodumb.c:171 tool/ppmtodumb.c:191 tool/ppmtodumb.c:222
+#: tool/ppmtodumb.c:248
+msgid "bad ppm"
+msgstr ""
+
+#: tool/ppmtodumb.c:178
+msgid "this ppm is the wrong size for a flat"
+msgstr ""
+
+#: tool/ppmtodumb.c:194
+msgid "out of memory"
+msgstr ""
+
+#: tool/ppmtodumb.c:281
+msgid "bad bpp value in mkcmap()"
+msgstr ""
+
+#: tool/mkdfnt.c:83
+msgid "trouble with XGetImage\n"
+msgstr ""
+
+#: tool/mkdfnt.c:102
+msgid "usage: mkdfnt <font> <ch> [<aaf>]\n"
+msgstr ""
+
+#: tool/mkdfnt.c:117
+msgid "font trouble\n"
+msgstr ""
+
+#: test/fixed_bm.c:70
+msgid "Seeding random number generator\n"
+msgstr ""
+
+#.
+#. printf("sizeof(long long)=%d sizeof(long)=%d, sizeof(int)=%d\n",
+#. sizeof(long long),sizeof(long),sizeof(int));
+#.
+#: test/fixed_bm.c:78
+msgid ""
+"\n"
+"Adding random numbers..."
+msgstr ""
+
+#: test/fixed_bm.c:85 test/fixed_bm.c:101 test/fixed_bm.c:118
+#, c-format
+msgid "  Fixed: %d"
+msgstr ""
+
+#: test/fixed_bm.c:92 test/fixed_bm.c:108 test/fixed_bm.c:126
+#, c-format
+msgid "  Float: %d"
+msgstr ""
+
+#: test/fixed_bm.c:94
+msgid ""
+"\n"
+"Multiplying random numbers..."
+msgstr ""
+
+#: test/fixed_bm.c:110
+msgid ""
+"\n"
+"Dividing random numbers..."
+msgstr ""
+
+#: test/ldltest.c:107
+#, c-format
+msgid "%s: initializing map\n"
+msgstr ""
+
+#: test/ldltest.c:111
+#, c-format
+msgid "%s: setting difficulty\n"
+msgstr ""
+
+#: test/ldltest.c:155
+#, c-format
+msgid "%s: --difficulty given twice\n"
+msgstr ""
+
+#: test/ldltest.c:158
+#, c-format
+msgid "%s: invalid difficulty `%s'\n"
+msgstr ""
+
+#: test/ldltest.c:160
+#, c-format
+msgid "%s: difficulty must be between 1 and 5\n"
+msgstr ""
+
+#: test/ldltest.c:170 test/ldltest.c:176
+#, c-format
+msgid "%s: invalid sector number `%s'\n"
+msgstr ""
+
+#: test/ldltest.c:182
+#, c-format
+msgid "%s: invalid thing number `%s'\n"
+msgstr ""
+
+#. --help
+#: test/ldltest.c:196
+#, c-format
+msgid ""
+"Usage: %s [OPTION]... IWAD [PWAD]...\n"
+"Load a map and operate on it.\n"
+"\n"
+"  Settings:\n"
+"  -m, --map=NAME             which map to load (default %s)\n"
+"      --difficulty=N         1=easy ... 5=hard (default all)\n"
+"      --verbose              explain what is being done\n"
+"  Operations:\n"
+"      --statistics           display statistics on the whole map\n"
+"      --sector-sides=SECTOR  list sides in SECTOR\n"
+"      --sector-things=SECTOR list things in SECTOR\n"
+"      --thing-sectors=THING  list sectors THING is in\n"
+"      --set-name=NAME        set the name of the map to NAME\n"
+"      --set-long-name=NAME   set the long name of the map to NAME\n"
+"      --output-doom=FILE     save the map to FILE in Doom format.\n"
+"                             .wad won't be appended automatically.\n"
+"  Other:\n"
+"      --help                 display this help and exit\n"
+"      --version              print version information and exit\n"
+"\n"
+"Report bugs to tosi@stekt.oulu.fi.\n"
+msgstr ""
+
+#: test/ldltest.c:221
+msgid ""
+"Copyright (C) 1998 Kalle O. Niemitalo.\n"
+"This program is free software; you may redistribute it under the terms of\n"
+"the GNU General Public License.  This program has absolutely no warranty.\n"
+msgstr ""
+
+#. getopt_long() printed the error message already
+#: test/ldltest.c:228
+#, c-format
+msgid "Try `%s --help' for more information.\n"
+msgstr ""
+
+#: test/ldltest.c:238
+#, c-format
+msgid "%s: opening files\n"
+msgstr ""
+
+#: test/ldltest.c:241
+#, c-format
+msgid "%s: missing IWAD argument\n"
+msgstr ""
+
+#: test/ldltest.c:318
+#, c-format
+msgid "Statistics for level %s:"
+msgstr ""
+
+#: test/ldltest.c:319
+msgid ""
+"\n"
+"\tVertices: "
+msgstr ""
+
+#: test/ldltest.c:321
+msgid ""
+"\n"
+"\tSectors: "
+msgstr ""
+
+#: test/ldltest.c:323
+msgid ""
+"\n"
+"\tSides: "
+msgstr ""
+
+#: test/ldltest.c:325
+msgid ""
+"\n"
+"\tLines: "
+msgstr ""
+
+#: test/ldltest.c:327
+msgid ""
+"\n"
+"\tThings: "
+msgstr ""
+
+#: test/ldltest.c:335
+#, c-format
+msgid "%u alloced, %u inited, %u free"
+msgstr ""
+
+#: test/ldltest.c:344 test/ldltest.c:374
+#, c-format
+msgid "%s: sector number %d doesn't exist\n"
+msgstr ""
+
+#: test/ldltest.c:348
+#, c-format
+msgid "Sides in sector %d:\n"
+msgstr ""
+
+#: test/ldltest.c:361
+#, c-format
+msgid "\tside %5d, line %5d\n"
+msgstr ""
+
+#: test/ldltest.c:364
+#, c-format
+msgid "\tside %5d, line %5d, opposite sector %5d\n"
+msgstr ""
+
+#: test/ldltest.c:378
+#, c-format
+msgid "Things in sector %d:"
+msgstr ""
+
+#: test/ldltest.c:391
+#, c-format
+msgid "%s: thing number %d doesn't exist\n"
+msgstr ""
+
+#: test/ldltest.c:395
+#, c-format
+msgid "Sectors thing %d is in:"
+msgstr ""
+
+#: libmissing/getopt.c:680
+#, c-format
+msgid "%s: option `%s' is ambiguous\n"
+msgstr ""
+
+#: libmissing/getopt.c:704
+#, c-format
+msgid "%s: option `--%s' doesn't allow an argument\n"
+msgstr ""
+
+#: libmissing/getopt.c:709
+#, c-format
+msgid "%s: option `%c%s' doesn't allow an argument\n"
+msgstr ""
+
+#: libmissing/getopt.c:726 libmissing/getopt.c:899
+#, c-format
+msgid "%s: option `%s' requires an argument\n"
+msgstr ""
+
+#. --option
+#: libmissing/getopt.c:755
+#, c-format
+msgid "%s: unrecognized option `--%s'\n"
+msgstr ""
+
+#. +option or -option
+#: libmissing/getopt.c:759
+#, c-format
+msgid "%s: unrecognized option `%c%s'\n"
+msgstr ""
+
+#. 1003.2 specifies the format of this message.
+#: libmissing/getopt.c:785
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr ""
+
+#: libmissing/getopt.c:788
+#, c-format
+msgid "%s: invalid option -- %c\n"
+msgstr ""
+
+#. 1003.2 specifies the format of this message.
+#: libmissing/getopt.c:818 libmissing/getopt.c:948
+#, c-format
+msgid "%s: option requires an argument -- %c\n"
+msgstr ""
+
+#: libmissing/getopt.c:865
+#, c-format
+msgid "%s: option `-W %s' is ambiguous\n"
+msgstr ""
+
+#: libmissing/getopt.c:883
+#, c-format
+msgid "%s: option `-W %s' doesn't allow an argument\n"
+msgstr ""
+
+#: libdumbworldb/del.c:66
+#, c-format
+msgid "deleting sector %u which has sides"
+msgstr ""
+
+#: libdumbworldb/del.c:73
+#, c-format
+msgid "sector deleted under thing %d"
+msgstr ""
+
+#: libdumbworldb/savedoom.c:67
+#, c-format
+msgid "Saving level %s to %s"
+msgstr ""

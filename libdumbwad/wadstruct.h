@@ -1,3 +1,23 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * libdumbwad/wadstruct.h: Structures in a Doom WAD file.
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
 
 #ifndef WADSTRUCT_H
 #define WADSTRUCT_H
@@ -5,9 +25,9 @@
 #include "libdumbutil/endiantypes.h"
 
 /* wad structures don't get aligned: old GCCs might need a #pragma instead */
-/*#define PACKED __attribute__((packed))*/
+/*#define PACKED __attribute__((packed)) */
 
-/* Annoyingly, the above doesn't seem to do anything on systems which need 
+/* Annoyingly, the above doesn't seem to do anything on systems which need
    it, AND it breaks C++ compilation.  If anyone can explain this to me,
    please do. */
 #define PACKED
@@ -36,7 +56,7 @@ typedef struct {
 /* Sounds */
 
 typedef struct {
-   LE_uint16 sig,hz,len,_spare;
+   LE_uint16 sig, hz, len, _spare;
    unsigned char data[1];
 } SoundHdr;
 
@@ -44,17 +64,17 @@ typedef struct {
 /* Pictures and Patches */
 
 typedef struct {
-   LE_uint16 width,height;
-   LE_int16 xoffset,yoffset;
+   LE_uint16 width, height;
+   LE_int16 xoffset, yoffset;
    LE_int32 idx[1];
 } PictHeader;
 
-typedef struct { /* dumb-only extension */
-   char sig[2]; /* == J1 */
-   unsigned char log2width,log2height;
-   LE_int32 width,height;
+typedef struct {		/* dumb-only extension */
+   char sig[2];			/* == J1 */
+   unsigned char log2width, log2height;
+   LE_int32 width, height;
    /* followed by width<<log2_height bytes of data */
-   unsigned char data[1]; 
+   unsigned char data[1];
 } AltPictData;
 
 #ifndef __cplusplus
@@ -63,26 +83,33 @@ typedef union {
    PictHeader hdr;
    AltPictData alt;
 } PictData;
+
 #else
 typedef struct {
    unsigned char data[1];
-   PictHeader &hdr() {return *(PictHeader*)data;}
-   AltPictData &alt() {return *(AltPictData*)data;}
-   const PictHeader &hdr() const {return *(PictHeader*)data;}
-   const AltPictData &alt() const {return *(AltPictData*)data;}
+   PictHeader &hdr() {
+      return *(PictHeader *) data;
+   } AltPictData &alt() {
+      return *(AltPictData *) data;
+   } const PictHeader &hdr() const {
+      return *(PictHeader *) data;
+   } const AltPictData &alt() const {
+      return *(AltPictData *) data;
+   }
 } PictData;
+
 #endif
 
 #define IS_JPATCH(p) ((p)->UMEMB(alt).sig[0]=='J'&&(p)->UMEMB(alt).sig[1]=='1')
 
 
-/* Wall Textures */   
+/* Wall Textures */
 
 typedef struct {
-   LE_int16 x,y;
+   LE_int16 x, y;
    LE_uint16 pnum;
-   LE_uint16 stepdir; /* ??? */
-   LE_uint16 colmap;  /* ??? */
+   LE_uint16 stepdir;		/* ??? */
+   LE_uint16 colmap;		/* ??? */
 } PatchDescData;
 
 #define MAXPATCHDS 64
@@ -90,12 +117,12 @@ typedef struct {
 typedef struct {
    char name[8];
    LE_int32 dummy1;
-   LE_int16 dx,dy;
+   LE_int16 dx, dy;
    int dummy2;
    LE_int16 npatches;
    PatchDescData patch[MAXPATCHDS];
 } TextureData;
-   
+
 typedef struct {
    LE_int32 num;
    char name[1];
@@ -111,12 +138,17 @@ typedef union {
    TextureHdr hdr;
    char data[1];
 } TextureTable;
+
 #else
 typedef struct {
    char data[1];
-   TextureHdr &hdr() {return *(TextureHdr*)data;}
-   const TextureHdr &hdr() const {return *(TextureHdr*)data;}
+   TextureHdr &hdr() {
+      return *(TextureHdr *) data;
+   } const TextureHdr &hdr() const {
+      return *(TextureHdr *) data;
+   }
 } TextureTable;
+
 #endif
 
 
@@ -125,8 +157,8 @@ typedef struct {
 /* the thingdefs */
 
 typedef struct {
-   LE_int16 x,y;
-   LE_int16 angle; /* this is in *degrees*, not bams */
+   LE_int16 x, y;
+   LE_int16 angle;		/* this is in *degrees*, not bams */
    LE_int16 type;
    LE_flags16 flags;
 } PACKED ThingData;
@@ -153,7 +185,7 @@ typedef struct {
 #define LINE_POSTER 0x0200
 
 typedef struct {
-   LE_int16 ver2,ver1;
+   LE_int16 ver2, ver1;
    LE_flags16 flags;
    LE_int16 type;
    LE_int16 tag;
@@ -164,7 +196,7 @@ typedef struct {
 /* the sidedefs */
 
 typedef struct {
-   LE_int16 xoffset,yoffset;
+   LE_int16 xoffset, yoffset;
    char utexture[8];
    char ltexture[8];
    char texture[8];
@@ -172,52 +204,52 @@ typedef struct {
 } PACKED SideData;
 
 
-/* the vertices */ 
+/* the vertices */
 
 typedef struct {
-   LE_int16 x,y;
+   LE_int16 x, y;
 } PACKED VertexData;
 
 
 /* the sectordefs */
 
 typedef struct {
-   LE_int16 floor,ceiling;
+   LE_int16 floor, ceiling;
    char ftexture[8];
    char ctexture[8];
    LE_int16 light;
    LE_int16 type;
    LE_int16 tag;
 } PACKED SectorData;
-   
+
 
 /* the BSP data: segs, ssectors, nodes */
 
 typedef struct {
-   LE_int16 ver1,ver2;
-   LE_int16 angle; /* this is in BAMs, not degrees */
+   LE_int16 ver1, ver2;
+   LE_int16 angle;		/* this is in BAMs, not degrees */
    LE_int16 line;
-   LE_int16 isleft; /* 1 if on 2nd side of line, otherwise 0 */
-   LE_int16 offset; /* along line */
+   LE_int16 isleft;		/* 1 if on 2nd side of line, otherwise 0 */
+   LE_int16 offset;		/* along line */
 } PACKED SegData;
 
 typedef struct {
-   LE_int16 nsegs,seg1;
+   LE_int16 nsegs, seg1;
 } PACKED SSectorData;
 
 typedef struct {
    /* these coordinates refer to the Node's partition line */
-   LE_int16 x,y;
-   LE_int16 dx,dy;
+   LE_int16 x, y;
+   LE_int16 dx, dy;
    /* the boundaries of the right child-node */
-   LE_int16 rymax,rymin;
-   LE_int16 rxmin,rxmax;
+   LE_int16 rymax, rymin;
+   LE_int16 rxmin, rxmax;
    /* the boundaries of the left child-node */
-   LE_int16 lymax,lymin;
-   LE_int16 lxmin,lxmax;
+   LE_int16 lymax, lymin;
+   LE_int16 lxmin, lxmax;
    /* the children */
    int right:15;
-   int rleaf:1; /* 1 if the right child is a leaf node, ie a ssector */
+   int rleaf:1;			/* 1 if the right child is a leaf node, ie a ssector */
    int left:15;
    int lleaf:1;
 } PACKED NodeData;
@@ -227,27 +259,36 @@ typedef struct {
 
 #define BM_BLOCKSIZE 128
 
-typedef struct  {
-   LE_int16 minx,miny;
-   LE_int16 numx,numy;
+typedef struct {
+   LE_int16 minx, miny;
+   LE_int16 numx, numy;
    LE_uint16 idx[1];
 } BlockMapHdr;
 
 #ifndef __cplusplus
-typedef union  {
+typedef union {
    BlockMapHdr hdr;
    LE_int16 data[1];
 } BlockMap;
+
 #else
-typedef struct  {
+typedef struct {
    LE_int16 data[1];
-   BlockMapHdr &hdr() {return *(BlockMapHdr*)data;}
-   const BlockMapHdr &hdr() const {return *(BlockMapHdr*)data;}
+   BlockMapHdr &hdr() {
+      return *(BlockMapHdr *) data;
+   } const BlockMapHdr &hdr() const {
+      return *(BlockMapHdr *) data;
+   }
 } BlockMap;
+
 #endif
 
-   
+
 /* blocklist(x,y) is at data+(x-minx)/BMBS+((y-miny)/BMBS)*numx
  * "each blocklist starts with a 0 and ends with a 0xffff" */
 
 #endif
+
+// Local Variables:
+// c-basic-offset: 3
+// End:

@@ -68,7 +68,7 @@ Proto Moss1 48
 
 Proto Moss2 49
   Phases Mundane
-  Size 30 28 
+  Size 30 28
   Hanging
   Sprite MOS2
 
@@ -77,19 +77,19 @@ Proto SkullHang35 26
   Phases Mundane
   Size 16 35
   Sprite SKH4
-  
+
 Proto SkullHang45 25
   Hanging
   Phases Mundane
   Size 16 45
   Sprite SKH3
-  
+
 Proto SkullHang60 24
   Hanging
   Phases Mundane
   Size 16 60
   Sprite SKH2
-  
+
 Proto SkullHang70 17
   Hanging
   Phases Mundane
@@ -108,7 +108,7 @@ PhaseTable RedGlitter
   Phase INIT A
   Phase -    B
   Phase -    C
-  Phase -    D  
+  Phase -    D
   Phase -    E  Destroy
 
 PhaseTable BlueGlitter

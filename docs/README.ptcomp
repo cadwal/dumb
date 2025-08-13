@@ -1,5 +1,5 @@
 
-          *** WARNING: this information is out of date!!!  *** 
+          *** WARNING: this information is out of date!!!  ***
           *** it's mostly right for protos and phases, but ***
           *** misses out linetypes, gettables and heaps    ***
 	  *** of other stuff                               ***
@@ -16,13 +16,13 @@ DUMB levels contain instructions for placing objects (sometimes called
 "things") into maps.  These objects might be bonuses, like Doom's
 health and armour bonuses; or they might be monsters; or they might be
 mere furniture.  Some objects are created on the fly by the game, such
-as missiles, bullet puffs, and teleport fogs.  
+as missiles, bullet puffs, and teleport fogs.
 
 Since objects encompass such a wide range of entities, each with their
 own detailed kinds of behaviour, instead of keeping track of, for
 example, an object's mass, or sprite, for each object, objects are
 classified into types.  Each type is called a ProtoThing, or proto for
-short. 
+short.
 
 Each proto has an ID.  For example, in Doom, the player's ID is 1.
 The ID numbers are used by the level data to tell DUMB to create
@@ -100,11 +100,11 @@ PhaseTable Blink
 
 This phasetable could be used for Doom's keys, as discussed about.
 It starts with the keyword "PhaseTable", and like a Proto definition,
-continues until another phase table or proto definition starts. 
+continues until another phase table or proto definition starts.
 
 The third kind of information in the .pt file are gettable types,
 which are types of stuff that players can collect through interacting
-with certain objects.  [NEED EXAMPLE HERE] 
+with certain objects.  [NEED EXAMPLE HERE]
 
 
 * 3. How do I go about creating a new Proto?
@@ -156,7 +156,7 @@ PhaseTable Imp
   Phase IDLE	A	Idle Goto IDLE
 
 # MOVE and the following phases are the main loop.  MOVE is the
-# handler for the "Detect" signal which gets sent when the player 
+# handler for the "Detect" signal which gets sent when the player
 # gets close to this monster.  "Strategy" tells DUMB to run a monster
 # strategy routine when that phase is entered.  The strategy routine
 # tries to find enemies and kill them.  The sequence of letters "A"
@@ -168,7 +168,7 @@ PhaseTable Imp
   Phase -	D	Goto MOVE
 
 # SHOOT is the handler for the "Shoot" signal, which is sent to the
-# object by the strategy routine.  The sprite sequence E-G shows the 
+# object by the strategy routine.  The sprite sequence E-G shows the
 # Imp hurling a fireball.  During the 2 and third parts of the
 # sequence, the Imp is lit up by its fireball, and should be visible
 # in the dark, hence "Glow".  "Shoot" causes DUMB to create a new
@@ -183,7 +183,7 @@ PhaseTable Imp
 # is wounded.  All it does is show the poor creature in pain for a
 # while, and then get back to moving around.  Because "Ouch" signals
 # could occur at any time, this means that the Imp could be interrupted
-# in the middle of shooting a fireball at you, for example.  
+# in the middle of shooting a fireball at you, for example.
 
   Phase OUCH	H	SigOuch Duration 4 Goto MOVE
 
@@ -373,7 +373,7 @@ Hits <number>
 Maximum/Initial hit points of objects of this type.
 
 
-Shooter 
+Shooter
 
 This proto is a "shooter".  Missiles spawned with "Shoot" will be
 instantly delivered to their target (like bullets).
@@ -449,7 +449,7 @@ ShootMany <number> <denom>
 
 This also affects shooting.  It causes a "Shoot" phase to spawn
 <number> missiles instead of one, spreading them over an angle of
-pi/<denom>.  Shootmany 6 24 produces a shotgun-like effect. 
+pi/<denom>.  Shootmany 6 24 produces a shotgun-like effect.
 
 
 Size <diameter> <height>
@@ -517,7 +517,7 @@ Perform standard monster strategy functions.
 
 HeatSeek
 
-Perform "heatseeking" strategy. 
+Perform "heatseeking" strategy.
 
 
 Shoot

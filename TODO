@@ -1,5 +1,6 @@
 * Highest-priority queue:
-make a libdumbworld that both *dumb and XWad use
+aadumb doesn't build when using configure --without-x
+finish libdumbworldb
 separate renderer from rest of code again
 speed up rendering by checking recursively which sectors can be seen
 fix wall collision checks
@@ -8,11 +9,17 @@ fix wall collision checks
 activation
 aim to monster nearest to screen center, not necessarily closest to player
 allow objects to award multiple gettables (eg. MegaSphere)
+allow using the same sprites for things and icons
 armor should absorb damage
 BPP should always mean Bits Per Pixel
+center DUMB logo vertically (just look at aadumb)
+clean up shm on fatal signals
 configuration menus
+confirm quitting (use the menu code)
 continuous sounds for moving sectors
 do something about music
+echoes in sewers
+end-level statistics (secret%, kill%, collect%, hit%)
 finish off heretic protos
 fix DGA
 fix end of level in network game
@@ -21,49 +28,53 @@ get rid of C++ on big-endian machines
 get rid of alarm(), use select() instead
 get rid of all arbitrary limits
 Guile scripts in wads
-idspispopd
 implement invincibility, light goggles, etc....
 implement sectortypes (partially done)
-internationalize
 inventory items (may already have some of the code for this?)
 jumping instead of levitation
 light areas should be lighter, dark ones darker (0=almost impossible to see)
 loading & saving
+long options, including --help and --version in all programs
 make --dumb-xmul 3 --dumb-ymul 1 work
-make loops over things more efficient perhaps?
+make loops over things more efficient perhaps?  (in libdumbworldb)
 mapping
+menus
 mipmapping
 monsters should be smarter
+move bpp-independent code to rendcommon.c
 moving vertices, sideways opening & hinged doors
 multi-threaded sound driver
 network games that anyone can join
-rendcommon.c for bpp-independent code
-runtime choosing of sound bits & channels
+polymorphing to a monster (like in Nethack!)
+scale weapons & gettable icons if framebuffer is small
 sectors above&below each other
 sector shouldn't give damage while player is in air
 snapshot.ppm when BPP=1 (8 bits)
 sound shouldn't get through closed doors
 special shooting
+truecolor textures
 tunneling
 "Uff!" when the hero runs against a wall or falls
 use function keys for special commands, select weapons with numbers
+use PNG instead of PPM
 use regular fixed point instead of UNIT_SPEED
+version number of doom4dum.wad
 weapon numbering
 write documents in Texinfo or something
+AA-lib: ASCII snapshot
+AA-lib: special handling for AA_RESIZE and AA_MOUSE
+AA-lib: three-state boolean parameters
+AA-lib: use real ticks in autorelease
 ctlkey: mouse
 ctlkey: look at GGI's General Input Interface
 conf: don't forget aadumb settings with xdumb -S, etc.
+conf: dynamic enumerations (like for AA-lib fonts)
 conf: halt on bogus parameters to enumerated switches
 conf: quote special characters in .dumbrc strings
 conf: support floating-point entries (for aadumb --vid-gamma)
-AA-lib: ASCII snapshot
-AA-lib: special handling for AA_RESIZE and AA_MOUSE
-AA-lib: more parameters
-AA-lib: mouse
-AA-lib: use real ticks in autorelease
 Doom: automate 666 effect
 Doom: backpack should double carrying capacity
-Doom: don't get Health>100% with medikits
+Doom: don't get Health>100% with medikits and stimpaks
 Doom: doors should crush corpses to bloodsplats
 Doom: imps should not be able to kill each other with fireballs (ImmuneToSuch)
 Doom: make player pick up things farther away (like armor in E1M2)
@@ -74,6 +85,8 @@ Doom: staircase doesn't work in E1M8
 keymap: alternative keynames; recognize both Shift_L and Shift_R as Shift
 keymap: conditional entries like X11:KP_Up AA:8
 keymap: keymap_keyname_to_keycode()
+ptcomp: output a WAD
+wadtool: --verbose
 X11: KeymapNotify
 X11: set icon in program, not in window manager config
 X11: turn autorepeat off when window has focus and XKB isn't available

@@ -22,7 +22,7 @@ PhaseTable FireBall
   Default Duration ExplodeRate
   Default NoSigs
   Phase EXPLODE C Explode  SigExplode Sound DSFIRXPL
-  Phase -       D 
+  Phase -       D
   Phase -       E Destroy
 
 Proto ImpFireBall 8004
@@ -105,7 +105,7 @@ PhaseTable Missile
   Default Duration ExplodeRate
   Default NoSigs
   Phase EXPLODE B Explode  SigExplode Sound DSRXPLOD
-  Phase -       C 
+  Phase -       C
   Phase -       D Destroy
 
 Proto Missile 8001
@@ -130,7 +130,7 @@ PhaseTable SkelFireBall
   Default NoSigs
 
   Phase EXPLODE A Explode  SigExplode
-  Phase -       B 
+  Phase -       B
   Phase -       C Destroy
 
 Proto SkelFireBall 8002
@@ -145,7 +145,7 @@ PhaseTable MancFireBall
   Default Duration GlowRate
   Default Glow
 
-  Phase INIT    A 
+  Phase INIT    A
   Phase -       B Goto INIT
 
   Default Duration ExplodeRate
@@ -153,7 +153,7 @@ PhaseTable MancFireBall
   Default NoSigs
 
   Phase EXPLODE B Explode  SigExplode
-  Phase -       C 
+  Phase -       C
   Phase -       D Destroy
 
 Proto MancFireBall 8007
@@ -170,7 +170,7 @@ PhaseTable AracFireBall
   Default Duration GlowRate
   Default Glow
 
-  Phase INIT    A 
+  Phase INIT    A
   Phase -       B Goto INIT
 
   Default Duration ExplodeRate
@@ -178,9 +178,9 @@ PhaseTable AracFireBall
   Default NoSigs
 
   Phase EXPLODE A Explode  SigExplode
-  Phase -       B 
-  Phase -       C 
-  Phase -       D 
+  Phase -       B
+  Phase -       C
+  Phase -       D
   Phase -       E Destroy
 
 Proto AracFireBall 8068
@@ -197,7 +197,7 @@ PhaseTable PlasmaBall
   Default Duration GlowRate
   Default Glow
 
-  Phase INIT    A 
+  Phase INIT    A
   Phase -       B Goto INIT
 
   Default Duration ExplodeRate
@@ -205,8 +205,8 @@ PhaseTable PlasmaBall
   Default NoSigs
 
   Phase EXPLODE A Explode  SigExplode
-  Phase -       B 
-  Phase -       C 
+  Phase -       B
+  Phase -       C
   Phase -       D Destroy
 
 Proto PlasmaBall 8204
@@ -222,7 +222,7 @@ PhaseTable BFGBall
   Default Duration GlowRate
   Default Glow
 
-  Phase INIT    A 
+  Phase INIT    A
   Phase -       B Goto INIT
 
   Default Duration 350msec
@@ -230,10 +230,10 @@ PhaseTable BFGBall
   Default NoSigs
 
   Phase EXPLODE A Explode  SigExplode BFGEffect
-  Phase -       B 
-  Phase -       C 
-  Phase -       D 
-  Phase -       E 
+  Phase -       B
+  Phase -       C
+  Phase -       D
+  Phase -       E
   Phase -       F Destroy
 
 Proto BFGBall 8206
@@ -247,7 +247,7 @@ Proto BFGBall 8206
 
 PhaseTable Bullet
   Default Duration 100msec
-  Phase 0 A Glow Melee 
+  Phase 0 A Glow Melee
   Phase 1 B Glow
   Phase 2 C
   Phase 3 D Destroy
@@ -255,14 +255,14 @@ PhaseTable Bullet
 Proto Bullet 9001
   Sprite PUFF
   Mass 1000 YMoveOnly
-  Phantom BulletKludge BulletAttack ZCenter 
+  Phantom BulletKludge BulletAttack ZCenter
   FloatsUp Speed 10
   Damage 1
-  
+
 
 PhaseTable BloodSplat
   Default Duration 100msec
-  Phase 0 A Melee 
+  Phase 0 A Melee
   Phase 1 B
   Phase 2 C Destroy
 
@@ -300,7 +300,7 @@ PhaseTable VileFire
   Default Duration 200msec
   Default Glow
 
-  Phase BURN    A 
+  Phase BURN    A
   Phase -       B
   Phase -       C
   Phase -       D Melee

@@ -102,7 +102,7 @@ Proto QuartzFlask 82
 Proto Torch 33
   Sprite TRCH
   Phases Cycle3
-  Mass 1000 YMoveOnly 
+  Mass 1000 YMoveOnly
   Size 16 16
   Gets Torch 1
 

@@ -1,7 +1,6 @@
 /* DUMB: A Doom-like 3D game engine.
- * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
- * keymapdummy.c: Dummy code for input drivers that don't use the keymap.
+ * dumb/keymapdummy.c: Dummy code for input drivers that don't use the keymap.
  * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,16 +14,19 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; see the file COPYING.  If not, write to
- * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111, USA.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
  */
+
+#include <config.h>
 
 #include "keymap.h"		/* for prototypes of the following */
 
 const char *
 keymap_keycode_to_keyname(keymap_keycode keycode)
 {
+   /* Actually, this should never even get called... */
    return "dummy";
 }
 

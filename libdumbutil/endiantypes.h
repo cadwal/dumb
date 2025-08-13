@@ -1,34 +1,60 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * libdumbutil/endiantypes.h: Integers of a specific endianness.
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
 
 #ifndef ENDIANTYPES_H
 #define ENDIANTYPES_H
 
 #ifdef CHAR_BY_CHAR_BYTESWAP
-/* this might eliminate misalignment problems on bigendian machines */ 
+/* this might eliminate misalignment problems on bigendian machines */
 /* shouldn't be necessary now */
 
-typedef union {unsigned int i;unsigned char c[4];} EInt32;
-typedef union {unsigned short i;unsigned char c[2];} EInt16;
+typedef union {
+   unsigned int i;
+   unsigned char c[4];
+} EInt32;
+typedef union {
+   unsigned short i;
+   unsigned char c[2];
+} EInt16;
 
 #define INT32_CHAR(x,n) ( (unsigned int)(((EInt32*)&(x))->c[n]) )
 #define INT16_CHAR(x,n) ( (unsigned int)(((EInt16*)&(x))->c[n]) )
 #define FROM_LE32(x) ( INT32_CHAR(x,0)|(INT32_CHAR(x,1)<<8)|(INT32_CHAR(x,2)<<16)|(INT32_CHAR(x,3)<<24) )
 #define FROM_LE16(x) ( INT16_CHAR(x,0)|(INT16_CHAR(x,1)<<8) )
 
-#else /* !CHAR_BY_CHAR_BYTESWAP */
+#else  /* !CHAR_BY_CHAR_BYTESWAP */
 
 #define SWAPSHORT(i) (((i>>8)&0xff)|((i<<8)&0xff00))
 
 #define SWAPINT(i) (((i>>24)&0xff)|((i>>8)&0xff00)|((i<<8)&0xff0000)|((i<<24)&0xff000000))
 
 #ifdef WORDS_BIGENDIAN
-#define FROM_BE16(x) 
+#define FROM_BE16(x)
 #define FROM_LE16(x) SWAPSHORT((x))
-#define FROM_BE32(x) 
+#define FROM_BE32(x)
 #define FROM_LE32(x) SWAPINT((x))
 #else  /* !WORDS_BIGENDIAN */
-#define FROM_LE16(x) 
+#define FROM_LE16(x)
 #define FROM_BE16(x) SWAPSHORT((x))
-#define FROM_LE32(x) 
+#define FROM_LE32(x)
 #define FROM_BE32(x) SWAPINT((x))
 #endif /* !WORDS_BIGENDIAN */
 
@@ -37,13 +63,8 @@ typedef union {unsigned short i;unsigned char c[2];} EInt16;
 #ifdef WORDS_BIGENDIAN
 
 #ifndef __cplusplus
-/* Commented out because __cplusplus is not defined when preprocessing
- * for dependencies.  And if someone tries to compile this without C++,
- * there will be enough error messages even without the extra check.
- *
- * #error "You need to compile DUMB with C++ to support big endian processors"
- */
-#else /* __cplusplus */
+# error "You need to compile DUMB with C++ to support big endian processors"
+#else  /* __cplusplus */
 
 #define IA(o) \
 int operator o##=(int j) {i o##= FROM_LE32(j); return FROM_LE32(i);}
@@ -62,10 +83,20 @@ class LE_flags32 {
    int i;
 public:
    LE_flags32() {}
-   LE_flags32(int j) :i(FROM_LE32(j)) {}
-   operator int() const {return FROM_LE32(i);}
-   int operator=(int j) {i=FROM_LE32(j); return j;}
-   int operator&(int j) const {return i&FROM_LE32(j);}
+   LE_flags32(int j): i(FROM_LE32(j)) {}
+   operator int () const
+   {
+      return FROM_LE32(i);
+   }
+   int operator =(int j)
+   {
+      i = FROM_LE32(j);
+      return j;
+   }
+   int operator &(int j) const
+   {
+      return i & FROM_LE32(j);
+   }
    IA(^) IA(|) IA(&)
 };
 
@@ -73,9 +104,16 @@ class LE_int32 {
    int i;
 public:
    LE_int32() {}
-   LE_int32(int j) :i(FROM_LE32(j)) {}
-   operator int() const {return FROM_LE32(i);}
-   int operator=(int j) {i=FROM_LE32(j); return j;}
+   LE_int32(int j): i(FROM_LE32(j)) {}
+   operator int() const
+   {
+      return FROM_LE32(i);
+   }
+   int operator =(int j)
+   {
+      i = FROM_LE32(j);
+      return j;
+   }
    IBS
 };
 
@@ -83,20 +121,37 @@ class LE_flags16 {
    short i;
 public:
    LE_flags16() {}
-   LE_flags16(short j) :i(FROM_LE16(j)) {}
-   operator short() const {return FROM_LE16(i);}
-   short operator=(short j) {i=FROM_LE16(j); return j;}
-   int operator&(short j) const {return i&FROM_LE16(j);}
-   SA(^) SA(|) SA(&)
+   LE_flags16(short j): i(FROM_LE16(j)) {}
+   operator short() const
+   {
+      return FROM_LE16(i);
+   }
+   short operator =(short j)
+   {
+      i = FROM_LE16(j);
+      return j;
+   }
+   int operator &(short j) const
+   {
+      return i & FROM_LE16(j);
+   }
+   SA(^)SA(|)SA(&)
 };
 
 class LE_int16 {
    short i;
 public:
    LE_int16() {}
-   LE_int16(short j) :i(FROM_LE16(j)) {}
-   operator short() const {return FROM_LE16(i);}
-   short operator=(short j) {i=FROM_LE16(j); return j;}
+   LE_int16(short j): i(FROM_LE16(j)) {}
+   operator short() const
+   {
+      return FROM_LE16(i);
+   }
+   short operator =(short j)
+   {
+      i = FROM_LE16(j);
+      return j;
+   }
    IBS
 };
 
@@ -104,9 +159,16 @@ class LE_uint32 {
    int i;
 public:
    LE_uint32() {}
-   LE_uint32(unsigned int j) :i(FROM_LE32(j)) {}
-   operator unsigned int() const {return FROM_LE32(i);}
-   unsigned int operator=(unsigned int j) {i=FROM_LE32(j); return j;}
+   LE_uint32(unsigned int j): i(FROM_LE32(j)) {}
+   operator unsigned int() const
+   {
+      return FROM_LE32(i);
+   }
+   unsigned int operator =(unsigned int j)
+   {
+      i = FROM_LE32(j);
+      return j;
+   }
    IBS
 };
 
@@ -114,9 +176,16 @@ class LE_uint16 {
    short i;
 public:
    LE_uint16() {}
-   LE_uint16(unsigned short j) :i(FROM_LE16(j)) {}
-   operator unsigned short() const {return FROM_LE16(i);}
-   unsigned short operator=(unsigned short j) {i=FROM_LE16(j); return j;}
+   LE_uint16(unsigned short j): i(FROM_LE16(j)) {}
+   operator unsigned short() const
+   {
+      return FROM_LE16(i);
+   }
+   unsigned short operator =(unsigned short j)
+   {
+      i = FROM_LE16(j);
+      return j;
+   }
    IBS
 };
 
@@ -125,7 +194,7 @@ public:
 
 #endif /* __cplusplus */
 
-#else /* !WORDS_BIGENDIAN */
+#else  /* !WORDS_BIGENDIAN */
 
 typedef int LE_int32;
 typedef int LE_flags32;
@@ -137,3 +206,7 @@ typedef unsigned short LE_uint16;
 #endif /* !WORDS_BIGENDIAN */
 
 #endif
+
+// Local Variables:
+// c-basic-offset: 3
+// End:

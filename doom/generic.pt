@@ -11,14 +11,14 @@ PhaseTable Blink2
   Default Duration 300msec
   Default Glow
   
-  Phase IDLE A 
+  Phase IDLE A
   Phase -    B Goto IDLE
 
 PhaseTable Blink3
   Default Duration 300msec
   Default Glow
   
-  Phase IDLE A 
+  Phase IDLE A
   Phase -    B
   Phase -    C Goto IDLE
 
@@ -26,45 +26,45 @@ PhaseTable Blink4
   Default Duration 200msec
   Default Glow
   
-  Phase IDLE A 
-  Phase -    B 
-  Phase -    C 
+  Phase IDLE A
+  Phase -    B
+  Phase -    C
   Phase -    D Goto IDLE
 
 PhaseTable Cycle3
   Default Duration 200msec
   Default Glow
 
-  Phase IDLE A 
-  Phase -    B 
-  Phase -    C 
+  Phase IDLE A
+  Phase -    B
+  Phase -    C
   Phase -    B Goto IDLE
 
 PhaseTable Cycle4
   Default Duration 120msec
   Default Glow
 
-  Phase IDLE A 
-  Phase -    B 
-  Phase -    C 
-  Phase -    D 
+  Phase IDLE A
+  Phase -    B
+  Phase -    C
+  Phase -    D
   Phase -    C
   Phase -    B Goto IDLE
 
 PhaseTable Repeat2
   Default Duration 300msec
-  Phase IDLE A 
+  Phase IDLE A
   Phase -    B Goto IDLE
 
 PhaseTable Repeat3
   Default Duration 300msec
-  Phase IDLE A 
+  Phase IDLE A
   Phase -    B
   Phase -    C Goto IDLE
 
 PhaseTable Repeat4
   Default Duration 300msec
-  Phase IDLE A 
+  Phase IDLE A
   Phase -    B
   Phase -    C
   Phase -    D Goto IDLE

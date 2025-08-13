@@ -48,7 +48,7 @@ can be bound to the same ctlkey.
 
 Keynames are supposed to be portable between different input systems
 so that if the user binds "Up" to CTLKEY_MOVE_FORWARD it will work the
-same with both X11 and AA-lib. 
+same with both X11 and AA-lib.
 
 The keyname of a key that normally means one character (like ".")
 should be that character.  This way, the keynames will look good in

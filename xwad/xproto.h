@@ -1,3 +1,23 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * xwad/xproto.h: XProtoThing, a program for viewing ProtoThings.
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
 
 #ifndef XWAD_XPROTO_H
 #define XWAD_XPROTO_H
@@ -24,13 +44,13 @@ typedef struct AppInstance {
    int currot;
    int phcount;
    ChooseInst chooser;
-   CSetInstance choctls,dispctls,actctls;
-   Window frame,wdisp;
-   int min_width,min_height;
+   CSetInstance choctls, dispctls, actctls;
+   Window frame, wdisp;
+   int min_width, min_height;
    int want_quit:1;
    int animate:1;
    int rotate:1;
-} XPInstance,XProtoInstance;
+} XPInstance, XProtoInstance;
 
 #define CURPROTO (inst->protos[inst->chooser.curitem])
 #define CURPHASE (inst->phase_tbl[inst->curphase])
@@ -44,15 +64,11 @@ void update_intgeo(XPInstance *inst);
 void redraw_wdisp(XPInstance *inst);
 void xproto_redraw(XPInstance *inst);
 
-void xproto_sendsig(XPInstance *inst,ThingSignal sig);
-void xproto_enter_phase(XPInstance *inst,int ph);
+void xproto_sendsig(XPInstance *inst, ThingSignal sig);
+void xproto_enter_phase(XPInstance *inst, int ph);
 
 #endif
 
-
-
-
-
-
-
-
+// Local Variables:
+// c-basic-offset: 3
+// End:

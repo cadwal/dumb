@@ -1,3 +1,24 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * dumb/things.c: Various thing functions.
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
+
 #include <config.h>
 
 #include <stdarg.h>
@@ -9,116 +30,137 @@
 #include "libdumbutil/fixed.h"
 #include "things.h"
 
-/* Return the region in which a point falls.  The method for determining
-**   this is simple--probably too much so.  We shoot a ray horizontally
-**   from the point.  The region containing the point is either the front
-**   or back region of the wall which intersects the ray closest to the
-**   point.
+/*
+** Return the region in which a point falls.  The method for
+** determining this is simple--probably too much so.  We shoot a ray
+** horizontally from the point.  The region containing the point is
+** either the front or back region of the wall which intersects the
+** ray closest to the point.
 */
-int findsector(const LevData *ld, fixed x, fixed y, fixed z) {
+int
+findsector(const LevData *ld, fixed x, fixed y, fixed z)
+{
    int closest_region = -1;
    fixed closest = FIXED_MAX;
    int i;
 
-   for (i=0; i<ldnlines(ld); i++) {
-      const LineData *wall=ldline(ld)+i;
+   for (i = 0; i < ldnlines(ld); i++) {
+      const LineData *wall = ldline(ld) + i;
       fixed y1 = ldvertexd(ld)[wall->ver1].y;
       fixed y2 = ldvertexd(ld)[wall->ver2].y;
-	
+
       if ((y >= y1 && y < y2) || (y >= y2 && y < y1)) {
 	 fixed dist;
-	 const VertexDyn *v1 = ldvertexd(ld)+wall->ver1; 
-	 const VertexDyn *v2 = ldvertexd(ld)+wall->ver2;
+	 const VertexDyn *v1 = ldvertexd(ld) + wall->ver1;
+	 const VertexDyn *v2 = ldvertexd(ld) + wall->ver2;
 
 	 /* Kludge to avoid division overflows for near-
 	  **   horizontal walls.
 	  */
 	 if (FIXED_ABS(y1 - y2) < FIXED_EPSILON)
-	   dist = MIN(v1->x - x, v2->x - x);
+	    dist = MIN(v1->x - x, v2->x - x);
 	 else
-	   dist = fixmul(fixdiv(v1->x - v2->x, v1->y - v2->y),
-			 y - v1->y) + v1->x - x;
+	    dist = fixmul(fixdiv(v1->x - v2->x, v1->y - v2->y),
+			  y - v1->y) + v1->x - x;
 	 if (dist > FIXED_ZERO && dist < closest) {
 	    closest = dist;
 	    if (y1 < y2)
-	      closest_region = wall->side[0];
+	       closest_region = wall->side[0];
 	    else
-	      closest_region = wall->side[1];
+	       closest_region = wall->side[1];
 	 }
       }
    }
-   if(closest_region>=0) return ldside(ld)[closest_region].sector;
-   else return -1;
+   if (closest_region >= 0)
+      return ldside(ld)[closest_region].sector;
+   else
+      return -1;
 }
 
-void thingd_findsector(const LevData *ld,ThingDyn *td) {
-   td->sector=findsector(ld,td->x,td->y,td->z);
+void
+thingd_findsector(const LevData *ld, ThingDyn *td)
+{
+   td->sector = findsector(ld, td->x, td->y, td->z);
 }
 
-int thing2player(const LevData *ld,int th) {
+int
+thing2player(const LevData *ld, int th)
+{
    int i;
-   for(i=0;i<MAXPLAYERS;i++) 
-      if(ld->player[i]==th) return i;
+   for (i = 0; i < MAXPLAYERS; i++)
+      if (ld->player[i] == th)
+	 return i;
    return -1;
 }
-void touch_player(LevData *ld,int pl) {
-  /* trivially change a player to force update */
-  if(ld->player[pl]>=0)
-    ldthingd(ld)[ld->player[pl]].x++;
+
+void
+touch_player(LevData *ld, int pl)
+{
+   /* trivially change a player to force update */
+   if (ld->player[pl] >= 0)
+      ldthingd(ld)[ld->player[pl]].x++;
 }
 
-void thing_to_view(const LevData *ld,int th,View *v,const ViewTrans *vx)  {
-   ThingDyn *td=ldthingd(ld)+th;
-   SectorDyn *sd=NULL;
-   if(td->sector>=0) sd=ldsectord(ld)+td->sector;
-   v->height=td->z;
-   if(td->proto) v->height+=SHOOT_HEIGHT(td);
-   v->angle=td->angle+vx->angle;
+void
+thing_to_view(const LevData *ld, int th, View *v, const ViewTrans *vx)
+{
+   ThingDyn *td = ldthingd(ld) + th;
+   SectorDyn *sd = NULL;
+   if (td->sector >= 0)
+      sd = ldsectord(ld) + td->sector;
+   v->height = td->z;
+   if (td->proto)
+      v->height += SHOOT_HEIGHT(td);
+   v->angle = td->angle + vx->angle;
    NORMALIZE_ANGLE(v->angle);
-   v->x=td->x;
-   if(vx->offset) v->x+=fixmul(vx->offset,fixcos(v->angle));
-   v->y=td->y;
-   if(vx->offset) v->y+=fixmul(vx->offset,fixsin(v->angle));
-   v->sector=td->sector;
+   v->x = td->x;
+   if (vx->offset)
+      v->x += fixmul(vx->offset, fixcos(v->angle));
+   v->y = td->y;
+   if (vx->offset)
+      v->y += fixmul(vx->offset, fixsin(v->angle));
+   v->sector = td->sector;
    /* work out horizon */
-   if(sd&&(td->proto==NULL||td->hits<=0)) {
-      v->height=sd->floor+(2<<12);
-      v->horizon=-FIXED_ONE/4;
-   } else if(sd&&v->height<sd->floor) {
-      v->height=sd->floor+(2<<12);
-      v->horizon=-FIXED_ONE/4;
-   } else if(sd&&v->height<sd->floor+FIXED_ONE/4) {
-      v->horizon=v->height-(sd->floor+FIXED_ONE/4);
-      v->height+=(2<<12);
+   if (sd && (td->proto == NULL || td->hits <= 0)) {
+      v->height = sd->floor + (2 << 12);
+      v->horizon = -FIXED_ONE / 4;
+   } else if (sd && v->height < sd->floor) {
+      v->height = sd->floor + (2 << 12);
+      v->horizon = -FIXED_ONE / 4;
+   } else if (sd && v->height < sd->floor + FIXED_ONE / 4) {
+      v->horizon = v->height - (sd->floor + FIXED_ONE / 4);
+      v->height += (2 << 12);
    } else
-      v->horizon=-fixsin(td->elev);
+      v->horizon = -fixsin(td->elev);
 }
 
 /* These are now inlined */
 /*
-int reject_sectors(LevData *ld,int s1,int s2) {
-   int bit,byte;
-   if(s1<0||s2<0) return 1;
-   bit=s1+(s2*ldnsectors(ld));
-   byte=bit/8;
-   bit%=8;
-   return (ldreject(ld)[byte]>>bit)&1;
+int
+reject_sectors(LevData *ld, int s1, int s2)
+{
+   int bit, byte;
+   if (s1 < 0 || s2 < 0)
+      return 1;
+   bit = s1 + (s2 * ldnsectors(ld));
+   byte = bit / 8;
+   bit %= 8;
+   return (ldreject(ld)[byte] >> bit) & 1;
 }
 
-int reject_sector_wall(LevData *ld,int s,int w) {
-   int side0=ldline(ld)[w].side[0];
-   int side1=ldline(ld)[w].side[1];
-   if(!reject_sectors(ld,s,ldside(ld)[side0].sector)) return 0;
-   if(side1>0&&!reject_sectors(ld,s,ldside(ld)[side1].sector)) return 0;
+int
+reject_sector_wall(LevData *ld, int s, int w)
+{
+   int side0 = ldline(ld)[w].side[0];
+   int side1 = ldline(ld)[w].side[1];
+   if (!reject_sectors(ld, s, ldside(ld)[side0].sector))
+      return 0;
+   if (side1 > 0 && !reject_sectors(ld, s, ldside(ld)[side1].sector))
+      return 0;
    return 1;
 }
 */
 
-
-
-
-
-
-
-
-
+// Local Variables:
+// c-basic-offset: 3
+// End:

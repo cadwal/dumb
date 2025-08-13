@@ -7,8 +7,8 @@ ptcomp_SOURCES = ptcomp.c globals.h token.c token.h parm.c parm.h \
  ltcomp.c ltcomp.h phasecomp.c phasecomp.h protocomp.c protocomp.h \
  soundcomp.c soundcomp.h
 
-# Don't use srcdir or top_srcdir here!
+# DUMB libraries are in the build tree, so don't use $(srcdir).
 LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
- ../libdumbutil/libdumbutil.a
+ ../libdumbutil/libdumbutil.a $(INTLLIBS)
 
 INCLUDES = -I$(top_srcdir)

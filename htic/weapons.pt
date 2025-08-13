@@ -50,7 +50,7 @@ PhaseTable HeldClaw
 
   Default NoSigs
   Phase SHOOT   B  SigShoot
-  Phase -       C  
+  Phase -       C
   Phase -       D  Shoot Sound BLSSHT Goto IDLE
 
 Proto HeldClaw

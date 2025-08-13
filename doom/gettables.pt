@@ -7,7 +7,7 @@
 #define StickToFloor  Mass 1000 YMoveOnly
 
 #define PowerUpQty  300
-#define PowerUpTimeout  Decay 1  
+#define PowerUpTimeout  Decay 1
 
 // IDEA: (use 'parm_speed' instead of assuming ticks)
 //
@@ -28,7 +28,7 @@
 
 Gettable Health
   Icon BON1A0 RevAnim D Timing 150msec
-  IconPos 8 6 
+  IconPos 8 6
   Special 1
   Collect 200
   PickupSound DSITEMUP
@@ -40,7 +40,7 @@ Gettable Armour
   Collect 200
   PickupSound DSITEMUP
 //  GotThe Message ARMOUR
- 
+
 Gettable Bullet
   Icon CLIPA0
   IconPos -8 8
@@ -48,7 +48,7 @@ Gettable Bullet
   Initial 50
   PickupSound DSITEMUP
 //  GotThe Message BULLETS
-  
+
 Gettable Shell
   Icon SHELA0
   IconPos -32 10
@@ -228,7 +228,7 @@ Gettable RedKey
   Icon RKEYA0
   IconPos 8 40 Anim B Timing 400msec
   Collect 1
-  KeyType 1 
+  KeyType 1
   Local
   GotThe Message RED_KEY
   PickupSound DSITEMUP

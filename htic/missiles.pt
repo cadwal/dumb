@@ -22,7 +22,7 @@ PhaseTable WandZap
 Proto WandZap
   Sprite FX01
   Size 16 16
-  Damage 2 
+  Damage 2
   Explosive ZCenter
   Phantom BulletKludge BulletAttack
   Speed 64
@@ -86,7 +86,7 @@ PhaseTable WizardZap
   Phase - B Goto INIT
   Default Duration ExplodeRate
   Default NoSigs
-  Phase BOOM C  SigExplode Explode 
+  Phase BOOM C  SigExplode Explode
   Phase - D
   Phase - E
   Phase - F
@@ -184,7 +184,7 @@ Proto RedAxe
   Mass 0
   Speed 64
   Explosive ZCenter
-  
+
 
 PhaseTable TeleportFog
   Default Duration 200msec

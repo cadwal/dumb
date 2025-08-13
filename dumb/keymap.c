@@ -1,7 +1,6 @@
 /* DUMB: A Doom-like 3D game engine.
- * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
- * keymap.c: Key mapping from keycodes and keynames to enum ctlkey.
+ * dumb/keymap.c: Key mapping from keycodes and keynames to enum ctlkey.
  * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,9 +14,9 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; see the file COPYING.  If not, write to
- * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111, USA.
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
  */
 
 /* Long blurb moved to docs/keymap.txt */
@@ -25,6 +24,8 @@
 #include <config.h>
 
 #include <string.h>
+
+#include "libdumbutil/dumb-nls.h"
 
 #include "libdumbutil/log.h"
 #include "libdumbutil/safem.h"
@@ -51,67 +52,68 @@ static void keymap_new_binding(const char *keyname, enum ctlkey action);
 static void keymap_del_binding(struct keymap_binding *);
 static void keymap_set_capacity(size_t new_capacity);
 
-static struct keymap_default_binding keymap_defaults[] = {
-   { CTLKEY_QUIT, "Escape" },
-   { CTLKEY_MOVE_FORWARD, "Up" },
-   { CTLKEY_MOVE_FORWARD, "KP_Up" },
-   { CTLKEY_MOVE_FORWARD, "k" },	 /* AA */
-   { CTLKEY_MOVE_BACKWARD, "Down" },
-   { CTLKEY_MOVE_BACKWARD, "KP_Down" },
-   { CTLKEY_MOVE_BACKWARD, "j" },	 /* AA */
-   { CTLKEY_TURN_LEFT, "Left" },
-   { CTLKEY_TURN_LEFT, "KP_Left" },
-   { CTLKEY_TURN_LEFT, "h" },		 /* AA */
-   { CTLKEY_TURN_RIGHT, "Right" },
-   { CTLKEY_TURN_RIGHT, "KP_Right" },
-   { CTLKEY_TURN_RIGHT, "l" },		 /* AA */
-   { CTLKEY_TURN_180, "KP_Insert" },
-   { CTLKEY_MOVE_LEFT, "," },
-   { CTLKEY_MOVE_LEFT, "KP_End" },
-   { CTLKEY_MOVE_RIGHT, "." },
-   { CTLKEY_MOVE_RIGHT, "KP_Next" },
-   { CTLKEY_MOVE_UP, "a" },
-   { CTLKEY_MOVE_DOWN, "z" },
-   { CTLKEY_LOOK_UP, "Prior" },
-   { CTLKEY_LOOK_DOWN, "Next" },
-   { CTLKEY_AIM_UP, "KP_Prior" },
-   { CTLKEY_AIM_UP, "d" },		 /* AA */
-   { CTLKEY_AIM_DOWN, "KP_Home" },
-   { CTLKEY_AIM_DOWN, "c" },		 /* AA */
-   { CTLKEY_CENTER_VIEW, "KP_Begin" },
-   { CTLKEY_RUN, "Shift_L" },
-   { CTLKEY_RUN, "Shift_R" },
-   { CTLKEY_RUN, "Shift" },		 /* AA */
-   { CTLKEY_STRAFE, "Alt_L" },
-   { CTLKEY_STRAFE, "Alt_R" },
-   { CTLKEY_STRAFE, "Meta_L" },
-   { CTLKEY_STRAFE, "Meta_R" },
-   { CTLKEY_STRAFE, "Mode_switch" },
-   { CTLKEY_STRAFE, "slash" },
-   { CTLKEY_ACTIVATE, "space" },
-   { CTLKEY_SHOOT, "Control_L" },
-   { CTLKEY_SHOOT, "Control_R" },
-   { CTLKEY_SHOOT, "s" },		 /* AA */
-   { CTLKEY_SHOOT_SPECIAL, "x" },
-   { CTLKEY_NEXT_WEAPON, "Tab" },
-   { CTLKEY_NEXT_WEAPON, "w" },
-   { CTLKEY_PREVIOUS_WEAPON, "q" },
-   { CTLKEY_WEAPON_0, "0" },
-   { CTLKEY_WEAPON_1, "1" },
-   { CTLKEY_WEAPON_2, "2" },
-   { CTLKEY_WEAPON_3, "3" },
-   { CTLKEY_WEAPON_4, "4" },
-   { CTLKEY_WEAPON_5, "5" },
-   { CTLKEY_WEAPON_6, "6" },
-   { CTLKEY_WEAPON_7, "7" },
-   { CTLKEY_WEAPON_8, "8" },
-   { CTLKEY_WEAPON_9, "9" },
-   { CTLKEY_USE_ITEM, "Return" },
-   { CTLKEY_USE_ITEM, "KP_Enter" },
-   { CTLKEY_NEXT_ITEM, "KP_Multiply" },
-   { CTLKEY_PREVIOUS_ITEM, "KP_Divide" },
+static struct keymap_default_binding keymap_defaults[] =
+{
+   {CTLKEY_QUIT, "Escape"},
+   {CTLKEY_MOVE_FORWARD, "Up"},
+   {CTLKEY_MOVE_FORWARD, "KP_Up"},
+   {CTLKEY_MOVE_FORWARD, "k"},	/* AA */
+   {CTLKEY_MOVE_BACKWARD, "Down"},
+   {CTLKEY_MOVE_BACKWARD, "KP_Down"},
+   {CTLKEY_MOVE_BACKWARD, "j"},	/* AA */
+   {CTLKEY_TURN_LEFT, "Left"},
+   {CTLKEY_TURN_LEFT, "KP_Left"},
+   {CTLKEY_TURN_LEFT, "h"},	/* AA */
+   {CTLKEY_TURN_RIGHT, "Right"},
+   {CTLKEY_TURN_RIGHT, "KP_Right"},
+   {CTLKEY_TURN_RIGHT, "l"},	/* AA */
+   {CTLKEY_TURN_180, "KP_Insert"},
+   {CTLKEY_MOVE_LEFT, ","},
+   {CTLKEY_MOVE_LEFT, "KP_End"},
+   {CTLKEY_MOVE_RIGHT, "."},
+   {CTLKEY_MOVE_RIGHT, "KP_Next"},
+   {CTLKEY_MOVE_UP, "a"},
+   {CTLKEY_MOVE_DOWN, "z"},
+   {CTLKEY_LOOK_UP, "Prior"},
+   {CTLKEY_LOOK_DOWN, "Next"},
+   {CTLKEY_AIM_UP, "KP_Prior"},
+   {CTLKEY_AIM_UP, "d"},	/* AA */
+   {CTLKEY_AIM_DOWN, "KP_Home"},
+   {CTLKEY_AIM_DOWN, "c"},	/* AA */
+   {CTLKEY_CENTER_VIEW, "KP_Begin"},
+   {CTLKEY_RUN, "Shift_L"},
+   {CTLKEY_RUN, "Shift_R"},
+   {CTLKEY_RUN, "Shift"},	/* AA */
+   {CTLKEY_STRAFE, "Alt_L"},
+   {CTLKEY_STRAFE, "Alt_R"},
+   {CTLKEY_STRAFE, "Meta_L"},
+   {CTLKEY_STRAFE, "Meta_R"},
+   {CTLKEY_STRAFE, "Mode_switch"},
+   {CTLKEY_STRAFE, "slash"},
+   {CTLKEY_ACTIVATE, "space"},
+   {CTLKEY_SHOOT, "Control_L"},
+   {CTLKEY_SHOOT, "Control_R"},
+   {CTLKEY_SHOOT, "s"},		/* AA */
+   {CTLKEY_SHOOT_SPECIAL, "x"},
+   {CTLKEY_NEXT_WEAPON, "Tab"},
+   {CTLKEY_NEXT_WEAPON, "w"},
+   {CTLKEY_PREVIOUS_WEAPON, "q"},
+   {CTLKEY_WEAPON_0, "0"},
+   {CTLKEY_WEAPON_1, "1"},
+   {CTLKEY_WEAPON_2, "2"},
+   {CTLKEY_WEAPON_3, "3"},
+   {CTLKEY_WEAPON_4, "4"},
+   {CTLKEY_WEAPON_5, "5"},
+   {CTLKEY_WEAPON_6, "6"},
+   {CTLKEY_WEAPON_7, "7"},
+   {CTLKEY_WEAPON_8, "8"},
+   {CTLKEY_WEAPON_9, "9"},
+   {CTLKEY_USE_ITEM, "Return"},
+   {CTLKEY_USE_ITEM, "KP_Enter"},
+   {CTLKEY_NEXT_ITEM, "KP_Multiply"},
+   {CTLKEY_PREVIOUS_ITEM, "KP_Divide"},
    /* CTLKEY_NONE marks the terminator here (but not in the real keymap) */
-   { CTLKEY_NONE, NULL }
+   {CTLKEY_NONE, NULL}
 };
 
 /* These are initialized by keymap_init().  There is no terminator
@@ -135,7 +137,7 @@ void
 keymap_reset(void)
 {
    while (keymap_length > 0)
-      keymap_del_binding(&keymap[keymap_length-1]);
+      keymap_del_binding(&keymap[keymap_length - 1]);
    if (keymap)
       safe_free(keymap);
    ctlkey_reset();
@@ -159,18 +161,18 @@ keymap_keycode_to_ctlkey(keymap_keycode keycode)
       return binding->action;
    keyname = keymap_keycode_to_keyname(keycode);
    if (!keyname) {
-      logprintf(LOG_ERROR,'I', "NULL keyname for keycode 0x%08lX",
+      logprintf(LOG_ERROR, 'I', _("NULL keyname for keycode 0x%08lX"),
 		(unsigned long) keycode);
-      keymap_free_keyname(keyname); /* anyway */
+      keymap_free_keyname(keyname);	/* anyway */
       return CTLKEY_NONE;
    }
    binding = keymap_find_keyname(keyname);
    if (binding) {
-      binding->keycode = keycode; /* cache */
+      binding->keycode = keycode;	/* cache */
       keymap_free_keyname(keyname);
       return binding->action;
    }
-   logprintf(LOG_DEBUG,'I', "No action for keyname \"%s\"", keyname);
+   logprintf(LOG_DEBUG, 'I', _("No action for keyname \"%s\""), keyname);
    keymap_free_keyname(keyname);
    return CTLKEY_NONE;
 }
@@ -188,7 +190,7 @@ void
 keymap_clear_caches(void)
 {
    unsigned int i;
-   for (i=0; i<keymap_length; i++)
+   for (i = 0; i < keymap_length; i++)
       keymap[i].keycode = KEYMAP_NULL_KEYCODE;
 }
 
@@ -232,14 +234,14 @@ keymap_bind_key(const char *keyname, enum ctlkey action)
 }
 
 void
-keymap_foreach_binding(void (*fn)(const char *keyname,
-				  enum ctlkey action,
-				  void *extra),
+keymap_foreach_binding(void (*fn) (const char *keyname,
+				   enum ctlkey action,
+				   void *extra),
 		       void *extra)
 {
    unsigned int i;
-   for (i=0; i<keymap_length; i++)
-      (*fn)(keymap[i].keyname, keymap[i].action, extra);
+   for (i = 0; i < keymap_length; i++)
+      (*fn) (keymap[i].keyname, keymap[i].action, extra);
 }
 
 /* ---------------------------------------------------------------------
@@ -250,7 +252,7 @@ static struct keymap_binding *
 keymap_find_keycode(keymap_keycode keycode)
 {
    unsigned int i;
-   for (i=0; i<keymap_length; i++) {
+   for (i = 0; i < keymap_length; i++) {
       if (keymap[i].keycode == keycode)
 	 return &keymap[i];
    }
@@ -261,7 +263,7 @@ static struct keymap_binding *
 keymap_find_keyname(const char *keyname)
 {
    unsigned int i;
-   for (i=0; i<keymap_length; i++) {
+   for (i = 0; i < keymap_length; i++) {
       if (!strcmp(keymap[i].keyname, keyname))
 	 return &keymap[i];
    }
@@ -273,14 +275,15 @@ static void
 keymap_debug_dump(void)
 {
    int i;
-   logprintf(LOG_DEBUG,'I', "--- begin keymap debug dump");
-   for (i=0; i<keymap_length; i++)
-      logprintf(LOG_DEBUG,'I', "%-15s %-15s 0x%08lX",
+   logprintf(LOG_DEBUG, 'I', _("--- begin keymap debug dump"));
+   for (i = 0; i < keymap_length; i++)
+      logprintf(LOG_DEBUG, 'I', "%-15s %-15s 0x%08lX",
 		ctlkey_ugly_name(keymap[i].action),
 		keymap[i].keyname,
 		(unsigned long) keymap[i].keycode);
-   logprintf(LOG_DEBUG,'I', "--- end keymap debug dump");
+   logprintf(LOG_DEBUG, 'I', _("--- end keymap debug dump"));
 }
+
 #endif
 
 /* This is a low-level routine used by keymap_bind_key() */
@@ -292,7 +295,7 @@ keymap_new_binding(const char *keyname, enum ctlkey action)
       /* You could use some other formula to calculate the new
        * capacity.  (keymap_capacity*2) comes to mind, but then you'd
        * need a separate check for keymap_capacity==0.  */
-      keymap_set_capacity(keymap_capacity+64);
+      keymap_set_capacity(keymap_capacity + 64);
    }
    /* Now there is space.  */
    binding = &keymap[keymap_length++];
@@ -301,14 +304,14 @@ keymap_new_binding(const char *keyname, enum ctlkey action)
    binding->action = action;
 }
 
-static void 
+static void
 keymap_del_binding(struct keymap_binding *binding)
 {
    safe_free(binding->keyname);
    /* If the last binding is to be deleted, just decrement the length.
     * Otherwise, move the last binding to the gap first.  */
-   if (binding != &keymap[keymap_length-1])
-      *binding = keymap[keymap_length-1];
+   if (binding != &keymap[keymap_length - 1])
+      *binding = keymap[keymap_length - 1];
    keymap_length--;
 }
 
@@ -316,12 +319,13 @@ static void
 keymap_set_capacity(size_t new_capacity)
 {
    if (new_capacity < keymap_length) {
-      logprintf(LOG_ERROR,'I', "attempt to resize keymap under its length");
+      logprintf(LOG_ERROR, 'I',
+		_("attempt to resize keymap under its length"));
       return;
    }
    /* FIXME: Is it permissible to give a null pointer to safe_realloc()? */
-   keymap = safe_realloc(keymap, 
-			 new_capacity * sizeof (struct keymap_binding));
+   keymap = safe_realloc(keymap,
+			 new_capacity * sizeof(struct keymap_binding));
    keymap_capacity = new_capacity;
 }
 

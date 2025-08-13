@@ -1,8 +1,36 @@
-/* The name of this package, as a string constant.  */
+/* Define to the name of the distribution.  */
 #undef PACKAGE
 
-/* What version of the package this is.  */
+/* Define to the version of the distribution.  */
 #undef VERSION
+
+/* Define if your locale.h file contains LC_MESSAGES.  */
+#undef HAVE_LC_MESSAGES
+
+/* Define to 1 if NLS is requested.  */
+#undef ENABLE_NLS
+
+/* Define as 1 if you have catgets and don't want to use GNU gettext.  */
+#undef HAVE_CATGETS
+
+/* Define as 1 if you have gettext and don't want to use GNU gettext.  */
+#undef HAVE_GETTEXT
+
+/* Define as 1 if you have the stpcpy function.  */
+#undef HAVE_STPCPY
+
+/* Define as the directory to load locale data from.  */
+#undef LOCALEDIR
+
+/* Define as a function attribute to pass parameters in registers.
+ * Define as empty if register parameters aren't supported.
+ * This macro is used in the prototype like this:
+ *
+ * int foo(int) ATTR_REGPARM;
+ *
+ * The macro is not used again in the actual definition of the
+ * function.  */
+#define ATTR_REGPARM
 
 /* Define if you have the XFree86 DGA extension.  This requires
  * <X11/extensions/xf86dga.h> and -lXxf86dga.  */
@@ -25,12 +53,14 @@
 /* Define to support framebuffers with 32 bits per pixel.  */
 #undef DUMB_CONFIG_32BPP
 
-/* Define to get stereo sound (instead of mono).  */
-#undef DUMB_CONFIG_SOUND_STEREO
-
-/* Define to get 16-bit sound (instead of 8-bit).  */
-#undef DUMB_CONFIG_SOUND_16BIT
-
 /* Define if shmat() can attach to shared memory segments already
  * marked for deletion with shmctl(id, IPC_RMID, NULL).  */
 #undef DUMB_CONFIG_SYS_SHMAT_RMID
+
+@BOTTOM@
+
+/* DUMB always has <libintl.h> -- the included GNU gettext library
+ * provides it if the system doesn't.  */
+#ifdef ENABLE_NLS
+#define HAVE_LIBINTL_H 1
+#endif

@@ -1,3 +1,23 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * dumb/levdata.h: Loading and updating levels.
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
 
 #ifndef LEVDATA_H
 #define LEVDATA_H
@@ -27,7 +47,7 @@ typedef DYN_DECODE_FUNC(*DynDecodeFuncPtr);
 
 typedef struct {
    char lumpname[10];
-   size_t lumpgrain,dyngrain,lumpalign;
+   size_t lumpgrain, dyngrain, lumpalign;
    DynInitFuncPtr dyninit;
    int dynextra;
    DynEncodeFuncPtr encode;
@@ -54,10 +74,10 @@ typedef struct {
 typedef unsigned int Ticks;
 
 typedef struct {
-   Ticks start,stop;
-   short entity,sound,stopsound,contsound;
-   short ltype,type;
-   short wait,_spare;
+   Ticks start, stop;
+   short entity, sound, stopsound, contsound;
+   short ltype, type;
+   short wait, _spare;
    short model;
    /* this is tricky: 0 or 1 tell us what stage we're in, <0 means
       go to (stage+2) next time, copying delta[stage] and term[stage]
@@ -68,17 +88,17 @@ typedef struct {
    /* key is used for unqueuing events */
    const void *key;
    /* the meaning of these fields will vary */
-   fixed curdelta,curterm;
-   fixed delta[2],term[2];
-   fixed x,y,z,angle;
+   fixed curdelta, curterm;
+   fixed delta[2], term[2];
+   fixed x, y, z, angle;
 } MapEvent;
 
 /* values for crush_effect: what to do if a moving sector hits something */
-#define MEC_NOTHING 0  /* ignore completely */
-#define MEC_FASTHURT 1 /* kill whatever it is nowish (type 6) */
-#define MEC_SLOWHURT 2 /* give them a chance to get out (type 25) */
-#define MEC_STOP 3     /* stop moving (???) */
-#define MEC_REVERSE 4  /* reverse, guess where to stop (doors) */
+#define MEC_NOTHING 0		/* ignore completely */
+#define MEC_FASTHURT 1		/* kill whatever it is nowish (type 6) */
+#define MEC_SLOWHURT 2		/* give them a chance to get out (type 25) */
+#define MEC_STOP 3		/* stop moving (???) */
+#define MEC_REVERSE 4		/* reverse, guess where to stop (doors) */
 
 #define NEXT_STAGE(me) ((me)->stage=((me)->stage?-2:-1))
 #define EVENTVALID(e) ((e).type!=ME_NONE)
@@ -97,19 +117,19 @@ typedef struct _LevData {
    int plwep[MAXPLAYERS];
    int plflags[MAXPLAYERS];
    int plinfo_len;
-   int *plinfo[MAXPLAYERS],*plbkup[MAXPLAYERS];
+   int *plinfo[MAXPLAYERS], *plbkup[MAXPLAYERS];
    Ticks map_ticks;
    MapEvent event[MAXEVENTS];
    int difficulty;
    int mplayer;
    int localplayer;
    int levinfo_id;
-   int boss_id,boss_count;
+   int boss_id, boss_count;
 } LevData;
 
-#define PLF_WSEL     0x0001 /* player wanted wsel last input */
-#define PLF_SSEL     0x0002 /* player wanted ssel last input */
-#define PLF_CHEAT    0x0004 /* player cheated last input */
+#define PLF_WSEL     0x0001	/* player wanted wsel last input */
+#define PLF_SSEL     0x0002	/* player wanted ssel last input */
+#define PLF_CHEAT    0x0004	/* player cheated last input */
 
 #define ldvertex(ld) ((const VertexData *)(ld->lump[ML_VERTEX])
 #define ldline(ld) ((const LineData *)(ld->lump[ML_LINE]))
@@ -130,23 +150,27 @@ typedef struct _LevData {
 #define ldnssectors(ld) ld->count[ML_SSECTOR]
 #define ldnnodes(ld) ld->count[ML_NODE]
 
-void load_level(LevData *data,const char *name,int difficulty,int mp);
+void load_level(LevData *data, const char *name, int difficulty, int mp);
 void free_level(LevData *data);
 void reset_level(LevData *data);
-void free_levlumptype(LevData *data,MapLumpType mlt);
+void free_levlumptype(LevData *data, MapLumpType mlt);
 
 int get_plinfo_len(void);
 void init_plinfo(int *pli);
 
-void init_player(LevData *ld,int plnum,int thnum);
+void init_player(LevData *ld, int plnum, int thnum);
 
-char *get_next_level_name(char *buf,const char *name);
+char *get_next_level_name(char *buf, const char *name);
 
 void do_tag666(LevData *ld);
 
 void generate_updates(LevData *ld);
-void apply_update(LevData *ld,MapLumpType mlt,int ofs,
-		  const void *code,int codelen);
-void apply_plinfo_update(LevData *ld,int player,int offset,int value);
+void apply_update(LevData *ld, MapLumpType mlt, int ofs,
+		  const void *code, int codelen);
+void apply_plinfo_update(LevData *ld, int player, int offset, int value);
 
 #endif
+
+// Local Variables:
+// c-basic-offset: 3
+// End:

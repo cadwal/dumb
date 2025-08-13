@@ -1,3 +1,26 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * libdumbutil/safem.c: "Safe" (checked) memory allocation.
+ * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Josh Parsons <josh@schlick.anu.edu.au>
+ * Copyright (C) 1994 by Chris Laurel
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
+
 #include <config.h>
 
 #include <stdarg.h>
@@ -11,7 +34,9 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/mman.h>
-#endif
+#endif /* HAVE_MMAP */
+
+#include "libdumbutil/dumb-nls.h"
 
 #include "log.h"
 #include "safem.h"
@@ -19,8 +44,9 @@
 #ifdef HAVE_MMAP
 
 /* In Solaris, this flag means that the allocation should succeed even
- * if there actually isn't that much memory.  */
+ * if there actually isn't that much memory. */
 #ifndef MAP_NORESERVE
+/* The operating system doesn't support this flag, so make it a no-op.  */
 #define MAP_NORESERVE 0
 #endif
 
@@ -38,23 +64,23 @@ safe_vcalloc(size_t size)
    void *p;
 #ifdef MAP_ANONYMOUS
    /* this should get us an all-zero area */
-   p = mmap(NULL, size, PROT_READ|PROT_WRITE,
-	    MAP_PRIVATE|MAP_ANONYMOUS|MAP_NORESERVE, -1, 0);
-   if (p==MAP_FAILED)
-      logfatal('S',"mmapping %lu zero bytes: %s",
+   p = mmap(NULL, size, PROT_READ | PROT_WRITE,
+	    MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0);
+   if (p == MAP_FAILED)
+      logfatal('S', _("mmapping %lu zero bytes: %s"),
 	       (unsigned long) size, strerror(errno));
 #else  /* !MAP_ANONYMOUS */
    static int fd = -1;
-   if (fd<0) {
+   if (fd < 0) {
       fd = open(DEV_ZERO, O_RDONLY);
-      if (fd<0)
-	 logfatal('S', "opening %s: %s.", DEV_ZERO, strerror(errno));
+      if (fd < 0)
+	 logfatal('S', "%s: %s", DEV_ZERO, strerror(errno));
    }
-   p = mmap(NULL, size, PROT_READ|PROT_WRITE,
+   p = mmap(NULL, size, PROT_READ | PROT_WRITE,
 	    MAP_PRIVATE | MAP_NORESERVE, fd, 0);
-   if (p==MAP_FAILED)
-      logfatal('S',"mmapping %lu bytes from %s: %s",
-	       (unsigned long) size, DEV_ZERO, strerror(errno));
+   if (p == MAP_FAILED)
+      logfatal('S', _("%s: mmapping %lu bytes: %s"),
+	       DEV_ZERO, (unsigned long) size, strerror(errno));
 #endif /* !MAP_ANONYMOUS */
    return p;
 }
@@ -62,50 +88,67 @@ safe_vcalloc(size_t size)
 void
 safe_vfree(void *ptr, size_t size)
 {
-   if(munmap(ptr,size))
-      logfatal('S',"munmapping %lu bytes @ %p: %s",
+   if (munmap(ptr, size))
+      logfatal('S', _("munmapping %lu bytes @ %p: %s"),
 	       (unsigned long) size, ptr,
 	       strerror(errno));
 }
+
 #endif /* HAVE_MMAP */
 
 void *
-safe_realloc(void *p1,size_t l)
+safe_realloc(void *p1, size_t size)
 {
-   void *p=realloc(p1,l);
-   if (p==NULL)
-      logfatal('S',"reallocating %lu bytes (old=%p): %s",
-	       (unsigned long) l, p1, strerror(errno));
-   return p;
+   if (p1 == NULL) {
+      /* Perhaps some pre-ANSI C library can't handle realloc(NULL,
+       * size).  Maybe the configure script should check for that but
+       * this takes just a few bytes of code anyway.  */
+      return safe_malloc(size);
+   } else if (size == 0) {
+      /* As above...
+       * If this wasn't handled separately, you'd have to check for
+       * size==0 below when p==NULL.  */
+      free(p1);			/* FIXME: maybe safe_free()? */
+      return NULL;
+   } else {
+      void *p = realloc(p1, size);
+      if (p == NULL)
+	 logfatal('S', _("out of memory reallocating %lu bytes (old=%p)"),
+		  (unsigned long) size, p1);
+      return p;
+   }
 }
 
 void *
 safe_malloc(size_t l)
 {
-   void *p=malloc(l);
-   if (p==NULL)
-      logfatal('S',"allocating %lu bytes: %s", (unsigned long) l,
-	       strerror(errno));
+   void *p = malloc(l);
+   /* FIXME: If we're out of memory, does gettext() work?  Perhaps
+    * this string should be pretranslated and saved in a variable.  */
+   /* malloc(0) is valid and may return NULL.  If it returns something
+    * else, the only things one can do with the returned value is
+    * realloc it or free it. */
+   if (p == NULL && l != 0)
+      logfatal('S', _("out of memory allocating %lu bytes"),
+	       (unsigned long) l);
    return p;
 }
 
 void *
 safe_calloc(size_t l, size_t c)
 {
-   void *p=calloc(l, c);
-   if (p==NULL)
-      logfatal('S',"allocating %lu bytes: %s", (unsigned long) l * c,
-	       strerror(errno));
+   void *p = calloc(l, c);
+   if (p == NULL && l * c != 0)
+      logfatal('S', _("out of memory allocating %lu bytes"),
+	       (unsigned long) l * c);
    return p;
 }
 
 char *
 safe_strdup(const char *s)
 {
-   char *p=strdup(s);
-   if (p==NULL)
-      logfatal('S',"allocating %lu bytes: %s", (unsigned long) strlen(s) + 1,
-	       strerror(errno));
+   char *p = safe_malloc(strlen(s) + 1);
+   strcpy(p, s);
    return p;
 }
 
@@ -113,10 +156,10 @@ void
 safe_free(void *p)
 {
    /* FIXME: free(NULL) should be a no-op */
-   if (p==NULL)
-      logprintf(LOG_ERROR,'S', "Attempt to free NULL.");
-   /*else logprintf(LOG_DEBUG,'S',"Freeing memory at %p",p);*/
-   /* *((char *)p)=0;*/ /* force a crash here, if p is bogus */
+   if (p == NULL)
+      logprintf(LOG_ERROR, 'S', _("Attempt to free NULL."));
+   /*else logprintf(LOG_DEBUG, 'S', _("Freeing memory at %p"), p); */
+   /* *((char *)p)=0; *//* force a crash here, if p is bogus */
    free(p);
 }
 

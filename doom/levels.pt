@@ -6,80 +6,80 @@
 
 /* Doom I levels */
 
-Level E1M1  Music D_E1M1  Sky SKY1  StartGame     
-Level E1M2  Music D_E1M2  Sky SKY1     
+Level E1M1  Music D_E1M1  Sky SKY1  StartGame
+Level E1M2  Music D_E1M2  Sky SKY1
 Level E1M3  Music D_E1M3  Sky SKY1  Secret E1M9
-Level E1M4  Music D_E1M4  Sky SKY1     
-Level E1M5  Music D_E1M5  Sky SKY1     
-Level E1M6  Music D_E1M6  Sky SKY1     
-Level E1M7  Music D_E1M7  Sky SKY1     
+Level E1M4  Music D_E1M4  Sky SKY1
+Level E1M5  Music D_E1M5  Sky SKY1
+Level E1M6  Music D_E1M6  Sky SKY1
+Level E1M7  Music D_E1M7  Sky SKY1
 Level E1M8  Music D_E1M8  Sky SKY1  EndGame
 Level E1M9  Music D_E1M9  Sky SKY1  Next E1M4 Secret E1M4
-				  
+
 Level E2M1  Music D_E2M1  Sky SKY2  StartGame
-Level E2M2  Music D_E2M2  Sky SKY2   
-Level E2M3  Music D_E2M3  Sky SKY2   
-Level E2M4  Music D_E2M4  Sky SKY2   
+Level E2M2  Music D_E2M2  Sky SKY2
+Level E2M3  Music D_E2M3  Sky SKY2
+Level E2M4  Music D_E2M4  Sky SKY2
 Level E2M5  Music D_E2M5  Sky SKY2  Secret E2M9
-Level E2M6  Music D_E2M6  Sky SKY2   
-Level E2M7  Music D_E2M7  Sky SKY2   
+Level E2M6  Music D_E2M6  Sky SKY2
+Level E2M7  Music D_E2M7  Sky SKY2
 Level E2M8  Music D_E2M8  Sky SKY2  EndGame
 Level E2M9  Music D_E2M9  Sky SKY2  Next E2M6 Secret E2M6
-				  
-Level E3M1  Music D_E3M1  Sky SKY3  StartGame 
-Level E3M2  Music D_E3M2  Sky SKY3   
-Level E3M3  Music D_E3M3  Sky SKY3   
-Level E3M4  Music D_E3M4  Sky SKY3   
-Level E3M5  Music D_E3M5  Sky SKY3   
+
+Level E3M1  Music D_E3M1  Sky SKY3  StartGame
+Level E3M2  Music D_E3M2  Sky SKY3
+Level E3M3  Music D_E3M3  Sky SKY3
+Level E3M4  Music D_E3M4  Sky SKY3
+Level E3M5  Music D_E3M5  Sky SKY3
 Level E3M6  Music D_E3M6  Sky SKY3  Secret E3M9
-Level E3M7  Music D_E3M7  Sky SKY3   
+Level E3M7  Music D_E3M7  Sky SKY3
 Level E3M8  Music D_E3M8  Sky SKY3  EndGame
 Level E3M9  Music D_E3M9  Sky SKY3  Next E3M7 Secret E3M7
 
-Level E4M1  Music D_E4M1  Sky SKY4  StartGame   
-Level E4M2  Music D_E4M2  Sky SKY4  Secret E4M9   
-Level E4M3  Music D_E4M3  Sky SKY4     
-Level E4M4  Music D_E4M4  Sky SKY4     
-Level E4M5  Music D_E4M5  Sky SKY4     
-Level E4M6  Music D_E4M6  Sky SKY4     
-Level E4M7  Music D_E4M7  Sky SKY4  
+Level E4M1  Music D_E4M1  Sky SKY4  StartGame
+Level E4M2  Music D_E4M2  Sky SKY4  Secret E4M9
+Level E4M3  Music D_E4M3  Sky SKY4
+Level E4M4  Music D_E4M4  Sky SKY4
+Level E4M5  Music D_E4M5  Sky SKY4
+Level E4M6  Music D_E4M6  Sky SKY4
+Level E4M7  Music D_E4M7  Sky SKY4
 Level E4M8  Music D_E4M8  Sky SKY4  EndGame
 Level E4M9  Music D_E4M9  Sky SKY4  Next E4M3 Secret E4M3
 
 
 /* Doom II levels */
 
-Level MAP01  Music D_RUNNIN  Sky SKY1  StartGame   
-Level MAP02  Music D_STALKS  Sky SKY1   
-Level MAP03  Music D_COUNTD  Sky SKY1   
-Level MAP04  Music D_BETWEE  Sky SKY1   
-Level MAP05  Music D_DOOM    Sky SKY1   
-Level MAP06  Music D_THE_DA  Sky SKY1   
-Level MAP07  Music D_SHAWN   Sky SKY1   
-				     
-Level MAP08  Music D_DDTBLU  Sky SKY2   
-Level MAP09  Music D_IN_CIT  Sky SKY2   
-Level MAP10  Music D_DEAD    Sky SKY2   
-Level MAP11  Music D_STLKS2  Sky SKY2   
-Level MAP12  Music D_THEDA2  Sky SKY2   
-Level MAP13  Music D_DOOM2   Sky SKY2   
-Level MAP14  Music D_DDTBL2  Sky SKY2   
+Level MAP01  Music D_RUNNIN  Sky SKY1  StartGame
+Level MAP02  Music D_STALKS  Sky SKY1
+Level MAP03  Music D_COUNTD  Sky SKY1
+Level MAP04  Music D_BETWEE  Sky SKY1
+Level MAP05  Music D_DOOM    Sky SKY1
+Level MAP06  Music D_THE_DA  Sky SKY1
+Level MAP07  Music D_SHAWN   Sky SKY1
+
+Level MAP08  Music D_DDTBLU  Sky SKY2
+Level MAP09  Music D_IN_CIT  Sky SKY2
+Level MAP10  Music D_DEAD    Sky SKY2
+Level MAP11  Music D_STLKS2  Sky SKY2
+Level MAP12  Music D_THEDA2  Sky SKY2
+Level MAP13  Music D_DOOM2   Sky SKY2
+Level MAP14  Music D_DDTBL2  Sky SKY2
 Level MAP15  Music D_RUNNI2  Sky SKY2  Secret MAP31
-Level MAP16  Music D_DEAD2   Sky SKY2   
-Level MAP17  Music D_STLKS3  Sky SKY2   
-Level MAP18  Music D_ROMERO  Sky SKY2   
-Level MAP19  Music D_SHAWN2  Sky SKY2   
-Level MAP20  Music D_MESSAG  Sky SKY2   
-				     
-Level MAP21  Music D_COUNT2  Sky SKY3   
-Level MAP22  Music D_DDTBL3  Sky SKY3   
-Level MAP23  Music D_AMPIE   Sky SKY3   
-Level MAP24  Music D_THEDA3  Sky SKY3   
-Level MAP25  Music D_ADRIAN  Sky SKY3   
-Level MAP26  Music D_MESSG2  Sky SKY3   
-Level MAP27  Music D_ROMER2  Sky SKY3   
-Level MAP28  Music D_TENSE   Sky SKY3   
-Level MAP29  Music D_SHAWN3  Sky SKY3   
+Level MAP16  Music D_DEAD2   Sky SKY2
+Level MAP17  Music D_STLKS3  Sky SKY2
+Level MAP18  Music D_ROMERO  Sky SKY2
+Level MAP19  Music D_SHAWN2  Sky SKY2
+Level MAP20  Music D_MESSAG  Sky SKY2
+
+Level MAP21  Music D_COUNT2  Sky SKY3
+Level MAP22  Music D_DDTBL3  Sky SKY3
+Level MAP23  Music D_AMPIE   Sky SKY3
+Level MAP24  Music D_THEDA3  Sky SKY3
+Level MAP25  Music D_ADRIAN  Sky SKY3
+Level MAP26  Music D_MESSG2  Sky SKY3
+Level MAP27  Music D_ROMER2  Sky SKY3
+Level MAP28  Music D_TENSE   Sky SKY3
+Level MAP29  Music D_SHAWN3  Sky SKY3
 Level MAP30  Music D_OPENIN  Sky SKY3  EndGame
 
 Level MAP31  Music D_EVIL    Sky SKY3  Secret MAP32 Next MAP16

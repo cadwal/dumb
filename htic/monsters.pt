@@ -7,7 +7,7 @@
 #define OuchRate     400msec
 #define DieRate      160msec
 #define ExplodeRate  130msec
-#define RespawnRate  300msec 
+#define RespawnRate  300msec
 
 
 /* the Player */
@@ -62,9 +62,9 @@ SoundType DSPLPAIN Chance 3
 
 PhaseTable Player
   Default Duration NormalRate
-  Phase INIT    A   
-  Phase -	B   
-  Phase -	C   
+  Phase INIT    A
+  Phase -	B
+  Phase -	C
   Phase -	D   Goto INIT
 
   /* player shooting needs to be like this because the actual shooting
@@ -376,10 +376,10 @@ PhaseTable Mummy
 
   Phase MOVE    A
   Phase -       B       Strategy
-  Phase -       C	
+  Phase -       C
   Phase -       D	Strategy Goto MOVE
 
-  Phase FIGHT   E       SigFight 
+  Phase FIGHT   E       SigFight
   Phase -       F       Melee Sound MUMAT
   Phase -       G       Goto MOVE
 
@@ -393,7 +393,7 @@ PhaseTable Mummy
   Default NoSigs
   Phase DIE     I       SigDie Sound MUMDTH
   Phase -       J	Spawn2
-  Phase -       K       
+  Phase -       K
   Phase -       L
   Phase -       M
   Phase -       N
@@ -497,7 +497,7 @@ PhaseTable Knight
   Phase SIGHT   A	SigDetect Sound KGTSIT
 
   Phase MOVE    A	Strategy
-  Phase -	B	
+  Phase -	B
   Phase -	C	Strategy
   Phase -	D	Goto MOVE
 
@@ -512,7 +512,7 @@ PhaseTable Knight
   Phase OUCH	H	SigOuch Duration OuchRate Sound KGTPAI Goto MOVE
 
   Default NoSigs Duration DieRate
-  Phase DIE	I	SigDie Sound KGTDTH 
+  Phase DIE	I	SigDie Sound KGTDTH
   Phase -	J	Spawn2
   Phase -	K
   Phase -	L
@@ -591,7 +591,7 @@ PhaseTable Disciple
   Default NoSigs
   Phase DIE     F       SigDie Sound WIZDTH
   Phase -       G
-  Phase -       H       
+  Phase -       H
   Phase -       I
   Phase -       J
   Phase -       K
@@ -611,11 +611,11 @@ Proto Disciple 15
   Speed 15
 
 
-#undef NormalRate  
-#undef OuchRate    
-#undef DieRate     
-#undef ExplodeRate 
-#undef RespawnRate 
+#undef NormalRate
+#undef OuchRate
+#undef DieRate
+#undef ExplodeRate
+#undef RespawnRate
 
 
 

@@ -1,6 +1,29 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * libdumbutil/fixed.h: Fixed-point math.
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ * Copyright (C) 1994 by Chris Laurel
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
 
 #ifndef FIXED_H
 #define FIXED_H
+
+#include <limits.h>
 
 /* fixed point conversions */
 #define INT_TO_FIXED(i) ((i) << 16)
@@ -44,16 +67,14 @@ typedef int fixed;
 
 #if !defined(__GNUC__)
 #define FIX_ATTR
-#elif defined(i386)
-#define FIX_ATTR __attribute__ ((const, regparm (3)))
 #else
-#define FIX_ATTR __attribute__ ((const))
+#define FIX_ATTR __attribute__ ((const)) ATTR_REGPARM
 #endif
 
 fixed fix_sqrt(fixed) FIX_ATTR;
-fixed fix_pythagoras(fixed x,fixed y) FIX_ATTR;
-fixed fix_pyth3d(fixed x,fixed y,fixed z) FIX_ATTR;
-fixed fix_vec2angle(fixed x,fixed y) FIX_ATTR;
+fixed fix_pythagoras(fixed x, fixed y) FIX_ATTR;
+fixed fix_pyth3d(fixed x, fixed y, fixed z) FIX_ATTR;
+fixed fix_vec2angle(fixed x, fixed y) FIX_ATTR;
 
 #define NORMALIZE_ANGLE(x) while(x>=FIXED_2PI) x-=FIXED_2PI; while(x<0) x+=FIXED_2PI
 
@@ -69,43 +90,44 @@ fixed fixtan(fixed) FIX_ATTR;
 
 /*********************** Intel fixed point functions **********************/
 
-static inline fixed fixmul(fixed r1, fixed r2)
+static inline fixed
+fixmul(fixed r1, fixed r2)
 {
-     fixed result;
+   fixed result;
 
-     __asm__ ("imull %2\n\t"
-	      "shrd  $16, %%edx, %%eax\n\t"
-	      :"=a" (result)
-	      :"%a" (r1), "mr" (r2): "edx");
+   __asm__("imull %2\n\t"
+	   "shrd  $16, %%edx, %%eax\n\t"
+	   : "=a"(result)
+	   : "%a"(r1), "mr"(r2):"edx");
 
-     return result;
+   return result;
 }
 
-
-static inline fixed fixmul2_30(fixed r1, fixed r2)
+static inline fixed
+fixmul2_30(fixed r1, fixed r2)
 {
-     fixed result;
+   fixed result;
 
-     __asm__ ("imull %2\n\t"
-	      "shrd  $30, %%edx, %%eax\n\t"
-	      :"=a" (result)
-	      :"%a" (r1), "mr" (r2): "edx");
+   __asm__("imull %2\n\t"
+	   "shrd  $30, %%edx, %%eax\n\t"
+	   : "=a"(result)
+	   : "%a"(r1), "mr"(r2):"edx");
 
-     return result;
+   return result;
 }
 
-
-static inline fixed fixdiv(fixed dividend, fixed divisor)
+static inline fixed
+fixdiv(fixed dividend, fixed divisor)
 {
-     fixed result;
+   fixed result;
 
-     __asm__("sar  $16, %%edx\n\t"
-	     "idivl %3, %%eax\n\t"
-	     :"=a" (result)
-	     :"a" (dividend<<16), "d" (dividend), "mr" (divisor)
-	     : "edx");
+   __asm__("sar  $16, %%edx\n\t"
+	   "idivl %3, %%eax\n\t"
+	   : "=a"(result)
+	   : "a"(dividend << 16), "d"(dividend), "mr"(divisor)
+	   : "edx");
 
-     return result;
+   return result;
 }
 
 #elif defined(ARCH_MAC) && !defined(__powerc)
@@ -118,23 +140,26 @@ static inline fixed fixdiv(fixed dividend, fixed divisor)
 
 /* inline versions */
 #pragma parameter __D0 fixmul(__D0,__D1)
-fixed fixmul(fixed a, fixed b) = 
+fixed
+fixmul(fixed a, fixed b) =
 {
-        0x4C01,0x0C01   // muls.L D1,D1:D0
-        ,0x3001                 // move.w D1,D0
-        ,0x4840                 // swap D0
+   0x4C01, 0x0C01,		// muls.L D1,D1:D0
+   0x3001,			// move.w D1,D0
+   0x4840,			// swap D0
 }
+
 #pragma parameter __D1 fixmul2_30(__D0,__D1)
-fixed fixmul2_30(fixed a, fixed b) = 
+fixed
+fixmul2_30(fixed a, fixed b) =
 {
-        0x4C01,0x0C01   // muls.L D1,D1:D0
-        ,0xE589                 // lsl.L #2, D1
-        /* without the following lines, we're dropping the 
-           least signifigant 2 bits.  If this is a problem, 
-           uncomment them. 
-         */
-         //,0xE598                       // rol.L #2, D0
-         //,0xEFC1, 0x0782       // bfins D0, D1{30,2}
+   0x4C01, 0x0C01,		// muls.L D1,D1:D0
+   0xE589			// lsl.L #2, D1
+   /* without the following lines, we're dropping the
+      least signifigant 2 bits.  If this is a problem,
+      uncomment them.
+    */
+   //,0xE598,                   // rol.L #2, D0
+   //0xEFC1, 0x0782             // bfins D0, D1{30,2}
 }
 
 #undef INT_TO_FIXED
@@ -142,24 +167,28 @@ fixed fixmul2_30(fixed a, fixed b) =
 #undef FIXED_TRUNC
 
 #pragma parameter __D0 FIXED_TRUNC(__D0)
-fixed FIXED_TRUNC(fixed x) = 
-        0x4240;         // clr.W D0
+fixed
+FIXED_TRUNC(fixed x) =
+ 0x4240;			// clr.W D0
 
 #pragma parameter __D0 FIXED_TO_INT(__D0)
-signed short FIXED_TO_INT(fixed x) = 
-        0x4840;         // swap D0
+signed short
+FIXED_TO_INT(fixed x) =
+ 0x4840;			// swap D0
 
 #pragma parameter __D0 INT_TO_FIXED(__D0)
-fixed INT_TO_FIXED(signed short x) = 
+fixed
+INT_TO_FIXED(signed short x) =
 {
-        0x4840          // swap D0
-        ,0x4240         // clr.w D0
+   0x4840			// swap D0
+       ,0x4240			// clr.w D0
 }
 
-/* MBW - one of these days I'll rewrite division too. 
+/* MBW - one of these days I'll rewrite division too.
    The toolbox trap works, though.
-*/
-extern pascal fixed fixdiv(fixed x, fixed y) = 0xA84D;
+ */
+extern pascal fixed
+fixdiv(fixed x, fixed y) = 0xA84D;
 
 #else
 
@@ -167,23 +196,24 @@ extern pascal fixed fixdiv(fixed x, fixed y) = 0xA84D;
 
 #define FIXMUL_AS_MACRO
 
+/* FIXME: check for this in configure */
 #ifdef NO_LONGLONG
 #define fixmul(a, b) ((fixed) ((double) (a) * ((double) (b)) * \
 			       1.52587890625e-5))
 #define fixmul2_30(a, b) ((fixed) ((double) (a) * ((double) (b) * \
 				    9.313225746154785e-10)))
-#else
+#else  /* !NO_LONGLONG */
 #define fixmul(a,b)  ( (fixed) (((long long)(a)*(long long)(b)) >> 16) )
 #define fixmul2_30(a,b)  ( (fixed) (((long long)(a)*(long long)(b)) >> 30) )
-#endif
+#endif /* !NO_LONGLONG */
 
 #define fixdiv(a, b) ((fixed) (((double) (a) / (double) (b)) * 65536.0))
 
 #endif
 
 
-#endif
+#endif /* !FIXED_H */
 
-
-
-
+// Local Variables:
+// c-basic-offset: 3
+// End:

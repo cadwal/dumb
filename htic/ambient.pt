@@ -19,24 +19,24 @@ SoundType AMB9-5 Redir AMB9 BendConst -16
 
 PhaseTable Growl /* sounds like more laughter to me??? */
   Phase WAIT A AmbientRWait
-  Phase PLAY A  Duration 120msec Sound AMB9 
-  Phase -    A  Duration 160msec Sound AMB9-1 
-  Phase -    A  Duration 160msec Sound AMB9-1 
-  Phase -    A  Duration 200msec Sound AMB9-1 
-  Phase -    A  Duration 240msec Sound AMB9-2 
-  Phase -    A  Duration 300msec Sound AMB9-3 
-  Phase -    A  Duration 350msec Sound AMB9-4 
+  Phase PLAY A  Duration 120msec Sound AMB9
+  Phase -    A  Duration 160msec Sound AMB9-1
+  Phase -    A  Duration 160msec Sound AMB9-1
+  Phase -    A  Duration 200msec Sound AMB9-1
+  Phase -    A  Duration 240msec Sound AMB9-2
+  Phase -    A  Duration 300msec Sound AMB9-3
+  Phase -    A  Duration 350msec Sound AMB9-4
   Phase -    A  Duration 350msec Sound AMB9-5 Goto WAIT
 
 PhaseTable Laughter
   Phase WAIT A AmbientRWait
-  Phase PLAY A  Duration 120msec Sound AMB10 
-  Phase -    A  Duration 160msec Sound AMB10-1 
-  Phase -    A  Duration 160msec Sound AMB10-1 
-  Phase -    A  Duration 200msec Sound AMB10-1 
-  Phase -    A  Duration 240msec Sound AMB10-2 
-  Phase -    A  Duration 300msec Sound AMB10-3 
-  Phase -    A  Duration 350msec Sound AMB10-4 
+  Phase PLAY A  Duration 120msec Sound AMB10
+  Phase -    A  Duration 160msec Sound AMB10-1
+  Phase -    A  Duration 160msec Sound AMB10-1
+  Phase -    A  Duration 200msec Sound AMB10-1
+  Phase -    A  Duration 240msec Sound AMB10-2
+  Phase -    A  Duration 300msec Sound AMB10-3
+  Phase -    A  Duration 350msec Sound AMB10-4
   Phase -    A  Duration 350msec Sound AMB10-5 Goto WAIT
 
 PhaseTable Squish

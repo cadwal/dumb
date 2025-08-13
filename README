@@ -30,6 +30,7 @@ distribute the derived works in source form under the GPL yourself.
 If you do modify DUMB, please send me your changes (see contact
 details at the end of this file).
 
+[There's more information on contributing patches in docs/contrib.html.]
 
 2. What is DUMB?
 
@@ -76,7 +77,7 @@ never.
 
 2.1  History of DUMB:
 
-[By Dr. Parsons]
+[By Josh Parsons]
 
 Some time in 1995, I was playing around with Chris Laurel's wt.  I
 thought I would experiment by tuning it up to preview Doom WADFiles.
@@ -91,7 +92,7 @@ various tools to generate other necessary bits of wadfiles.
 
 In July 1997, I decided that it was going too slowly, and that I'd
 release it out into the world to see if anyone else was interested in
-helping, or even just commenting on it.  
+helping, or even just commenting on it.
 
 The response of the Linux community was, well, overwhelming.  My
 humble 486/80 ran hot with ftp requests.  Many people sent advice,
@@ -157,9 +158,8 @@ This must be changed to:
 
 Debian GNU/Linux libc5-dev_5.4.33-6 has a bug that prevents profiling
 functions that take register parameters: mcount() overwrites the
-registers and the parameters are lost.  I have tweaked
-libdumbutil/Makefile.am to prevent this from happening.  When I get a
-fixed version of the library, I'll remove the hacks.
+registers and the parameters are lost.  The configure script detects
+this bug and disables register parameters if profiling is used.
 
 Automake 1.2 had a bug that prevented it from noticing when
 AC_PROG_CXXCPP was used.  Then it didn't add a CXXCPP=@CXXCPP@ line in
@@ -175,9 +175,10 @@ The graphics and map for the sample game are now distributed
 seperately from the sources.  This is because they take up a lot of
 space without being terribly functional.  Nevertheless, you will need
 them if you do not have a copy of Doom or Heretic to play with.  They
-are in dumb-game-<version>.zip  If you have this file, unpack it too.
+are in dumb-game-<version>.tar.gz.  If you have this file, unpack it
+too and read the instructions inside.
 
-You should get a directory called something like "dumb-0.12", with a
+You should get a directory called something like "dumb-0.13.0", with a
 configure script, some other files and several subdirectories in it.
 Change to the directory and run the script.  (See the files INSTALL
 and docs/configure.txt for the options you can give to it.)  It'll
@@ -231,6 +232,7 @@ If you have Heretic and the script found its IWAD:
 Whatever you have, you get:
 - fixed_bm, a benchmark measuring how fast your machine is at the
   fixed-point calculations DUMB uses,
+- ldltest, a test program for the still unfinished libdumbworldb,
 - mknulmap, a single-room map generator,
 - ptcomp, a program for compiling textual ProtoThing etc. definitions
   to lumps for inclusion in WADs,
@@ -248,7 +250,7 @@ install" to copy them to their official places.
 The installed executables contain full debug information by default.
 If you don't like that, use "make install-strip".
 
-Programs fixed_bm and mkdfnt won't be installed.
+Programs fixed_bm, ldltest and mkdfnt won't be installed.
 
 If you later change your mind (oh no!), you can run "make uninstall"
 to remove them if you still have the sources left.
@@ -288,6 +290,8 @@ they are used for various cheats and special functions:
 	2: all weapons, full ammo, all keys,
 	3: open the way out on boss levels (should be automated),
 	4: resurrect yourself,
+	5: no-clipping mode (doesn't work very cleanly though),
+	6: toggle between renderer debug modes,
 	9: save snapshot in ./snapshot.ppm.
 
 In the X11 and AA-lib versions, you can reconfigure all the keys with
@@ -335,7 +339,7 @@ textures, without having to play tricks with modified IWADs.
 
 This can be done in much the same way as Doom:
 
-ldumb -w heretic.wad htic4dum.wad -m E1M1 -n
+ldumb -w heretic.wad htic4dum.wad -m E1M1
 
 The sources for htic4dum.wad are stored in the htic directory.  They
 are not nearly as complete as those for Doom.  If you would like to
@@ -446,7 +450,7 @@ software (I don't use any, either).
 [This isn't going to change.  - Kalle]
 
 I've made a web page for DUMB at http://samba.anu.edu.au/dumb
-Any news will turn up there.  
+Any news will turn up there.
 
 I've released DUMB as it is because I have increasingly little time to
 work on it, and I'm worried that, if I delay, the technology involved
@@ -470,7 +474,7 @@ best to make up new lumps eg: LINEEXTS (a list of extended information
 about lines, in the same order as LINEDEFS).
 
 
-6. Contact information. 
+6. Contact information.
 
 [I maintain DUMB nowadays, as Josh's school eats his time.
 

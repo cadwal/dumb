@@ -1,8 +1,31 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * libdumbutil/safeio.c: mmap() emulation, file operations and path search.
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ * Copyright (C) 1998 by Kalle O. Niemitalo <tosi@stekt.oulu.fi>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
+
 #include <config.h>
 
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <errno.h>
 #include <sys/types.h>
@@ -12,23 +35,26 @@
 #include <sys/mman.h>
 #endif /* HAVE_MMAP */
 
+#include "libdumbutil/dumb-nls.h"
+
 #include "log.h"
 #include "safeio.h"
 #include "safem.h"
 
+static int fname_has_directory(const char *fname);
 
 #ifdef HAVE_MMAP
 
 const void *
 safe_mmap(const char *name, int fd, unsigned int offset, size_t len)
 {
-   caddr_t p=mmap(NULL,len,PROT_READ,MAP_SHARED,fd,offset);
-   if(p==(caddr_t)-1) {
+   caddr_t p = mmap(NULL, len, PROT_READ, MAP_SHARED, fd, offset);
+   if (p == (caddr_t) - 1) {
       if (name)
-	 logprintf(LOG_FATAL,'S', "%s: mmap %lu bytes: %s",
+	 logprintf(LOG_FATAL, 'S', _("%s: mmap %lu bytes: %s"),
 		   name, (unsigned long) len, strerror(errno));
       else
-	 logprintf(LOG_FATAL,'S', "mmap %lu bytes: %s",
+	 logprintf(LOG_FATAL, 'S', _("mmap %lu bytes: %s"),
 		   (unsigned long) len, strerror(errno));
    }
    return p;
@@ -37,9 +63,10 @@ safe_mmap(const char *name, int fd, unsigned int offset, size_t len)
 void
 safe_munmap(const char *name, const void *ptr, size_t len)
 {
-   if(munmap((caddr_t)ptr,len)==-1)
-      logprintf(LOG_FATAL,'S', "%s: munmapping %lu bytes: %s",
-		name?name:"?\?\?", (unsigned long) len, strerror(errno));
+   if (munmap((caddr_t) ptr, len) == -1)
+      logprintf(LOG_FATAL, 'S', _("%s: munmapping %lu bytes: %s"),
+		name ? name : "?\?\?",
+		(unsigned long) len, strerror(errno));
 }
 
 #else  /* !HAVE_MMAP */
@@ -47,22 +74,26 @@ safe_munmap(const char *name, const void *ptr, size_t len)
 const void *
 safe_mmap(const char *name, int fd, unsigned int offset, size_t len)
 {
-   void *p=safe_malloc(len);
+   void *p = safe_malloc(len);
    size_t l;
-   if(name==NULL) name="?\?\?";
-   if(lseek(fd,offset,SEEK_SET)==-1)
-      logprintf(LOG_ERROR,'S', "%s: seeking to %d: %s",
-	       name, offset, strerror(errno));
-   if((l=read(fd,p,len))<len)
-      logprintf(LOG_ERROR,'S', "%s: short read (%d<%d): %s",
-		name, l, len, strerror(errno));
+   if (name == NULL)
+      name = "?\?\?";
+   if (lseek(fd, offset, SEEK_SET) == -1)
+      logprintf(LOG_ERROR, 'S', _("%s: seeking to %u: %s"),
+		name, offset, strerror(errno));
+   /* FIXME: read() might return -1 */
+   /* FIXME: interrupted system call */
+   if ((l = read(fd, p, len)) < len)
+      logprintf(LOG_ERROR, 'S', _("%s: short read (%lu<%lu): %s"),
+		name, (unsigned long) l, (unsigned long) len,
+		strerror(errno));
    return p;
 }
 
 void
 safe_munmap(const char *name, const void *ptr, size_t len)
 {
-   safe_free((void *)ptr);
+   safe_free((void *) ptr);
 }
 
 #endif /* !HAVE_MMAP */
@@ -70,10 +101,11 @@ safe_munmap(const char *name, const void *ptr, size_t len)
 void
 safe_read(const char *name, int fd, void *buf, size_t len)
 {
-   int r=read(fd,buf,len);
-   if(r != len)
-      logprintf(LOG_FATAL,'S', "%s: short read (%d<%lu): %s",
-		name?name:"?\?\?", r, (unsigned long) len, strerror(errno));
+   int r = read(fd, buf, len);
+   if (r != len)
+      logprintf(LOG_FATAL, 'S', _("%s: short read (%d<%lu): %s"),
+		name ? name : "?\?\?",
+		r, (unsigned long) len, strerror(errno));
 }
 
 int
@@ -81,13 +113,13 @@ safe_open(const char *fname, int omode, int fail_lvl)
 {
    /* If the file is created (omode includes O_CREAT), give everyone
     * read and write permission if allowed by umask.  */
-   int fd=open(fname, omode, 
-	       S_IRUSR|S_IWUSR | S_IRGRP|S_IWGRP | S_IROTH|S_IWOTH);
-   if(fd==-1&&fail_lvl!=-1)
-      logprintf(fail_lvl,'S', "%s: opening: %s",
+   int fd = open(fname, omode,
+	      S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+   if (fd == -1 && fail_lvl != -1)
+      logprintf(fail_lvl, 'S', _("%s: opening: %s"),
 		fname, strerror(errno));
    /*else
-      logprintf(LOG_DEBUG,'S',"Successfully opened %s",fname);*/
+      logprintf(LOG_DEBUG, 'S', _("Successfully opened %s"),fname); */
    return fd;
 }
 
@@ -95,32 +127,44 @@ void
 safe_close(const char *name, int fd)
 {
    if (close(fd))
-      logprintf(LOG_ERROR,'S', "%s: closing: %s", 
-		name?name:"?\?\?", strerror(errno));
+      logprintf(LOG_ERROR, 'S', _("%s: closing: %s"),
+		name ? name : "?\?\?",
+		strerror(errno));
+}
+
+static int
+fname_has_directory(const char *fname)
+{
+   if (strchr(fname, '/'))
+      return 1;
+#ifdef __MSDOS__
+   /* Actually, the colon is valid in fname[1] only.  */
+   if (strpbrk(fname, "\\:"))
+      return 1;
+#endif /* __MSDOS__ */
+   return 0;
 }
 
 int
 safe_open_path(const char *fname, int omode, int fail_lvl,
 	       const char *const *path, char **realname)
 {
-   static const char *const default_path[] = { ".", NULL };
-   if (fname[0] == '/') {	/* Absolute filename, don't search path */
-#ifdef __MSDOS__
-#warn "MS-DOS absolute filenames not recognized"
-#endif
+   static const char *const default_path[] = {".", NULL};
+   if (fname_has_directory(fname)) {	/* don't search path */
       int ret = safe_open(fname, omode, fail_lvl);
-      if (realname && ret!=-1)
+      if (realname && ret != -1)
 	 *realname = safe_strdup(fname);
       return ret;
    }
-   if (!path || path[0]==NULL)
+   if (!path || path[0] == NULL)
       path = default_path;
    for (; *path; path++) {
       const char *dir = *path;
       size_t dirlen = strlen(dir);
+      /* Variable-length automatic arrays are a GCC extension.  */
       char tryname[dirlen + 1 + strlen(fname) + 1];
       int ret;
-      if (!dirlen || dir[dirlen-1]=='/')
+      if (!dirlen || dir[dirlen - 1] == '/')
 	 sprintf(tryname, "%s%s", dir, fname);
       else
 	 sprintf(tryname, "%s/%s", dir, fname);

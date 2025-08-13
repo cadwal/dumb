@@ -6,7 +6,8 @@ network_objs = $(DUMB_NETWORK_SOURCES:.c=.o)
 
 # These sources aren't currently used at all but I think it's better to
 # keep them in the distribution.
-EXTRA_DIST = dosinput.c dosvideo.c vgagl_video.c
+# The DOS files would be used if we had configure.bat and a makefile.
+EXTRA_DIST = dos_input.c dos_video.c vgagl_video.c
 
 if DUMB_CONFIG_AALIB
 aalib_bin_programs = aadumb
@@ -49,7 +50,7 @@ core_sources = dumb.c animtex.c animtex.h bangbang.c banner.c banner.h \
  ctlkey.c ctlkey.h keymap.c keymap.h keymapconf.c keymapconf.h \
  $(DUMB_FBREREND_SOURCES) fbrerend.h \
  $(DUMB_RENDER_SOURCES) render.h renderc.h rendcore.h rendflat.h rendsl.h \
- rendsl86.h draw.c draw.h \
+ rendsl86.h rendcommon.c draw.c draw.h \
  $(DUMB_NETWORK_SOURCES) net.h \
  input.h video.h
 
@@ -84,18 +85,18 @@ ldumb_SOURCES = linux_video.c linux_input.c keymapdummy.c \
 EXTRA_ldumb_SOURCES = $(extra_sources)
 
 xdumb_SOURCES = x11_video.c $(keyname_sources) \
- $(core_sources) 
+ $(core_sources)
 EXTRA_xdumb_SOURCES = $(extra_sources)
 
-# Don't use srcdir or top_srcdir here!
+# Objects and DUMB libraries are in the build tree, so don't use $(srcdir).
 LDADD = $(render_objs) $(fbrerend_objs) $(network_objs) \
- ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
- ../libdumbutil/libdumbutil.a $(DUMB_CONFIG_SOUND_LDADD) \
- $(DUMB_NETWORK_LDADD)
+ ../libdumb/libdumb.a \
+ ../libdumbwad/libdumbwad.a ../libdumbutil/libdumbutil.a \
+ $(DUMB_CONFIG_SOUND_LDADD) $(DUMB_NETWORK_LDADD) $(INTLLIBS)
 
 dependencies = $(render_objs) $(fbrerend_objs) $(network_objs) \
- ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
- ../libdumbutil/libdumbutil.a
+ ../libdumb/libdumb.a \
+ ../libdumbwad/libdumbwad.a ../libdumbutil/libdumbutil.a
 
 aadumb_LDADD = $(LDADD) $(aalib_ldadd)
 aadumb_DEPENDENCIES = $(dependencies)

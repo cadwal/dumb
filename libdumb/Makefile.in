@@ -57,9 +57,12 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+CATALOGS = @CATALOGS@
+CATOBJEXT = @CATOBJEXT@
 CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+DATADIRNAME = @DATADIRNAME@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
 DUMB_CONFIG_SOUND = @DUMB_CONFIG_SOUND@
@@ -71,21 +74,38 @@ DUMB_NETWORK_SOURCES = @DUMB_NETWORK_SOURCES@
 DUMB_RENDER_SOURCES = @DUMB_RENDER_SOURCES@
 DUMB_XKB_LDADD = @DUMB_XKB_LDADD@
 DUMB_XSHM_LDADD = @DUMB_XSHM_LDADD@
+GENCAT = @GENCAT@
+GMOFILES = @GMOFILES@
+GMSGFMT = @GMSGFMT@
+GT_NO = @GT_NO@
+GT_YES = @GT_YES@
+INCLUDE_LOCALE_H = @INCLUDE_LOCALE_H@
+INSTOBJEXT = @INSTOBJEXT@
+INTLDEPS = @INTLDEPS@
+INTLLIBS = @INTLLIBS@
+INTLOBJS = @INTLOBJS@
+l = @l@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
+MKINSTALLDIRS = @MKINSTALLDIRS@
+MSGFMT = @MSGFMT@
 PACKAGE = @PACKAGE@
+POFILES = @POFILES@
+POSUB = @POSUB@
 RANLIB = @RANLIB@
+USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
+USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 
 noinst_LIBRARIES = libdumb.a
 
 libdumb_a_SOURCES = dsound.c prothing.c texture.c view.c \
- $(DUMB_CONFIG_SOUND)_sound.c \
+ $(DUMB_CONFIG_SOUND)_sound.c sound_mix.c sound_mix.h \
  dsound.h pastepic.h prothing.h texture.h sound.h view.h \
  animtexstruct.h gettablestruct.h levinfostruct.h linetypestruct.h \
  prothingstruct.h levdatanums.h
 
-EXTRA_libdumb_a_SOURCES = dummy_sound.c linux_sound.c mme_sound.c
+EXTRA_libdumb_a_SOURCES = dummy_sound.c dos_sound.c linux_sound.c mme_sound.c
 
 INCLUDES = -I$(top_srcdir)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -104,7 +124,7 @@ X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_PRE_LIBS = @X_PRE_LIBS@
 libdumb_a_LIBADD = 
 libdumb_a_OBJECTS =  dsound.o prothing.o texture.o view.o \
-$(DUMB_CONFIG_SOUND)_sound.o
+$(DUMB_CONFIG_SOUND)_sound.o sound_mix.o
 AR = ar
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
@@ -200,20 +220,26 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
-dsound.o: dsound.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/safem.h ../libdumbwad/wadstruct.h \
-	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h sound.h \
-	../libdumbutil/fixed.h dsound.h view.h
-linux_sound.o: linux_sound.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/safem.h sound.h ../libdumbutil/fixed.h
-prothing.o: prothing.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/safem.h ../libdumbwad/wadio.h prothing.h \
-	prothingstruct.h ../libdumbutil/endiantypes.h \
-	../libdumbutil/fixed.h texture.h
-texture.o: texture.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/safem.h ../libdumbwad/wadstruct.h \
-	../libdumbutil/endiantypes.h texture.h ../libdumbwad/wadio.h \
-	pastepic.h
+dsound.o: dsound.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
+	../libdumbwad/wadio.h sound.h ../libdumbutil/fixed.h \
+	../libdumbutil/confdef.h dsound.h view.h
+linux_sound.o: linux_sound.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h \
+	../libdumbutil/safeio.h sound.h ../libdumbutil/fixed.h \
+	../libdumbutil/confdef.h sound_mix.h
+prothing.o: prothing.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h \
+	../libdumbwad/wadio.h prothing.h prothingstruct.h \
+	../libdumbutil/endiantypes.h ../libdumbutil/fixed.h texture.h
+sound_mix.o: sound_mix.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/fixed.h ../libdumbutil/log.h sound_mix.h sound.h \
+	../libdumbutil/confdef.h
+texture.o: texture.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
+	texture.h ../libdumbwad/wadio.h pastepic.h
 view.o: view.c ../config.h ../libdumbutil/fixed.h ../libdumbutil/log.h \
 	view.h
 

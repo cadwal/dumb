@@ -57,9 +57,12 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+CATALOGS = @CATALOGS@
+CATOBJEXT = @CATOBJEXT@
 CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+DATADIRNAME = @DATADIRNAME@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
 DUMB_CONFIG_SOUND = @DUMB_CONFIG_SOUND@
@@ -71,10 +74,27 @@ DUMB_NETWORK_SOURCES = @DUMB_NETWORK_SOURCES@
 DUMB_RENDER_SOURCES = @DUMB_RENDER_SOURCES@
 DUMB_XKB_LDADD = @DUMB_XKB_LDADD@
 DUMB_XSHM_LDADD = @DUMB_XSHM_LDADD@
+GENCAT = @GENCAT@
+GMOFILES = @GMOFILES@
+GMSGFMT = @GMSGFMT@
+GT_NO = @GT_NO@
+GT_YES = @GT_YES@
+INCLUDE_LOCALE_H = @INCLUDE_LOCALE_H@
+INSTOBJEXT = @INSTOBJEXT@
+INTLDEPS = @INTLDEPS@
+INTLLIBS = @INTLLIBS@
+INTLOBJS = @INTLOBJS@
+l = @l@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
+MKINSTALLDIRS = @MKINSTALLDIRS@
+MSGFMT = @MSGFMT@
 PACKAGE = @PACKAGE@
+POFILES = @POFILES@
+POSUB = @POSUB@
 RANLIB = @RANLIB@
+USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
+USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 
 render_objs = $(DUMB_RENDER_SOURCES:.c=.o)
@@ -83,7 +103,8 @@ network_objs = $(DUMB_NETWORK_SOURCES:.c=.o)
 
 # These sources aren't currently used at all but I think it's better to
 # keep them in the distribution.
-EXTRA_DIST = dosinput.c dosvideo.c vgagl_video.c
+# The DOS files would be used if we had configure.bat and a makefile.
+EXTRA_DIST = dos_input.c dos_video.c vgagl_video.c
 
 @DUMB_CONFIG_AALIB_TRUE@aalib_bin_programs = aadumb
 @DUMB_CONFIG_AALIB_FALSE@aalib_bin_programs =
@@ -111,7 +132,7 @@ core_sources = dumb.c animtex.c animtex.h bangbang.c banner.c banner.h \
  ctlkey.c ctlkey.h keymap.c keymap.h keymapconf.c keymapconf.h \
  $(DUMB_FBREREND_SOURCES) fbrerend.h \
  $(DUMB_RENDER_SOURCES) render.h renderc.h rendcore.h rendflat.h rendsl.h \
- rendsl86.h draw.c draw.h \
+ rendsl86.h rendcommon.c draw.c draw.h \
  $(DUMB_NETWORK_SOURCES) net.h \
  input.h video.h
 
@@ -146,18 +167,18 @@ ldumb_SOURCES = linux_video.c linux_input.c keymapdummy.c \
 EXTRA_ldumb_SOURCES = $(extra_sources)
 
 xdumb_SOURCES = x11_video.c $(keyname_sources) \
- $(core_sources) 
+ $(core_sources)
 EXTRA_xdumb_SOURCES = $(extra_sources)
 
-# Don't use srcdir or top_srcdir here!
+# Objects and DUMB libraries are in the build tree, so don't use $(srcdir).
 LDADD = $(render_objs) $(fbrerend_objs) $(network_objs) \
- ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
- ../libdumbutil/libdumbutil.a $(DUMB_CONFIG_SOUND_LDADD) \
- $(DUMB_NETWORK_LDADD)
+ ../libdumb/libdumb.a \
+ ../libdumbwad/libdumbwad.a ../libdumbutil/libdumbutil.a \
+ $(DUMB_CONFIG_SOUND_LDADD) $(DUMB_NETWORK_LDADD) $(INTLLIBS)
 
 dependencies = $(render_objs) $(fbrerend_objs) $(network_objs) \
- ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
- ../libdumbutil/libdumbutil.a
+ ../libdumb/libdumb.a \
+ ../libdumbwad/libdumbwad.a ../libdumbutil/libdumbutil.a
 
 aadumb_LDADD = $(LDADD) $(aalib_ldadd)
 aadumb_DEPENDENCIES = $(dependencies)
@@ -193,31 +214,31 @@ aadumb_OBJECTS =  aalib_video.o aalib_input.o keyname.o dumb.o animtex.o \
 bangbang.o banner.o bogothing.o dyncode.o game.o gettable.o levdata.o \
 levdyn.o levinfo.o linetype.o netio.o netplay.o termtype.o thinghit.o \
 thingm.o things.o updmap.o updthing.o useitem.o ctlkey.o keymap.o \
-keymapconf.o draw.o
+keymapconf.o rendcommon.o draw.o
 aadumb_LDFLAGS = 
 dummydumb_OBJECTS =  dummy_video.o dummy_input.o keymapdummy.o dumb.o \
 animtex.o bangbang.o banner.o bogothing.o dyncode.o game.o gettable.o \
 levdata.o levdyn.o levinfo.o linetype.o netio.o netplay.o termtype.o \
 thinghit.o thingm.o things.o updmap.o updthing.o useitem.o ctlkey.o \
-keymap.o keymapconf.o draw.o
+keymap.o keymapconf.o rendcommon.o draw.o
 dummydumb_LDFLAGS = 
 ggidumb_OBJECTS =  ggi_video.o keymapdummy.o dumb.o animtex.o bangbang.o \
 banner.o bogothing.o dyncode.o game.o gettable.o levdata.o levdyn.o \
 levinfo.o linetype.o netio.o netplay.o termtype.o thinghit.o thingm.o \
 things.o updmap.o updthing.o useitem.o ctlkey.o keymap.o keymapconf.o \
-draw.o
+rendcommon.o draw.o
 ggidumb_LDFLAGS = 
 ldumb_OBJECTS =  linux_video.o linux_input.o keymapdummy.o dumb.o \
 animtex.o bangbang.o banner.o bogothing.o dyncode.o game.o gettable.o \
 levdata.o levdyn.o levinfo.o linetype.o netio.o netplay.o termtype.o \
 thinghit.o thingm.o things.o updmap.o updthing.o useitem.o ctlkey.o \
-keymap.o keymapconf.o draw.o
+keymap.o keymapconf.o rendcommon.o draw.o
 ldumb_LDFLAGS = 
 xdumb_OBJECTS =  x11_video.o keyname.o dumb.o animtex.o bangbang.o \
 banner.o bogothing.o dyncode.o game.o gettable.o levdata.o levdyn.o \
 levinfo.o linetype.o netio.o netplay.o termtype.o thinghit.o thingm.o \
 things.o updmap.o updthing.o useitem.o ctlkey.o keymap.o keymapconf.o \
-draw.o
+rendcommon.o draw.o
 xdumb_LDFLAGS = 
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
@@ -344,206 +365,221 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
-aalib_input.o: aalib_input.c ../config.h ../libdumbutil/log.h input.h \
-	../libdumbutil/confdef.h ../libdumbutil/endiantypes.h keymap.h \
-	ctlkey.h keyname.h
-aalib_video.o: aalib_video.c ../config.h ../libdumbutil/log.h video.h \
-	../libdumbutil/confdef.h
-animtex.o: animtex.c ../config.h ../libdumbutil/safem.h \
-	../libdumbutil/log.h ../libdumbwad/wadio.h animtex.h \
-	../libdumb/animtexstruct.h ../libdumb/texture.h
-bangbang.o: bangbang.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/fixed.h things.h ../libdumb/view.h levdyn.h \
-	../libdumb/texture.h ../libdumbwad/wadio.h \
-	../libdumb/prothing.h ../libdumb/prothingstruct.h \
-	../libdumbutil/endiantypes.h levdata.h \
-	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h
-banner.o: banner.c ../config.h ../libdumbutil/safem.h \
-	../libdumbutil/log.h draw.h ../libdumb/texture.h \
-	../libdumbwad/wadio.h banner.h
+aalib_input.o: aalib_input.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h input.h ../libdumbutil/confdef.h \
+	../libdumbutil/endiantypes.h keymap.h ctlkey.h keyname.h
+aalib_video.o: aalib_video.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h video.h ../libdumbutil/confdef.h
+animtex.o: animtex.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/safem.h ../libdumbutil/log.h \
+	../libdumbwad/wadio.h animtex.h ../libdumb/animtexstruct.h \
+	../libdumb/texture.h
+bangbang.o: bangbang.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/fixed.h things.h \
+	../libdumb/view.h levdyn.h ../libdumb/texture.h \
+	../libdumbwad/wadio.h ../libdumb/prothing.h \
+	../libdumb/prothingstruct.h ../libdumbutil/endiantypes.h \
+	levdata.h ../libdumbwad/wadstruct.h ../libdumb/levdatanums.h
+banner.o: banner.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/safem.h ../libdumbutil/log.h draw.h \
+	../libdumb/texture.h ../libdumbwad/wadio.h banner.h
 bogothing.o: bogothing.c ../config.h draw.h ../libdumb/texture.h \
 	../libdumbwad/wadio.h things.h ../libdumb/view.h \
 	../libdumbutil/fixed.h levdyn.h ../libdumb/prothing.h \
 	../libdumb/prothingstruct.h ../libdumbutil/endiantypes.h \
 	levdata.h ../libdumbwad/wadstruct.h ../libdumb/levdatanums.h \
 	bogothing.h
-ctlkey.o: ctlkey.c ../config.h ../libdumbutil/fixed.h \
-	../libdumbutil/log.h ctlkey.h input.h ../libdumbutil/confdef.h \
-	../libdumbutil/endiantypes.h
+ctlkey.o: ctlkey.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/fixed.h ../libdumbutil/log.h ctlkey.h input.h \
+	../libdumbutil/confdef.h ../libdumbutil/endiantypes.h
 draw.o: draw.c ../config.h draw.h ../libdumb/texture.h \
 	../libdumbwad/wadio.h
-dumb.o: dumb.c ../config.h ../libdumbutil/confdef.h \
-	../libdumbutil/confargs.h ../libdumbutil/confeng.h \
-	../libdumbutil/conffile.h ../libdumbutil/log.h \
-	../libdumbutil/safem.h ../libdumbutil/timer.h \
-	../libdumbwad/wadio.h ../libdumb/dsound.h \
-	../libdumbutil/fixed.h ../libdumbutil/endiantypes.h \
-	../libdumb/view.h ../libdumb/sound.h ../libdumb/texture.h \
-	banner.h bogothing.h levdata.h ../libdumbwad/wadstruct.h \
-	../libdumb/levdatanums.h draw.h fbrerend.h render.h game.h \
-	input.h gettable.h ../libdumb/gettablestruct.h keymap.h \
-	ctlkey.h keymapconf.h levinfo.h ../libdumb/levinfostruct.h \
-	linetype.h ../libdumb/linetypestruct.h net.h netplay.h netio.h \
-	things.h levdyn.h ../libdumb/prothing.h \
-	../libdumb/prothingstruct.h updmap.h video.h
+dumb.o: dumb.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/confdef.h ../libdumbutil/confargs.h \
+	../libdumbutil/confeng.h ../libdumbutil/conffile.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h \
+	../libdumbutil/timer.h ../libdumbwad/wadio.h \
+	../libdumb/dsound.h ../libdumbutil/fixed.h \
+	../libdumbutil/endiantypes.h ../libdumb/view.h \
+	../libdumb/sound.h ../libdumb/texture.h banner.h bogothing.h \
+	levdata.h ../libdumbwad/wadstruct.h ../libdumb/levdatanums.h \
+	draw.h fbrerend.h render.h game.h input.h gettable.h \
+	../libdumb/gettablestruct.h keymap.h ctlkey.h keymapconf.h \
+	levinfo.h ../libdumb/levinfostruct.h linetype.h \
+	../libdumb/linetypestruct.h net.h netplay.h netio.h things.h \
+	levdyn.h ../libdumb/prothing.h ../libdumb/prothingstruct.h \
+	updmap.h video.h
 dyncode.o: dyncode.c ../config.h levdyn.h ../libdumbutil/fixed.h \
 	../libdumb/texture.h ../libdumbwad/wadio.h \
 	../libdumb/prothing.h ../libdumb/prothingstruct.h \
 	../libdumbutil/endiantypes.h levdata.h \
 	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h things.h \
 	../libdumb/view.h dyncode.h
-game.o: game.c ../config.h ../libdumbutil/log.h things.h \
-	../libdumb/view.h ../libdumbutil/fixed.h levdyn.h \
-	../libdumb/texture.h ../libdumbwad/wadio.h \
-	../libdumb/prothing.h ../libdumb/prothingstruct.h \
-	../libdumbutil/endiantypes.h levdata.h \
-	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h gettable.h \
-	../libdumb/gettablestruct.h netplay.h ../libdumbutil/confdef.h \
-	input.h net.h netio.h game.h
-gettable.o: gettable.c ../config.h ../libdumbutil/safem.h \
-	../libdumbutil/log.h ../libdumbwad/wadio.h ../libdumb/texture.h \
-	../libdumb/dsound.h ../libdumbutil/fixed.h \
-	../libdumbutil/endiantypes.h ../libdumb/view.h banner.h draw.h \
-	game.h input.h ../libdumbutil/confdef.h levdata.h \
-	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h gettable.h \
-	../libdumb/gettablestruct.h things.h levdyn.h \
-	../libdumb/prothing.h ../libdumb/prothingstruct.h
-ggi_video.o: ggi_video.c ../config.h ../libdumbutil/safem.h \
-	../libdumbutil/log.h input.h ../libdumbutil/confdef.h \
-	../libdumbutil/endiantypes.h video.h
-keymapconf.o: keymapconf.c ../config.h ../libdumbutil/confeng.h \
-	../libdumbutil/confdef.h ../libdumbutil/log.h keymap.h ctlkey.h \
-	input.h ../libdumbutil/endiantypes.h keymapconf.h
-keymapdummy.o: keymapdummy.c keymap.h ctlkey.h input.h \
+game.o: game.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h things.h ../libdumb/view.h \
+	../libdumbutil/fixed.h levdyn.h ../libdumb/texture.h \
+	../libdumbwad/wadio.h ../libdumb/prothing.h \
+	../libdumb/prothingstruct.h ../libdumbutil/endiantypes.h \
+	levdata.h ../libdumbwad/wadstruct.h ../libdumb/levdatanums.h \
+	gettable.h ../libdumb/gettablestruct.h netplay.h \
+	../libdumbutil/confdef.h input.h net.h netio.h render.h game.h
+gettable.o: gettable.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/safem.h ../libdumbutil/log.h \
+	../libdumbwad/wadio.h ../libdumb/texture.h ../libdumb/dsound.h \
+	../libdumbutil/fixed.h ../libdumbutil/endiantypes.h \
+	../libdumb/view.h banner.h draw.h game.h input.h \
+	../libdumbutil/confdef.h levdata.h ../libdumbwad/wadstruct.h \
+	../libdumb/levdatanums.h gettable.h ../libdumb/gettablestruct.h \
+	things.h levdyn.h ../libdumb/prothing.h \
+	../libdumb/prothingstruct.h
+keymapconf.o: keymapconf.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/confeng.h ../libdumbutil/confdef.h \
+	../libdumbutil/log.h keymap.h ctlkey.h input.h \
+	../libdumbutil/endiantypes.h keymapconf.h
+keymapdummy.o: keymapdummy.c ../config.h keymap.h ctlkey.h input.h \
 	../libdumbutil/confdef.h ../libdumbutil/endiantypes.h
-keymap.o: keymap.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/safem.h keymap.h ctlkey.h input.h \
-	../libdumbutil/confdef.h ../libdumbutil/endiantypes.h
+keymap.o: keymap.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h keymap.h ctlkey.h \
+	input.h ../libdumbutil/confdef.h ../libdumbutil/endiantypes.h
 keyname.o: keyname.c ../config.h keyname.h
-levdata.o: levdata.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/safem.h ../libdumbwad/wadio.h levdata.h \
-	../libdumbutil/fixed.h ../libdumbwad/wadstruct.h \
-	../libdumbutil/endiantypes.h ../libdumb/texture.h \
-	../libdumb/levdatanums.h levdyn.h ../libdumb/prothing.h \
-	../libdumb/prothingstruct.h dyncode.h netplay.h \
-	../libdumbutil/confdef.h input.h net.h netio.h
-levdyn.o: levdyn.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/fixed.h ../libdumbutil/timer.h things.h \
-	../libdumb/view.h levdyn.h ../libdumb/texture.h \
+levdata.o: levdata.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h \
+	../libdumbwad/wadio.h levdata.h ../libdumbutil/fixed.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
+	../libdumb/texture.h ../libdumb/levdatanums.h levdyn.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h dyncode.h \
+	netplay.h ../libdumbutil/confdef.h input.h net.h netio.h
+levdyn.o: levdyn.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/fixed.h \
+	../libdumbutil/timer.h levdyn.h ../libdumb/texture.h \
 	../libdumbwad/wadio.h ../libdumb/prothing.h \
 	../libdumb/prothingstruct.h ../libdumbutil/endiantypes.h \
 	levdata.h ../libdumbwad/wadstruct.h ../libdumb/levdatanums.h \
 	levinfo.h ../libdumb/levinfostruct.h updmap.h animtex.h \
 	../libdumb/animtexstruct.h game.h input.h \
-	../libdumbutil/confdef.h
-levinfo.o: levinfo.c ../config.h ../libdumbutil/log.h \
-	../libdumbwad/wadio.h levdyn.h ../libdumbutil/fixed.h \
-	../libdumb/texture.h ../libdumb/prothing.h \
-	../libdumb/prothingstruct.h ../libdumbutil/endiantypes.h \
-	levdata.h ../libdumbwad/wadstruct.h ../libdumb/levdatanums.h \
-	levinfo.h ../libdumb/levinfostruct.h
+	../libdumbutil/confdef.h things.h ../libdumb/view.h
+levinfo.o: levinfo.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbwad/wadio.h levdyn.h \
+	../libdumbutil/fixed.h ../libdumb/texture.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h \
+	../libdumbutil/endiantypes.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h levinfo.h \
+	../libdumb/levinfostruct.h
 le32_fbrerend.o: le32_fbrerend.c ../config.h render.h ../libdumb/view.h \
 	../libdumbutil/fixed.h levdata.h ../libdumbwad/wadstruct.h \
 	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h \
 	../libdumb/texture.h ../libdumb/levdatanums.h fbrerend.h
-linetype.o: linetype.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/safem.h ../libdumbwad/wadio.h linetype.h \
-	../libdumb/linetypestruct.h ../libdumbutil/endiantypes.h \
-	../libdumbutil/fixed.h levdata.h ../libdumbwad/wadstruct.h \
-	../libdumb/texture.h ../libdumb/levdatanums.h
-linux_input.o: linux_input.c ../config.h ../libdumbutil/log.h input.h \
-	../libdumbutil/confdef.h ../libdumbutil/endiantypes.h
-linux_video.o: linux_video.c ../config.h ../libdumbutil/safem.h \
-	../libdumbutil/log.h video.h ../libdumbutil/confdef.h
-netio.o: netio.c ../config.h ../libdumbutil/log.h ../libdumbutil/safem.h \
-	netplay.h ../libdumbutil/confdef.h levdata.h \
-	../libdumbutil/fixed.h ../libdumbwad/wadstruct.h \
-	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h \
-	../libdumb/texture.h ../libdumb/levdatanums.h input.h net.h \
-	netio.h
-netplay.o: netplay.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/safem.h ../libdumbutil/timer.h \
-	../libdumb/dsound.h ../libdumbutil/fixed.h \
-	../libdumbutil/endiantypes.h ../libdumb/view.h game.h input.h \
-	../libdumbutil/confdef.h levdata.h ../libdumbwad/wadstruct.h \
+linetype.o: linetype.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h \
+	../libdumbwad/wadio.h linetype.h ../libdumb/linetypestruct.h \
+	../libdumbutil/endiantypes.h ../libdumbutil/fixed.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumb/texture.h \
+	../libdumb/levdatanums.h
+linux_input.o: linux_input.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h input.h ../libdumbutil/confdef.h \
+	../libdumbutil/endiantypes.h
+linux_video.o: linux_video.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/safem.h ../libdumbutil/log.h video.h \
+	../libdumbutil/confdef.h
+netio.o: netio.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h netplay.h \
+	../libdumbutil/confdef.h levdata.h ../libdumbutil/fixed.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
 	../libdumbwad/wadio.h ../libdumb/texture.h \
-	../libdumb/levdatanums.h things.h levdyn.h \
+	../libdumb/levdatanums.h input.h net.h netio.h
+netplay.o: netplay.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h \
+	../libdumbutil/timer.h ../libdumb/dsound.h \
+	../libdumbutil/fixed.h ../libdumbutil/endiantypes.h \
+	../libdumb/view.h game.h input.h ../libdumbutil/confdef.h \
+	levdata.h ../libdumbwad/wadstruct.h ../libdumbwad/wadio.h \
+	../libdumb/texture.h ../libdumb/levdatanums.h things.h levdyn.h \
 	../libdumb/prothing.h ../libdumb/prothingstruct.h netplay.h \
 	net.h netio.h
+rendcommon.o: rendcommon.c ../config.h render.h ../libdumb/view.h \
+	../libdumbutil/fixed.h levdata.h ../libdumbwad/wadstruct.h \
+	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h \
+	../libdumb/texture.h ../libdumb/levdatanums.h
 render16.o: render16.c ../config.h render.h ../libdumb/view.h \
 	../libdumbutil/fixed.h levdata.h ../libdumbwad/wadstruct.h \
 	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h \
 	../libdumb/texture.h ../libdumb/levdatanums.h renderc.h \
-	../libdumbutil/log.h ../libdumbutil/safem.h levdyn.h \
-	../libdumb/prothing.h ../libdumb/prothingstruct.h linetype.h \
-	../libdumb/linetypestruct.h things.h rendsl.h rendflat.h \
+	../libdumbutil/dumb-nls.h ../libdumbutil/log.h \
+	../libdumbutil/safem.h levdyn.h ../libdumb/prothing.h \
+	../libdumb/prothingstruct.h linetype.h \
+	../libdumb/linetypestruct.h things.h rendsl86.h rendflat.h \
 	rendcore.h
 render32.o: render32.c ../config.h render.h ../libdumb/view.h \
 	../libdumbutil/fixed.h levdata.h ../libdumbwad/wadstruct.h \
 	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h \
 	../libdumb/texture.h ../libdumb/levdatanums.h renderc.h \
-	../libdumbutil/log.h ../libdumbutil/safem.h levdyn.h \
-	../libdumb/prothing.h ../libdumb/prothingstruct.h linetype.h \
-	../libdumb/linetypestruct.h things.h rendsl.h rendflat.h \
+	../libdumbutil/dumb-nls.h ../libdumbutil/log.h \
+	../libdumbutil/safem.h levdyn.h ../libdumb/prothing.h \
+	../libdumb/prothingstruct.h linetype.h \
+	../libdumb/linetypestruct.h things.h rendsl86.h rendflat.h \
 	rendcore.h
 render8.o: render8.c ../config.h render.h ../libdumb/view.h \
 	../libdumbutil/fixed.h levdata.h ../libdumbwad/wadstruct.h \
 	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h \
 	../libdumb/texture.h ../libdumb/levdatanums.h renderc.h \
-	../libdumbutil/log.h ../libdumbutil/safem.h levdyn.h \
-	../libdumb/prothing.h ../libdumb/prothingstruct.h linetype.h \
-	../libdumb/linetypestruct.h things.h rendsl.h rendflat.h \
+	../libdumbutil/dumb-nls.h ../libdumbutil/log.h \
+	../libdumbutil/safem.h levdyn.h ../libdumb/prothing.h \
+	../libdumb/prothingstruct.h linetype.h \
+	../libdumb/linetypestruct.h things.h rendsl86.h rendflat.h \
 	rendcore.h
-termtype.o: termtype.c ../config.h ../libdumbutil/log.h levdyn.h \
-	../libdumbutil/fixed.h ../libdumb/texture.h \
-	../libdumbwad/wadio.h ../libdumb/prothing.h \
-	../libdumb/prothingstruct.h ../libdumbutil/endiantypes.h \
-	levdata.h ../libdumbwad/wadstruct.h ../libdumb/levdatanums.h \
-	linetype.h ../libdumb/linetypestruct.h
-thinghit.o: thinghit.c ../config.h ../libdumbutil/log.h levdyn.h \
-	../libdumbutil/fixed.h ../libdumb/texture.h \
-	../libdumbwad/wadio.h ../libdumb/prothing.h \
-	../libdumb/prothingstruct.h ../libdumbutil/endiantypes.h \
-	levdata.h ../libdumbwad/wadstruct.h ../libdumb/levdatanums.h \
-	things.h ../libdumb/view.h updmap.h game.h input.h \
+termtype.o: termtype.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h levdyn.h ../libdumbutil/fixed.h \
+	../libdumb/texture.h ../libdumbwad/wadio.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h \
+	../libdumbutil/endiantypes.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h linetype.h \
+	../libdumb/linetypestruct.h
+thinghit.o: thinghit.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h levdyn.h ../libdumbutil/fixed.h \
+	../libdumb/texture.h ../libdumbwad/wadio.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h \
+	../libdumbutil/endiantypes.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h things.h \
+	../libdumb/view.h updmap.h game.h input.h \
 	../libdumbutil/confdef.h gettable.h ../libdumb/gettablestruct.h \
 	linetype.h ../libdumb/linetypestruct.h
-thingm.o: thingm.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/fixed.h ../libdumbutil/timer.h \
-	../libdumb/dsound.h ../libdumbutil/endiantypes.h \
-	../libdumb/view.h things.h levdyn.h ../libdumb/texture.h \
-	../libdumbwad/wadio.h ../libdumb/prothing.h \
-	../libdumb/prothingstruct.h levdata.h ../libdumbwad/wadstruct.h \
-	../libdumb/levdatanums.h game.h input.h \
-	../libdumbutil/confdef.h
+thingm.o: thingm.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/fixed.h \
+	../libdumbutil/timer.h ../libdumb/dsound.h \
+	../libdumbutil/endiantypes.h ../libdumb/view.h things.h \
+	levdyn.h ../libdumb/texture.h ../libdumbwad/wadio.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h game.h \
+	input.h ../libdumbutil/confdef.h
 things.o: things.c ../config.h ../libdumbutil/log.h \
 	../libdumbutil/fixed.h things.h ../libdumb/view.h levdyn.h \
 	../libdumb/texture.h ../libdumbwad/wadio.h \
 	../libdumb/prothing.h ../libdumb/prothingstruct.h \
 	../libdumbutil/endiantypes.h levdata.h \
 	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h
-unix_net.o: unix_net.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/safem.h netplay.h ../libdumbutil/confdef.h \
-	levdata.h ../libdumbutil/fixed.h ../libdumbwad/wadstruct.h \
-	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h \
-	../libdumb/texture.h ../libdumb/levdatanums.h input.h net.h \
-	netio.h
-updmap.o: updmap.c ../config.h ../libdumbutil/log.h ../libdumb/dsound.h \
-	../libdumbutil/fixed.h ../libdumbutil/endiantypes.h \
-	../libdumb/view.h levdyn.h ../libdumb/texture.h \
-	../libdumbwad/wadio.h ../libdumb/prothing.h \
-	../libdumb/prothingstruct.h levdata.h ../libdumbwad/wadstruct.h \
-	../libdumb/levdatanums.h animtex.h ../libdumb/animtexstruct.h \
-	updmap.h things.h linetype.h ../libdumb/linetypestruct.h game.h \
-	input.h ../libdumbutil/confdef.h
-updthing.o: updthing.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/timer.h levdata.h ../libdumbutil/fixed.h \
+unix_net.o: unix_net.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h netplay.h \
+	../libdumbutil/confdef.h levdata.h ../libdumbutil/fixed.h \
 	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
 	../libdumbwad/wadio.h ../libdumb/texture.h \
-	../libdumb/levdatanums.h gettable.h ../libdumb/gettablestruct.h \
-	linetype.h ../libdumb/linetypestruct.h things.h \
-	../libdumb/view.h levdyn.h ../libdumb/prothing.h \
-	../libdumb/prothingstruct.h
+	../libdumb/levdatanums.h input.h net.h netio.h
+updmap.o: updmap.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumb/dsound.h ../libdumbutil/fixed.h \
+	../libdumbutil/endiantypes.h ../libdumb/view.h levdyn.h \
+	../libdumb/texture.h ../libdumbwad/wadio.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h animtex.h \
+	../libdumb/animtexstruct.h updmap.h things.h linetype.h \
+	../libdumb/linetypestruct.h game.h input.h \
+	../libdumbutil/confdef.h
+updthing.o: updthing.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/timer.h levdata.h \
+	../libdumbutil/fixed.h ../libdumbwad/wadstruct.h \
+	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h \
+	../libdumb/texture.h ../libdumb/levdatanums.h gettable.h \
+	../libdumb/gettablestruct.h linetype.h \
+	../libdumb/linetypestruct.h things.h ../libdumb/view.h levdyn.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h
 useitem.o: useitem.c ../config.h ../libdumbutil/log.h things.h \
 	../libdumb/view.h ../libdumbutil/fixed.h levdyn.h \
 	../libdumb/texture.h ../libdumbwad/wadio.h \
@@ -551,10 +587,10 @@ useitem.o: useitem.c ../config.h ../libdumbutil/log.h things.h \
 	../libdumbutil/endiantypes.h levdata.h \
 	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h gettable.h \
 	../libdumb/gettablestruct.h
-x11_video.o: x11_video.c ../config.h ../libdumbutil/log.h \
-	../libdumbutil/safem.h input.h ../libdumbutil/confdef.h \
-	../libdumbutil/endiantypes.h video.h keymap.h ctlkey.h \
-	keyname.h
+x11_video.o: x11_video.c ../config.h ../libdumbutil/dumb-nls.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h input.h \
+	../libdumbutil/confdef.h ../libdumbutil/endiantypes.h video.h \
+	keymap.h ctlkey.h keyname.h
 
 info:
 dvi:

@@ -1,3 +1,106 @@
+* Changes in DUMB 0.13.0.
+
+** Internationalization.
+
+DUMB now uses the GNU gettext library to translate its messages to
+your language.
+
+So far, only Finnish translations are available.
+
+** Networking not compatible with previous versions.
+
+And probably not with future ones either.
+
+** Random sound redirections now actually work.
+
+** Linux 8-bit sound clicking cured.
+
+** Wadtool "Copying..." message formats changed.
+
+Previously it only showed what it was copying; now it also shows where
+it is copying that.  It uses the same notation for lumps in wads as
+Make uses for objects in archives: "file.wad(LUMP)".
+
+** No-clipping mode with cheat key 5.
+
+It doesn't work very cleanly but it's useful for debugging.
+
+** Key 6 toggles between renderer debug modes.
+
+** Wadpath isn't searched if the wad filename contains a slash.
+
+Previously, only slashes at the beginning of the filename prevented
+the search.
+
+On MS-DOS, backslashes and colons are treated as slashes.
+
+** Sky rendering changed.
+
+The difference is very visible in Doom's E1M1.
+
+The renderer still doesn't work quite right but it's better now.  I'm
+not hacking it any more right now because I hope to rewrite most of
+it.
+
+** Null sprites allowed.
+
+If neither the protothing nor the phasetable specifies a sprite, DUMB
+will now just skip drawing that thing, instead of complaining.
+
+** All lumps in output WAD files are aligned by 8.
+
+** Texture-changing floors & ceilings reset the sector type to 0.
+
+Patch from Andrew Apted.
+
+** Wall patches are only searched for between P_START and P_END.
+
+However, you can have many P_START...P_END pairs and so it's still
+easy to add patches in PWADs.
+
+Patch from Josh Parsons.
+
+** Configuration changes.
+
+*** The configure script now checks if __attribute__((regparm(3))) works.
+
+The check notices if you use CFLAGS=-p and a buggy mcount() messes up
+the registers.  In that case, it disables register parameters.  Thus
+libdumbutil/fixed.c no longer needs special compilation flags.
+
+*** --disable-16bit-sound and --disable-stereo-sound removed.
+
+The OSS/Linux sound driver now checks these in runtime.
+
+The MME sound driver currently doesn't do that, but you can set the
+parameters with --sound-stereo and --sound-bits 16.  Patches are
+welcome.
+
+** Source code changes.
+
+*** libdumb/mme_sound.c changed a lot and may not compile.
+
+I took the sound mixing routines from it and linux_sound.c, put them
+in sound_mix.c (a new file), added some features and fixed a few bugs.
+The Linux sound driver now uses the new mixer and works fine (except I
+couldn't test 16-bit sound with the SB Pro I have).  I made the
+corresponding changes in mme_sound.c but haven't been able to test
+them.
+
+If you find bugs in the code, please fix them and send the patches to
+me (or to dumb-list if you have subscribed to it).  If you don't know
+C, you can configure --without-sound to disable the driver.
+
+*** Integrated Dosdumb 0.11 sources from Ulf Axelsson.
+
+Unfortunately, we don't yet have a DOS Makefile for DUMB 0.13.
+
+*** Copyright notices added in all source files.
+
+*** docs/dumb-autoins.el has auto-insert definitions for GNU Emacs.
+
+*** All source files reindented with the rules in docs/indent.pro.
+
 * Changes in DUMB 0.12.1.
 
 ** New option: --dumb-wadpath <list> (short form -W)
@@ -97,7 +200,7 @@ you have to do is recompile.
 In GETTABLE, I just used some of the spare fields, so they should be
 compatible.
 
-The structures inherited from Doom are still the same.  
+The structures inherited from Doom are still the same.
 
 I haven't changed the network protocol either.  DUMB 0.13 will
 probably change it too, to be able to support function keys.
@@ -266,7 +369,7 @@ In the future, the configuration file may have some quoting.
 
 ** Unix networking allows HOST:PORT.
 
-This can be used for pseudo-networking on a single machine.  
+This can be used for pseudo-networking on a single machine.
 Read docs/README.netplay.
 
 ** DOOM chainsaw made faster again.
@@ -277,7 +380,7 @@ The keywords NoGlow, NoDestroy, NoStrategy, NoHeatSeek, NoShoot,
 NoExplode, NoMelee, NoSpawn2, NoRSpawn2, NoIdle, NoBFGEffect and
 NoSpawn are now recognized by ptcomp when compiling a PhaseTable.
 Each of them negates the effect of the corresponding positive form.
-There is also Sigs which negates NoSigs.  
+There is also Sigs which negates NoSigs.
 
 These new keywords aren't probably useful outside "Default"
 directives.
@@ -285,7 +388,7 @@ directives.
 * version 0.11.kn.1:
 JoinLines and Crossing in XWad
 
-* version 0.11: 
+* version 0.11:
 Kalle Niemitalo's patches to 0.10a.kn.4 (incl. autoconf support!)
 fixed aalib_video.c for new init_video() args
 fixed x11_video.c to work with NO_XSHM
@@ -303,7 +406,7 @@ merged 0.10a.kn.4 and pre-0.11
 configurable keymap in xdumb
 
 * version pre-0.11 (released as source patches on dumb-list):
-silent mode for XProtoThing 
+silent mode for XProtoThing
 fixed bullets (broken by chainsaw fix in 0.10)
 check that both player AND weapon are ready before shooting (useitem.c)
 x11_video.c: DGA off by default
@@ -377,10 +480,10 @@ changed format of PlayerInput to make it saveable/networkable
 multiplayer support: big changes to gettables.c, game.c, dumb.c
 NOHURTO stops weapons from shooting their owners
 sound and game messages network aware
-animating icons for gettables 
+animating icons for gettables
 fixed a bug in conf.c that caused sigsegvs when configuring list args
 
---- Oops: version 0.09 went out with "0.08" as its version number in dumb.c 
+--- Oops: version 0.09 went out with "0.08" as its version number in dumb.c
 
 * version 0.08:
 bogothings
@@ -411,7 +514,7 @@ fixed a bug in the first release of 0.07 that stopped it compiling w/C++
 * version 0.07:
 rotated floor and ceiling textures 90 degrees to agree with Doom (flrender.c)
 wadwr.c: fixed bug to do with freeing (NULL) on error
-wadwr.c,wadtool.c: added ability to write output to a directory of lumps 
+wadwr.c,wadtool.c: added ability to write output to a directory of lumps
 debug messages in levdata.c to track down alignment woes on non-intel ports
 linetype tweaks from Andrew Apted
 ptcomp now produces ANIMTEX lump
@@ -432,7 +535,7 @@ bullet puffs and smoke float up (doom/missiles.pt)
 fixed missing call to XInstallColormap in x11_video.c
 rewrote sprite lookup code in textures.c to cope with sprite PWADs
 sprite browser for XWad
-LEVINFO mechanism (dumb/levinfo.*, tool/ptcomp.c) 
+LEVINFO mechanism (dumb/levinfo.*, tool/ptcomp.c)
 fixed diameters in doom/furnishings.pt
 implemented texture copying linetypes
 dumb/bangbang.c optimized a bit, smoothed monster TSIG_DETECT checking
@@ -472,7 +575,7 @@ modified Makefile to use makedepend
 peg PT_HANGING objects to ceilings when they move
 MAX_SPARE_THINGS revved to 64
 fixed anomalously glowing barrels
-"Speed" keyword for monster and missile protos (ptcomp.c, prothing.h) 
+"Speed" keyword for monster and missile protos (ptcomp.c, prothing.h)
 tweaks to monster strategy (still not smart enough though)
 some objects get Mass so they go up and down with floors
 tweaks to melee/bullet code for Archvile
@@ -483,7 +586,7 @@ more monster sounds and bend patch from Andrew Apted
 * version 0.05:
 more GGI twiddling for mouse support from Andreas Beck
 "minor fixes" to doom/*.pt from Andrew Apted
-preprocess .pt sources with -lang-c++ for // comments 
+preprocess .pt sources with -lang-c++ for // comments
 memory allocation in tool/ptcomp.c rationalised
 thinghit.c now uses a linetype database (doom/linetypes.pt)
 animtex.c modified to deal with switches
@@ -501,7 +604,7 @@ hacked sources to allow compilation under GNU C++: "DUMB++"
 (DUMB++ only) byteorder fixes
 reduced LOTS in ptcomp.c
 kludge to x11_video.c for 24-bit truecolour modes on Matrox cards
-fixed 32-bit pixel conversion in texture.c 
+fixed 32-bit pixel conversion in texture.c
 more alpha/DUNIX stuff from Marcus Sundberg
 doom player's bloodtype fixed
 modularised XWad a bit
@@ -515,7 +618,7 @@ fixed bug that caused missiles to slide along the ground
 fixed view height to conform with Doom
 fixed sizes of many doom gettables (gettables.pt)
 fixed pillar collision problem
-new hashing algorithm for wadio.c (much faster) 
+new hashing algorithm for wadio.c (much faster)
 
 * version 0.03:
 render/draw.c: draw transparent images over the framebuffer
@@ -534,7 +637,7 @@ GGI stuff from Andreas Beck
 heretic stuff (htic/*)
 fixed trouble with transparency at bpp>1
 teleportation (dumb/thinghit.c, dumb/updmap.c)
-remote doors (dumb/thinghit.c) 
+remote doors (dumb/thinghit.c)
 
 * version 0.02a:
 doom.pt additions from Andrew Apted

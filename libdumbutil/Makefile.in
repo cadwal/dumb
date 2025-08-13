@@ -57,9 +57,12 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+CATALOGS = @CATALOGS@
+CATOBJEXT = @CATOBJEXT@
 CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+DATADIRNAME = @DATADIRNAME@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
 DUMB_CONFIG_SOUND = @DUMB_CONFIG_SOUND@
@@ -71,26 +74,40 @@ DUMB_NETWORK_SOURCES = @DUMB_NETWORK_SOURCES@
 DUMB_RENDER_SOURCES = @DUMB_RENDER_SOURCES@
 DUMB_XKB_LDADD = @DUMB_XKB_LDADD@
 DUMB_XSHM_LDADD = @DUMB_XSHM_LDADD@
+GENCAT = @GENCAT@
+GMOFILES = @GMOFILES@
+GMSGFMT = @GMSGFMT@
+GT_NO = @GT_NO@
+GT_YES = @GT_YES@
+INCLUDE_LOCALE_H = @INCLUDE_LOCALE_H@
+INSTOBJEXT = @INSTOBJEXT@
+INTLDEPS = @INTLDEPS@
+INTLLIBS = @INTLLIBS@
+INTLOBJS = @INTLOBJS@
+l = @l@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
+MKINSTALLDIRS = @MKINSTALLDIRS@
+MSGFMT = @MSGFMT@
 PACKAGE = @PACKAGE@
+POFILES = @POFILES@
+POSUB = @POSUB@
 RANLIB = @RANLIB@
+USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
+USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 
 noinst_LIBRARIES = libdumbutil.a
 
-libdumbutil_a_SOURCES = confargs.c confeng.c conffile.c confhelp.c \
- fixed.c log.c safeio.c safem.c timer.c \
- confargs.h confdef.h confeng.h conffile.h confhelp.h \
- endiantypes.h fixed.h log.h safeio.h safem.h timer.h
+libdumbutil_a_SOURCES = align.h confargs.c confargs.h confdef.h \
+ confeng.c confeng.h conffile.c conffile.h confhelp.c confhelp.h \
+ dumb-nls.h endiantypes.h fixed.c fixed.h log.c log.h safeio.c \
+ safeio.h safem.c safem.h timer.c timer.h
+
+# These sources aren't currently used at all.
+EXTRA_libdumbutil_a_SOURCES = dos_timer.c intset.c intset.h
 
 INCLUDES = -I$(top_srcdir)
-
-# mcount() in Debian GNU/Linux libc 5.4.33-3 seems to have a bug that
-# messes up parameters when using both -pg and
-# __attribute__((regparm)).  So I have a special set of CFLAGS for
-# fixed.c.
-fixed_CFLAGS = -O2
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -119,7 +136,7 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP = --best
-SOURCES = $(libdumbutil_a_SOURCES)
+SOURCES = $(libdumbutil_a_SOURCES) $(EXTRA_libdumbutil_a_SOURCES)
 OBJECTS = $(libdumbutil_a_OBJECTS)
 
 all: Makefile $(LIBRARIES)
@@ -205,13 +222,15 @@ distdir: $(DISTFILES)
 	done
 confargs.o: confargs.c ../config.h confargs.h confdef.h confeng.h \
 	confhelp.h
-confeng.o: confeng.c ../config.h confeng.h confdef.h
-conffile.o: conffile.c ../config.h conffile.h confdef.h confeng.h
-confhelp.o: confhelp.c ../config.h confhelp.h confdef.h confdef.h \
+confeng.o: confeng.c ../config.h dumb-nls.h confeng.h confdef.h
+conffile.o: conffile.c ../config.h dumb-nls.h conffile.h confdef.h \
 	confeng.h
-log.o: log.c ../config.h log.h
-safeio.o: safeio.c ../config.h log.h safeio.h safem.h
-safem.o: safem.c ../config.h log.h safem.h
+confhelp.o: confhelp.c ../config.h dumb-nls.h confhelp.h confdef.h \
+	confeng.h
+fixed.o: fixed.c ../config.h fixed.h
+log.o: log.c ../config.h dumb-nls.h log.h safem.h
+safeio.o: safeio.c ../config.h dumb-nls.h log.h safeio.h safem.h
+safem.o: safem.c ../config.h dumb-nls.h log.h safem.h
 timer.o: timer.c ../config.h timer.h
 
 info:
@@ -274,8 +293,6 @@ install-exec install-data install uninstall all installdirs \
 mostlyclean-generic distclean-generic clean-generic \
 maintainer-clean-generic clean mostlyclean distclean maintainer-clean
 
-fixed.o: fixed.c
-	$(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(fixed_CFLAGS) -c $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

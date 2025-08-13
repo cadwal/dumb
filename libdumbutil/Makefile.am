@@ -2,17 +2,12 @@
 
 noinst_LIBRARIES = libdumbutil.a
 
-libdumbutil_a_SOURCES = confargs.c confeng.c conffile.c confhelp.c \
- fixed.c log.c safeio.c safem.c timer.c \
- confargs.h confdef.h confeng.h conffile.h confhelp.h \
- endiantypes.h fixed.h log.h safeio.h safem.h timer.h
+libdumbutil_a_SOURCES = align.h confargs.c confargs.h confdef.h \
+ confeng.c confeng.h conffile.c conffile.h confhelp.c confhelp.h \
+ dumb-nls.h endiantypes.h fixed.c fixed.h log.c log.h safeio.c \
+ safeio.h safem.c safem.h timer.c timer.h
+
+# These sources aren't currently used at all.
+EXTRA_libdumbutil_a_SOURCES = dos_timer.c intset.c intset.h
 
 INCLUDES = -I$(top_srcdir)
-
-# mcount() in Debian GNU/Linux libc 5.4.33-3 seems to have a bug that
-# messes up parameters when using both -pg and
-# __attribute__((regparm)).  So I have a special set of CFLAGS for
-# fixed.c.
-fixed_CFLAGS = -O2
-fixed.o: fixed.c
-	$(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(fixed_CFLAGS) -c $<
