@@ -11,4 +11,6 @@ ptcomp_SOURCES = ptcomp.c globals.h token.c token.h parm.c parm.h \
 LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
  ../libdumbutil/libdumbutil.a $(INTLLIBS)
 
-INCLUDES = -I$(top_srcdir)
+CC = $(CXX_HACK_CC)
+
+INCLUDES = -I$(top_srcdir) -I../intl

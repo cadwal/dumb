@@ -23,6 +23,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <locale.h>
 
 #include "libdumbutil/safem.h"
 #include "libdumbutil/log.h"
@@ -105,6 +106,7 @@ main(int argc, char **argv)
    wadwr_write(w, sect, sizeof(SectorData) * NSECTS);
    /* make a bogus blockmap */
    wadwr_lump(w, "BLOCKMAP");
+   /* FIXME: assuming sizeof(short)==2 is not portable */
    bm = safe_malloc(bmsize = (2 * (NLINES + 2)));
    bm[0] = 0;
    bm[NLINES + 1] = -1;

@@ -218,7 +218,7 @@ chksize(ChooseInst *ci)
 #define SC_EVMASK ExposureMask|ButtonPressMask|ButtonMotionMask
 
 static void
-choosedhf(XEvent * ev, AppInst * inst, void *info)
+choosedhf(XEvent *ev, AppInst *inst, void *info)
 {
    switch (ev->type) {
    case (ButtonPress):

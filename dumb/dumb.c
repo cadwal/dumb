@@ -28,6 +28,7 @@
 #include <time.h>
 #include <setjmp.h>
 #include <signal.h>
+#include <locale.h>
 
 #include "libdumbutil/dumb-nls.h"
 
@@ -83,14 +84,14 @@ alarm_handler(int i)
 
 ConfItem mainconf[] =
 {
-CONFB("auto-save-cfg", NULL, 0, N_("save configuration after every run")),
-   CONFNS("save-cfg", NULL, 'S', N_("save configuration this time only")),
+   CONFB("auto-save-cfg", NULL, 0, N_("save configuration after every run")),
+   CONFB_NS("save-cfg", NULL, 'S', N_("save configuration this time only")),
    CONFL("wad", NULL, 'w', N_("specify wadfiles to load")),
-CONFL("wadpath", NULL, 'W', N_("directories in which to look for wads")),
- CONFS("doom-wad", NULL, 0, N_("filename of doom.wad"), "doom.wad", 200),
-   CONFS("doom2-wad", NULL, 0, N_("filename of doom2.wad"), "doom2.wad", 200),
-   CONFS("doom4dum-wad", NULL, 0, N_("filename of doom4dum.wad"), "doom4dum.wad", 200),
-   CONFS("map", NULL, 'm', N_("set starting map"), "E1M1", 9),
+   CONFL("wadpath", NULL, 'W', N_("directories in which to look for wads")),
+   CONFS("doom-wad", NULL, 0, N_("filename of doom.wad"), "doom.wad"),
+   CONFS("doom2-wad", NULL, 0, N_("filename of doom2.wad"), "doom2.wad"),
+   CONFS("doom4dum-wad", NULL, 0, N_("filename of doom4dum.wad"), "doom4dum.wad"),
+   CONFS_L("map", NULL, 'm', N_("set starting map"), "E1M1", 9),
    CONFB("quiet", NULL, 'q', N_("don't log to the screen")),
    CONFB("preview", NULL, 0, N_("don't create any objects, just preview the map")),
    CONFI("difficulty", NULL, 0, N_("set difficulty level"), 3),
@@ -98,9 +99,9 @@ CONFL("wadpath", NULL, 'W', N_("directories in which to look for wads")),
    CONFI("width", NULL, 'x', N_("video width"), 320),
    CONFI("height", NULL, 'y', N_("video height"), 200),
    CONFI("depth", NULL, 'd', N_("video depth (in bytes/pixel)"), 1),
-   CONFS("log", NULL, 'l', N_("log to this file"), NULL, 255),
-CONFS("record", NULL, 0, N_("record player actions to file"), NULL, 255),
-   CONFS("play", NULL, 0, N_("playback player actions from file"), NULL, 255),
+   CONFS_L("log", NULL, 'l', N_("log to this file"), NULL, 255),
+   CONFS_L("record", NULL, 0, N_("record player actions to file"), NULL, 255),
+   CONFS_L("play", NULL, 0, N_("playback player actions from file"), NULL, 255),
    CONFB("uncrowd", NULL, 0, N_("hide gettables and banners")),
    CONFB("crosshair", NULL, 0, N_("show a crosshair in the center of the view")),
    CONFI("xmul", NULL, 'X', N_("multiply the pixels x size"), 1),
@@ -108,8 +109,8 @@ CONFS("record", NULL, 0, N_("record player actions to file"), NULL, 255),
    CONFI("xlace", NULL, 0, N_("skip pixels when multiplying x size"), 0),
    CONFI("ylace", NULL, 0, N_("skip pixels when multiplying y size"), 0),
    CONFB("preload", NULL, 0, N_("load textures before game starts")),
-CONFI("view-angle", NULL, 0, N_("angle from forward of player view"), 0),
-CONFI("view-offset", NULL, 0, N_("offset from center of player view"), 0),
+   CONFI("view-angle", NULL, 0, N_("angle from forward of player view"), 0),
+   CONFI("view-offset", NULL, 0, N_("offset from center of player view"), 0),
    CONFL("slave", NULL, 0, N_("network play: slave mode")),
    CONFL("master", NULL, 0, N_("network play: master mode")),
    CONFB("single", NULL, 0, N_("force single player mode")),
@@ -272,6 +273,20 @@ main(int argc, char **argv)
    int load_failed = 1;
    Texture *txh = NULL;
 
+   /* some default places to look for wads
+      this will help make rpm installation easier */
+   static const char *builtin_wadpath[]={
+      "/usr/share/dumb",
+      "/usr/local/share/dumb",
+#ifdef DUMB_CONFIG_DOOM_PATH
+      DUMB_CONFIG_DOOM_PATH,
+#endif
+#ifdef DUMB_CONFIG_HERETIC_PATH
+      DUMB_CONFIG_HERETIC_PATH,
+#endif
+      NULL}; 
+   const char *const *wadpath;
+
    INIT_RENDERER_FN *init_renderer = NULL;
    RENDER_FN *render = NULL;
 
@@ -293,7 +308,8 @@ main(int argc, char **argv)
       return 1;
 
    if (!cnf_quiet) {
-      /*setlinebuf(stdout); *//* if stdout is a socket, we'll want this */
+      /*setlinebuf(stdout); *//* if stdout is a socket, we'll want this 
+                                 (eg. if you're running xdumb with rsh) */
       log_stdout();
    }
    logprintf(LOG_BANNER, 'D', BANNER);
@@ -326,17 +342,21 @@ main(int argc, char **argv)
    vheight = height * ymul;
    bpp = cnf_bpp;
 
+   /* if no wadpath specified, use default */
+   if(cnf_wadpath==NULL) wadpath=builtin_wadpath;
+   else wadpath=cnf_wadpath;
+
    if (cnf_wad) {
       char **s = cnf_wad;
-      init_iwad(*(s++), cnf_wadpath);
+      init_iwad(*(s++), wadpath);
       while (*s)
-	 init_pwad(*(s++), cnf_wadpath);
+	 init_pwad(*(s++), wadpath);
    } else if (*cnf_map == 'E' || *cnf_map == 'e') {
-      init_iwad(cnf_doom_wad, cnf_wadpath);
-      init_pwad(cnf_doom4dum_wad, cnf_wadpath);
+      init_iwad(cnf_doom_wad, wadpath);
+      init_pwad(cnf_doom4dum_wad, wadpath);
    } else {
-      init_iwad(cnf_doom2_wad, cnf_wadpath);
-      init_pwad(cnf_doom4dum_wad, cnf_wadpath);
+      init_iwad(cnf_doom2_wad, wadpath);
+      init_pwad(cnf_doom4dum_wad, wadpath);
    }
    init_wadhashing();
 

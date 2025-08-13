@@ -90,7 +90,7 @@ static struct keymap_default_binding keymap_defaults[] =
    {CTLKEY_STRAFE, "Meta_R"},
    {CTLKEY_STRAFE, "Mode_switch"},
    {CTLKEY_STRAFE, "slash"},
-   {CTLKEY_ACTIVATE, "space"},
+   {CTLKEY_ACTIVATE, "Space"},
    {CTLKEY_SHOOT, "Control_L"},
    {CTLKEY_SHOOT, "Control_R"},
    {CTLKEY_SHOOT, "s"},		/* AA */
@@ -323,9 +323,9 @@ keymap_set_capacity(size_t new_capacity)
 		_("attempt to resize keymap under its length"));
       return;
    }
-   /* FIXME: Is it permissible to give a null pointer to safe_realloc()? */
-   keymap = safe_realloc(keymap,
-			 new_capacity * sizeof(struct keymap_binding));
+   keymap = (struct keymap_binding *)
+      safe_realloc(keymap,
+		   new_capacity * sizeof(struct keymap_binding));
    keymap_capacity = new_capacity;
 }
 

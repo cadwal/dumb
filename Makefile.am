@@ -4,6 +4,19 @@ SUBDIRS = libmissing libdumbutil libdumbwad libdumbworldb \
  libdumbrender libdumb intl \
  dumb xwad ptcomp tool doom htic test po docs
 
+# stuff for making Red Hat style rpms
+RPMRELEASE = 1
+RPMSTEM	= $(PACKAGE)-$(VERSION)-$(RPMRELEASE)
+RPMSPEC = $(RPMSTEM).spec
+RPMIN	= rpmspec.m4 
+EXTRA_DIST = $(RPMSPEC) $(RPMIN)
+MAINTAINERCLEANFILES = $(RPMSPEC)
+
+rpmspec: $(RPMSPEC)
+
+$(RPMSPEC): $(RPMIN)
+	m4 -DRPMSTEM=$(RPMSTEM) -DRPMPACKAGE=$(PACKAGE) -DRPMVERSION=$(VERSION) -DRPMRELEASE=$(RPMRELEASE) $^ >$@
+
 # This is only meant to be run by a maintainer, so it's safe to use
 # utilities that people may not have.
 update-po:
@@ -26,4 +39,4 @@ update-po:
 	fi
 	cd po && $(MAKE) update-po
 
-.PHONY: update-POTFILES.in
+.PHONY: update-po

@@ -60,7 +60,7 @@ add_dh(Window w, DispatchFunc func, AppInst *inst, void *info)
    while (dh->w != None && dh->w != w && dh->chain != NULL)
       dh = dh->chain;
    if (dh->w != None && dh->w != w) {
-      dh->chain = calloc(1, sizeof(DHEnt));
+      dh->chain = (DHEnt *) calloc(1, sizeof(DHEnt));
       dh = dh->chain;
    }
    dh->w = w;

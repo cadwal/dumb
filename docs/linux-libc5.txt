@@ -1,0 +1,6 @@
+On Debian GNU/Linux 2.0, you can compile DUMB for libc5.  You must
+first install altgcc and all appropriate altdev and oldlibs packages.
+Then run configure like this:
+
+CC=i486-linuxlibc1-gcc CXX=i486-linuxlibc1-g++ \
+configure --x-libraries=/usr/lib/libc5-compat

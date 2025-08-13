@@ -29,5 +29,6 @@ ppmtodumb_LDADD = $(LDADD) $(ppm_ldadd)
 
 dark2trans_LDADD = $(LDADD) $(ppm_ldadd)
 
-INCLUDES = -I$(top_srcdir)
+CC = $(CXX_HACK_CC)
 
+INCLUDES = -I$(top_srcdir) -I../intl

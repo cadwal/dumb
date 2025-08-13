@@ -51,8 +51,10 @@
 
 ConfItem net_conf[] =
 {
+   /* FIXME: Port 7777 is already officially registered for "cbt",
+    * whatever that is.  */
    CONFI("udp-port", NULL, 0, N_("UDP port to listen on"), 7777),
-   CONFS("broadcast", NULL, 0, N_("IP broadcast address"), NULL, 32),
+   CONFS("broadcast", NULL, 0, N_("IP broadcast address"), NULL),
    CONFITEM_END
 };
 #define cnf_udp_port (net_conf[0].intval)
@@ -90,7 +92,7 @@ udp_init_station(RemoteStation *rs)
       /* Make a temporary copy of the name without the colon and the port.
        * This could modify rs->name directly but that would be dirty.  */
       size_t barelen = colon - rs->name;
-      bare_name = safe_malloc(barelen + 1);
+      bare_name = (char *) safe_malloc(barelen + 1);
       memcpy(bare_name, rs->name, barelen);
       bare_name[barelen] = '\0';
       /* TODO: getservbyname() */
@@ -127,7 +129,8 @@ udp_init_station(RemoteStation *rs)
 	     (unsigned char) he->h_addr[2],
 	     (unsigned char) he->h_addr[3],
 	     port);
-   sin = rs->addr = safe_malloc(rs->addrlen = sizeof(struct sockaddr_in));
+   sin = (struct sockaddr_in *)
+      rs->addr = safe_malloc(rs->addrlen = sizeof(struct sockaddr_in));
    sin->sin_family = AF_INET;
    sin->sin_port = htons((unsigned short) port);
    memcpy(&sin->sin_addr, he->h_addr, sizeof(struct in_addr));
@@ -154,6 +157,7 @@ udp_recpkt(size_t * len, int *station)
    int r, i;
    *len = 0;
    *station = -1;
+   /* FIXME: Is the signedness right?  What does POSIX say?  */
    r = recvfrom(sock, netbuf, NETBUF_LEN, 0, &sia.sa, &sialen);
    if (r == -1) {
       if (errno == EWOULDBLOCK);	/* nothing to receive */
@@ -170,7 +174,7 @@ udp_recpkt(size_t * len, int *station)
    for (i = 0; i < nstations; i++) {
       if (stations[i].addrlen == sizeof(struct sockaddr_in) &&
 	  stations[i].addr) {
-	 struct sockaddr_in *sin = stations[i].addr;
+	 struct sockaddr_in *sin = (struct sockaddr_in *) stations[i].addr;
 	 if (!memcmp(&sin->sin_addr,
 		     &sia.sin.sin_addr,
 		     sizeof(struct in_addr))) {
@@ -253,7 +257,8 @@ udp_sendpkt(RemoteStation *rs, const void *pkt, size_t len)
    pktcount++;
    bytecount += len;
 #endif
-   if (sendto(sock, pkt, len, 0, rs->addr, rs->addrlen) == -1)
+   if (sendto(sock, pkt, len, 0,
+	      (const struct sockaddr *) rs->addr, rs->addrlen) == -1)
       logprintf(LOG_ERROR, 'N', _("error (%d) in sendto sock=%d"),
 		errno, sock);
 }

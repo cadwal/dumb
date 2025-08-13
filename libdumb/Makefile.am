@@ -10,4 +10,6 @@ libdumb_a_SOURCES = dsound.c prothing.c texture.c view.c \
 
 EXTRA_libdumb_a_SOURCES = dummy_sound.c dos_sound.c linux_sound.c mme_sound.c
 
-INCLUDES = -I$(top_srcdir)
+CC = $(CXX_HACK_CC)
+
+INCLUDES = -I$(top_srcdir) -I../intl

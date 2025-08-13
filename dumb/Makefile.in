@@ -59,9 +59,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 CATALOGS = @CATALOGS@
 CATOBJEXT = @CATOBJEXT@
-CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+CXX_HACK_CC = @CXX_HACK_CC@
 DATADIRNAME = @DATADIRNAME@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
@@ -84,7 +84,6 @@ INSTOBJEXT = @INSTOBJEXT@
 INTLDEPS = @INTLDEPS@
 INTLLIBS = @INTLLIBS@
 INTLOBJS = @INTLOBJS@
-l = @l@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
 MKINSTALLDIRS = @MKINSTALLDIRS@
@@ -96,6 +95,7 @@ RANLIB = @RANLIB@
 USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
+l = @l@
 
 render_objs = $(DUMB_RENDER_SOURCES:.c=.o)
 fbrerend_objs = $(DUMB_FBREREND_SOURCES:.c=.o)
@@ -103,8 +103,7 @@ network_objs = $(DUMB_NETWORK_SOURCES:.c=.o)
 
 # These sources aren't currently used at all but I think it's better to
 # keep them in the distribution.
-# The DOS files would be used if we had configure.bat and a makefile.
-EXTRA_DIST = dos_input.c dos_video.c vgagl_video.c
+EXTRA_DIST = vgagl_video.c
 
 @DUMB_CONFIG_AALIB_TRUE@aalib_bin_programs = aadumb
 @DUMB_CONFIG_AALIB_FALSE@aalib_bin_programs =
@@ -121,8 +120,12 @@ EXTRA_DIST = dos_input.c dos_video.c vgagl_video.c
 @DUMB_CONFIG_X_TRUE@x_bin_programs = xdumb
 @DUMB_CONFIG_X_FALSE@x_bin_programs = 
 
+@DUMB_CONFIG_DOS_TRUE@dos_bin_programs = dosdumb
+@DUMB_CONFIG_DOS_FALSE@dos_bin_programs =
+
 bin_PROGRAMS = $(aalib_bin_programs) $(dummy_bin_programs) \
- $(ggi_bin_programs) $(svgalib_bin_programs) $(x_bin_programs)
+ $(ggi_bin_programs) $(svgalib_bin_programs) $(x_bin_programs) \
+ $(dos_bin_programs)
 
 core_sources = dumb.c animtex.c animtex.h bangbang.c banner.c banner.h \
  bogothing.c bogothing.h dyncode.c dyncode.h game.c game.h gettable.c \
@@ -149,6 +152,7 @@ x_ldadd = $(X_LIBS) $(X_PRE_LIBS) \
  $(DUMB_DGA_LDADD) $(DUMB_XSHM_LDADD) $(DUMB_XKB_LDADD) \
  -lX11 $(X_EXTRA_LIBS)
 aalib_ldadd = -laa -lncurses $(x_ldadd)
+dos_ldadd = -lalleg
 
 aadumb_SOURCES = aalib_video.c aalib_input.c $(keyname_sources) \
  $(core_sources)
@@ -169,6 +173,10 @@ EXTRA_ldumb_SOURCES = $(extra_sources)
 xdumb_SOURCES = x11_video.c $(keyname_sources) \
  $(core_sources)
 EXTRA_xdumb_SOURCES = $(extra_sources)
+
+dosdumb_SOURCES = dos_video.c dos_input.c keymapdummy.c \
+ $(core_sources)
+EXTRA_dosdumb_SOURCES = $(extra_sources)
 
 # Objects and DUMB libraries are in the build tree, so don't use $(srcdir).
 LDADD = $(render_objs) $(fbrerend_objs) $(network_objs) \
@@ -195,7 +203,12 @@ ldumb_DEPENDENCIES = $(dependencies)
 xdumb_LDADD = $(LDADD) $(x_ldadd)
 xdumb_DEPENDENCIES = $(dependencies)
 
-INCLUDES = -I$(top_srcdir)
+dosdumb_LDADD = $(LDADD) $(dos_ldadd)
+dosdumb_DEPENDENCIES = $(dependencies)
+
+CC = $(CXX_HACK_CC)
+
+INCLUDES = -I$(top_srcdir) -I../intl
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -240,6 +253,12 @@ levinfo.o linetype.o netio.o netplay.o termtype.o thinghit.o thingm.o \
 things.o updmap.o updthing.o useitem.o ctlkey.o keymap.o keymapconf.o \
 rendcommon.o draw.o
 xdumb_LDFLAGS = 
+dosdumb_OBJECTS =  dos_video.o dos_input.o keymapdummy.o dumb.o \
+animtex.o bangbang.o banner.o bogothing.o dyncode.o game.o gettable.o \
+levdata.o levdyn.o levinfo.o linetype.o netio.o netplay.o termtype.o \
+thinghit.o thingm.o things.o updmap.o updthing.o useitem.o ctlkey.o \
+keymap.o keymapconf.o rendcommon.o draw.o
+dosdumb_LDFLAGS = 
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LINK = $(CC) $(CFLAGS) $(LDFLAGS) -o $@
@@ -250,13 +269,13 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP = --best
-SOURCES = $(aadumb_SOURCES) $(EXTRA_aadumb_SOURCES) $(dummydumb_SOURCES) $(EXTRA_dummydumb_SOURCES) $(ggidumb_SOURCES) $(EXTRA_ggidumb_SOURCES) $(ldumb_SOURCES) $(EXTRA_ldumb_SOURCES) $(xdumb_SOURCES) $(EXTRA_xdumb_SOURCES)
-OBJECTS = $(aadumb_OBJECTS) $(dummydumb_OBJECTS) $(ggidumb_OBJECTS) $(ldumb_OBJECTS) $(xdumb_OBJECTS)
+SOURCES = $(aadumb_SOURCES) $(EXTRA_aadumb_SOURCES) $(dummydumb_SOURCES) $(EXTRA_dummydumb_SOURCES) $(ggidumb_SOURCES) $(EXTRA_ggidumb_SOURCES) $(ldumb_SOURCES) $(EXTRA_ldumb_SOURCES) $(xdumb_SOURCES) $(EXTRA_xdumb_SOURCES) $(dosdumb_SOURCES) $(EXTRA_dosdumb_SOURCES)
+OBJECTS = $(aadumb_OBJECTS) $(dummydumb_OBJECTS) $(ggidumb_OBJECTS) $(ldumb_OBJECTS) $(xdumb_OBJECTS) $(dosdumb_OBJECTS)
 
 all: Makefile $(PROGRAMS)
 
 .SUFFIXES:
-.SUFFIXES: .c .o .s .S
+.SUFFIXES: .S .c .o .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps dumb/Makefile
 
@@ -328,6 +347,10 @@ ldumb: $(ldumb_OBJECTS) $(ldumb_DEPENDENCIES)
 xdumb: $(xdumb_OBJECTS) $(xdumb_DEPENDENCIES)
 	@rm -f xdumb
 	$(LINK) $(xdumb_LDFLAGS) $(xdumb_OBJECTS) $(xdumb_LDADD) $(LIBS)
+
+dosdumb: $(dosdumb_OBJECTS) $(dosdumb_DEPENDENCIES)
+	@rm -f dosdumb
+	$(LINK) $(dosdumb_LDFLAGS) $(dosdumb_OBJECTS) $(dosdumb_LDADD) $(LIBS)
 
 tags: TAGS
 

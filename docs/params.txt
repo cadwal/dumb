@@ -1,0 +1,39 @@
+This file tries to shed some light on the mysterious runtime
+parameters.  When the menu code gets written, these explanations
+should be made accessible with F1 or something.
+
+
+--player-timer: integer (5)
+
+DUMB tries to adapt to the speed of your machine, but that may not
+work perfectly.
+
+If the game seems to be too slow, try increasing this value.  If it's
+too fast, do the opposite.
+
+Negative values are not recommended.
+
+--player-forward: integer (18)
+
+Affects how fast you can move forward and backward.  Greater numbers
+mean you move slower.
+
+--player-strafe: integer (20)
+
+Affects how fast you can step left and right.  Greater numbers mean
+you move slower.
+
+--player-turn: integer (100)
+
+Affects how fast you can turn left and right.  Greater numbers mean
+you turn slower.
+
+--player-jump: integer (20)
+
+Should affect how high you can jump.  Greater numbers should mean your
+jump is weaker.
+
+However, the current version (0.13.1) lets you jump even when you're
+in air already, so you can always keep the key pressed and jump as
+high as you want.  This number then affects only how fast you rise in
+air.

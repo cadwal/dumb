@@ -120,4 +120,7 @@ if the resulting identifier would otherwise begin with a digit."
 // End:
 " '(setq c-basic-offset 3)))
 
+;;; This formfeed stops Emacs from reading the Local Variables section above.
+
+
 ;;; dumb-autoins.el ends here

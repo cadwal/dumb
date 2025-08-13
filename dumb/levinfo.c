@@ -48,7 +48,7 @@ init_levinfo(void)
       return;
    }
    ninfo = get_lump_len(info_ln) / sizeof(LevInfo);
-   info = load_lump(info_ln);
+   info = (const LevInfo *) load_lump(info_ln);
    logprintf(LOG_INFO, 'M', _("Init %d levels"), ninfo);
 }
 

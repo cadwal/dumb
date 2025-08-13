@@ -62,6 +62,7 @@ CATOBJEXT = @CATOBJEXT@
 CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+CXX_HACK_CC = @CXX_HACK_CC@
 DATADIRNAME = @DATADIRNAME@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
@@ -84,7 +85,6 @@ INSTOBJEXT = @INSTOBJEXT@
 INTLDEPS = @INTLDEPS@
 INTLLIBS = @INTLLIBS@
 INTLOBJS = @INTLOBJS@
-l = @l@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
 MKINSTALLDIRS = @MKINSTALLDIRS@
@@ -96,12 +96,15 @@ RANLIB = @RANLIB@
 USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
+l = @l@
 
 noinst_LIBRARIES = libmissing.a
 
 # getopt.c and getopt1.c contain logic to elide code if using the
 # GNU C library.
 libmissing_a_SOURCES = getopt.c getopt.h getopt1.c
+
+INCLUDES = -I../intl
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -135,7 +138,7 @@ OBJECTS = $(libmissing_a_OBJECTS)
 all: Makefile $(LIBRARIES)
 
 .SUFFIXES:
-.SUFFIXES: .c .o .s .S
+.SUFFIXES: .S .c .o .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps libmissing/Makefile
 
@@ -213,7 +216,7 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
-getopt.o: getopt.c ../config.h getopt.h
+getopt.o: getopt.c ../config.h
 getopt1.o: getopt1.c ../config.h getopt.h
 
 info:

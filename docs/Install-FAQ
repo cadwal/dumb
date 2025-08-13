@@ -6,6 +6,8 @@ Could you make the Makefile strip them?
 Q2. Why does it use -I. -I. -I.. -I.. -I../libmissing -I../intl
 when compiling?
 
+Q3. Ppmtodumb dumps core.
+
 * Q1. DUMB compiles and installs fine but the executables are huge.
 Could you make the Makefile strip them?
 
@@ -14,7 +16,7 @@ Use the install-strip target.
 $ make install-strip
 
 The GNU Coding Standards say that executables shouldn't be stripped by
-default, and Automake makes it easy for me to follow that rule.
+default, and Automake makes it easy to follow that rule.
 
 * Q2. Why does it use -I. -I. -I.. -I.. -I../libmissing -I../intl
 when compiling?
@@ -33,3 +35,8 @@ The second -I.. refers to the top source directory so that #include
 lack.
 
 -I../intl is for libintl.h in GNU gettext.
+
+* Q3. Ppmtodumb dumps core.
+
+A bad pbmplus installation can cause this.  Are you sure the headers
+and the libraries are from the same version?

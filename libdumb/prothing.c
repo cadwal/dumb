@@ -69,8 +69,8 @@ get_sprite_table(const ProtoThing *pr)
 {
    const int idx = (pr - protos);
    if (sprites[idx] == NULL)
-      sprites[idx] = safe_calloc(8 * count_phases(pr->phase_id),
-				 sizeof(Texture *));
+      sprites[idx] = (Texture **) safe_calloc(8 * count_phases(pr->phase_id),
+					      sizeof(Texture *));
    return sprites[idx];
 }
 
@@ -212,7 +212,7 @@ init_prothings(void)
    /* load phases from wad */
    if (LUMPNUM_OK(phase_ln)) {
       nphases = get_lump_len(phase_ln) / sizeof(ThingPhase);
-      phases = load_lump(phase_ln);
+      phases = (const ThingPhase *) load_lump(phase_ln);
    }
 #ifdef BUILT_IN_XLUMPS
    /* load phases from internal table */
@@ -224,15 +224,17 @@ init_prothings(void)
    }
 #endif /*BUILT_IN_XLUMPS */
    /* build phase index */
-   phaseidx = safe_malloc(nphases * sizeof(ThingPhase *));
+   phaseidx = (const ThingPhase **)
+      safe_malloc(nphases * sizeof(const ThingPhase *));
    for (nphaseidx = i = 0; i < nphases; i++)
       if (phases[i].id > 0)
 	 phaseidx[nphaseidx++] = phases + i;
-   phaseidx = safe_realloc(phaseidx, nphaseidx * sizeof(ThingPhase *));
+   phaseidx = (const ThingPhase **)
+      safe_realloc(phaseidx, nphaseidx * sizeof(const ThingPhase *));
    /* load protos from wad */
    if (LUMPNUM_OK(proto_ln)) {
       nprotos = get_lump_len(proto_ln) / sizeof(ProtoThing);
-      protos = load_lump(proto_ln);
+      protos = (const ProtoThing *) load_lump(proto_ln);
    }
 #ifdef BUILT_IN_XLUMPS
    /* load protos from internal table */
@@ -248,7 +250,7 @@ init_prothings(void)
       }
    }
 #endif /*BUILT_IN_XLUMPS */
-   sprites = safe_calloc(nprotos, sizeof(Texture **));
+   sprites = (Texture ***) safe_calloc(nprotos, sizeof(Texture **));
    /*proto2phase=safe_calloc(nprotos,sizeof(ThingPhase *));
       for(i=0;i<nprotos;i++)
       proto2phase[i]=find_first_thingphase(protos[i].phase_id); */

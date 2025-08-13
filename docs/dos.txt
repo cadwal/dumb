@@ -1,0 +1,5 @@
+The MS-DOS support was written by Ulf Axelsson
+<cadwal@hem2.passagen.se>.  He has a homepage at
+http://hem2.passagen.se/cadwal.
+
+If you have problems, he may be able to help.

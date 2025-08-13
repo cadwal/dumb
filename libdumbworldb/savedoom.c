@@ -91,8 +91,9 @@ save_doom_vertexes(struct savedoom_ctx *ctx)
    count = ctx->level->vertex_alloc.inited;
    /* dcount = how many will be saved */
    dcount = count - ctx->level->vertex_alloc.free;
-   ctx->vertexmap = safe_malloc(count * sizeof(int));
-   dvertexes = safe_malloc(dcount * sizeof(struct doom_vertex));
+   ctx->vertexmap = (int *) safe_malloc(count * sizeof(int));
+   dvertexes = (struct doom_vertex *)
+      safe_malloc(dcount * sizeof(struct doom_vertex));
    /* Clear the map.  */
    for (ind = 0; ind < count; ind++)
       ctx->vertexmap[ind] = -1;
@@ -123,8 +124,9 @@ save_doom_sectors(struct savedoom_ctx *ctx)
    count = ctx->level->sector_alloc.inited;
    /* dcount = how many will be saved */
    dcount = count - ctx->level->sector_alloc.free;
-   ctx->sectormap = safe_malloc(count * sizeof(int));
-   dsectors = safe_malloc(dcount * sizeof(struct doom_sector));
+   ctx->sectormap = (int *) safe_malloc(count * sizeof(int));
+   dsectors = (struct doom_sector *)
+      safe_malloc(dcount * sizeof(struct doom_sector));
    /* Clear the map.  */
    for (ind = 0; ind < count; ind++)
       ctx->sectormap[ind] = -1;
@@ -162,8 +164,9 @@ save_doom_sidedefs(struct savedoom_ctx *ctx)
    count = ctx->level->side_alloc.inited;
    /* dcount = how many will be saved */
    dcount = count - ctx->level->side_alloc.free;
-   ctx->sidemap = safe_malloc(count * sizeof(int));
-   dsidedefs = safe_malloc(dcount * sizeof(struct doom_sidedef));
+   ctx->sidemap = (int *) safe_malloc(count * sizeof(int));
+   dsidedefs = (struct doom_sidedef *)
+      safe_malloc(dcount * sizeof(struct doom_sidedef));
    /* Clear the map.  */
    for (ind = 0; ind < count; ind++)
       ctx->sidemap[ind] = -1;
@@ -218,7 +221,8 @@ save_doom_linedefs(struct savedoom_ctx *ctx)
 #ifdef CREATE_LINEMAP
    ctx->linemap = safe_malloc(count * sizeof(int));
 #endif
-   dlinedefs = safe_malloc(dcount * sizeof(struct doom_linedef));
+   dlinedefs = (struct doom_linedef *)
+      safe_malloc(dcount * sizeof(struct doom_linedef));
 #ifdef CREATE_LINEMAP
    /* Clear the map.  */
    for (ind = 0; ind < count; ind++)

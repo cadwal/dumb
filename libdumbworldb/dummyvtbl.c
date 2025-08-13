@@ -30,8 +30,11 @@ const struct dwdb_thing_vtbl dwdb_dummy_thing_vtbl =
    /* Once again, a GCC extension is used
     * (although I believe this'll be in the next standard too)
     */
+#if 0
+   /* this breaks C++ compilation, at least with G++ 2.7.2.3 -- josh */
    .init = dummy_init_fini,
    .fini = dummy_init_fini
+#endif
 };
 
 static void

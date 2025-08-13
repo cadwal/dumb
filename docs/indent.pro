@@ -149,12 +149,6 @@
 -TWallHitType
 -TWall_start
 -TWall_start_list
--TXButtonEvent
--TXCrossingEvent
--TXEvent
--TXExposeEvent
--TXKeyEvent
--TXMotionEvent
 -TXPInstance
 -TXProtoInstance
 -TXWadInstance
@@ -162,3 +156,13 @@
 -Tfixed
 -Tkeymap_keycode
 -Tnls_uint32
+
+-TXButtonEvent
+-TXCrossingEvent
+-TXErrorEvent
+-TXEvent
+-TXExposeEvent
+-TXKeyEvent
+-TXMotionEvent
+
+-Tcaddr_t

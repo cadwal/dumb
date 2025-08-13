@@ -62,6 +62,7 @@ CATOBJEXT = @CATOBJEXT@
 CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+CXX_HACK_CC = @CXX_HACK_CC@
 DATADIRNAME = @DATADIRNAME@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
@@ -84,7 +85,6 @@ INSTOBJEXT = @INSTOBJEXT@
 INTLDEPS = @INTLDEPS@
 INTLLIBS = @INTLLIBS@
 INTLOBJS = @INTLOBJS@
-l = @l@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
 MKINSTALLDIRS = @MKINSTALLDIRS@
@@ -96,11 +96,13 @@ RANLIB = @RANLIB@
 USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
+l = @l@
 
 EXTRA_DIST = FAQ README.fixbm README.netplay README.ptcomp \
- dumb-0.13.0.lsm dumblogo.ppm xrosella.xpm keymap.txt log-classes \
- Install-FAQ configure.txt contrib.html source.html template.c \
- dumb-autoins.el indent.pro
+ dumb-$(VERSION).lsm dumblogo.ppm xrosella.xpm keymap.txt \
+ log-classes Install-FAQ configure.txt contrib.html source.html \
+ template.c dumb-autoins.el indent.pro dos.txt params.txt \
+ linux-libc5.txt
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -201,6 +203,13 @@ maintainer-clean
 # template.c       Template for new C source files
 # dumb-autoins.el  Like template.c but with Emacs Lisp automation
 # indent.pro       Instructions for GNU indent (not automatically read)
+# linux-libc5.txt  Compiling for Linux libc.so.5
+#
+# Files which should be installed in some cases:
+#
+# File             When it should be installed
+# ----             ---------------------------
+# dos.txt          If the DOS version is being built
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

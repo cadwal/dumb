@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>		/* from ../libmissing/ */
+#include <locale.h>
 
 #include "libdumbutil/dumb-nls.h"
 
@@ -271,7 +272,8 @@ parse_int(const char *s, const char *errmsg)
 static struct op_node *
 queue_op(enum operation op)
 {
-   struct op_node *node = safe_malloc(sizeof(struct op_node));
+   struct op_node *node = (struct op_node *)
+      safe_malloc(sizeof(struct op_node));
    node->operation = op;
    node->next = NULL;
    if (!first_op)

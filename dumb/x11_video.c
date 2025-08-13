@@ -50,8 +50,11 @@
 #endif
 
 #ifdef DUMB_CONFIG_XKB
+/* explicit is a reserved word in C++ */
+#define explicit xkb_explicit
 #include <X11/XKBlib.h>
-#endif
+#undef explicit
+#endif /* DUMB_CONFIG_XKB */
 
 #include "libdumbutil/dumb-nls.h"
 
@@ -62,9 +65,14 @@
 #include "keymap.h"
 #include "keyname.h"
 
-#ifndef __cplusplus
-#define c_class class
-#endif
+#ifdef __cplusplus
+# define BEGIN_EXTERN_C extern "C" {
+# define END_EXTERN_C   }
+#else /* !defined(__cplusplus) */
+# define c_class        class
+# define BEGIN_EXTERN_C
+# define END_EXTERN_C
+#endif /* !defined(__cplusplus) */
 
 ConfItem video_conf[] =
 {
@@ -74,14 +82,18 @@ ConfItem video_conf[] =
    CONFB("use-dga", NULL, 0, N_("<disabled at compile time>")),
 #endif
 #ifdef DUMB_CONFIG_XSHM
-   CONFNB("use-xshm", NULL, 0, N_("allow use of the MIT shared memory extension")),
+   CONFB_1("use-xshm", NULL, 0, N_("allow use of the MIT shared memory extension")),
 #else
-   CONFNB("use-xshm", NULL, 0, N_("<disabled at compile time>")),
+   CONFB_1("use-xshm", NULL, 0, N_("<disabled at compile time>")),
 #endif
+   CONFB("sync-io", NULL, 0, N_("synchronous I/O (for debugging)")),
+   CONFB("abort-on-error", NULL, 0, N_("dump core on X errors (for debugging)")),
    CONFITEM_END
 };
-#define use_dga (video_conf[0].intval)
-#define use_shm (video_conf[1].intval)
+#define use_dga        (video_conf[0].intval)
+#define use_shm        (video_conf[1].intval)
+#define sync_io        (video_conf[2].intval)
+#define abort_on_error (video_conf[3].intval)
 
 enum grab_choice_enum {
    GRAB_NEVER,
@@ -100,12 +112,12 @@ static const ConfEnum grab_choices[] =
 ConfItem input_conf[] =
 {
 #ifdef DUMB_CONFIG_XKB
-   CONFNB("use-xkb", NULL, 0, N_("allow use of the XKeyboard extension")),
+   CONFB_1("use-xkb", NULL, 0, N_("allow use of the XKeyboard extension")),
 #else
-   CONFNB("use-xkb", NULL, 0, N_("<disabled at compile time>")),
+   CONFB_1("use-xkb", NULL, 0, N_("<disabled at compile time>")),
 #endif
-CONFE("grab-kbd", NULL, 0, N_("grab the keyboard focus while DUMB runs"),
-      GRAB_ALWAYS, grab_choices),
+   CONFE("grab-kbd", NULL, 0, N_("grab the keyboard focus while DUMB runs"),
+	 GRAB_ALWAYS, grab_choices),
    CONFITEM_END
 };
 #define use_xkb (input_conf[0].intval)
@@ -121,6 +133,7 @@ static Colormap cmap = None;
 static char *fb = NULL, *fballoc = NULL;
 static int width, height, pagelen, memlen, npages, real_width;
 static XImage *image = NULL;
+static int (*untrapped_errh)(Display *, XErrorEvent *);
 
 /* this is used for DGA double buffering */
 #ifdef DUMB_CONFIG_XF86DGA
@@ -134,33 +147,40 @@ static int need_cmapinst = 0, need_map = 1;
 #ifdef DUMB_CONFIG_XKB
 static void init_xkb(void);
 #endif
-static void handle_keyevent(XKeyEvent * ev);
-static void handle_crossingevent(XCrossingEvent * ev);
+static void handle_keyevent(XKeyEvent *ev);
+static void handle_crossingevent(XCrossingEvent *ev);
 static void grab_keys(int pointer_mode, int keyboard_mode);
 static void ungrab_keys(void);
+BEGIN_EXTERN_C
+static int error_abort(Display *disp, XErrorEvent *ev);
+END_EXTERN_C
 
 #ifdef DUMB_CONFIG_XSHM
 static int xerr;
 
+/* Calling conventions *might* differ between C and C++ on some machine.
+ * This function will be called by C code, so use the C conventions.  */
+BEGIN_EXTERN_C
 static int
-errh(Display * d, XErrorEvent * ev)
+errh(Display *d, XErrorEvent *ev)
 {
    xerr++;
    return 0;
 }
+END_EXTERN_C
 
 static void
 trap_errs(void)
 {
    xerr = 0;
-   XSetErrorHandler(errh);
+   untrapped_errh = XSetErrorHandler(errh);
 }
 
 static int
 untrap_errs(void)
 {
    XSync(dpy, 0);
-   XSetErrorHandler(NULL);
+   XSetErrorHandler(untrapped_errh);
    return xerr;
 }
 
@@ -193,6 +213,11 @@ init_video(int *_width, int *_height, int *_bpp, int *_real_width)
    cmap = None;
    npages = 0;
    grabbed = 0;
+
+   if (sync_io)
+      XSynchronize(dpy, True);
+   if (abort_on_error)
+      XSetErrorHandler(error_abort);
 
 #ifdef DUMB_CONFIG_XF86DGA
    /* init DGA */
@@ -237,7 +262,8 @@ init_video(int *_width, int *_height, int *_bpp, int *_real_width)
       use_dga = 0;
       *_bpp = DefaultDepth(dpy, scrn) / 8;
       if (*_bpp == 3)
-	 *_bpp = 4;		/* for Matrox */
+	 *_bpp = 4;		/* for Matrox/XF86, seems to report depth=24
+				   even in non-packed-pixel mode? */
       height = *_height;
       width = *_width;
       *_real_width = real_width = width;
@@ -317,9 +343,13 @@ init_video(int *_width, int *_height, int *_bpp, int *_real_width)
 
       /* no xshm */
       if (use_shm == 0) {
-	 fb = fballoc = safe_malloc(pagelen);
-	 image = XCreateImage(dpy, visual, *_bpp * 8, ZPixmap, 0, fb,
-			      width, height, 8, 0);
+	 fb = fballoc = (char *) safe_malloc(pagelen);
+	 if(*_bpp==4)
+	    image = XCreateImage(dpy, visual, 24, ZPixmap, 0, fb,
+				 width, height, 8, 0);
+	 else 
+	    image = XCreateImage(dpy, visual, *_bpp * 8, ZPixmap, 0, fb,
+				 width, height, 8, 0);
 	 if (image == NULL)
 	    logfatal('V', _("XCreateImage failed"));
 	 logprintf(LOG_INFO, 'V', _("using Xlib Images (slow)"));
@@ -650,6 +680,21 @@ ungrab_keys(void)
    XUngrabKeyboard(dpy, CurrentTime);
    grabbed = 0;
 }
+
+BEGIN_EXTERN_C
+static int
+error_abort(Display *disp, XErrorEvent *ev)
+{
+   char buffer[BUFSIZ];
+   XGetErrorText(disp, ev->error_code, buffer, sizeof(buffer));
+   /* This should be LOG_FATAL, but that would bail out without
+    * getting to the abort().  */
+   logprintf(LOG_ERROR, 'V', "%s", buffer);
+   /* FIXME: should this do atexit(abort) and call the original function? */
+   abort();
+   return 0;			/* yeah, sure */
+}
+END_EXTERN_C
 
 const char *
 keymap_keycode_to_keyname(keymap_keycode keycode)

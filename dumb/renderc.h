@@ -291,14 +291,16 @@ init_renderer(int v_width, int v_height, int real_width, int real_height)
       reset_renderer();
 
    /* Allocate space for event lists. */
-   start_events = safe_calloc(sizeof(Wall_start_list), (v_width + 1));
-   obj_start_events = safe_calloc(sizeof(Object_start_list), (v_width + 1));
+   start_events = (Wall_start_list *)
+      safe_calloc(sizeof(Wall_start_list), v_width + 1);
+   obj_start_events = (Object_start_list *)
+      safe_calloc(sizeof(Object_start_list), v_width + 1);
 
    /*
    ** Precalculate the offsets of rows in the frame buffer--this is
    ** another 'avoid multiplication' optimization.
    */
-   fb_rows = safe_calloc(sizeof(int), v_height);
+   fb_rows = (int *) safe_calloc(sizeof(int), v_height);
    for (i = 0; i < v_height; i++)
       fb_rows[i] = i * real_width;
 

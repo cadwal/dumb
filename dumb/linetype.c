@@ -61,9 +61,10 @@ init_linetypes(void)
    lt = NULL;
    nlts = 0;
    if (LUMPNUM_OK(linetype_ln)) {
-      lt = load_lump(linetype_ln);
+      lt = (const LineType *) load_lump(linetype_ln);
       nlts = get_lump_len(linetype_ln) / sizeof(LineType);
-      ltofs = safe_calloc(sizeof(struct LineTypeOffsets), nlts);
+      ltofs = (struct LineTypeOffsets *)
+	 safe_calloc(sizeof(struct LineTypeOffsets), nlts);
       init_ltscroll();
       logprintf(LOG_INFO, 'M',
 		_("Loaded %d linetypes, of which %d scrolling"),
@@ -75,7 +76,7 @@ init_linetypes(void)
    st = NULL;
    nsts = 0;
    if (LUMPNUM_OK(sectortype_ln)) {
-      st = load_lump(sectortype_ln);
+      st = (const SectorType *) load_lump(sectortype_ln);
       nsts = get_lump_len(sectortype_ln) / sizeof(SectorType);
       logprintf(LOG_INFO, 'M', _("Loaded %d sectortypes"), nsts);
    } else
@@ -94,7 +95,8 @@ init_ltscroll(void)
 	 nscrollers++;
    }
    /* then allocate a table and put them in it */
-   scrollers = safe_malloc(nscrollers * sizeof(*scrollers));
+   scrollers = (struct LineTypeScroller *)
+      safe_malloc(nscrollers * sizeof(struct LineTypeScroller));
    for (i = 0, p = scrollers; i < nlts; i++) {
       if (lt[i].scrolldx || lt[i].scrolldy) {
 	 p->ltind = i;

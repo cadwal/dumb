@@ -62,6 +62,7 @@ CATOBJEXT = @CATOBJEXT@
 CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+CXX_HACK_CC = @CXX_HACK_CC@
 DATADIRNAME = @DATADIRNAME@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
@@ -84,7 +85,6 @@ INSTOBJEXT = @INSTOBJEXT@
 INTLDEPS = @INTLDEPS@
 INTLLIBS = @INTLLIBS@
 INTLOBJS = @INTLOBJS@
-l = @l@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
 MKINSTALLDIRS = @MKINSTALLDIRS@
@@ -96,18 +96,27 @@ RANLIB = @RANLIB@
 USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
+l = @l@
 
 SUBDIRS = libmissing libdumbutil libdumbwad libdumbworldb \
  libdumbrender libdumb intl \
  dumb xwad ptcomp tool doom htic test po docs
+
+# stuff for making Red Hat style rpms
+RPMRELEASE = 1
+RPMSTEM	= $(PACKAGE)-$(VERSION)-$(RPMRELEASE)
+RPMSPEC = $(RPMSTEM).spec
+RPMIN	= rpmspec.m4 
+EXTRA_DIST = $(RPMSPEC) $(RPMIN)
+MAINTAINERCLEANFILES = $(RPMSPEC)
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = 
-DIST_COMMON =  README ABOUT-NLS acconfig.h acinclude.m4 aclocal.m4 \
-AUTHORS ChangeLog config.h.in configure configure.in COPYING INSTALL \
-install-sh Makefile.am Makefile.in missing mkinstalldirs NEWS \
-stamp-h.in TODO
+DIST_COMMON =  README ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL \
+Makefile.am Makefile.in NEWS TODO acconfig.h acinclude.m4 aclocal.m4 \
+config.h.in configure configure.in install-sh missing mkinstalldirs \
+stamp-h.in
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
@@ -342,6 +351,11 @@ clean-generic maintainer-clean-generic clean mostlyclean distclean \
 maintainer-clean
 
 
+rpmspec: $(RPMSPEC)
+
+$(RPMSPEC): $(RPMIN)
+	m4 -DRPMSTEM=$(RPMSTEM) -DRPMPACKAGE=$(PACKAGE) -DRPMVERSION=$(VERSION) -DRPMRELEASE=$(RPMRELEASE) $^ >$@
+
 # This is only meant to be run by a maintainer, so it's safe to use
 # utilities that people may not have.
 update-po:
@@ -364,7 +378,7 @@ update-po:
 	fi
 	cd po && $(MAKE) update-po
 
-.PHONY: update-POTFILES.in
+.PHONY: update-po
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

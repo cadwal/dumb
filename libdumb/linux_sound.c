@@ -47,7 +47,7 @@
 
 ConfItem sound_conf[] =
 {
-   CONFS("device", NULL, 0, N_("Sound device file to open"), "/dev/dsp", 100),
+   CONFS("device", NULL, 0, N_("Sound device file to open"), "/dev/dsp"),
    CONFI("bits", NULL, 0, N_("Maximum allowed bits per channel"), 16),
    CONFB("mono", NULL, 0, N_("Force monaural sound")),
    CONFITEM_END
@@ -257,6 +257,8 @@ void
 play_sound(const unsigned char *buf, int count,
 	   SoundBalance bal, int myspeed)
 {
+   if (fd < 0)
+      return;
    sndmix_play_sound(buf, count, bal, myspeed + 300 * bal.bend);
 }
 

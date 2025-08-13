@@ -163,8 +163,8 @@ recalc_input(void)
    input.forward = y;
 #else
    /* PlayerInput has its own scaling */
-   input.sideways = FIXED_TO_FLOAT(x) * UNIT_SPEED;
-   input.forward = FIXED_TO_FLOAT(y) * UNIT_SPEED;
+   input.sideways = (int) (FIXED_TO_FLOAT(x) * UNIT_SPEED);
+   input.forward = (int) (FIXED_TO_FLOAT(y) * UNIT_SPEED);
 #endif
    for (i = 0; i <= 9; i++)
       input.select[i] = keystate[CTLKEY_WEAPON_0 + i];

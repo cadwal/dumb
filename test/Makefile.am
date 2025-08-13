@@ -15,6 +15,8 @@ ldltest_LDADD = ../libdumb/libdumb.a ../libdumbworldb/libdumbworldb.a \
 # libintl.h is generated in the build tree.
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/libmissing -I../intl
 
+CC = $(CXX_HACK_CC)
+
 # fixed_bm should not be optimized because that's cheating.
 fixed_bm_CFLAGS = 
 fixed_bm.o: fixed_bm.c

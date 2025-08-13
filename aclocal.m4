@@ -54,7 +54,7 @@ dnl DUMB_SYS_SHMAT_RMID
 dnl
 dnl Cache variable: dumb_cv_sys_shmat_rmid
 dnl
-dnl I copied this test from the gtk+-0.99.4/configure.in and made it a macro.
+dnl I copied this test from gtk+-0.99.4/configure.in and made it a macro.
 
 AC_DEFUN(DUMB_SYS_SHMAT_RMID,
 [AC_CACHE_CHECK(whether shmctl IPC_RMID allows subsequent attaches,

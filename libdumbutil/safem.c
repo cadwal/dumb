@@ -147,7 +147,7 @@ safe_calloc(size_t l, size_t c)
 char *
 safe_strdup(const char *s)
 {
-   char *p = safe_malloc(strlen(s) + 1);
+   char *p = (char *) safe_malloc(strlen(s) + 1);
    strcpy(p, s);
    return p;
 }

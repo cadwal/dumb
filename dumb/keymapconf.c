@@ -125,7 +125,8 @@ keymapconf_make_list(ConfItem *ci, enum ctlkey ctl)
 static void
 check_binding(const char *keyname, enum ctlkey action, void *extra)
 {
-   struct keymapconf_list_params *params = extra;
+   struct keymapconf_list_params *params
+      = (struct keymapconf_list_params *) extra;
    if (action == params->ctl) {
       /* set_conf() won't change keyname anyway because
        * params->ci->type==CONF_TYPE_LIST  */

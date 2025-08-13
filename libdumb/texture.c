@@ -45,7 +45,7 @@ init_playpal(void)
 {
    if (playpal == NULL) {
       ppln = getlump("PLAYPAL");
-      playpal = load_lump(ppln);
+      playpal = (const unsigned char *) load_lump(ppln);
    }
 }
 
@@ -194,6 +194,7 @@ reset_pnames(void)
       pnames = NULL;
    }
 }
+
 static void
 init_pnames(void)
 {
@@ -203,10 +204,10 @@ init_pnames(void)
    if (pnames != NULL)
       return;
    ln = getlump("PNAMES");
-   pn = load_lump(ln);
+   pn = (const char *) load_lump(ln);
    npnames = *(const LE_int32 *) (pn);
    pn += 4;
-   pnames = safe_calloc(npnames, 9);
+   pnames = (char *) safe_calloc(npnames, 9);
    for (i = 0; i < npnames; i++)
       strncpy(pnames + 9 * i, pn + 8 * i, 8);
    free_lump(ln);
@@ -229,11 +230,11 @@ init_texture_lumps(void)
       t2ln = lookup_lump("TEXTURE2", NULL, NULL);
       if (t1ln == BAD_LUMPNUM)
 	 logprintf(LOG_FATAL, 'T', _("No metatexture lumps in WAD"));
-      texture1 = load_lump(t1ln);
+      texture1 = (const TextureTable *) load_lump(t1ln);
       if (t2ln == BAD_LUMPNUM)
 	 texture2 = NULL;
       else
-	 texture2 = load_lump(t2ln);
+	 texture2 = (const TextureTable *) load_lump(t2ln);
       nwalltexs = texture1->UMEMB(hdr).ntxts;
       logprintf(LOG_DEBUG, 'T', _("%s has %d wall textures"),
 		"TEXTURE1", (int) (texture1->UMEMB(hdr).ntxts));
@@ -308,7 +309,7 @@ guess_sprite_size(Texture *t)
    const PictData *pd;
    if (t->width > 0)
       return;
-   pd = load_lump(t->lumpnum);
+   pd = (const PictData *) load_lump(t->lumpnum);
    if (IS_JPATCH(pd)) {
       t->width = pd->UMEMB(alt).width;
       t->height = pd->UMEMB(alt).height;
@@ -380,7 +381,7 @@ load_sprite(Texture *t, int bpp)
    size_t l;
    if (!LUMPNUM_OK(t->lumpnum))
       logfatal('T', _("Bad lumpnum for texture %s in load_sprite()"), t->name);
-   pd = load_lump(t->lumpnum);
+   pd = (const PictData *) load_lump(t->lumpnum);
    l = bpp << (t->log2width + t->log2height);
    if (IS_JPATCH(pd) && bpp == 1) {
       t->bpp = 1;
@@ -532,7 +533,7 @@ load_flat(Texture *t, int bpp)
       t->texels = (void *) load_lump(t->lumpnum);
    else {
       int i = t->width * t->height;
-      const unsigned char *data = load_lump(t->lumpnum);
+      const unsigned char *data = (const unsigned char *) load_lump(t->lumpnum);
       t->texels = safe_malloc(i * bpp);
       while (i > 0) {
 	 i--;
@@ -581,8 +582,11 @@ init_patches(void)
    if (patlns)
       return;
    init_pnames();
-   patlns = safe_calloc(npnames, sizeof(LumpNum));
-   patlumps = safe_calloc(npnames, sizeof(const PictHeader *));
+   patlns = (LumpNum *) safe_calloc(npnames, sizeof(LumpNum));
+   /* PictData can be a 1-byte pseudo-union, whereas PictHeader is the
+    * real thing.  */
+   patlumps = (const PictData **)
+      safe_calloc(npnames, sizeof(const PictHeader *));
    for (i = 0; i < npnames; i++)
       patlns[i] = lookup_lump(lookup_pname(i), "P_START", "P_END");
 }
@@ -624,7 +628,7 @@ get_patch_data(int num)
 	 logprintf(LOG_DEBUG, 'T', _("loading patchnum %d (%s)"),
 		   num, pnames + num * 9);
 #endif
-	 patlumps[num] = load_lump(patlns[num]);
+	 patlumps[num] = (const PictData *) load_lump(patlns[num]);
       }
    }
    return patlumps[num];

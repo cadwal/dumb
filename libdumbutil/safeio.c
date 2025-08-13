@@ -48,8 +48,8 @@ static int fname_has_directory(const char *fname);
 const void *
 safe_mmap(const char *name, int fd, unsigned int offset, size_t len)
 {
-   caddr_t p = mmap(NULL, len, PROT_READ, MAP_SHARED, fd, offset);
-   if (p == (caddr_t) - 1) {
+   caddr_t p = (caddr_t) mmap(NULL, len, PROT_READ, MAP_SHARED, fd, offset);
+   if (p == (caddr_t) -1) {
       if (name)
 	 logprintf(LOG_FATAL, 'S', _("%s: mmap %lu bytes: %s"),
 		   name, (unsigned long) len, strerror(errno));

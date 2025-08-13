@@ -22,14 +22,17 @@ wadtool = ../tool/wadtool
 ppmtodumb = ../tool/ppmtodumb
 ptcomp = ../ptcomp/ptcomp
 
-pt_preprocess = $(CXXCPP) -x c-header -I$(srcdir)
+# srcdir/.. is needed so we can get at doom's linetypes, on which
+# heretic's are based
+
+pt_preprocess = $(CXXCPP) -x c-header -I$(srcdir) -I$(top_srcdir)
 # -x c-header is required because $(CXXCPP) is typically g++ -E which
 # assumes the .pt files are linker input and thus ignores them.  If
 # $(CXXCPP) is something else, -x c-header will cause it to fail.  In
 # that case, try this definition (which uses -lang-c++ because of //
 # comments and so needs GNU cpp):
 #
-# pt_preprocess = /lib/cpp -lang-c++ -I$(srcdir)
+# pt_preprocess = /lib/cpp -lang-c++ -I$(srcdir) -I$(top_srcdir)
 #
 # If you need it, please report, so I can add a check in
 # ../configure.in or devise a trickier scheme.  (One idea would be to

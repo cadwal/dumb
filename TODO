@@ -1,5 +1,5 @@
 * Highest-priority queue:
-aadumb doesn't build when using configure --without-x
+fix all configure/compile/install bugs
 finish libdumbworldb
 separate renderer from rest of code again
 speed up rendering by checking recursively which sectors can be seen
@@ -8,23 +8,16 @@ fix wall collision checks
 * Later:
 activation
 aim to monster nearest to screen center, not necessarily closest to player
+allow each level to specify its own LEVINFO, PROTOS and PHASES
 allow objects to award multiple gettables (eg. MegaSphere)
-allow using the same sprites for things and icons
 armor should absorb damage
-BPP should always mean Bits Per Pixel
 center DUMB logo vertically (just look at aadumb)
-clean up shm on fatal signals
-configuration menus
-confirm quitting (use the menu code)
+compile as C++ on little-endian machines too
 continuous sounds for moving sectors
-do something about music
-echoes in sewers
+documentation
 end-level statistics (secret%, kill%, collect%, hit%)
 finish off heretic protos
-fix DGA
-fix end of level in network game
-flow control in aadumb (now it lags horribly at 9600bps)
-get rid of C++ on big-endian machines
+gamma control from keyboard
 get rid of alarm(), use select() instead
 get rid of all arbitrary limits
 Guile scripts in wads
@@ -33,35 +26,32 @@ implement sectortypes (partially done)
 inventory items (may already have some of the code for this?)
 jumping instead of levitation
 light areas should be lighter, dark ones darker (0=almost impossible to see)
-loading & saving
 long options, including --help and --version in all programs
 make --dumb-xmul 3 --dumb-ymul 1 work
 make loops over things more efficient perhaps?  (in libdumbworldb)
 mapping
-menus
-mipmapping
 monsters should be smarter
 move bpp-independent code to rendcommon.c
 moving vertices, sideways opening & hinged doors
-multi-threaded sound driver
-network games that anyone can join
 polymorphing to a monster (like in Nethack!)
-scale weapons & gettable icons if framebuffer is small
-sectors above&below each other
+rename ldltest to dwdbtest
 sector shouldn't give damage while player is in air
 snapshot.ppm when BPP=1 (8 bits)
 sound shouldn't get through closed doors
 special shooting
-truecolor textures
-tunneling
+support PPM_PACKCOLORS
+tunneling (in libdumbworldb)
+turning inertia control
 "Uff!" when the hero runs against a wall or falls
 use function keys for special commands, select weapons with numbers
 use PNG instead of PPM
 use regular fixed point instead of UNIT_SPEED
-version number of doom4dum.wad
 weapon numbering
 write documents in Texinfo or something
+AA-lib: aadumb doesn't build when using configure --without-x
 AA-lib: ASCII snapshot
+AA-lib: draw text as text
+AA-lib: flow control (now it lags horribly at 9600bps)
 AA-lib: special handling for AA_RESIZE and AA_MOUSE
 AA-lib: three-state boolean parameters
 AA-lib: use real ticks in autorelease
@@ -72,6 +62,7 @@ conf: dynamic enumerations (like for AA-lib fonts)
 conf: halt on bogus parameters to enumerated switches
 conf: quote special characters in .dumbrc strings
 conf: support floating-point entries (for aadumb --vid-gamma)
+conf: use libargp?
 Doom: automate 666 effect
 Doom: backpack should double carrying capacity
 Doom: don't get Health>100% with medikits and stimpaks
@@ -82,11 +73,36 @@ Doom: monsters should be immune to radiation
 Doom: rising staircases should be slower
 Doom: spheres & suit shouldn't expire so fast
 Doom: staircase doesn't work in E1M8
+hier: REQUIRE and PROVIDE lumps (use an ASCII format) with version numbers
+hier: use heuristics if a wad doesn't contain a REQUIRE lump
+hier: autoload a wad when an IWAD uses one of its textures?
 keymap: alternative keynames; recognize both Shift_L and Shift_R as Shift
 keymap: conditional entries like X11:KP_Up AA:8
 keymap: keymap_keyname_to_keycode()
+menu: configuration menus
+menu: confirm quitting
+menu: load/save/newgame
+net: fix end of level
+net: games that anyone can join
+net: rewrite protocol completely, using libdumbworldb observers
+net: multicast
+net: register a port number from IANA (port 7777 is already "cbt")
 ptcomp: output a WAD
+render: allow using the same sprites for things and icons
+render: BPP should always mean Bits Per Pixel
+render: mipmapping
+render: scale weapons & gettable icons if framebuffer is small
+render: sectors above & below each other
+render: truecolor textures
+sound: Doppler effects?
+sound: do something about music
+sound: echoes in sewers
+sound: support Enlightened Sound Daemon, rplay and NAS
+sound: multi-threaded sound driver
+sound: output to a file/pipe the user can postprocess any way (s)he wants
 wadtool: --verbose
+X11: clean up shm on fatal signals
+X11: fix DGA
 X11: KeymapNotify
 X11: set icon in program, not in window manager config
 X11: turn autorepeat off when window has focus and XKB isn't available

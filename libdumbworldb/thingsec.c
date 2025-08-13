@@ -49,7 +49,7 @@ _dwdb_new_thingsec(struct dwdb_level *lev,
 		   unsigned thing, unsigned sector)
 {
    struct dwdb_thingsec *ts
-   = safe_malloc(sizeof(struct dwdb_thingsec));
+      = (struct dwdb_thingsec *) safe_malloc(sizeof(struct dwdb_thingsec));
    ts->thing = thing;
    ts->sector = sector;
    ts->next_thing = lev->sectors[sector].things;

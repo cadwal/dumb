@@ -69,7 +69,7 @@ load_doom_sectors(struct dwdb_level *lev)
    if (!LUMPNUM_OK(lumpnum))
       return;
    count = get_lump_len(lumpnum) / sizeof(struct doom_sector);
-   doom_sectors = load_lump(lumpnum);
+   doom_sectors = (const struct doom_sector *) load_lump(lumpnum);
    dwdb_prealloc_sectors(lev, count);
    for (ind = 0; ind < count; ind++) {
       const struct doom_sector *doom_sector = &doom_sectors[ind];
@@ -101,7 +101,7 @@ load_doom_vertexes(struct dwdb_level *lev)
    if (!LUMPNUM_OK(lumpnum))
       return;
    count = get_lump_len(lumpnum) / sizeof(struct doom_vertex);
-   doom_vertexes = load_lump(lumpnum);
+   doom_vertexes = (const struct doom_vertex *) load_lump(lumpnum);
    dwdb_prealloc_vertices(lev, count);
    for (ind = 0; ind < count; ind++) {
       /* Vertices must get the right numbers, as linedefs refer to
@@ -132,8 +132,8 @@ load_doom_linedefs(struct dwdb_level *lev)
 		    / sizeof(struct doom_linedef));
    sidedef_count = (get_lump_len(sidedefs_ln)
 		    / sizeof(struct doom_sidedef));
-   doom_linedefs = load_lump(linedefs_ln);
-   doom_sidedefs = load_lump(sidedefs_ln);
+   doom_linedefs = (const struct doom_linedef *) load_lump(linedefs_ln);
+   doom_sidedefs = (const struct doom_sidedef *) load_lump(sidedefs_ln);
    dwdb_prealloc_lines(lev, linedef_count);
    dwdb_prealloc_sides(lev, sidedef_count);
    for (lineind = 0; lineind < linedef_count; lineind++) {
@@ -214,7 +214,7 @@ load_doom_things(struct dwdb_level *lev)
       return;
    thing_count = (get_lump_len(things_ln)
 		  / sizeof(struct doom_thing));
-   doom_things = load_lump(things_ln);
+   doom_things = (const struct doom_thing *) load_lump(things_ln);
    dwdb_prealloc_things(lev, thing_count);
    for (ind = 0; ind < thing_count; ind++) {
       const struct doom_thing *doom_thing = &doom_things[ind];

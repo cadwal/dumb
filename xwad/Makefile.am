@@ -23,4 +23,6 @@ LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
  ../libdumbutil/libdumbutil.a \
  $(X_LIBS) $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS) $(INTLLIBS)
 
-INCLUDES = -I$(top_srcdir)
+CC = $(CXX_HACK_CC)
+
+INCLUDES = -I$(top_srcdir) -I../intl

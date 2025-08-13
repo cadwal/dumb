@@ -70,7 +70,7 @@ typedef struct {
 } PictHeader;
 
 typedef struct {		/* dumb-only extension */
-   char sig[2];			/* == J1 */
+   char sig[2];			/* {'J','1'} */
    unsigned char log2width, log2height;
    LE_int32 width, height;
    /* followed by width<<log2_height bytes of data */
@@ -84,7 +84,8 @@ typedef union {
    AltPictData alt;
 } PictData;
 
-#else
+#else  /* !__cplusplus */
+
 typedef struct {
    unsigned char data[1];
    PictHeader &hdr() {
@@ -98,7 +99,7 @@ typedef struct {
    }
 } PictData;
 
-#endif
+#endif /* !__cplusplus */
 
 #define IS_JPATCH(p) ((p)->UMEMB(alt).sig[0]=='J'&&(p)->UMEMB(alt).sig[1]=='1')
 

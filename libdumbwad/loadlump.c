@@ -55,9 +55,9 @@ llinit(void)
    if (tbl != NULL)
       return;
    num_wads = get_num_wads();
-   tbl = safe_calloc(num_wads, sizeof(LumpRec *));
+   tbl = (LumpRec **) safe_calloc(num_wads, sizeof(LumpRec *));
    for (i = 0; i < num_wads; i++)
-      tbl[i] = safe_calloc(get_num_lumps(i), sizeof(LumpRec));
+      tbl[i] = (LumpRec *) safe_calloc(get_num_lumps(i), sizeof(LumpRec));
 }
 
 const void *

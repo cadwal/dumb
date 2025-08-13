@@ -23,6 +23,7 @@
 #include <config.h>
 
 #include <string.h>
+#include <assert.h>
 
 #include "libdumbutil/dumb-nls.h"
 
@@ -119,6 +120,10 @@ sndmix_play_sound(const unsigned char *buf, size_t len,
 		  SoundBalance bal, int freq)
 {
    int i;
+   /* If sndmix hasn't been initialized, this function could just
+    * return with no error, but sndmix_calc_frag() can't.  For
+    * consistency, both functions assert(sndmix_inited).  */
+   assert(sndmix_inited);
    for (i = 0; i < SQMAX; i++) {
       if (sq[i].count == 0)
 	 break;
@@ -143,6 +148,11 @@ void
 sndmix_calc_frag(void *buf, unsigned samples)
 {
    int i;
+   /* If sndmix has not been initialized, this function aborts the
+    * program.  The alternative would be to zero the buffer, but that
+    * is impossible, as the number of bits and channels is not known.
+    */
+   assert(sndmix_inited);
    switch (format) {
    case SNDMIX_FMT_S16:
       memset(buf, 0, samples * channels * 2);

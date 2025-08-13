@@ -59,9 +59,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 CATALOGS = @CATALOGS@
 CATOBJEXT = @CATOBJEXT@
-CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+CXX_HACK_CC = @CXX_HACK_CC@
 DATADIRNAME = @DATADIRNAME@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
@@ -84,7 +84,6 @@ INSTOBJEXT = @INSTOBJEXT@
 INTLDEPS = @INTLDEPS@
 INTLLIBS = @INTLLIBS@
 INTLOBJS = @INTLOBJS@
-l = @l@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
 MKINSTALLDIRS = @MKINSTALLDIRS@
@@ -96,6 +95,7 @@ RANLIB = @RANLIB@
 USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
+l = @l@
 
 noinst_LIBRARIES = libdumb.a
 
@@ -107,7 +107,9 @@ libdumb_a_SOURCES = dsound.c prothing.c texture.c view.c \
 
 EXTRA_libdumb_a_SOURCES = dummy_sound.c dos_sound.c linux_sound.c mme_sound.c
 
-INCLUDES = -I$(top_srcdir)
+CC = $(CXX_HACK_CC)
+
+INCLUDES = -I$(top_srcdir) -I../intl
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -142,7 +144,7 @@ OBJECTS = $(libdumb_a_OBJECTS)
 all: Makefile $(LIBRARIES)
 
 .SUFFIXES:
-.SUFFIXES: .c .o .s .S
+.SUFFIXES: .S .c .o .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps libdumb/Makefile
 

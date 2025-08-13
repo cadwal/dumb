@@ -57,6 +57,12 @@
  * marked for deletion with shmctl(id, IPC_RMID, NULL).  */
 #undef DUMB_CONFIG_SYS_SHMAT_RMID
 
+/* A standard place to look for Doom .WADs */
+#undef DUMB_CONFIG_DOOM_PATH
+
+/* A standard place to look for HERETIC .WADs */
+#undef DUMB_CONFIG_HERETIC_PATH
+
 @BOTTOM@
 
 /* DUMB always has <libintl.h> -- the included GNU gettext library

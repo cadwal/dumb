@@ -39,7 +39,7 @@ dwdb_new_observer(struct dwdb_level *level,
 		  void *clientdata)
 {
    struct dwdb_observer *obs
-   = safe_malloc(sizeof(struct dwdb_observer));
+      = (struct dwdb_observer *) safe_malloc(sizeof(struct dwdb_observer));
    /* Note: this will cause the observers to be called in reverse
     * order.  So let's just say the order is unspecified.  */
    obs->next = level->first_observer;

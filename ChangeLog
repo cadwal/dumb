@@ -1,3 +1,192 @@
+Wed Jul 22 03:06:11 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* libmissing/Makefile.am (INCLUDES): Added.
+
+Sat Jul 11 21:43:27 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* dumb/dumb.c, xwad/xwad.c, xwad/xproto.c, ptcomp/ptcomp.c,
+ 	tool/wadtool.c, tool/mknulmap.c, tool/mkpnames.c,
+ 	tool/dark2trans.c, tool/ppmtodumb.c, tool/mkdfnt.c,
+ 	test/ldltest.c: Include <locale.h>.
+	Reported by Josh Parsons.
+
+	* dumb/dumb.c (main): Use DUMB_CONFIG_DOOM_PATH and
+	DUMB_CONFIG_HERETIC_PATH only if they are defined.
+  	Patch from Josh Parsons.
+	* configure.in: Don't define DUMB_CONFIG_DOOM_PATH and
+	DUMB_CONFIG_HERETIC_PATH if the files weren't found.
+
+	* libdumb/linux_sound.c (play_sound): Return right away if fd<0.
+	* libdumb/sound_mix.c (sndmix_play_sound, sndmix_calc_frag):
+ 	assert(sndmix_inited).
+
+Fri Jul  3 19:51:30 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* docs/Install-FAQ: Added Q3: Ppmtodumb dumps core.
+
+	* AUTHORS: Changed Ulf Axelsson's WWW address again.
+
+	* htic/Makefile.am (pt_preprocess): Add "-I$(top_srcdir)".
+  	Reported by Josh Parsons.
+	* dumb/keymap.c (keymap_defaults): Capitalize "Space".  Patch by
+ 	Josh Parsons.
+
+Wed Jul  1 20:41:38 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* AUTHORS: Changed Ulf Axelsson's addresses.
+
+	* docs/params.txt: New file.
+	* docs/dos.txt: New file.
+	* docs/Makefile.am (EXTRA_DIST): Add them.
+
+Tue Jun 30 20:59:19 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* docs/Makefile.am (EXTRA_DIST): Use $(VERSION).
+	* docs/dumb-0.13.1.lsm: Updated and renamed.
+
+	* Makefile.am (RPMSPEC, RPMIN): Don't use $(srcdir) yet.
+	($(RPMSPEC)): Use automatic variables in the rule.
+
+Mon Jun 29 20:13:03 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* dumb/x11_video.c (video_conf): Add --vid-abort-on-error.
+	(init_video): Support it.
+	(error_abort): New function.
+	(untrapped_errh): New variable.
+	(trap_errs, untrap_errs): Use untrapped_errh.
+	(errh, error_abort): Make extern "C".
+	(BEGIN_EXTERN_C, END_EXTERN_C): New macros.
+
+	* docs/indent.pro: Add -TXErrorEvent.
+
+	* dumb/x11_video.c (init_video): Treat BPP=4 as 24-bit.  Patch by
+ 	Josh Parsons.
+
+	* docs/configure.txt: Doc fix.
+
+	* dumb/x11_video.c (video_conf): Add --vid-sync-io.
+	(init_video): Support it.
+
+Sun Jun 28 16:48:14 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* libdumbutil/safeio.c (safe_mmap): Add casts for C++ compatibility.
+	* libdumbutil/safem.c (safe_strdup): Add casts.
+	* libdumbwad/loadlump.c (llinit): Add casts.
+	* libdumbwad/wadio.c (add_hashent): Add casts.
+	(check_sanity): Signedness fix.
+	(load_wad): Add casts.
+	(lumpnext): Signedness fix.
+	(lumplook): Signedness fix.
+	* libdumbwad/wadwr.h (WADWR): Signedness fix.
+	* libdumbworldb/loaddoom.c (load_doom_sectors): Add casts.
+	(load_doom_vertexes): Add casts.
+	(load_doom_linedefs): Add casts.
+	(load_doom_things): Add casts.
+	* libdumbworldb/observer.c (dwdb_new_observer): Add casts.
+	* libdumbworldb/savedoom.c (save_doom_vertexes): Add casts.
+	(save_doom_sectors): Add casts.
+	(save_doom_sidedefs): Add casts.
+	(save_doom_linedefs): Add casts.
+	* libdumbworldb/thingsec.c (_dwdb_new_thingsec): Add casts.
+	* libdumb/prothing.c (get_sprite_table): Add casts.
+	(init_prothings): Add casts.
+	* libdumb/texture.c (init_playpal): Add casts.
+	(init_pnames): Add casts.
+	(reset_texture_lumps): Add casts.
+	(guess_sprite_size): Add casts.
+	(load_sprite): Add casts.
+	(load_flat): Add casts.
+	(init_patches): Add casts.
+	(get_patch_data): Add casts.
+	* dumb/dumb.c (main): Add a const to wadpath.
+	* dumb/gettable.c (draw_count): Signedness fix.
+	* dumb/levinfo.c (init_levinfo): Add casts.
+	* dumb/netplay.c (netplay_poll): Signedness fix.
+	* dumb/keymap.c (keymap_set_capacity): Add casts.
+	* dumb/keymapconf.c (check_binding): Add casts.
+	* dumb/renderc.h (init_renderer): Add casts.
+	* dumb/unix_net.c (udp_init_station): Add casts.
+	(udp_recpkt): Add casts.
+	* dumb/linux_video.c (init_video): Add casts.
+	(page, pagev): Make unsigned.
+	* dumb/x11_video.c (explicit): Define as xkb_explicit.
+	* dumb/unix_net.c (udp_sendpkt): Add cast.
+	* xwad/xwad.c (init_instance): Add casts.
+	* xwad/disphash.c (add_dh): Add casts.
+	* xwad/mapcon.c: #include <stdlib.h>
+	* xwad/savemap.c (gc_vers): Add cast.
+	(gc_sides): Add cast.
+	(gc_sects): Add cast.
+	* xwad/xproto.c (init_instance): Add cast.
+	* test/ldltest.c (queue_op): Add cast.
+
+	* docs/indent.pro: Add -Tcaddr_t.
+
+	* configure.in: Integrate dosdumb-0.13.0 from Ulf Axelsson.
+	* dumb/Makefile.am, libdumb/dos_sound.c, libdumbutil/Makefile.am:
+ 	Ditto.
+	
+	* configure.in (--disable-c): New option.
+
+Fri Jun 19 14:17:39 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Makefile.am (RPMIN): Use $(srcdir).
+
+	* libdumbutil/confdef.h (CONFNB): Rename to CONFB_1.  All callers
+ 	changed.
+	(CONFNS): Rename to CONFB_NS.  All callers changed.
+	(CONFS): Remove maximum length parameter.  All callers changed to
+ 	either leave maxlen out or use CONFS_L instead.
+  	(CONFS_L): This is what CONFS used to be.
+
+	* AUTHORS (Andrew Tridgell): Added email address.
+	(Ulf Axelsson): Added URL.
+
+	* configure.in (CXX_HACK_CC): Define as $CC if little-endian.
+	* libdumbutil/Makefile.am (INCLUDES): Add -I../intl.
+	(CC): Define as $(CXX_HACK_CC).
+	* libdumbwad/Makefile.am: Here too.
+	* libdumbrender/Makefile.am: Here too.
+	* dumb/Makefile.am: Here too.
+	* xwad/Makefile.am: Here too.
+	* ptcomp/Makefile.am: Here too.
+	* tool/Makefile.am: Here too.
+	* test/Makefile.am (INCLUDES): Already had -I../intl.
+	(CC): Define as $(CXX_HACK_CC).
+
+	* rpmspec.m4: Don't undivert -1 to -1.  Removed empty lines from
+ 	beginning of output.
+
+Thu Jun 18 01:12:57 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Makefile.am ($(RPMSPEC)): Use $(srcdir).
+	(MAINTAINERCLEANFILES): Added.
+
+Wed Jun 17 19:16:43 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* libmissing/Makefile.am: Don't assign CC.
+
+	* Makefile.am (.PHONY): update-po was update-POTFILES.in.
+
+	* configure.in: Save C-as-C++ command as $CXX_HACK_CC and not
+ 	directly in $CC.
+
+Sun Jun 14 19:43:20 1998  Josh Parsons <josh@coombs.anu.edu.au>
+
+	* libdumbworldb/dummyvtbl.c: Commented out GCC trickery, 
+	as it breaks C++ compilation on bigendian architecture
+	* libmissing/Makefile.am: use C even on bigendian arch.
+
+	* Makefile.am: target to build a rpm-style .spec file
+	* rpmspec.m4: template for .spec file
+
+	* dumb/dumb.c: use built-in wadpath if none specified
+
+	* configure.in: figure out appropriate built-in wadpath, 
+	stash real C compiler name in REALCC for libmissing
+	
+	* test/fixed_bm.c: include locale.h
+	
 Thu Jun 11 19:17:33 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
 
 	* libdumbutil/align.h: New file.

@@ -53,7 +53,7 @@ ConfItem input_conf[] =
 {
    CONFB("no-mouse", NULL, 0, N_("disable mouse support")),
    CONFE("mouse-type", NULL, 0, N_("mouse type"), 0, mousies),
-   CONFS("mouse-dev", NULL, 0, N_("mouse device"), "/dev/mouse", 254),
+   CONFS_L("mouse-dev", NULL, 0, N_("mouse device"), "/dev/mouse", 254),
    CONFITEM_END
 };
 #define cnf_no_mouse (input_conf[0].intval)

@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <locale.h>
 
 #include "libdumbutil/dumb-nls.h"
 
@@ -65,7 +66,7 @@ add_texture(const char *s, int x, int y)
    if (ntexs > 0)
       td[ntexs - 1] = realloc(td[ntexs - 1], TDSIZE(td[ntexs - 1]));
    /* make a new texture */
-   td[ntexs] = calloc(1, sizeof(TextureData));
+   td[ntexs] = (TextureData *) calloc(1, sizeof(TextureData));
    strncpy(td[ntexs]->name, s, 8);
    td[ntexs]->dx = x;
    td[ntexs]->dy = y;

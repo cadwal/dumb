@@ -216,7 +216,7 @@ static void
 gc_vers(XWadInstance *inst)
 {
    int i, j, n = inst->nvers;
-   int *tbl = safe_calloc(n, sizeof(int));
+   int *tbl = (int *) safe_calloc(n, sizeof(int));
    /* find which vers are referenced */
    for (i = 0; i < inst->nlines; i++) {
       COUNT(inst->line[i].ver1);
@@ -246,7 +246,7 @@ static void
 gc_sides(XWadInstance *inst)
 {
    int i, j, n = inst->nsides;
-   int *tbl = safe_calloc(n, sizeof(int));
+   int *tbl = (int *) safe_calloc(n, sizeof(int));
    /* find which sides are referenced */
    for (i = 0; i < inst->nlines; i++) {
       SCOUNT(inst->line[i].side[0]);
@@ -276,7 +276,7 @@ static void
 gc_sects(XWadInstance *inst)
 {
    int i, j, n = inst->nsects;
-   int *tbl = safe_calloc(n, sizeof(int));
+   int *tbl = (int *) safe_calloc(n, sizeof(int));
    /* find which sects are referenced */
    for (i = 0; i < inst->nsides; i++)
       SCOUNT(inst->side[i].sector);

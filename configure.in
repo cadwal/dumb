@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(libdumb/dsound.h)
-AM_INIT_AUTOMAKE(dumb, 0.13.0)
+AM_INIT_AUTOMAKE(dumb, 0.13.1)
 AM_CONFIG_HEADER(config.h)
 
 # $datadir is usually '${prefix}/share'.  Expand it once.
@@ -42,6 +42,31 @@ AC_MSG_RESULT($fbrerend)
 AC_SUBST(DUMB_FBREREND_SOURCES)
 DUMB_FBREREND_SOURCES="${fbrerend}_fbrerend.c"
 
+dnl --- C++ compilation hack.
+dnl To avoid having to change intl/Makefile.in, the C-as-C++ compiler
+dnl invocation command is saved in $CXX_HACK_CC and not directly in
+dnl $CC.  The contents of intl/ should be identical in all GNU
+dnl packages, so they can be updated automatically when a new version
+dnl of gettext is released.
+AC_SUBST(CXX_HACK_CC)
+AC_ARG_ENABLE(c,
+  [  --disable-c             always compile as C++, not C],
+  [if test "$enableval" != "no"; then
+    AC_MSG_WARN([--enable-c not supported])
+  fi],
+  [enable_c=yes])
+if test "$ac_cv_c_bigendian" = "yes" || test "$enable_c" = "no"; then
+  DUMB_PROG_CXX_C
+  CXX_HACK_CC="$dumb_cv_prog_cxx_c"
+  # The Makefiles in the hack-needing directories assign $CXX_HACK_CC
+  # to CC.  $CC is used for linking too and the -x c++ in it would
+  # cause the .o files to be interpreted as C++ too!  Override that.
+  # This assumes GCC but that's fine.
+  LDFLAGS="-x none $LDFLAGS"
+else
+  CXX_HACK_CC="$CC"
+fi
+
 dnl --- Internationalization.
 ALL_LINGUAS="fi"
 AM_GNU_GETTEXT
@@ -75,6 +100,9 @@ AM_CONDITIONAL(DUMB_CONFIG_GGI, test "$dumb_have_ggi" = "yes")
 DUMB_CHECK_HDR_LIB_YESNO(vga.h, vga, vga_setmode, [],
  dumb_have_svgalib)
 AM_CONDITIONAL(DUMB_CONFIG_SVGALIB, test "$dumb_have_svgalib" = "yes")
+DUMB_CHECK_HDR_LIB_YESNO(allegro.h, alleg, allegro_init, [],
+ dumb_have_allegro)
+AM_CONDITIONAL(DUMB_CONFIG_DOS, test "$dumb_have_allegro" = "yes")
 
 dnl --- Checks for header files.
 AC_HEADER_STDC
@@ -151,8 +179,7 @@ dnl     Do not use a `--with' option to specify the file name to use to
 dnl     find certain files.  That is outside the scope of what `--with'
 dnl     options are for.
 dnl
-dnl However, those files are needed at build time and I see no other
-dnl way to let the user say where they are.
+dnl FIXME.
 dnl
 AC_MSG_CHECKING(for doom.wad)
 AC_SUBST(DUMB_CONFIG_DOOM_WAD) DUMB_CONFIG_DOOM_WAD=""
@@ -205,6 +232,8 @@ if test -z "$DUMB_CONFIG_DOOM_WAD"; then
   AC_MSG_RESULT(not found)
 else
   AC_MSG_RESULT($DUMB_CONFIG_DOOM_WAD)
+  AC_DEFINE_UNQUOTED(DUMB_CONFIG_DOOM_PATH,
+                     "${DUMB_CONFIG_DOOM_WAD%doom*.wad}")
 fi
 AM_CONDITIONAL(DUMB_CONFIG_DOOM, test -n "${DUMB_CONFIG_DOOM_WAD}")
 
@@ -246,23 +275,27 @@ if test -z "$DUMB_CONFIG_HERETIC_WAD"; then
   AC_MSG_RESULT(not found)
 else
   AC_MSG_RESULT($DUMB_CONFIG_HERETIC_WAD)
+  AC_DEFINE_UNQUOTED(DUMB_CONFIG_HERETIC_PATH,
+                     "${DUMB_CONFIG_HERETIC_WAD%heretic*.wad}")
 fi
 AM_CONDITIONAL(DUMB_CONFIG_HERETIC, test -n "${DUMB_CONFIG_HERETIC_WAD}")
 
 dnl --- Sound.
 dnl This is pretty complicated.  The user can:
-dnl  - select one sound system (--with-uss, --with-mme)
+dnl  - select one sound system (--with-oss, --with-mme, --with-allegro)
 dnl  - disable sound (--without-sound)
-dnl  - autodetect but disable some systems (--without-uss, --without-mme)
+dnl  - autodetect but disable some systems (--without-oss, --without-mme,
+dnl    --without-allegro)
 dnl Disabling sound completely should have the same result as
 dnl disabling each sound system separately.
 dnl Note: Autoconf doesn't tell us which order the options were in, so
 dnl we can't rely on that for priority.  I arbitrarily decide that
 dnl --without-sound overrides individual sound systems.  The opposite
-dnl way would be useless; --with-uss disables all other sound systems
+dnl way would be useless; --with-oss disables all other sound systems
 dnl even without --without-sound.
 dumb_sound_oss="autodetect"
 dumb_sound_mme="autodetect"
+dumb_sound_allegro="autodetect"
 dumb_sound_specified=""
 AC_SUBST(DUMB_CONFIG_SOUND) DUMB_CONFIG_SOUND=""
 AC_SUBST(DUMB_CONFIG_SOUND_LDADD) DUMB_CONFIG_SOUND_LDADD=""
@@ -275,12 +308,14 @@ AC_ARG_WITH(sound,
     AC_MSG_CHECKING(for sound)
     AC_MSG_RESULT(disabled)
   else
-    AC_MSG_WARN([--with-sound not supported; use --with-uss or --with-mme])
+    AC_MSG_WARN([--with-sound not supported; use --with-oss or --with-mme])
   fi)
 DUMB_ARG_MULTICHOICE(sound, oss, oss,
   [  --with-oss              use Open Sound System (Linux usually has this)])
 DUMB_ARG_MULTICHOICE(sound, mme, mme,
   [  --with-mme              use MME for sound (for Alphas)])
+DUMB_ARG_MULTICHOICE(sound, allegro, allegro,
+  [  --with-allegro          use Allegro for sound (for DOS)])
 DUMB_TEST_MULTICHOICE(DUMB_CONFIG_SOUND, sound, oss, OSS,
   DUMB_CONFIG_SOUND="linux"
   DUMB_CONFIG_SOUND_LDADD="",
@@ -293,6 +328,12 @@ DUMB_TEST_MULTICHOICE(DUMB_SOUND, sound, mme, MME,
   DUMB_CHECK_HDR_LIB(mme/mme_api.h, mme, waveOutGetNumDevs, [],
     DUMB_CONFIG_SOUND="mme"
     DUMB_CONFIG_SOUND_LDADD="-lmme", []))
+DUMB_TEST_MULTICHOICE(DUMB_SOUND, sound, allegro, ALLEGRO,
+  DUMB_CONFIG_SOUND="dos"
+  DUMB_CONFIG_SOUND_LDADD="-lalleg",
+  AC_CHECK_HEADER(allegro.h,
+    DUMB_CONFIG_SOUND="dos"
+    DUMB_CONFIG_SOUND_LDADD="-lalleg", []))
 AC_MSG_CHECKING(which sound driver to use)
 if test -z "$DUMB_CONFIG_SOUND"; then
   DUMB_CONFIG_SOUND="dummy"
@@ -365,18 +406,6 @@ if test -n "$dumb_bpp_names"; then
 else
   AC_MSG_RESULT(nothing!)
   AC_MSG_WARN(No support included for framebuffers of any depth)
-fi
-
-dnl --- C++ compilation hack.
-dnl This must be last because it can mess up checks for library
-dnl functions.
-if test "$ac_cv_c_bigendian" = "yes"; then
-  DUMB_PROG_CXX_C
-  CC="$dumb_cv_prog_cxx_c"
-  # $CC is used for linking too and the -x c++ in it would cause the .o files
-  # to be interpreted as C++ too!  Override that.
-  # This assumes GCC but that's fine.
-  LDFLAGS="-x none $LDFLAGS"
 fi
 
 dnl --- Output.

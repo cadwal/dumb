@@ -26,6 +26,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <limits.h>
+#include <locale.h>
 
 #ifdef HAVE_FORK
 #include <signal.h>
@@ -343,13 +344,13 @@ init_instance(XWadInstance *inst)
 #ifdef USE_LIBDUMBLEVEL
    dumblevel_init(&inst->level);
 #else  /* !USE_LIBDUMBLEVEL */
-   inst->ver = safe_vmalloc(sizeof(VertexData) * MAXENTS);
-   inst->thing = safe_vmalloc(sizeof(ThingData) * MAXENTS);
-   inst->line = safe_vmalloc(sizeof(LineData) * MAXENTS);
-   inst->side = safe_vmalloc(sizeof(SideData) * MAXENTS);
-   inst->sect = safe_vmalloc(sizeof(SectorData) * MAXENTS);
+   inst->ver = (VertexData *) safe_vmalloc(sizeof(VertexData) * MAXENTS);
+   inst->thing = (ThingData *) safe_vmalloc(sizeof(ThingData) * MAXENTS);
+   inst->line = (LineData *) safe_vmalloc(sizeof(LineData) * MAXENTS);
+   inst->side = (SideData *) safe_vmalloc(sizeof(SideData) * MAXENTS);
+   inst->sect = (SectorData *) safe_vmalloc(sizeof(SectorData) * MAXENTS);
 #endif /* !USE_LIBDUMBLEVEL */
-   inst->enttbl = safe_vcalloc(sizeof(EntFlags) * MAXENTS);
+   inst->enttbl = (EntFlags *) safe_vcalloc(sizeof(EntFlags) * MAXENTS);
 
    /* create frame & map viewer */
    inst->mapframe = XCreateSimpleWindow(dpy, root, 0, 0,

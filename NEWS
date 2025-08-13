@@ -1,3 +1,30 @@
+* Changes in DUMB 0.13.1.
+
+** MS-DOS DJGPP support by Ulf Axelsson.
+
+** New switches --vid-sync-io and --vid-abort-on-error for debugging on X11.
+
+** Linux sound no longer crashes if the device could not be opened.
+
+** Configuration changes.
+
+*** configure --disable-c forces C++ compilation.
+
+DUMB is always compiled as C++ on big-endian machines; this switch
+forces C++ compilation on little-endian machines too.
+
+I use this for hunting down language dependencies that could cause
+compilation to fail on big-endian systems.
+
+In the future, C compilation is likely to be dropped altogether.
+
+** Source code changes.
+
+*** Typecasts added for reducing C++ warnings.
+
+I didn't add casts everywhere; some places looked so convoluted I
+decided to leave them alone for now.
+
 * Changes in DUMB 0.13.0.
 
 ** Internationalization.

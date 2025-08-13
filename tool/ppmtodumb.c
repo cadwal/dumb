@@ -26,7 +26,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <errno.h>
+#include <locale.h>
 
 #ifdef __cplusplus
 extern "C" {

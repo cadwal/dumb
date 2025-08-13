@@ -1,5 +1,5 @@
 						       -*- outline -*-
-This corresponds to DUMB 0.13.0.
+This corresponds to DUMB 0.13.1.
 
 You should also read ../INSTALL for general installation instructions.
 This configure.txt lists mostly DUMB-specific options.
@@ -86,6 +86,19 @@ To do it:
 --help
   The most important option.  Gives you short descriptions for every
   option.
+
+* Compilation options
+
+--disable-c
+  Force C++ compilation.
+
+  DUMB is always compiled as C++ on big-endian machines; this switch
+  forces C++ compilation on little-endian machines too.
+
+  I use this for hunting down language dependencies that could cause
+  compilation to fail on big-endian systems.
+
+  In the future, C compilation is likely to be dropped altogether.
 
 * Graphics options
 

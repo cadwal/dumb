@@ -240,7 +240,7 @@ init_cfont(void)
 static void
 draw_count(void *fb, int c, int x, int y)
 {
-   unsigned char buf[3];
+   char buf[3];
    init_cfont();
    buf[0] = (c / 100) % 10;
    buf[1] = (c / 10) % 10;

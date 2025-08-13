@@ -30,7 +30,7 @@ typedef struct {
    FILE *f;
    WadHeader hdr;
    WadDirEntry *dir, *current;
-   int maxdir;
+   unsigned maxdir;
    char *fname;
    char type;
 } WADWR;

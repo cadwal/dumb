@@ -28,6 +28,7 @@
 #include <limits.h>
 #include <signal.h>
 #include <setjmp.h>
+#include <locale.h>
 
 #include <sys/time.h>
 
@@ -370,7 +371,7 @@ init_instance(XPInstance *inst)
    inst->nprotos = get_lump_len(inst->protos_ln) / sizeof(ProtoThing);
    if (inst->nprotos < 1)
       logfatal('M', _("no protos"));
-   inst->protos = load_lump(inst->protos_ln);
+   inst->protos = (const ProtoThing *) load_lump(inst->protos_ln);
 
    /* create frame & map viewer */
    inst->frame = XCreateSimpleWindow(dpy, root, 0, 0,

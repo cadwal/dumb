@@ -130,7 +130,7 @@ add_hashent(const char *name, LumpNum ln)
    HashEnt **h = hashtbl + hashfunc(name);
    while (*h)
       h = &((*h)->next);
-   *h = safe_calloc(1, sizeof(HashEnt));
+   *h = (HashEnt *) safe_calloc(1, sizeof(HashEnt));
    (*h)->ln = ln;
 }
 
@@ -153,14 +153,15 @@ void
 init_wadhashing(void)
 {
    WadFile *w = wads;
-   int wadnum = 0, i;
+   int wadnum = 0;
+   unsigned i;
 #ifdef HASHING_REPORT
    int unused, maxuse = 0;
 #endif
    if (hashtbl)
       reset_wadhashing();
    /*logprintf(LOG_DEBUG, 'W', _("building hashtable...")); */
-   hashtbl = safe_calloc(HASHSIZE, sizeof(HashEnt *));
+   hashtbl = (HashEnt **) safe_calloc(HASHSIZE, sizeof(HashEnt *));
    /* now build table */
    while (w) {
       for (i = 0; i < w->nlumps; i++)
@@ -218,18 +219,18 @@ reset_wad(void)
 static void
 check_sanity(const WadFile *wad)
 {
-   int i;
+   unsigned ind;
    const WadDirEntry *wd = wad->dir;
-   for (i = 0; i < wad->nlumps; i++, wd++) {
+   for (ind = 0; ind < wad->nlumps; ind++, wd++) {
       if (wd->name[0] == '\0')
 	 logprintf(LOG_ERROR, 'W', _("%s: lump %d has no name"),
-		   wad->fname, i);
+		   wad->fname, ind);
       if (wd->size == 0)
 	 continue;	/* don't worry about extent check for markers */
       if (wd->offset < sizeof(WadHeader)
 	  || wd->offset + wd->size > wad->wadlen)
 	  logprintf(LOG_FATAL, 'W', _("%s: lump %d is too big for wad"),
-		    wad->fname, i);
+		    wad->fname, ind);
    }
 }
 
@@ -254,8 +255,9 @@ load_wad(const char *fname, const char *_sig, const char *const path[],
    /* now get the header.  how this is done will depend on our mm strategy */
    if (mapall) {
       wad->maplen = wad->wadlen;
-      wh = wad->whole_map = wad->mapalloc = safe_mmap(wad->fname, wad->fd, 0,
-						      wad->maplen);
+      wad->whole_map = wad->mapalloc = safe_mmap(wad->fname, wad->fd, 0,
+						 wad->maplen);
+      wh = (const WadHeader *) wad->whole_map;
       logprintf(LOG_INFO, 'W', _("%s mapped at %p (%lu bytes)"),
 		wad->fname, (void *) wh, (unsigned long) wad->maplen);
    } else
@@ -273,10 +275,11 @@ load_wad(const char *fname, const char *_sig, const char *const path[],
 	     _sig, wad->fname, (int) wad->nlumps, (int) wh->diroffset);
    /* load directory */
    if (wad->whole_map)
-      wad->dir = WHOLEMAP_PTR(wad, wh->diroffset);
+      wad->dir = (const WadDirEntry *) WHOLEMAP_PTR(wad, wh->diroffset);
    else
-      wad->dir = safe_mmap(wad->fname, wad->fd, wh->diroffset,
-			   wh->nlumps * sizeof(WadDirEntry));
+      wad->dir = (const WadDirEntry *)
+	 safe_mmap(wad->fname, wad->fd, wh->diroffset,
+		   wh->nlumps * sizeof(WadDirEntry));
    wads = wad;
    nwads++;
    check_sanity(wad);
@@ -328,7 +331,7 @@ lumpnamecmp(const char *s1, const char *s2)
 LumpNum
 lumpnext(LumpNum l, int crosswad)
 {
-   int wadnum = LUMP_WADNUM(l), dirnum = LUMP_DIRNUM(l);
+   unsigned int wadnum = LUMP_WADNUM(l), dirnum = LUMP_DIRNUM(l);
    WadFile *wad;
    if (!LUMPNUM_OK(l))
       return BAD_LUMPNUM;
@@ -348,7 +351,7 @@ lumpnext(LumpNum l, int crosswad)
 LumpNum
 lumplook(LumpNum l, const char *name)
 {
-   int wadnum = LUMP_WADNUM(l), dirnum = LUMP_DIRNUM(l);
+   unsigned int wadnum = LUMP_WADNUM(l), dirnum = LUMP_DIRNUM(l);
    WadFile *wad;
 #ifdef USE_HASHING
    if (hashtbl && !strchr(name, '?'))

@@ -45,7 +45,7 @@ ConfItem video_conf[] =
 #define MIN_PAGES (video_conf[1].intval)
 
 static int linearlen = -1, curpage = 0, pagelen = 0, npages = 0;
-static char **page = NULL, *pagev = NULL;
+static unsigned char **page = NULL, *pagev = NULL;
 static int vgapage = 0;
 static int was_suid_root = 0;
 
@@ -74,7 +74,7 @@ init_video(int *_width, int *_height, int *_bpp, int *_real_width)
    if (page != NULL)
       safe_free(page);
    pagev = NULL;
-   page = safe_calloc(MAX_PAGES, sizeof(char *));
+   page = (unsigned char **) safe_calloc(MAX_PAGES, sizeof(const char *));
 
    switch (*_bpp) {
    case (4):
@@ -172,14 +172,15 @@ init_video(int *_width, int *_height, int *_bpp, int *_real_width)
       _("Too little video RAM, or no linear fb: linearlen=%d pagelen=%d"),
 		linearlen, pagelen);
 
-   /*if(npages<MIN_PAGES&&pagelen<=65536) {
-      npages=2;
-      pagelen=65536;
-      vgapage=1;
+   /* if (npages < MIN_PAGES && pagelen <= 65536) {
+      npages = 2;
+      pagelen = 65536;
+      vgapage = 1;
       logprintf(LOG_INFO, 'V',
-      _("init_video in vga-paging mode linearlen=%d pagelen=%d npages=%d"),
-      linearlen, pagelen, npages);
-      } else */ if (npages < MIN_PAGES) {
+		_("init_video in vga-paging mode"
+		  " linearlen=%d pagelen=%d npages=%d"),
+		linearlen, pagelen, npages);
+   } else */ if (npages < MIN_PAGES) {
       logprintf(LOG_INFO, 'V',
        _("init_video in copying mode linearlen=%d pagelen=%d npages=%d"),
 		linearlen, pagelen, npages);

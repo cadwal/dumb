@@ -59,9 +59,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 CATALOGS = @CATALOGS@
 CATOBJEXT = @CATOBJEXT@
-CC = @CC@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
+CXX_HACK_CC = @CXX_HACK_CC@
 DATADIRNAME = @DATADIRNAME@
 DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
 DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
@@ -84,7 +84,6 @@ INSTOBJEXT = @INSTOBJEXT@
 INTLDEPS = @INTLDEPS@
 INTLLIBS = @INTLLIBS@
 INTLOBJS = @INTLOBJS@
-l = @l@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
 MKINSTALLDIRS = @MKINSTALLDIRS@
@@ -96,18 +95,29 @@ RANLIB = @RANLIB@
 USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
+l = @l@
 
 noinst_LIBRARIES = libdumbutil.a
 
-libdumbutil_a_SOURCES = align.h confargs.c confargs.h confdef.h \
+common_sources = align.h confargs.c confargs.h confdef.h \
  confeng.c confeng.h conffile.c conffile.h confhelp.c confhelp.h \
  dumb-nls.h endiantypes.h fixed.c fixed.h log.c log.h safeio.c \
- safeio.h safem.c safem.h timer.c timer.h
+ safeio.h safem.c safem.h timer.h
+
+@DUMB_CONFIG_DOS_TRUE@libdumbutil_a_SOURCES = $(common_sources) dos_timer.c
+@DUMB_CONFIG_DOS_FALSE@libdumbutil_a_SOURCES = $(common_sources) timer.c
+
+# Files that are compiled sometimes but not always, must be listed
+# here.  Automake 1.3 is not smart enough to combine the different
+# versions of libdumbutil_a_SOURCES automatically.
+EXTRA_libdumbutil_a_SOURCES = dos_timer.c timer.c
 
 # These sources aren't currently used at all.
-EXTRA_libdumbutil_a_SOURCES = dos_timer.c intset.c intset.h
+EXTRA_DIST = intset.c intset.h
 
-INCLUDES = -I$(top_srcdir)
+CC = $(CXX_HACK_CC)
+
+INCLUDES = -I$(top_srcdir) -I../intl
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -123,8 +133,14 @@ X_LIBS = @X_LIBS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_PRE_LIBS = @X_PRE_LIBS@
 libdumbutil_a_LIBADD = 
-libdumbutil_a_OBJECTS =  confargs.o confeng.o conffile.o confhelp.o \
-fixed.o log.o safeio.o safem.o timer.o
+@DUMB_CONFIG_DOS_TRUE@cond0libdumbutil_a_OBJECTS =  confargs.o confeng.o \
+@DUMB_CONFIG_DOS_TRUE@conffile.o confhelp.o fixed.o log.o safeio.o \
+@DUMB_CONFIG_DOS_TRUE@safem.o dos_timer.o
+@DUMB_CONFIG_DOS_FALSE@cond1libdumbutil_a_OBJECTS =  confargs.o \
+@DUMB_CONFIG_DOS_FALSE@confeng.o conffile.o confhelp.o fixed.o log.o \
+@DUMB_CONFIG_DOS_FALSE@safeio.o safem.o timer.o
+libdumbutil_a_OBJECTS =  $(cond0libdumbutil_a_OBJECTS) \
+$(cond1libdumbutil_a_OBJECTS)
 AR = ar
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
@@ -142,7 +158,7 @@ OBJECTS = $(libdumbutil_a_OBJECTS)
 all: Makefile $(LIBRARIES)
 
 .SUFFIXES:
-.SUFFIXES: .c .o .s .S
+.SUFFIXES: .S .c .o .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps libdumbutil/Makefile
 

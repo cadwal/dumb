@@ -48,6 +48,11 @@ typedef struct SSampQueue {
 
 static SampQueue *SQh = NULL, *SQt = NULL;
 
+ConfItem sound_conf[] =
+{
+   CONFITEM_END
+};
+
 /* Based on similar function i DOSDOOM, since allegro only loads
  * these from files.
  */

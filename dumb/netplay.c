@@ -395,18 +395,16 @@ netplay_poll(LevData *ld)
       /* deal with packet */
       rs = stations + station;
       while (pktlen > 0) {
-	 int codelen = code[1];
+	 size_t codelen = code[1];
 	 if (codelen > pktlen)
 	    logprintf(LOG_ERROR, 'N',
-		      _("inconsistent packet length %d > %lu"),
-		      codelen, (unsigned long) pktlen);
+		      _("inconsistent packet length %lu > %lu"),
+		      (unsigned long) codelen, (unsigned long) pktlen);
 	 switch (code[0]) {
 	 case (UPDATE_SIG):{
 	       const UpdatePktHdr *pkt = (UpdatePktHdr *) code;
-	       apply_update(ld,
-			    pkt->mltype,
-			    pkt->offset,
-			  pkt->code, 2 + codelen - sizeof(UpdatePktHdr));
+	       apply_update(ld, pkt->mltype, pkt->offset, pkt->code,
+			    2 + codelen - sizeof(UpdatePktHdr));
 	    } break;
 	 case (PLINFO_SIG):{
 	       const PlayerInfoPkt *pkt = (PlayerInfoPkt *) code;

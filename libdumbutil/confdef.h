@@ -54,13 +54,15 @@ typedef struct {
     df,NULL,NULL,DIRT_NONE}	/* integer(df) */
 #define CONFB(n,mn,sn,h) {n,mn,sn,h,CONF_TYPE_BOOL,NULL,0,0, \
     0,NULL,NULL,DIRT_NONE}	/* boolean(false) */
-#define CONFNB(n,mn,sn,h) {n,mn,sn,h,CONF_TYPE_BOOL,NULL,0,0, \
+#define CONFB_1(n,mn,sn,h) {n,mn,sn,h,CONF_TYPE_BOOL,NULL,0,0, \
     1,NULL,NULL,DIRT_NONE}	/* boolean(true) */
-#define CONFNS(n,mn,sn,h) {n,mn,sn,h,CONF_TYPE_BOOL,NULL,0,CI_NOSAVE, \
+#define CONFB_NS(n,mn,sn,h) {n,mn,sn,h,CONF_TYPE_BOOL,NULL,0,CI_NOSAVE, \
     0,NULL,NULL,DIRT_NONE}	/* boolean(false), no save */
 #define CONFE(n,mn,sn,h,df,e) {n,mn,sn,h,CONF_TYPE_ENUM,e,0,0, \
     df,NULL,NULL,DIRT_NONE}	/* enum(df) */
-#define CONFS(n,mn,sn,h,df,l) {n,mn,sn,h,CONF_TYPE_STR,NULL,l,0, \
+#define CONFS_L(n,mn,sn,h,df,l) {n,mn,sn,h,CONF_TYPE_STR,NULL,l,0, \
+    0,df,NULL,DIRT_NONE}	/* string(df), with maximum length */
+#define CONFS(n,mn,sn,h,df) {n,mn,sn,h,CONF_TYPE_STR,NULL,254,0, \
     0,df,NULL,DIRT_NONE}	/* string(df) */
 #define CONFL(n,mn,sn,h) {n,mn,sn,h,CONF_TYPE_LIST,NULL,0,0, \
     0,NULL,NULL,DIRT_NONE}	/* list({}) */
