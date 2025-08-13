@@ -25,7 +25,7 @@ Proto GreenKeyGizmo 95
   Blocking
   //Base KGZ1
 
-Proto YellowKeyGizmo 90
+Proto YellowKeyGizmo 96
   Phases Mundane
   Size 32 48
   Sprite KGZY

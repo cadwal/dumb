@@ -66,11 +66,6 @@ static void get_bend(SoundBalance *bal,const SoundEnt *se) {
       bal->bend+=se->bend_const;
 };
 
-void play_dsound(int i,fixed x,fixed y,fixed r) {
-   play_dsound_local(i,x,y,r);
-   send_dsound(i,x,y,r);
-};
-
 void play_dsound_local(int i,fixed x,fixed y,fixed r) {
    SoundDyn *s=sd+i;
    const SoundEnt *ent=se+i;

@@ -50,10 +50,10 @@ typedef int fixed;
 #define FIX_ATTR __attribute__ ((const))
 #endif
 
-extern fixed fix_sqrt(fixed) FIX_ATTR;
-extern fixed fix_pythagoras(fixed x,fixed y) FIX_ATTR;
-extern fixed fix_pyth3d(fixed x,fixed y,fixed z) FIX_ATTR;
-extern fixed fix_vec2angle(fixed x,fixed y) FIX_ATTR;
+fixed fix_sqrt(fixed) FIX_ATTR;
+fixed fix_pythagoras(fixed x,fixed y) FIX_ATTR;
+fixed fix_pyth3d(fixed x,fixed y,fixed z) FIX_ATTR;
+fixed fix_vec2angle(fixed x,fixed y) FIX_ATTR;
 
 #define NORMALIZE_ANGLE(x) while(x>=FIXED_2PI) x-=FIXED_2PI; while(x<0) x+=FIXED_2PI
 

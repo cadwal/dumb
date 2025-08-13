@@ -2,6 +2,9 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include <stdarg.h>
+#include <stdio.h>
+
 void logvprintf(int lev,char cl,const char *fmt,va_list argl);
 
 void logprintf(int lev,char cl,const char *fmt,...)

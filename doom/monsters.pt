@@ -8,7 +8,7 @@
 #define OuchRate     400msec
 #define DieRate      100msec
 #define ExplodeRate  120msec
-#define RespawnRate  400msec 
+#define RespawnRate  300msec 
 
 // IDEA: (for archvile when passing over a dead body)
 #define SigResurrect
@@ -25,18 +25,36 @@
 /* Player */
 
 PhaseTable DeadPlayer
+  Default Duration RespawnRate
   Phase INIT N Goto INIT
+  Phase -    M SigReanimate
+  Phase -    L
+  Phase -    K
+  Phase -    J
+  Phase -    I
+  Phase -    H Become
 Proto DeadPlayer 10
   Sprite PLAY
   Size 40 16
   Mass 1000 YMoveOnly
+  Becomes 1
 
 PhaseTable ExPlayer
+  Default Duration RespawnRate
   Phase INIT W Goto INIT
+  Phase -    V SigReanimate
+  Phase -    U
+  Phase -    T
+  Phase -    S
+  Phase -    R
+  Phase -    Q
+  Phase -    P
+  Phase -    O Become
 Proto ExPlayer 12
   Sprite PLAY
   Size 40 16
   Mass 1000 YMoveOnly
+  Becomes 1
 
 SoundType DSPLPAIN Chance 3
 
@@ -63,7 +81,8 @@ PhaseTable Player
   Phase -	K
   Phase -	L
   Phase -	M
-  Phase -	N   Become
+  Phase -	N
+  Phase -	A   Become
 
   Phase EXPLODE O   SigExplode Sound DSPDIEHI
   Phase -	P
@@ -73,7 +92,8 @@ PhaseTable Player
   Phase -	T
   Phase -	U
   Phase -	V
-  Phase -	W   Become2
+  Phase -	W
+  Phase -	A   Become2
 
 Proto Player 1
   Phases Player

@@ -1,9 +1,10 @@
 
 /* This gets included by render.c */
+/* There is also an optimized intel version in slice86.c */
 
 #define PIXEL_GUARD_VAL ((TPixel) ~0)
 
-extern inline void __draw_wall_slice(Pixel *start, Pixel *end, 
+static inline void __draw_wall_slice(Pixel *start, Pixel *end, 
 				     const TPixel *tex_base,
 				     fixed tex_y, fixed tex_dy,
 				     int log2_tex_height)
@@ -55,7 +56,7 @@ static void draw_wall_slice(Pixel *s, Pixel *e, const TPixel *tb,
 }
 
 
-extern inline void __draw_transparent_slice(Pixel *start, Pixel *end, 
+static inline void __draw_transparent_slice(Pixel *start, Pixel *end, 
 					    const TPixel *tex_base,
 					    fixed tex_y, fixed tex_dy, 
 					    int log2_tex_height)
@@ -68,6 +69,11 @@ extern inline void __draw_transparent_slice(Pixel *start, Pixel *end,
     **   and-masking.  For this to occur correctly, it is necessary to
     **   make utex_y and unsigned quantity.  This is probably non-portable,
     **   but should work with most architectures.
+    *
+    * tosi@stekt.oulu.fi: 
+    **   I recall the latest C standard saying that unsigned integers
+    **   always wrap with no error at the end of their range.  
+    **   (And <limits.h> gives that range.)
     */
    utex_y = (unsigned int) tex_y;
    

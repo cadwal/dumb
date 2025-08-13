@@ -22,9 +22,9 @@ typedef struct {
 
 void net_init(void);
 void net_reset(void);
-int net_initstation(const char *name,int flags);
-#define net_initslave(name) net_initstation(name,RS_SLAVE)
-#define net_initmaster(name) net_initstation(name,RS_MASTER)
+int net_initstation(int station, const char *name,int flags);
+#define net_initslave(name) net_initstation(-1,name,RS_SLAVE)
+#define net_initmaster(name) net_initstation(-1,name,RS_MASTER)
 
 const unsigned char *net_recpkt(size_t *pktlen,int *station);
 int net_waitpkt(struct RemoteStation_struct *rs,int msec);

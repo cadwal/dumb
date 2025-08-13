@@ -36,7 +36,7 @@ void video_preinit(void) {
       will tell the user. */
 };
 
-void init_video(int *_width,int *_height,int *_bpp) {
+void init_video(int *_width,int *_height,int *_bpp,int *_real_width) {
    /* 
     * For security reasons, we shouldn't call vga_init() here:
     * it MUST be called as the first thing in main()
@@ -85,7 +85,7 @@ void init_video(int *_width,int *_height,int *_bpp) {
       logfatal('V',"Bad BPP (%d) in init_video",*_bpp);
    };
 
-   *_width=vga_getxdim();
+   *_real_width=*_width=vga_getxdim();
    *_height=vga_getydim();
    
    linearlen=vga_setlinearaddressing();

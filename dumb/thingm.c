@@ -5,8 +5,10 @@
 
 #include "lib/log.h"
 #include "lib/fixed.h"
+#include "lib/timer.h"
 #include "dsound.h"
 #include "things.h"
+#include "game.h"
 
 /*#define THINGM_DEBUG */
 
@@ -180,7 +182,7 @@ static void do_strategy(const LevData *ld,int th) {
       double attd2;
       fixed dz=(ttd->z+ttd->proto->height)-(td->z+td->proto->height);
       fixed movespeed=fixmul(td->proto->realmass,td->proto->speed);
-      fixed turnspeed=movespeed/4;
+      fixed turnspeed=movespeed/2;
       NORMALIZE_ANGLE(t);
       if(td->proto->signals[TS_FIGHT]<0) attack_dist+=INT_TO_FIXED(4);
       else attack_dist+=FIXED_ONE;
@@ -198,7 +200,7 @@ static void do_strategy(const LevData *ld,int th) {
 	 else if((d2<=attd2)&&!(rand()&3)) 
 	    thing_send_sig(ld,th,TS_SHOOT);
 	 /* sometimes just shoot anyway */
-	 else if(!(rand()&7)) 
+	 else if(!(rand()&3)) 
 	    thing_send_sig(ld,th,TS_SHOOT);
       }
       /* failing that, turn towards them */
@@ -234,13 +236,15 @@ static void spawn_or_hurl(const LevData *ld,int th,int prid)  {
 };
 
 /* wake anyone who can see me */
-void thing_wake_others(const LevData *ld,int th) {
+void thing_wake_others(const LevData *ld,int th,int tickspassed) {
    int i;
    for(i=0;i<ldnthings(ld);i++) {
-      const ThingDyn *td=ldthingd(ld)+i;
+      ThingDyn *td=ldthingd(ld)+i;
       const ThingPhase *tph=td->phase_tbl+td->phase;
-      if(i!=th&&td->proto&&(tph->flags&TPH_IDLE)&&thing_can_see(ld,i,th))
+      td->wakeness+=tickspassed;
+      if((td->wakeness>=WAKE_TICKS)&&i!=th&&td->proto&&(tph->flags&TPH_IDLE)&&thing_can_see(ld,i,th))
 	 thing_send_sig(ld,i,TS_DETECT);
+      td->wakeness%=WAKE_TICKS;
    };
 };
 
@@ -330,6 +334,8 @@ static void do_damage(const LevData *ld,int th,fixed arc) {
    };
 };
 
+#define MELEE_DISTANCE (24<<12)
+
 /* do damage just to target */
 static void do_melee_damage(const LevData *ld,int th,fixed knockback) {
    ThingDyn *td=ldthingd(ld)+th;
@@ -338,8 +344,7 @@ static void do_melee_damage(const LevData *ld,int th,fixed knockback) {
    int myowner;
    if(td->target<0||ttd->proto==NULL) return;
    dist=fix_pyth3d(td->x-ttd->x,td->y-ttd->y,td->z-ttd->z);
-   if(dist>td->proto->radius+td->proto->height+
-      ttd->proto->radius+ttd->proto->height) {
+   if(dist>td->proto->radius+ttd->proto->radius+MELEE_DISTANCE) {
 #ifdef THINGM_DEBUG
       logprintf(LOG_DEBUG,'O',"melee: %d's attack on %d failed",th,td->target);
 #endif
@@ -355,6 +360,13 @@ static void do_melee_damage(const LevData *ld,int th,fixed knockback) {
       thingd_apply_up(ttd,td->proto->damage*knockback/4);
    /* actually do the damage */
    thing_take_damage(ld,td->target,td->proto->damage);
+   /* perhaps turn my owner (as with DOOM chainsaw) */
+   if (td->proto->flags & PT_TURNWHENHITTING) {
+     /* FIXME: Turn this bogothing and all others as well... */
+     ldthingd(ld)[myowner].angle 
+       = fix_vec2angle(ttd->x - ldthingd(ld)[myowner].x,
+		       ttd->y - ldthingd(ld)[myowner].y);
+   }
 };
 
 void thing_autoaim(const LevData *ld,int th,fixed arc,fixed *angle,fixed *elev) {
@@ -387,6 +399,8 @@ static void do_shoot(LevData *ld,int th) {
    /* figure out angle to target */
    thing_autoaim(ld,th,ldthingd(ld)[th].proto->aim_arc,&angle,&elev);
    /* do it */
+   /* FIXME: should check PT_TURNWHENHITTING here? 
+    * no such weapon yet, though */
    if(td->proto->flags&PT_SHOOTER) 
       thing_shoot(ld,th,td->proto->spawn1,angle,elev,
 		  td->proto->shootarc,td->proto->shootnum,
@@ -418,6 +432,10 @@ void thing_enter_phase(LevData *ld,int th,int ph)  {
    ThingDyn *td=ldthingd(ld)+th;
    const ThingPhase *nu=td->phase_tbl+ph;
    const ThingPhase *old=td->phase_tbl+td->phase;
+
+   /* check we've been passed a valid thing */
+   if(td->phase_tbl==NULL||td->proto==NULL) return;
+
    /* do post-phase effects */
    if(old->flags&TPH_DESTROY)  {
       td->proto=NULL;

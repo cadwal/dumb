@@ -54,7 +54,7 @@ typedef struct {
    fixed x,y,z;
    fixed angle,elev;
    int sector;
-   int hits,armour;
+   int hits,armour,tmpinv,tmpgod;
    int phase;
    /* changes in members after this don't require an update */
    fixed dx,dy,dz,dangle,delev;
@@ -65,12 +65,16 @@ typedef struct {
    int phase_wait;
    int target;
    int owner;
+   int wakeness;
 } ThingDyn;
 LD_DYNDECL(Thing);
 
 /* ahg! a horrible kludge */
-#define THING_MAGIC_JELLYBEAN \
- ( sizeof(int)*4 + sizeof(fixed)*5 + sizeof(void*)*2 )
+/*#define THING_MAGIC_JELLYBEAN \
+ ( sizeof(int)*6 + sizeof(fixed)*5 + sizeof(void*)*2 )*/
+
+/* no quite so horrible (thanks, Kalle) */
+#define THING_MAGIC_JELLYBEAN offsetof(ThingDyn,dx)
 
 #define ldvertexd(ld) ((VertexDyn *)(ld->dyn[ML_VERTEX]))
 #define ldsectord(ld) ((SectorDyn *)(ld->dyn[ML_SECTOR]))
@@ -84,13 +88,6 @@ LD_DYNDECL(Thing);
 
 #endif
 
-
-
-
-
-
-
-
-
-
-
+// Local Variables:
+// c-basic-offset: 3
+// End:

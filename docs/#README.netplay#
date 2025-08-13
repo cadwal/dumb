@@ -1,0 +1,43 @@
+
+1. Basics of network play with DUMB.
+
+DUMB's network play is based around a client/server design.  The
+server (also called the master) does all game control, moves objects
+around, etc, and periodically broadcasts all the changes it's making
+out to the clients (AKA slaves).  Both master and slaves respond to
+player input and render a view of the current level.  Slaves send all
+their players' actions off to the master to be applied to the game
+state, though.
+
+To play a network game, you need to set up one of the computers that
+you want to play on as a master, and the rest as slaves.  For example,
+I can use
+
+[josh@schlick dumb]$ xdumb --dumb-slave hempel
+[josh@carnap dumb]$ ldumb --dumb-slave hempel
+[josh@hempel dumb]$ xdumb --dumb-master carnap schlick
+
+to start a three player game on carnap, schlick, and hempel.  It
+doesn't (or shouldn't) matter which machine you start first; each
+machine will wait until all the others are ready.
+
+Effectively, there are three modes that DUMB can run in, and three
+major tasks to be performed:
+
+	           Game Management  Broadcasting Updates  Rendering  
+Non-Network Mode        YES                 NO               YES
+Master Mode             YES                 YES              YES
+Slave Mode              NO                  NO               YES
+
+Of the three tasks, rendering is usually the most costly, followed
+game management, followed by detecting and broadcasting updates.
+Since the network master does all three, in any case, it pays to run
+the master DUMB on your fastest machine.  No slave can go faster than
+the master (it would just be wasting time if it did).  A slave that is
+much slower than its master will just render less smoothly (though,
+see "network synchronisation" below!).
+
+Part of the initialisation information 
+
+
+

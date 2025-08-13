@@ -87,7 +87,7 @@ static fixed wall_ray_intersection(const LevData *ld,fixed Vx, fixed Vy,
 };
 
 
-static inline double pyth_sq(fixed x,fixed y) {
+inline double pyth_sq(fixed x,fixed y) {
    double dx=FIXED_TO_FLOAT(x),dy=FIXED_TO_FLOAT(y);
    return dx*dx+dy*dy;
 }; 

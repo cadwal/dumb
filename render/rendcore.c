@@ -32,9 +32,16 @@ static void draw_wall_segment(fixed pstart, fixed pend,
    cond_load_texels(tex,sizeof(TPixel));
 #endif   
    
-   //tex_column&=((1<<tex->log2width) - 1);
-   while(tex_column<0) tex_column+=tex->width;
-   tex_column%=tex->width;
+   if (tex_column < 0)
+      tex_column = tex->width-1 - (tex->width-1 - tex_column) % tex->width;
+   else
+      tex_column %= tex->width;
+   /* A slower way to do this:
+    *   while(tex_column<0) tex_column+=tex->width;
+    *   tex_column%=tex->width;
+    * Faster but less general:
+    *   tex_column&=((1<<tex->log2width) - 1);
+    */
    tex_base=TEXTURE_COLUMN(tex,tex_column);
    
    /* Clip the wall slice. */
@@ -105,7 +112,8 @@ static void draw_sky_segment(fixed pstart, fixed pend,
    tex_column = FIXED_TO_INT(fixmul(angle,INT_TO_FIXED(1024))) &
      ((1<<tex->log2width) - 1);
 
-   /* sky always takes up 3/4 of the viewport */
+   /* sky always takes up 3/4 of the viewport
+      TODO: make this configurable? */
    tex_dy = fixdiv(4*INT_TO_FIXED(tex->height), 3*INT_TO_FIXED(view_height));
    tex_base=TEXTURE_COLUMN(tex,tex_column);
    
@@ -132,6 +140,8 @@ static void draw_sky_segment(fixed pstart, fixed pend,
    last_byte = fb + fb_column + fb_rows[fb_end];
 
    tex_y=INT_TO_FIXED(tex->height-1)-fixmul(tex_dy,INT_TO_FIXED(fb_start));
+   /*tex_y=INT_TO_FIXED(tex->height-1)-
+      fixmul(tex_dy,FIXED_SCALE(pstart, view_height));*/
    
    draw_wall_slice(fb_byte, last_byte, 
 		   tex_base, tex_y, tex_dy,
@@ -154,9 +164,13 @@ static void draw_wall(Active_wall *active,
    
    /*logprintf(LOG_DEBUG,'R',"draw_wall(column=%d wall=%d side=%d)",column,wall,side);*/
    
-   if (pend1 > pend2) pend1 = pend2;
-   if (pstart2 < pstart1) pstart2 = pstart1;
-   
+   /* This would be wrong!  The textures must be clipped, not moved.
+    *   if (pend1 > pend2) pend1 = pend2;
+    *   if (pstart2 < pstart1) pstart2 = pstart1;
+    * Instead, I adjust top & bottom after the ceiling and floor 
+    * have been drawn.  The adjustment was originally in do_walls().
+    */
+
    pfend=MIN(pstart1,top);
    pcstart=MAX(pend2,bottom);
    
@@ -197,6 +211,11 @@ static void draw_wall(Active_wall *active,
       	draw_ceiling_slices(active, front, pcstart,top);
    };
    
+   /* Adjust bottom & top to avoid drawing walls over ceiling & floor.
+    * This adjustment used to be in do_walls().  */
+   if (bottom < pstart1) bottom = pstart1;
+   if (top > pend2) top = pend2;
+
    /* if there's nothing more to do, skip costly ray-intersect */
    if(!do_lower&&!do_upper&&!do_middle) return; 
      
@@ -229,7 +248,7 @@ static void draw_wall(Active_wall *active,
      tex_dy = fixdiv(scale,FIXED_SCALE(z, view_height));
    
    if (do_lower)
-     draw_wall_segment(pstart1, pend1,
+      draw_wall_segment(pstart1, pend1,
 		       WALL_LOUNPEGGED(wall)?
 		       REGION_FLOOR(front)-REGION_CEILING(front):
 		       REGION_FLOOR(front)-REGION_FLOOR(back),
@@ -237,7 +256,6 @@ static void draw_wall(Active_wall *active,
 		       tex_col,tex_dy,tex_yoffset,
 		       1,
 		       scale);
-
    if (do_middle)
      draw_wall_segment(pstart3, pend3, 
 		       WALL_LOUNPEGGED(wall)?
@@ -256,14 +274,14 @@ static void draw_wall(Active_wall *active,
 	 draw_sky_segment(pstart2, top, REGION_CTEX(front));
       }
       else
-      	draw_wall_segment(pstart2, pend2, 
-			  WALL_UPUNPEGGED(wall)?
-			  REGION_CEILING(back)-REGION_CEILING(front):
-			  0,
-			  ldsided(ld)[side].utex,
-			  tex_col,tex_dy,tex_yoffset,
-			  1,
-			  scale);
+	 draw_wall_segment(pstart2, pend2, 
+			   WALL_UPUNPEGGED(wall)?
+			   REGION_CEILING(back)-REGION_CEILING(front):
+			   0,
+			   ldsided(ld)[side].utex,
+			   tex_col,tex_dy,tex_yoffset,
+			   1,
+			   scale);
    };
 };
 
@@ -482,16 +500,19 @@ static void do_walls(Active_wall *active, int n_active,
 	 last_saved->active_obj = NULL;
 	 last_saved++;
 	 free_saved_walls--;
+	 /* this must be done after saving top & bottom */
+	 if (bottom < pstart1) bottom = pstart1;
+	 if (top > pend2) top = pend2;
       }
       else
       	draw_wall(active, 
 		  Vx, Vy);
 
       /* adjust bottom and top */
+      /* adjustment between pend2 and pstart1 is now done in draw_wall() 
+       * if the wall texture is opaque */
       if (bottom < pend1) bottom = pend1;
-      if (bottom < pstart1) bottom = pstart1;
       if (top > pstart2) top = pstart2;
-      if (top > pend2) top = pend2;
 
       /* if this wall is terminal, we can quit now */
       if(back<0) break;
@@ -558,3 +579,6 @@ static void do_walls(Active_wall *active, int n_active,
    }
 };
 
+// Local Variables:
+// c-basic-offset:3
+// End:

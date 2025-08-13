@@ -36,23 +36,30 @@ static CTLACTION(next) {
 };
 
 static CTLACTION(del_thing) {
-   int i=0,sel=inst->curselect;
-   int survivor=-1;
-   if(sel>=0) inst->enttbl[sel]|=ENT_SELECTED;
-   while(i<inst->nthings) {
-      if(inst->enttbl[i]&ENT_SELECTED) {
-	 memmove(inst->thing+i,
-		 inst->thing+i+1,
-		 (--inst->nthings)-i);
-	 inst->enttbl[i]^=ENT_SELECTED;
+   /* Changed to an O(nthings) algorithm that has less bugs too. */
+   int getind, putind, newsel=-1;
+   if (inst->curselect >= 0)
+      inst->enttbl[inst->curselect] |= ENT_SELECTED;
+   for (getind = putind = 0; getind < inst->nthings; getind++) {
+      if (getind == inst->curselect)
+         newsel = putind;
+      if (inst->enttbl[getind] & ENT_SELECTED) {
+         /* delete it by skipping */
+         inst->enttbl[getind] &= ~ENT_SELECTED; /* clear marks */
+      } else {
+         /* retain */
+         if (putind != getind)
+            inst->thing[putind] = inst->thing[getind];
+         putind++; /* can't combine with above line because it's in the if */
       }
-      else if(survivor==-1) survivor=i++;
-      else i++;
-   };
-   if(sel>=inst->nthings) sel=survivor;
-   inst->curselect=sel+1;
-   new_selection(sel,inst,0);
+   }
+   inst->nthings = putind;
+   if (newsel < 0 || newsel >= inst->nthings)
+      newsel = -1;  /* sanity check */
+   inst->curselect = newsel+1; /* force redraw */
+   new_selection(newsel, inst, 0);
 };
+
 static CTLACTION(del_line) {
    int i=0,sel=inst->curselect;
    int survivor=-1;
@@ -569,7 +576,6 @@ const ControlSet mode_csets[NumModes]={
    {THCOLS,THROWS,thingmode_ctls}
 };
 
-
-
-
-
+// Local Variables:
+// c-basic-offset: 3
+// End:

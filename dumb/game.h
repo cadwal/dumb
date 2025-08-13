@@ -13,7 +13,10 @@ void game_message(int player,const char *fmt,...)
 void game_want_newlvl(int secret);
 void game_want_quit(int really);
 
- /* player stuff */
+/* how often to check whether monsters wake up */
+#define WAKE_TICKS (1000/MSEC_PER_TICK)
+
+/* player stuff */
 
 extern ConfItem playconf[];
 void slave_input(LevData *ld,const PlayerInput *in,int tickspassed);

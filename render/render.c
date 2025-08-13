@@ -75,9 +75,9 @@ typedef Pixel8 TPixel;
 **   calculations for perspective.
 */
 #define TO_FIX_2_30(f)   ((f) << 14)
-#define FROM_FIX_2_30(f) ((f) >> 14) 
+#define FROM_FIX_2_30(f) ((f) >> 14)
 #define TO_FIX_8_24(f)   ((f) << 8)
-#define FROM_FIX_8_24(f) ((f) >> 8) 
+#define FROM_FIX_8_24(f) ((f) >> 8)
 
 #define MAX_ERROR  view_width
 
@@ -88,7 +88,7 @@ typedef struct {
    fixed z, dz;
    short wall;
    short sidenum;
-   short backsect; 
+   short backsect;
    short endcol;
 } Wall_start;
 
@@ -99,7 +99,7 @@ typedef struct {
 } Wall_start_list;
 
 typedef struct {
-   fixed z,dz;
+   fixed z,dz;  /* dz = how much z changes in each screen column */
    short wall;
    short sidenum;
    short backsect;
@@ -107,6 +107,25 @@ typedef struct {
 #ifdef FAST_FLATS
    short mincrow,maxcrow,minfrow,maxfrow;
 #endif
+   /*  ___________top___________
+    * |\                       /|
+    * | \________pend2________/ |
+    * |  #                   #  |   ^ +z
+    * |  #______pstart2______#  |   |
+    * |  #\                 /#  |   |
+    * |  # \_______________/ #  |   |
+    * |  #  |             |  #  |
+    * |  #  |             |  #  |
+    * |  #  |             |  #  |
+    * |  #  |             |  #  |
+    * |  #  |_____________|  #  |
+    * |  # /               \ #  |
+    * |  #/______pend1______\#  |
+    * |  #                   #  |
+    * |  #______pstart1______#  |
+    * | /                     \ |
+    * |/________bottom_________\|
+    */
    fixed pstart1, pend1, pstart2, pend2;
    fixed dpstart1, dpend1, dpstart2, dpend2;
 } Active_wall;
@@ -156,15 +175,15 @@ static void add_wall_events(int wall,
 			    fixed x1, fixed px1, fixed x2, fixed px2);
 static void render_walls(void);
 static int add_events(Active_wall *active, int n_active, int column);
-static int wall_obscured(const VertexDyn *common, 
-			 const VertexDyn *v1, 
+static int wall_obscured(const VertexDyn *common,
+			 const VertexDyn *v1,
 			 const VertexDyn *v2) __attribute__((const));
 static int remove_events(Active_wall *active, int n_active, int column);
 static void add_objects(void);
 static int add_obj_events(Active_object *active, int n_active, int column);
 static int remove_obj_events(Active_object *active, int n_active, int column);
-static fixed wall_ray_intersection(fixed Vx, 
-				   fixed Vy, 
+static fixed wall_ray_intersection(fixed Vx,
+				   fixed Vy,
 				   int wall) __attribute__((const));
 static void init_buffers(void);
 static void calc_view_constants(int screen_width, int screen_height);
@@ -180,6 +199,8 @@ static Object_start_list *obj_start_events = NULL;
 static LumpNum colormap_ln=BAD_LUMPNUM;
 static const Pixel *colormap = NULL,*invismap = NULL;
 #endif
+
+#define PIXEL_TO_MAP(i) ((i)<<12)
 
 static LevData *ld = NULL;
 #define WALL_VER1(i) (ldvertexd(ld)[ldline(ld)[i].ver1])
@@ -202,7 +223,9 @@ static LevData *ld = NULL;
 #define OBJECT_Y(on) (ldthingd(ld)[on].y)
 #define OBJECT_REGION(on) (ldthingd(ld)[on].sector)
 #define OBJECT_GLOWS(on) (ldthingph(ld,on)->flags&TPH_GLOW)
-#define OBJECT_PARTINVIS(on) (ldthingd(ld)[on].proto->flags&PT_PINVIS)
+#define OBJECT_PARTINVIS(on) \
+     ((ldthingd(ld)[on].proto->flags&PT_PINVIS) | \
+      (ldthingd(ld)[on].tmpinv))
 #define OBJECT_IMAGE(on) (ldthingd(ld)[on].image)
 #define OBJECT_IS_MIRRORIMAGE(on) (ldthingd(ld)[on].mirror_image)
 #define OBJECT_INVISIBLE(on) (ldthingd(ld)[on].proto->sprite[0]==0||(ldthingd(ld)[on].proto->flags&PT_BOGUS))
@@ -252,7 +275,7 @@ void reset_renderer(void) {
    
 void init_renderer(int v_width, int v_height,int real_width,int real_height)
 {
-   int i,xo,yo;
+   int i,xo=0,yo=0;
 
    if(start_events!=NULL) reset_renderer();
    
@@ -270,10 +293,12 @@ void init_renderer(int v_width, int v_height,int real_width,int real_height)
    view_width = v_width;
    view_height = v_height;
    fb_width = real_width;
-  
+
+#if 0  
    xo=(real_width-view_width)/2;
    yo=(real_height-view_height)/2;
-   
+#endif   
+
    fb_topleft=xo+yo*real_width;
    
 #ifdef USE_COLORMAP
@@ -336,11 +361,11 @@ static void clip_walls(void) {
       //if(view->sector>=0&&reject_sector_wall(ld,view->sector,i)) continue;
 
       /* length 0 walls are invisible */
-      if(wall_length(ld,i)==0) continue; 
-      
+      if(wall_length(ld,i)==0) continue;
+
       x1 = WALL_VER1(i).tx;
       x2 = WALL_VER2(i).tx;
-      
+
       /* See if the wall lies completely behind the view plane. */
       if (x1 <= view->eye_distance && x2 <= view->eye_distance)
 	continue;
@@ -386,7 +411,7 @@ static void clip_walls(void) {
       if ((outcode1 | outcode2) != 0) {
 	 /* Damn . . . we need to clip. */
 	 fixed base_slope, slope, denom, y_diff;
-	 
+
 	 denom = (x2 - x1);
 	 if (FIXED_ABS(denom) < FIXED_EPSILON) {
 	    if (denom < 0)
@@ -413,7 +438,7 @@ static void clip_walls(void) {
 	    else
 	      x1 = FIXED_MAX;
 	 }
-	 
+
 	 if (outcode2 == 1) {
 	    px2 = -view->view_plane_size;
 	    y_diff = y2 - fixmul(x2, -view->view_plane_size);
@@ -432,7 +457,7 @@ static void clip_walls(void) {
 	      x2 = FIXED_MAX;
 	 }
       }
-      
+
       add_wall_events(i, x1, px1, x2, px2);
    }
 }
@@ -455,7 +480,7 @@ static void add_wall_events(int wall,
    fb2 = FIXED_TO_INT(px2) + (view_width >> 1);
 
 #ifdef CHK_FBCOLS
-   if(fb1<0||fb1>=view_width||fb2<0||fb2>=view_width) 
+   if(fb1<0||fb1>=view_width||fb2<0||fb2>=view_width)
      logprintf(LOG_ERROR,'R',"fb1=%d fb2=%d for wall %d",fb1,fb2,wall);
 #endif
 
@@ -469,7 +494,7 @@ static void add_wall_events(int wall,
 
    /* likewise, throw away walls that don't have a side facing us */
    if(sidenum<0) return;
-   
+
    /* Here we use a 2.30 fixed point format.  The result of this calculation
     **   is always between 1 and zero, as the distance can never be less
     **   than the view plane distance.  The extra fractional bits are
@@ -480,9 +505,9 @@ static void add_wall_events(int wall,
    z2 = fixdiv(TO_FIX_2_30(view->eye_distance), x2);
 
    if (fb1 < fb2) {
-      if(start_events[fb1].n_events>=MAX_WALL_EVENTS) 
+      if(start_events[fb1].n_events>=MAX_WALL_EVENTS)
       	logfatal('R',"Too many wall start_events column=%d",fb2);
-      
+
       event = &start_events[fb1].events[start_events[fb1].n_events];
       event->z = z1;
       event->dz = fixdiv(z2 - z1, INT_TO_FIXED(fb2 - fb1));
@@ -490,7 +515,7 @@ static void add_wall_events(int wall,
       event->backsect=ldline(ld)[wall].side[1];
       event->endcol=fb2;
       start_events[fb1].n_events++;
-      
+
    } else {
       if(start_events[fb2].n_events>=MAX_WALL_EVENTS)
       	logfatal('R',"Too many wall start_events column=%d",fb2);
@@ -502,7 +527,7 @@ static void add_wall_events(int wall,
       event->endcol=fb1;
       start_events[fb2].n_events++;
      };
-   
+
    /* event init stuff that doesn't depend on wall's sense */
    event->wall=wall;
    event->sidenum=sidenum;
@@ -513,7 +538,7 @@ static void add_objects(void) {
    int i;
    const fixed view_sin = view_constants.view_sin;
    const fixed view_cos = view_constants.view_cos;
-      
+
    for (i=0;i<NUM_OBJECTS;i++) {
       fixed x, y, z;
       fixed tx, ty;
@@ -522,22 +547,28 @@ static void add_objects(void) {
 
       /* if this thing doesn't exist anymore, skip */
       if(!OBJECT_EXISTS(i)) continue;
-      
+
       /* if thing isn't in any sector that we can see, throw it */
       if(view->sector>=0&&reject_sector_thing(ld,view->sector,i)) continue;
 
       /* Skip the object if it is invisible. */
       if (OBJECT_INVISIBLE(i)) continue;
-		  
+
       /* see object from the right angle, when the time comes */
       thing_rotate_image(ld,i,view->angle);
+      if(o->image==NULL) continue;
 
       /* Convert object coordinates to fixed point and transform. */
       x = o->x - view->x;
       y = o->y - view->y;
       z = o->z;
+#if 0 /* the old way: uses object's real width and height */
       height = OBJECT_HEIGHT(i);
       width  = OBJECT_WIDTH(i);
+#else /* the new way: use width and height of sprite */
+      height = PIXEL_TO_MAP(o->image->height);
+      width  = PIXEL_TO_MAP(o->image->width);
+#endif
       /* Rotate into viewer's coordinate system. */
       tx = fixmul(x, view_cos) - fixmul(y, view_sin);
       ty = fixmul(x, view_sin) + fixmul(y, view_cos);
@@ -547,21 +578,21 @@ static void add_objects(void) {
 	 int fb1, fb2;
 	 fixed pstart, pend;
 	 fixed z;
-	 
+
 	 /* Project the object onto the view plane . . . */
 	 pstart = fixdiv(ty - FIXED_HALF(width), tx);
 	 pend   = fixdiv(ty + FIXED_HALF(width), tx);
-	 
+
 	 /* check for a potential overflow */
 	 if(pstart>INT_TO_FIXED(1)||pend<INT_TO_FIXED(-1))
 	   continue;
-	     
+
 	 /* Convert to frame buffer coordinates. */
 	 pstart = fixdiv(pstart, view_constants.screen_dx + 1);
 	 pend   = fixdiv(pend,   view_constants.screen_dx + 1);
 	 fb1 = FIXED_TO_INT(pstart) + (view_width >> 1);
 	 fb2 = FIXED_TO_INT(pend)   + (view_width >> 1) - 1;
-	  
+
 	 if (fb2 >= 0 && fb1 < view_width) {
 	    Object_start_list *start_list;
 	    Object_start      *start;
@@ -574,11 +605,11 @@ static void add_objects(void) {
 	       fb1 = 0;
 	    }
 	    start_list = &obj_start_events[fb1];
-	    
+
 	    if (fb2 >= view_width)
 	      fb2 = view_width - 1;
 
-	    if(start_list->n_events>=MAX_OBJECT_EVENTS) 
+	    if(start_list->n_events>=MAX_OBJECT_EVENTS)
 	      logfatal('R',"Too many obj start_events");
 
 	    start = &start_list->events[start_list->n_events];
@@ -600,7 +631,7 @@ static void render_walls(void) {
    static Active_object *active_obj;
    int active_count = 0, active_obj_count = 0;
    fixed Vx, Vy, dVy;
-   
+
 
    /* Make sure that the active list is large enough to hold all the
     **   lines in a world.
@@ -612,11 +643,11 @@ static void render_walls(void) {
       else
       	active = safe_realloc(active,
 			      sizeof(Active_wall) * last_wall_count);
-      
+
    }
    if (active_obj == NULL)
      active_obj = safe_malloc(sizeof(Active_object) * MAX_ACTIVE_OBJECTS);
-   
+
    /* Set up for fast calculation of view rays. */
    Vx = view->eye_distance;
    Vy = -view->view_plane_size;
@@ -626,14 +657,14 @@ static void render_walls(void) {
    for (rw_column = 0; rw_column < view_width; rw_column++) {
       Active_wall   *current, *last;
       Active_object *current_obj, *last_obj;
-      
+
 #ifdef CHK_ACTIVE_COUNT
-      if(active_count<0) 
+      if(active_count<0)
       	logfatal('R',"active_count=%d at rw_column %d",active_count,rw_column);
-      if(active_obj_count<0) 
+      if(active_obj_count<0)
       	logfatal('R',"active_obj_count=%d at rw_column %d",active_obj_count,rw_column);
 #endif
-      
+
       active_count     = add_events(active, active_count, rw_column);
       active_obj_count = add_obj_events(active_obj, active_obj_count,
 					    rw_column);
@@ -642,17 +673,17 @@ static void render_walls(void) {
       if(active_obj_count>MAX_ACTIVE_OBJECTS)
       	logfatal('R',"Too many active objects (%d)",active_obj_count);
 #endif
-      
+
       do_walls(active, active_count,
 	       active_obj, active_obj_count,
 	       Vx, Vy);
-      
+
       active_count     = remove_events(active, active_count, rw_column);
       active_obj_count = remove_obj_events(active_obj, active_obj_count,
 					   rw_column);
-      
+
       /* Keep track of distances of walls in the active list.  Notice that
-       **   we're not actually tracking the distances of walls, but 
+       **   we're not actually tracking the distances of walls, but
        **   1 / distance instead.  That's because we can linearly
        **   interpolate 1 / distance.  Also, most calculations that
        **   use distance are really using 1 / distance (i.e. distance
@@ -672,14 +703,14 @@ static void render_walls(void) {
       last_obj = active_obj + active_obj_count;
       for (current_obj = active_obj; current_obj < last_obj; current_obj++)
       	current_obj->x += current_obj->dx;
-      
+
       Vy += dVy;
    }
 
 };
 
 #ifdef i386
-extern inline void memmove_fwd(void *d,const void *s,size_t l)  {
+static inline void memmove_fwd(void *d,const void *s,size_t l)  {
    asm("rep\n\t"
        "movsl\n\t"
        :
@@ -687,7 +718,7 @@ extern inline void memmove_fwd(void *d,const void *s,size_t l)  {
        : "edi", "esi", "ecx"
        );
 };
-extern inline void memmove_bwd(void *d,const void *s,size_t l)  {
+static inline void memmove_bwd(void *d,const void *s,size_t l)  {
    asm("std\n\t"
        "leal (%%esi,%%ecx,4),%%esi\n\t"
        "leal (%%edi,%%ecx,4),%%edi\n\t"
@@ -713,7 +744,7 @@ static int ver_eq(int _v1,int _v2)  {
    return v1->x==v2->x&&v1->y==v2->y;
 };
 #endif
-   
+
 /* Add new walls to the active list.  The active list is kept
 **   depth sorted.  We have to be careful here.  Correct depth
 **   ordering of the walls is vital for rendering.  At corners
@@ -730,7 +761,7 @@ static int add_events(Active_wall *active, int n_active, int column) {
       const int wall = event->wall;
       const fixed z = event->z;
 
-      /*logprintf(LOG_DEBUG,'R',"add_events(column=%d wall=%d)",column,wall);*/ 
+      /*logprintf(LOG_DEBUG,'R',"add_events(column=%d wall=%d)",column,wall);*/
 
       for (j = 0; j < n_active; j++) {
 	 const int wall2 = active[j].wall;
@@ -759,7 +790,7 @@ static int add_events(Active_wall *active, int n_active, int column) {
 	    v1 = &WALL_VER1(wall);
 	    v2 = &WALL_VER1(wall2);
 	 }
-#ifdef USE_VER_EQ	 
+#ifdef USE_VER_EQ
 	 /* Ill formed doom levels sometimes have coinciding vertices.
 	  * Also, when we have moving vertices, this might be allowable.
 	  */
@@ -779,8 +810,8 @@ static int add_events(Active_wall *active, int n_active, int column) {
 	    common = &WALL_VER2(wall);
 	    v1 = &WALL_VER1(wall);
 	    v2 = &WALL_VER1(wall2);
-	 } 
-#endif	 
+	 }
+#endif
 	 else {
 	    /*    We have two walls which are really close
 	     **   together, but share no vertices.  Because
@@ -798,7 +829,7 @@ static int add_events(Active_wall *active, int n_active, int column) {
 	       break;
 	    };
 	    */
-	       
+
 	    if (z >= active[j].z)
 	      break;
 	    else
@@ -814,12 +845,12 @@ static int add_events(Active_wall *active, int n_active, int column) {
 	    j=-1;
 	    break;
 	 };
-	 
+
       }
 
       /* did this wall turn out to be invisible? */
       if(j<0) continue;
-      
+
       /* insert ourselves in front */
       if(j<n_active) memmove_bwd(active + j + 1, active + j,
 				 sizeof(Active_wall) * (n_active - j));
@@ -841,7 +872,7 @@ static int add_obj_events(Active_object *active, int n_active, int column)
       const Texture *oimage=OBJECT_IMAGE(event->o);
 
       for (j = 0; j < n_active && event->z < active[j].z; j++);
-	  
+
       memmove_bwd(active + j + 1, active + j,
 	      sizeof(Active_object) * (n_active - j));
       active[j].z = event->z;
@@ -891,7 +922,7 @@ static int wall_obscured(const VertexDyn *common, const VertexDyn *v1, const Ver
      sign2 = FIXED_PRODUCT_SIGN(x1, common->ty);
    else
      sign2 = FIXED_SIGN(fixmul(x1, common->ty) - fixmul(common->tx, y1));
-   
+
    if (sign1 ^ sign2)
      return 0;
    else
@@ -953,7 +984,7 @@ static int remove_obj_events(Active_object *active, int n_active, int column)
 static fixed wall_ray_intersection(fixed Vx, fixed Vy, int wall)
 {
      fixed denominator;
-     
+
      const fixed Nx = -Vy;
      const fixed Ny = Vx;
      const fixed Wx = WALL_VER2(wall).tx - WALL_VER1(wall).tx;
@@ -1016,13 +1047,13 @@ static void calc_view_constants(int screen_width, int screen_height) {
 	 view_constants.sin_tab =
 	   safe_realloc(view_constants.sin_tab,
 			screen_width * sizeof(fixed));
-	 view_constants.cos_tab = 
+	 view_constants.cos_tab =
 	   safe_realloc(view_constants.cos_tab,
 			screen_width * sizeof(fixed));
       }
       last_width = screen_width;
    }
-	  
+
    view_constants.view_sin =fixsin(-view->angle);
    view_constants.view_cos =fixcos(-view->angle);
    view_constants.screen_dx = fixdiv(FIXED_DOUBLE(view->view_plane_size),
@@ -1041,16 +1072,16 @@ static void calc_view_constants(int screen_width, int screen_height) {
       y += view_constants.sin_dx;
       x += view_constants.cos_dx;
    }
-     
+
    y = FIXED_SCALE(view_constants.screen_dy, screen_height >> 1);
    y-=view->horizon;
    for (i = 0; i < screen_height; i++) {
       view_constants.row_view[i] = y;
-#ifdef ROW_RECI_SHR      
+#ifdef ROW_RECI_SHR
       /* the row_reci table is used for fast(er) floors and ceilings */
-      if(FIXED_ABS(y)>=FIXED_EPSILON) 
+      if(FIXED_ABS(y)>=FIXED_EPSILON)
 	view_constants.row_reci[i] = fixdiv(FIXED_ONE>>ROW_RECI_SHR,y);
-      else 
+      else
 	view_constants.row_reci[i] = FIXED_ONE>>ROW_RECI_SHR;
 #endif
       y -= view_constants.screen_dy;
@@ -1061,3 +1092,6 @@ static void calc_view_constants(int screen_width, int screen_height) {
 
 #endif /* WANT_BPPx */
 
+// Local Variables:
+// c-basic-offset:3
+// End:

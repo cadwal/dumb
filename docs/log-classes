@@ -1,0 +1,91 @@
+"char cl" parameters to logprintf.
+These correspond to DUMB 0.09.kn.2.
+
+'A': AnimTex
+dumb/animtex.c
+
+'B': Banner
+dumb/banner.c
+
+'B': Blockmap
+xwad/savemap.c
+
+'C': Child process
+xwad/xwad.c
+
+'C': Connect
+xwad/connect.c
+
+'D': DUMB
+dumb/dumb.c
+dumb/game.c
+
+'G': Gettable
+dumb/gettable.c
+
+'I': Input
+plat/aalib_input.c
+plat/linux_input.c
+plat/x11_video.c
+
+'L': Log
+dumb/log.c
+
+'M': ?
+xwad/xproto.c
+xwad/xwad.c
+
+'M': Map?
+dumb/levdata.c
+dumb/levinfo.c
+dumb/termtype.c
+dumb/thinghit.c
+dumb/updmap.c
+xwad/mapcon.c
+
+'N': Net
+dumb/netio.c
+dumb/netplay.c
+plat/unix_net.c
+
+'O': Object?
+dumb/bangbang.c
+dumb/levdyn.c
+dumb/prothing.c
+dumb/thingm.c
+dumb/updthing.c
+
+'P': Ptcomp?
+tool/ptcomp.c
+
+'R': Render
+render/rendcore.c
+render/render.c
+render/view.c
+
+'S': Safe
+lib/safeio.c
+lib/safem.c
+
+'S': Sound
+dumb/dsound.c
+plat/linux_sound.c
+plat/mme_sound.c
+
+'T': Texture
+dumb/texture.c
+
+'U': Use
+dumb/useitem.c
+
+'V': Video
+plat/dosvideo.c
+plat/ggi_video.c
+plat/linux_video.c
+plat/vgagl_video.c
+plat/x11_video.c
+
+'W': Wad
+plat/wadtool.c
+wad/loadlump.c
+wad/wadio.c

@@ -85,14 +85,16 @@ static void do_sector_event(LevData *ld,MapEvent *me,int tickspassed) {
    if(me->type!=ME_NONE&&me->stage>=0&&me->sound>=0) {
       if(sd->cent_r==0) 
 	 logprintf(LOG_DEBUG,'M',"sector %d has no center?",me->entity);
-      play_dsound(me->sound,sd->cent_x,sd->cent_y,sd->cent_r);
+      else 
+	play_dsound(me->sound,sd->cent_x,sd->cent_y,sd->cent_r);
       me->sound=-1;
    };
    /* do stop sound (only if start sound got to play) */
    if(me->type==ME_NONE&&me->sound<0&&me->stopsound>=0) {
       if(sd->cent_r==0) 
 	 logprintf(LOG_DEBUG,'M',"sector %d has no center?",me->entity);
-      play_dsound(me->stopsound,sd->cent_x,sd->cent_y,sd->cent_r);
+      else 
+	play_dsound(me->stopsound,sd->cent_x,sd->cent_y,sd->cent_r);
       me->stopsound=-1;
    };
 };

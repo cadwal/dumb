@@ -31,9 +31,9 @@ void game_message(int pl,const char *fmt,...) {
 
 ConfItem playconf[]={
    CONFI("timer",NULL,0,"processor timing overcompensation tweak",5),
-   CONFI("forward",NULL,0,"forward speed",25),
-   CONFI("strafe",NULL,0,"strafe speed",25),
-   CONFI("turn",NULL,0,"turning speed",140),
+   CONFI("forward",NULL,0,"forward speed",18),
+   CONFI("strafe",NULL,0,"strafe speed",20),
+   CONFI("turn",NULL,0,"turning speed",100),
    CONFI("jump",NULL,0,"jumping speed",20),
    {NULL}
 };
@@ -61,9 +61,42 @@ void process_input(LevData *ld,const PlayerInput *in,int tickspassed,int pl) {
    int cheated=0;
    /* this function called only on master */
    ThingDyn *td=ldthingd(ld)+ld->player[pl];
+
+   /* cheats and special functions */
+   if(in->select[1]) {
+      cheated++;
+      if(!(ld->plflags[pl]&PLF_CHEAT)) {
+	 game_message(-1,"PLAYER %d WARPED",pl+1);
+	 game_want_newlvl(1);
+      };
+   };
+   if(in->select[2]) {
+      cheated++;
+      if(!(ld->plflags[pl]&PLF_CHEAT)) {
+	 game_message(-1,"PLAYER %d CHEATED",pl+1);
+	 cheat_gettables(ld,pl);
+      };
+   };
+   if(in->select[3]) { 
+      cheated++;
+      if(!(ld->plflags[pl]&PLF_CHEAT)) {
+	 game_message(-1,"PLAYER %d WIBBLED LOUDLY",pl+1);
+	 do_tag666(ld);
+      };
+   };
+   if(in->select[4]) { 
+      cheated++;
+      if(!(ld->plflags[pl]&PLF_CHEAT)) {
+	 game_message(-1,"PLAYER %d RETURNED",pl+1);
+	 thing_send_sig(ld,ld->player[pl],TS_ANIMATE);
+      };
+   };
+   if(cheated) ld->plflags[pl]|=PLF_CHEAT;
+   else ld->plflags[pl]&=~PLF_CHEAT;
+
    /* only allow movement if player isn't dead */
    process_input_ms(ld,in,tickspassed,pl);
-   if(td->proto==NULL||td->hits<0) return;
+   if(td->proto==NULL||td->hits<=0) return;
 
    /* the point of this is to discount the processor-speed independent
       timing a little.  The update code tends to overcompensate for 
@@ -99,35 +132,11 @@ void process_input(LevData *ld,const PlayerInput *in,int tickspassed,int pl) {
       rotate_selection(ld,pl,0);
    if(in->s_sel&&!(ld->plflags[pl]&PLF_SSEL))
       rotate_selection(ld,pl,1);
-
+   
    if(in->w_sel) ld->plflags[pl]|=PLF_WSEL;
    else ld->plflags[pl]&=~PLF_WSEL;
    if(in->s_sel) ld->plflags[pl]|=PLF_SSEL;
    else ld->plflags[pl]&=~PLF_SSEL;
-
-   /* special whatsits */
-   if(in->select[1]) {
-      cheated++;
-      if(!(ld->plflags[pl]&PLF_CHEAT)) {
-	 game_message(-1,"PLAYER %d WARPED",pl+1);
-	 game_want_newlvl(1);
-      };
-   };
-   if(in->select[2]) {
-      cheated++;
-      if(!(ld->plflags[pl]&PLF_CHEAT)) {
-	 game_message(-1,"PLAYER %d CHEATED",pl+1);
-	 cheat_gettables(ld,pl);
-      };
-   };
-   if(in->select[3]) { 
-      cheated++;
-      if(!(ld->plflags[pl]&PLF_CHEAT)) {
-	 game_message(-1,"PLAYER %d WIBBLED LOUDLY",pl+1);
-	 do_tag666(ld);
-      };
-   };
-   if(cheated) ld->plflags[pl]|=PLF_CHEAT;
-   else ld->plflags[pl]&=~PLF_CHEAT;
+   
 };
 

@@ -6,7 +6,7 @@
 
 extern ConfItem video_conf[];
 
-void init_video(int *width,int *height,int *bpp);
+void init_video(int *width,int *height,int *bpp,int *real_width);
 void reset_video(void);
 
 void video_setpal(unsigned char idx,

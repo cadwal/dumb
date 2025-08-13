@@ -9,20 +9,23 @@
 
 extern ConfItem netplay_conf[];
 
+#define RS_NAME_LEN 64
+
 typedef struct RemoteStation_struct {
    NetDriver *driver;
-   const char *name;
    void *addr;
    int addrlen;
    int flags;
    int ackstate;
    int player;
+   char name[RS_NAME_LEN];
 } RemoteStation;
 
 #define RS_SLAVE 0x0001          /* this station is enslaved to me */
 #define RS_MASTER 0x0002         /* I'm enslaved to this station */
 #define RS_WADSERVER 0x0004      /* this station can serve lumps to me */
 #define RS_LIVE 0x0008           /* this station seems to be live */
+#define RS_INIT 0x0010           /* station has ackked an init packet */
 
 extern RemoteStation *stations;
 extern int nstations;

@@ -5,7 +5,7 @@
 
 /* this loop could be unrolled for greater efficiency... */
 
-extern inline void _flatx_loop(fixed x,fixed y,fixed dx,fixed dy,
+static inline void _flatx_loop(fixed x,fixed y,fixed dx,fixed dy,
 			       Pixel *out,Pixel *end,
 			       const Pixel *cm,const TPixel *t,
 			       int xmask,int ymask)
@@ -47,7 +47,7 @@ extern inline void _flatx_loop(fixed x,fixed y,fixed dx,fixed dy,
 
 #else /* i386 */
 
-extern inline void _flatx_loop(fixed x,fixed y,fixed dx,fixed dy,
+static inline void _flatx_loop(fixed x,fixed y,fixed dx,fixed dy,
 			Pixel *out,Pixel *end,
 			const Pixel *cm,const TPixel *t,
 			int xmask,int ymask)

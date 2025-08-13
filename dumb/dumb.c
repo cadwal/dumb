@@ -33,7 +33,7 @@
 /*#define WATCHDOG*/
 
 #define DUMB "DUMB"
-#define VERSION "0.08"
+#define VERSION "0.10"
 
 #ifdef __cplusplus
 #define BANNER (DUMB "++ " VERSION)
@@ -74,9 +74,10 @@ ConfItem mainconf[]={
    CONFB("preload",NULL,0,"load textures before game starts"),
    CONFI("view-angle",NULL,0,"angle from forward of player view",0),
    CONFI("view-offset",NULL,0,"offset from center of player view",0),
-
    CONFL("slave",NULL,0,"network play: slave mode"),
    CONFL("master",NULL,0,"network play: master mode"),
+   CONFB("single",NULL,0,"force single player mode"),
+   CONFI("view-rotate",NULL,0,"angle to rotate view by",0),
    {NULL}
 };
 #define cnf_auto_save (mainconf[0].intval)
@@ -102,9 +103,10 @@ ConfItem mainconf[]={
 #define cnf_preload (mainconf[20].intval)
 #define cnf_vt_angle (mainconf[21].intval)
 #define cnf_vt_offset (mainconf[22].intval)
-
 #define cnf_slave (mainconf[23].listval)
 #define cnf_master (mainconf[24].listval)
+#define cnf_single (mainconf[25].intval)
+#define cnf_vt_rotate (mainconf[26].intval)
 
 ConfModule dumbconf[]={
    {input_conf,"input","Input Driver"},
@@ -121,7 +123,7 @@ static int master=0,slave=0;
 static LevData ld[1];
 
 static int width=0,height=0,vwidth=0,vheight=0,bpp=0,
-   xmul=0,ymul=0,xlace=0,ylace=0,rend2fb=0;
+   xmul=0,ymul=0,xlace=0,ylace=0,rend2fb=0,real_width=0;
 
 static int banner=-1,wbanner=-1,bfont=-1;
 
@@ -130,7 +132,7 @@ static void do_gmsg(const char *s) {
    add_str_to_banner(banner,bfont,s);
 };
 void gmsg(int pl,const char *s) {
-   if(pl<0&&master) do_gmsg(s);
+   if(pl<0&&!slave) do_gmsg(s);
    if(pl==ld->localplayer) do_gmsg(s);
    else send_message(pl,s);
 };
@@ -174,9 +176,6 @@ void do_preload(LevData *ld,int bpp) {
 /* control how much we're allowed to speed up the action */
 #define MAXTICKS (500/MSEC_PER_TICK)
 
-/* how often to check whether monsters wake up */
-#define WAKE_TICKS (1000/MSEC_PER_TICK)
-
 int main(int argc,char **argv) {
    char conf_file[256];
    void *fb,*rendfb=NULL,*fbptr;
@@ -197,7 +196,6 @@ int main(int argc,char **argv) {
 #else
    void *(*fbrerender)();
 #endif
-   int wake_ticks=0;
    int load_failed=1;
    Texture *txh=NULL;
 
@@ -287,11 +285,17 @@ int main(int argc,char **argv) {
 		 slave_info.mplayer);
       ld->localplayer=slave_info.plnum;
    }
+   else if(cnf_single) load_level(ld,cnf_map,cnf_difficulty,0); 
    else load_level(ld,cnf_map,cnf_difficulty,master);
    if(cnf_preload) do_preload(ld,1);
    if(master) wait_slaveinit(ld);
 
-   init_video(&vwidth,&vheight,&bpp);
+   if(vwidth==width&&vheight==height) {
+     init_video(&vwidth,&vheight,&bpp,&real_width);
+     width=vwidth;
+     height=vheight;
+   }
+   else init_video(&vwidth,&vheight,&bpp,&real_width);
    if ((xmul & ymul) == 1) {
      rend2fb = 1;
      xlace = ylace = 0;
@@ -340,6 +344,8 @@ int main(int argc,char **argv) {
      if(i!=ld->player[ld->localplayer]) ldthingd(ld)[i].proto=NULL;
    
    td=ldthingd(ld)+(follow=ld->player[ld->localplayer]);
+   if (follow == -1)
+     logprintf(LOG_ERROR,'D',"Can't find player");
 
    init_view(&view);
    view.angle=0;
@@ -349,11 +355,8 @@ int main(int argc,char **argv) {
      logprintf(LOG_ERROR,'D',"Can't find sector for player");
    view.sector=td->sector;
    sd=ldsectord(ld)+td->sector;
-   /*if(vpdiv>1)
-     init_renderer(width-width/vpdiv,height-height/vpdiv,width,height);
-   else*/
-     init_renderer(width,height,width,height);
-   init_draw(width,height,bpp);
+   init_renderer(width,height,real_width,height);
+   init_draw(width,height,bpp,real_width);
 
    init_gettables();
 
@@ -450,7 +453,7 @@ int main(int argc,char **argv) {
 	 if(want_new_lvl) {
 	    levinfo_next(ld,want_new_lvl>1);
 	    reset_local_gettables(ld);
-	    td=ldthingd(ld)+(follow=ld->player[0]);
+	    td=ldthingd(ld)+(follow=ld->player[ld->localplayer]);
 	    video_winstuff(ld->name,vwidth,vheight);
 	    want_new_lvl=0;
 	    continue;
@@ -497,10 +500,16 @@ int main(int argc,char **argv) {
 		      tickspassed);
 	    tickspassed=MAXTICKS;
 	 };
-	 wake_ticks+=tickspassed;
-	 if(wake_ticks>=WAKE_TICKS) {
-	    thing_wake_others(ld,ld->player[0]);
-	    wake_ticks=0;
+	 if(!slave) {
+	    int p;
+	    for(p=0;p<MAXPLAYERS;p++)
+	      if(ld->player[p]>=0) 
+		 thing_wake_others(ld,ld->player[p],tickspassed);
+	 };
+	 if(cnf_vt_rotate) {	    
+	    viewtrans.angle+=(FIXED_PI*cnf_vt_rotate*tickspassed)
+	      /(180*1000/MSEC_PER_TICK); /* so vt_rotate is in degrees/sec */
+	    NORMALIZE_ANGLE(viewtrans.angle);
 	 };
 	 if(tickspassed>0) {
 	    reset_timer();
@@ -526,6 +535,7 @@ int main(int argc,char **argv) {
 	       ldthingd(ld)[ld->plwep[ld->localplayer]].proto=NULL;
 	 };
 
+	 if(master||slave) net_bufflush();
 	 frames++;
       };
 #ifdef WATCHDOG
@@ -537,19 +547,6 @@ int main(int argc,char **argv) {
       logprintf(LOG_INFO,'D',"%d frames, %d seconds, %f fps",
 		frames,tt,(double)frames/tt);
    
-   /*
-   tt=time(NULL);
-   for(view.height=sd->floor+(8<<12);view.height<sd->ceiling-(8>>12);view.height+=1<<11) {
-      view.angle+=1<<9;
-      render(fb=video_newframe(),ld,&view);
-      video_updateframe(fb);
-      frames++;
-   };
-   tt=time(NULL)-tt;
-   logprintf(LOG_INFO,'D',"%ld frames, %ld seconds, %f fps",frames,tt,(double)frames/tt);
-   */
-   
-   /*sleep(2);*/
    reset_input();
    reset_video();
    if(want_sound) {

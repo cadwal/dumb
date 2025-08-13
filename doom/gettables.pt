@@ -16,11 +16,12 @@
 
 #define PowerUp  Special
 
-#define SlimeProtection  3
-#define DamageProtection 5
-#define SuperStrength    4
+#define GhostWhoWalks    3
+#define DamageProtection 4
+
+#define SlimeProtection  6
+#define SuperStrength    5
 #define SuperSight       7
-#define GhostWhoWalks    6
 
 
 /* Health and Armour */
@@ -130,7 +131,7 @@ Proto Soulsphere 2013
   Phases Cycle4
   Size 24 20
   StickToFloor
-  Gets Health 200
+  Gets Health 100
 
 Proto Megasphere 83
   Sprite MEGA
@@ -342,7 +343,7 @@ Gettable Berserk
   PickupSound DSGETPOW
 
 Gettable Invincibility
-  Icon PINVA0
+  Icon PINVA0 Anim D Timing 100msec
   IconPos 114 6
   Collect PowerUpQty
   GotThe Message INVINCIBILITY___OH_MY_GOD
@@ -351,7 +352,7 @@ Gettable Invincibility
   PickupSound DSGETPOW
 
 Gettable Invisibility
-  Icon PINSA0
+  Icon PINSA0 Anim D Timing 100msec
   IconPos 148 6
   Collect PowerUpQty
   GotThe Message INVISIBILITY
@@ -360,7 +361,7 @@ Gettable Invisibility
   PickupSound DSGETPOW
 
 Gettable Goggles
-  Icon PVISA0
+  Icon PVISA0 Anim B Timing 400msec
   IconPos 184 12
   Collect PowerUpQty
   GotThe Message LIGHT_AMPLIFICATION_GOGGLES

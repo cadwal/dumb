@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -88,6 +89,7 @@ DECL_ENCODE(Thing) {
    c->owner=d->owner;
    c->sector=d->sector;
    c->armour=d->armour;
+   c->tmpinv=d->tmpinv;
    c->hits=d->hits;
    if(d->proto) c->proto=d->proto->id;
    else c->proto=-1;
@@ -108,6 +110,7 @@ DECL_DECODE(Thing) {
       d->sector=c->sector;
       d->hits=c->hits;
       d->armour=c->armour;
+      d->tmpinv=c->tmpinv;
       if(c->proto==-1) d->proto=NULL;
       else {
 	 if(d->proto==NULL||c->proto!=d->proto->id) 

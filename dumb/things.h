@@ -7,6 +7,7 @@
 
 #define SHOOT_HEIGHT(td) ((3*(td)->proto->height)/4)
 
+void touch_player(LevData *ld,int pl);
 int thing2player(const LevData *ld,int th);
 int find_empty_thing(const LevData *ld);
 int safe_find_empty_thing(const LevData *ld);
@@ -17,14 +18,14 @@ int thing_hurl(LevData *ld,int hurler,int missile_id,
 void thing_shoot(LevData *ld,int shooter,int bullet_id,
 		 fixed angle,fixed elevation,fixed arc,int num,int para);
 int thing_can_shoot_at(const LevData *ld,int looker,int target);
-void thing_wake_others(const LevData *ld,int th);
+void thing_wake_others(const LevData *ld,int th,int tickspassed);
 void thing_find_enemy(const LevData *ld,int th);
 void thing_autoaim(const LevData *ld,int th,
 		   fixed arc,fixed *angle,fixed *elev);
 void thing_autotarget(const LevData *ld,int th,fixed arc);
 fixed line_dist(const LevData *ld,int wall,fixed x,fixed y);
 
-void player_apply_lookup(const LevData *ld,int th,int lookup);
+void player_apply_lookup(const LevData *ld,int th,fixed lookup);
 
 void thing_become(LevData *ld,int th,int id);
 void thing_enter_phase(LevData *ld,int th,int ph);

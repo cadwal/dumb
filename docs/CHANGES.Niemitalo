@@ -1,0 +1,161 @@
+Wed Feb 18 16:58:54 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* dumb/dumb.c (VERSION): Update to "0.09.kn.3".
+	* docs/CHANGES.Niemitalo: Fix lower-case "version" in yesterday's
+ 	changes.
+	
+	* doom/weapons.pt: Rearrange to match DOOM weapon numbering.
+
+	* dumb/prothing.h (PT_TURNWHENHITTING): New.
+	* dumb/thingm.c (do_melee_damage): Add support for
+	PT_TURNWHENHITTING.
+	* tool/ptcomp.c (protocomp): Add support for TurnWhenHitting.
+	* doom/weapons.pt (Proto HeldChainsaw): Add TurnWhenHitting.
+
+	* doom/gettables.pt (Proto Soulsphere): Gets Health 100, not 200.
+
+	* docs/TODO: Add a few wishes.
+
+	* plat/x11_video.c (init_video): Move shm predeletion to correct
+ 	place.  It was in the wrong branch of an "if" and the segments
+	weren't being deleted at all.  My fault.
+
+	* dumb/texture.c (paste_pict_on_texture, paste_jpatch_on_texture):
+	Correct "BBP" to "BPP" in error messages.
+
+	* render/slice86.c (PIXEL_GUARD_VAL): New, copied from slice.c.
+	(draw_trans_slice): Change type of "p" from Pixel to TPixel.  Use
+ 	PIXEL_GUARD_VAL (which is always 255) instead of hex constants.
+  	This fixes the bug of partially invisible objects appearing as
+	rectangles when BPP>1.
+	* render/slice.c: Add comment that slice86.c exists. 
+	(__draw_transparent_sl): Add comment on unsigned integer overflow
+ 	behavior specified by C standard.
+
+	* render/slice86.c: Remove semicolons after closing braces and
+	excessive trailing newlines.
+	
+	* dumb/levdyn.h (THING_MAGIC_JELLYBEAN): Rewrite with offsetof()
+ 	from <stddef.h>.  WARNING: Network playing not tested.  But it
+	should work.
+	
+Tue Feb 17 15:56:25 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Synchronize with DUMB 0.09.
+	* dumb/dumb.c (VERSION): Update to "0.09.kn.2".
+
+	* dumb/dumb.c (main): Remove my fixed-point looking patch because
+ 	the looking system seems to have changed.
+	* plat/ctlkey_input.c (COMPLEX_LOOKING): New #define.  Not defined
+ 	by default.
+	(ctlkey_press, ctlkey_calc_tick): Add #ifdef COMPLEX_LOOKING.
+	(recalc_input): Add #ifdef COMPLEX_LOOKING and assignment inside
+ 	its #else...#endif.
+	
+	* plat/x11_video.c (input_conf): Add entry for use-xkb.
+	(use_xkb): No longer a separate variable.
+	* tool/ptcomp.c (parm_dbl): Remove.  parm_arc() does a better job.
+	
+	* render/rendcore.c (do_walls): My texture-alignment fix didn't
+ 	work right with transparent textures, just like I feared.  Fixed.
+	
+	* plat/x11_video.c (init_video): Remove extra call to
+ 	XkbSetDetectableAutoRepeat().
+	(init_video, init_input): Move call of init_xkb() from
+ 	init_video() to init_input().
+	
+	* tool/ptcomp.c (arc_units): Fix error message.  (was "strange
+	timing unit")
+	
+	* docs/log-classes: New file.
+
+	* plat/ctlkey_input.c: Add TO DO comment.
+
+Mon Feb 16 00:31:54 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* docs/CHANGES.Niemitalo: Reformat this file to GNU standards.
+	Add Local Variables section.
+
+	* dumb/dumb.c (VERSION): Update from 0.06 to 0.06.kn.2.
+	
+	* Makefile: Rerun make depend.
+	(XDUMB_OBJS): Add plat/ctlkey_input.o.
+	* plat/ctlkey_input.c, plat/ctlkey_input.h: New files.
+	* plat/x11_video.c: Separate ctlkey stuff as plat/ctlkey_input.c.
+	(get_input, init_input, reset_input): Call corresponding ctlkey
+ 	functions.
+	
+	* dumb/dumb.c (main): Convert in.lookup to fixed point and divide
+ 	it by 8 before dividing it by UNIT_SPEED and passing it to
+ 	player_apply_lookup().
+	* dumb/thingm.c (player_apply_lookup): Change type of parameter
+ 	LOOKUP from int to fixed and don't divide it by 8.  This allows
+ 	more precise looking / aiming.  
+
+	* lib/log.h: #include <stdarg.h> and <stdio.h>.
+
+	* plat/x11_video.c (NO_XKB, use_xkb, init_xkb): New.
+	(get_input): Separate looking and aiming.  They are otherwise
+ 	alike but when the player releases the look button, the view is
+ 	automatically centered.  Add CTLKEY_CENTER_VIEW from XK_KP_5 and
+ 	XK_KP_Begin.
+	
+	* tool/ptcomp.c (parm_dbl): New function.
+	(gettcomp, protocomp): Angle-ratio parameter to ShootMany is now
+ 	floating-point to allow 0.5 = full circle.  No changes in output
+ 	lump format.
+	
+Fri Feb 13 22:16:03 1998  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Begin with DUMB 0.06 downloaded from cmbsb78.anu.edu.au.
+
+	* dumb/dumb.c, dumb/levdyn.h, xwad/xwadctls.c: Remove empty lines
+ 	at end of file.
+	* dumb/dumb.c, dumb/levdyn.h, plat/x11_video.c, render/rendcore.c,
+ 	render/render.c, xwad/xwadctls.c: Add Local Variables sections for
+ 	emacs.
+
+	* Makefile (BINARIES, XLIBS): Adapt to my system.
+
+	* dumb/dumb.c (main): Change comment to "p = play".  Add "Can't
+ 	find player" check.
+
+	* x11_video.c (init_video): Mark the shared memory segment for
+ 	deletion right after attaching to it.  This way it won't be left
+ 	there when the program crashes.
+	(reset_video): No need to delete the shared memory segment second
+ 	time.  See above.
+
+	* x11_video.c (run_state, strafe_state): Replace with
+ 	ctlpressed[].
+        (get_input): Rewrite keyboard control system.  Now it uses "enum
+ 	ctlkey" and ctlpressed[] between X keysyms and inp_state.
+  	Advantages: easier to add keyboard configuration later; run key
+	(shift) works even if pressed after movement key; simpler
+ 	structure.  Rearrange keys to match those we use here (with
+ 	dedicated strafe keys in numpad 1 & 3; Alt still works however).
+  	Add a square-to-circle compression routine so that diagonal
+ 	movements aren't any faster than forward ones.  Should rethink
+ 	this one though... the input state should reflect what the player
+ 	is trying to do, not what he can do.
+
+	* render/rendcore.c (draw_wall_segment): Converted loop to
+	operator % when tex_column < 0.  Previous ways in comments.
+	* render/rendcore.c (draw_wall, do_walls): Fixed bug pegging
+ 	textures to wrong sectors when the floor is higher than adjacent
+ 	sector's ceiling.  WARNING: should test how well my fix cooperates
+ 	with transparent textures, objects & sky.
+	* render/render.c (Active_wall): Added diagram how
+ 	p{end,start}{1,2} work.
+
+	* xwad/drawmap.c (line_is_sel): Now returns a bit mask indicating
+ 	currentness/selection status for each side separately.
+	(draw_line): Highlights lines according to bit mask got from
+ 	line_is_sel().  This is great for clicking sectors and seeing if
+ 	they are using the correct sides of lines.
+	* xwat/xwadctls.c (del_thing): Now uses "packing" algorithm that
+ 	works faster and better when deleting multiple things.
+
+Local Variables:
+mode: change-log
+End:

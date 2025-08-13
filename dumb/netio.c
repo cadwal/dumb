@@ -1,4 +1,5 @@
 #include <stdarg.h>
+#include <strings.h>
 #include <stdio.h>
 
 #include "lib/log.h"
@@ -27,21 +28,27 @@ void net_reset(void) {
       netdriver[i].reset();
 };
 
-int net_initstation(const char *name,int flags) {
-   RemoteStation *rs=stations+nstations;
+int net_initstation(int station, const char *name, int flags) {
+   RemoteStation *rs;
    int i;
-   if(nstations>=MAX_STATIONS) {
-      logprintf(LOG_ERROR,'N',"too many stations");
-      return -1;
+   if(station<0) {
+     if(nstations>=MAX_STATIONS) {
+       logprintf(LOG_ERROR,'N',"too many stations");
+       return -1;
+     };
+     station=nstations;
    };
-   rs->name=name;
+   rs=stations+station;
+   strncpy(rs->name,name,RS_NAME_LEN);
+   rs->name[RS_NAME_LEN-1]=0;
    rs->flags=flags;
    rs->ackstate=0;
    rs->player=-1;
    for(i=0;netdriver[i].name;i++)
       if(!netdriver[i].init_station(rs)) {
 	 rs->driver=netdriver+i;
-	 return nstations++;
+	 if(station>=nstations) nstations=station+1;
+	 return station;
       };
    return -1;
 };
@@ -75,10 +82,11 @@ void net_slavecast_nobuf(const void *pkt,size_t len) {
    /* TODO: take advantage of driver slavecast() func */
    int i;
    for(i=0;i<nstations;i++)
-      if(stations[i].flags&RS_SLAVE)
+      if((stations[i].flags&RS_SLAVE)&&(stations[i].flags&RS_LIVE))
 	 net_sendto(stations+i,pkt,len);
 };
 
+/* buffered send functions */
 static unsigned char scbuf[NETBUF_LEN];
 static int sclen=0;
 static NetSendFunc scsend=NULL;

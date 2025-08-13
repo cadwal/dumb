@@ -131,7 +131,12 @@ void thing_chk_collide(LevData *ld,int thingnum) {
 	       }
 	       /* if object is blocking, stop */
 	       else if(otd->proto->flags&PT_BLOCKING) {
-		  td->dx=td->dy=td->dz=0;
+		  /* allow us to get away if stuck */
+		  fixed x=otd->x-td->x,y=otd->y-td->y;
+		  x=fixmul(x,td->dx);
+		  y=fixmul(y,td->dy);
+		  if(x>0&&y>0)
+		    td->dx=td->dy=td->dz=0;
 		  break;
 	       };
 	    };
@@ -157,7 +162,7 @@ void update_things(LevData *ld,int tickspassed)  {
       int walls_crossed=0;
       
       /* check that thing exists */
-      if(td->proto==NULL) continue;
+      if(td->proto==NULL||td->phase_tbl==NULL) continue;
       
       /* update thing state machine */
       td->phase_wait-=tickspassed;
@@ -363,6 +368,7 @@ void update_things(LevData *ld,int tickspassed)  {
 		  dz=dx=dy=td->dx=td->dy=td->dz=0;
 		  thing_send_sig(ld,thingnum,TS_EXPLODE);
 		  thing_hit_wall(ld,thingnum,wall,dist>0,Damaged);
+		  /*logprintf(LOG_DEBUG,'O',"explosive %d hits wall",thingnum);*/
 	       }
 	       /* slide along wall
 		* two things to know about this:
@@ -417,18 +423,18 @@ void update_things(LevData *ld,int tickspassed)  {
 	    };
 	 };
 
-	 if(dx==0&&dy==0) break;
-	 /* update plane position */
-	 td->x+=dx;
-	 td->y+=dy;
-	 if(walls_crossed>0) thingd_findsector(ld,td);
-	 
 	 thing_chk_collide(ld,thingnum);
 	 if(td->dx==0&&td->dy==0) {
 	    dx=dy=0;
 	    break;
 	 };
       
+	 if(dx==0&&dy==0) break;
+	 /* update plane position */
+	 td->x+=dx;
+	 td->y+=dy;
+	 if(walls_crossed>0) thingd_findsector(ld,td);
+	 
       /*end of "steps" loop */
       };
       

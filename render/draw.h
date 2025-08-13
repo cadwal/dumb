@@ -3,7 +3,7 @@
 
 #include "dumb/texture.h"
 
-void init_draw(int width,int height,int bpp);
+void init_draw(int width,int height,int bpp,int real_width);
 
 void draw(void *framebuf,Texture *t,int x,int y);
 void draw_outline(void *framebuf,Texture *t,int x,int y);

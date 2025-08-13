@@ -7,7 +7,7 @@
 #define OuchRate     400msec
 #define DieRate      160msec
 #define ExplodeRate  130msec
-#define RespawnRate  400msec 
+#define RespawnRate  300msec 
 
 
 /* the Player */
@@ -22,18 +22,41 @@ SoundType PLRDTH*
 #define SigStunned
 
 PhaseTable DeadPlayer
+  Default Duration RespawnRate
   Phase INIT P Goto INIT
+  Phase ANIM O SigReAnimate
+  Phase -    N
+  Phase -    M
+  Phase -    L
+  Phase -    K
+  Phase -    J
+  Phase -    I
+  Phase -    A Become
+
 Proto DeadPlayer
   Sprite PLAY
   Size 40 16
   Mass 1000 YMoveOnly
+  Becomes 1
 
 PhaseTable ExPlayer
+  Default Duration RespawnRate
   Phase INIT Y Goto INIT
+  Phase ANIM X SigReanimate
+  Phase -    W
+  Phase -    V
+  Phase -    U
+  Phase -    T
+  Phase -    S
+  Phase -    R
+  Phase -    Q
+  Phase -    A Become
+
 Proto ExPlayer
   Sprite PLAY
   Size 40 16
   Mass 1000 YMoveOnly
+  Becomes 1
 
 SoundType DSPLPAIN Chance 3
 
@@ -225,6 +248,69 @@ Proto ImpLeader 5
   Become2 ExImp
   Speed 20
   SigShoot SHOOT
+
+
+/* Sabreclaw */
+
+PhaseTable DeadSabreclaw
+  Phase DEAD    O      Goto DEAD
+
+  Default Duration RespawnRate
+  Default NoSigs
+
+  Phase RESPAWN O      SigReanimate
+  Phase -       N
+  Phase -       M
+  Phase -       L
+  Phase -       K
+  Phase -       J
+  Phase -       I      Become
+
+Proto DeadSabreclaw
+  Sprite CLNK
+  Size 72 65
+  Mass 100
+  Becomes 90
+
+SoundType CLKACT Chance -20
+
+PhaseTable Sabreclaw
+  Default Duration NormalRate
+
+  Phase IDLE    A       Idle Goto IDLE
+
+  Phase SIGHT   A       SigDetect Sound CLKSIT
+
+  Phase MOVE    A       Strategy Sound CLKACT
+  Phase -       B       Strategy
+  Phase -       C	Strategy
+  Phase -       D	Strategy Goto MOVE
+
+  Phase FIGHT   E       SigFight
+  Phase -       F       Melee Sound CLKATK
+  Phase -       G       Goto MOVE
+
+  Phase OUCH    H       SigOuch Sound CLKPAI Duration OuchRate Goto MOVE
+
+  Default Duration DieRate
+  Default NoSigs
+  Phase DIE     I       SigDie Sound CLKDTH
+  Phase -       J
+  Phase -       K
+  Phase -       L
+  Phase -       M
+  Phase -       N
+  Phase -       O       Become
+
+Proto Sabreclaw 90
+  Sprite CLNK
+  Size 47 67
+  Hits 15
+  Mass 100
+  Beastie Blocking SkirtCliffs
+  Damage 20
+  Becomes DeadSabreclaw
+  Speed 20
 
 
 /* Mummy */

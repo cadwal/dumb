@@ -2,7 +2,7 @@
 
 #include "draw.h"
 
-static int fb_height=200,fb_width=320,fb_bpp=1;
+static int fb_height=200,fb_width=320,fb_bpp=1,real_width=320;
 
 /*** drawtext ***/
 
@@ -22,14 +22,15 @@ void drawstr(void *fb,const char *text,int font,int x,int y) {
 
 /*** draw ***/
 
-void init_draw(int w,int h,int b) {
+void init_draw(int w,int h,int b,int r) {
    fb_height=h;
    fb_width=w;
    fb_bpp=b;
+   real_width=r;
 };
 
 #define DRAWSPEC(bpp,Pixel,T) \
-extern inline void draw##bpp(void *fb,Texture *t,int xo,int yo) {\
+static inline void draw##bpp(void *fb,Texture *t,int xo,int yo) {\
    int x,y,dx,dy,ix=0,iy=0;\
    dx=t->width;\
    dy=t->height;\
@@ -41,12 +42,12 @@ extern inline void draw##bpp(void *fb,Texture *t,int xo,int yo) {\
       const Pixel *tpix=t->texels;\
       Pixel *fpix=fb;\
       tpix+=((t->width-1-x)<<t->log2height)+t->height;\
-      fpix+=x+xo+yo*fb_width;\
+      fpix+=x+xo+yo*real_width;\
       for(y=iy;y<dy;y++) {\
 	 tpix--;\
 	 if(*tpix!=-1)\
 	    *fpix=T;\
-	 fpix+=fb_width;\
+	 fpix+=real_width;\
       };\
    };\
 };

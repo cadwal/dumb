@@ -33,6 +33,9 @@ static Texture ***gettxt=NULL;
 static int *getcount(LevData *ld,int pl,int type) {
    switch((int)(gett[type].special)) {
    case(1): return &(ldthingd(ld)[ld->player[pl]].hits);
+   case(2): return &(ldthingd(ld)[ld->player[pl]].armour);
+   case(3): return &(ldthingd(ld)[ld->player[pl]].tmpinv);
+   case(4): return &(ldthingd(ld)[ld->player[pl]].tmpgod);
    };
    return PLCOUNT(pl)+type;   
 };
@@ -201,7 +204,8 @@ void draw_gettables(LevData *ld,int pl,
 	 draw_outline(fb,gtx,xo,yo);
       else
 	 draw(fb,gtx,xo,yo);
-      if(gt->collect>1) draw_count(fb,cnt,xo,yo+gtx->height+3);
+      if(gt->collect>1&&!gt->decay) 
+	draw_count(fb,cnt,xo,yo+gtx->height+3);
    };
 };
 
@@ -211,9 +215,9 @@ void update_gettables(LevData *ld,int ticks) {
    for(pl=0;pl<MAXPLAYERS;pl++) {
       int i;
       const Gettable *gt=gett;
-      int *count=PLCOUNT(pl);
       if(!PLINFOK(pl)) continue;
-      for(i=0;i<ngetts;i++,gt++,count++) {
+      for(i=0;i<ngetts;i++,gt++) {
+	 int *count=getcount(ld,pl,i);
 	 if(gt->decay&&(*count>0))
 	    *count-=ticks*gt->decay;
 	 if(*count<0) *count=0;

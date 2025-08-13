@@ -16,7 +16,8 @@ typedef struct {
 
 typedef struct {
    LE_int32 x,y,z,angle,elev;
-   LE_int16 proto,phase,owner,sector,hits,armour;
+   LE_int16 proto,phase,owner,sector;
+   LE_int16 hits,armour,tmpinv,tmpgod;
 } ThingCode;
 
 #define DECL_ENCODE(struc) DYN_ENCODE_FUNC(struc##_encode)

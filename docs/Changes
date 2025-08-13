@@ -183,3 +183,29 @@ NOHURTO stops weapons from shooting their owners
 sound and game messages network aware
 animating icons for gettables 
 fixed a bug in conf.c that caused sigsegvs when configuring list args
+
+*** Oops: version 0.09 went out with "0.08" as its version number in dumb.c 
+
+version 0.10:
+*** the following stuff was coded at UNSW's Linux Party, Feb '98
+fixed a problem with XProtoThing failing to compile
+fixed up XF86-DGA
+x11_video: ability to grab keyboard while running in window
+player reanimation sequence
+player reanimate cheat key
+silly rotation
+fixed blocking objects so that they're really blocking
+improved monsters' turning circles
+asynchronous network mode (try --netplay-async)
+network resume (with help from Andrew Tridgell)
+*** this all came after the party
+removed $(GAME) from $(BINARIES) in Makefile
+applied Andrew Apted's monster wakefulness patch
+applied Kalle Niemitalo's massive set of patches (see CHANGES.Niemitalo)
+fixed a problem with Kalle's changes on big endian processors
+(manually) applied Ben Bullock's patches
+fixed up use of "inline" to compile w/no optimization
+tweaked player speed a bit more (dumb/game.c)
+fixed player's ability to keep shooting after death
+fixed broadcast gmsgs in non-network mode
+fixed a bug with weapon selection: only rotate when wep_sel becomes 1

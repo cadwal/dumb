@@ -1,13 +1,16 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "lib/log.h"
 #include "lib/fixed.h"
+#include "lib/timer.h"
 #include "things.h"
 #include "levdyn.h"
 #include "levinfo.h"
 #include "animtex.h"
+#include "game.h"
 
 #define MAPORD_TO_RENDERORD(x) (fixed)(x<<12)
 
@@ -138,6 +141,7 @@ int new_thing(const LevData *ld,int prid,fixed x, fixed y, fixed z)  {
    td->y=y;
    td->z=z;
    td->bouncemax=BOUNCEMAX;
+   td->wakeness=rand()%WAKE_TICKS;
    thingd_findsector(ld,td);
    td->proto=find_protothing(prid);
    if(prid>0&&td->proto==NULL) 
@@ -180,6 +184,7 @@ LD_DYNDECL(Thing) {
    dyn->y=MAPORD_TO_RENDERORD(lump->y);
    dyn->z=0;
    dyn->angle=D2R(lump->angle);
+   dyn->wakeness=rand()%WAKE_TICKS;
    thingd_findsector(ld,dyn);
    /* check if thing should exist on this skill level */
    if(diffchk(lump,ld))

@@ -121,24 +121,46 @@ const unsigned char *udp_recpkt(size_t *len,int *station) {
 		    sizeof(struct in_addr))) {
 	    *len=r;
 	    *station=i;
+	    /*printf("data from station %d of len %d\n", *station, *len);*/
 	    return netbuf;
 	 };
       };
    };
+#if 1
+   /* maybe a new station joining? */
+   *station = nstations;
+   *len = r;
+   printf("data from new station\n");
+   return netbuf;
+#else
    /* didn't find anything! */
    logprintf(LOG_ERROR,'N',"unclaimed packet (type=%c)",netbuf[0]);
    return NULL;
+#endif
 };
+
+#if 0
+/* this returns the number pf bytes waiting on a socket */
+int num_waiting(int fd)
+{
+	int len=0;
+	ioctl(fd,FIONREAD,&len);
+	return(len);
+}
+#endif
 
 #ifndef NO_SELECT
 int udp_waitpkt(int msec) {
    fd_set fds[1];
+   int ret;
    struct timeval tv;
    FD_ZERO(fds);
    FD_SET(sock,fds);
    tv.tv_sec=msec/1000;
    tv.tv_usec=(msec%1000)*1000;
-   return select(sock+1,fds,NULL,NULL,&tv);
+   ret = select(sock+1,fds,NULL,NULL,&tv);
+   /*logprintf("got select = %d\n", ret);*/
+   return ret<0;
 };
 #else
 int udp_waitpkt(int msec) {

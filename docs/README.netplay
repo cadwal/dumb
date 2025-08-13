@@ -1,0 +1,178 @@
+
+1. Basics of network play with DUMB.
+
+DUMB's network play is based around a client/server design.  The
+server (also called the master) does all game control, moves objects
+around, etc, and periodically broadcasts all the changes it's making
+out to the clients (AKA slaves).  Both master and slaves respond to
+player input and render a view of the current level.  Slaves send all
+their players' actions off to the master to be applied to the game
+state, though.
+
+To play a network game, you need to set up one of the computers that
+you want to play on as a master, and the rest as slaves.  For example,
+I can use
+
+[josh@schlick dumb]$ xdumb --dumb-slave hempel
+[josh@carnap dumb]$ ldumb --dumb-slave hempel
+[josh@hempel dumb]$ xdumb --dumb-master carnap schlick
+
+to start a three player game on carnap, schlick, and hempel.  It
+doesn't (or shouldn't) matter which machine you start first; each
+machine will wait until all the others are ready.  Also, note that the
+slaves don't have to know about each other, only about their master.
+
+Effectively, there are three modes that DUMB can run in, and three
+major tasks to be performed:
+
+	           Game Management  Broadcasting Updates  Rendering  
+Non-Network Mode        YES                 NO               YES
+Master Mode             YES                 YES              YES
+Slave Mode              NO                  NO               YES
+
+Of the three tasks, rendering is usually the most costly, followed
+game management, followed by detecting and broadcasting updates.
+Since the network master does all three, in any case, it pays to run
+the master DUMB on your fastest machine.  No slave can go faster than
+the master (it would just be wasting time if it did).  A slave that is
+much slower than its master will just render less smoothly (though,
+see "network synchronisation" below!).
+
+Part of the initialisation information that the master sends to all
+slaves is the name of the map and the difficulty level that the game
+will be played at.  So if you specify these options (-m or
+--dumb-difficulty) you only need to specify them to the master.  You
+do still need to tell all the slaves and the master about your
+wadfiles, if they are not the default ones.
+
+
+2. What if something goes wrong?
+
+If the master DUMB crashes, things are over for that game.  Though the
+slaves may look dead, hold down Escape and they should quit.  You will
+have to restart the game from scratch.
+
+If a slave crashes while play is going on, you can restart and rejoin
+the game where you left off by reinvoking that slave.  Test it out by
+quitting a slave with Ctrl-C!
+
+Adverse network conditions such as high latency or unreliability can
+cause trouble.  If you see a lot of messages saying "slave 'myhost' seems
+to be dead" followed by "station 'myhost' lives!" you should probably
+tweak DUMB's network synchronisation parameters (see below)
+
+
+3. Single-player mode.
+
+Ordinarily, enabling network play puts DUMB into multi-player mode,
+where each networked instance DUMB controls a player.  You can also
+play network games in single-player mode, where a single player is
+shared by every DUMB.
+
+For example, suppose I invoke:
+
+[josh@carnap dumb]$ ldumb --dumb-slave hempel --dumb-single
+[josh@hempel dumb]$ xdumb --dumb-master carnap --dumb-single
+
+I'll see the same thing on both hempel's and carnap's monitors, and
+both keyboards will control the player.
+
+Why would anyone want to do this?  Well, another set of command-line
+options allow us to change the point-of-view, relative to the player.
+
+If, on carnap, I'd run
+
+ ldumb --dumb-slave hempel --dumb-single --dumb-view-offset -48
+
+I'd see the view from 48 pixels behind the player on carnap; a kind of
+"follow-cam"
+
+"--dumb-view-offset -48 --dumb-view-rotate 10 --dumb-uncrowd" gives a
+view rotating around the player (a good way for an observer to follow
+what's happenning in the game).  The uncrowd option turns off banners,
+icons and bogothings, which look a bit silly when you're not seeing
+the player's point of view.
+
+"--dumb-view-angle 45" shows 45 degrees to the player's left.  Run
+this on one slave, and "--dumb-view-angle -45" on the other, and hey
+presto, distributed rendering!
+
+
+4. Network Synchronisation.
+
+By default, DUMB plays a "synchronous" network game.  That is, the
+master ensures that no slave lags too far behind, and will itself wait
+if any slave is having trouble keeping up.  This means that a very
+slow slave can slow the whole network game down.  On the other hand,
+it means that slow slaves respond to their players' actions in a
+reasonable time.  Synchronisation also adds a *little* overhead to
+DUMB's network protocol.
+
+The extremely efficiency-minded may like to try disabling
+synchronisation by giving the "--netplay-async" option to both master
+and slaves.  This will allow the master to run at full tilt, and
+inhibit slaves from sending any "Ack" packets.  
+
+To synchronise or not to synchronise is always a big question in
+multi-player realtime games.  I admit to being a synchroniser.  
+NB: synchronous play does NOT mean that a network game runs as fast as
+the slowest machine!  It just means that the game runs as fast as
+possible, while keeping response time for players within a certain 
+maximum.
+
+You can fine tune some of the synchronisation parameters with the
+following command-line options:
+
+--netplay-slave-timeout (in milliseconds, default 1000)
+
+This tells the master how far slaves should be allowed to fall
+behind.  In effect, it is the maximum response time for player actions
+on a slave, since if a slave is seeing the world as it was 1 second
+ago, it will not get to see its actions take effect until after a
+second of game time has passed.
+
+If the master detects that a slave is more than slave-timeout behind,
+it will wait for an Ack packet from that slave.
+
+--netplay-catchup-timeout (in milliseconds, default 2000)
+
+This tells the master how long to wait for slaves to catch up, *after*
+a slave-timeout has occured.  After this amount of time has passed, if
+there is still no response from a slave, that slave will be removed
+from the game and play will continue.
+
+If a "dead" slave turns up again, it gets rejoined to the game.
+
+--netplay-ack-wait (in milliseconds, default 400)
+
+This tells slaves how often to inform their master what they're up to,
+by sending an Ack packet.  Ack packets just tell the master what game
+time the slave thinks it is.  This value had better be less than
+slave-timeout!  A value of zero sends Acks every frame.
+
+
+5. Known bugs
+
+5.1 Deathmatch.
+
+There is no special deathmatch mode.  You can kill other players
+perfectly well as it is, if you want.  One thing that does make
+deathmatch play a little difficult is that items can only be picked up
+once without restarting the level.  I may add an "item respawn" option
+to fix this.
+
+5.2 End of Level.
+
+Going up a level in multi-player mode causes the game to crash.  This
+will definitely get fixed sometime soon.
+
+5.3 Lost network packets.
+
+At the moment, DUMB uses UDP to communicate on the network.  It does
+not, however, make any attempt to ensure that all datagrams reach
+their destinations.  This means that datagrams can get lost, producing
+inconsistencies between different DUMBs' copies of the game state.
+Since the master possesses an authoritative and incorrigible copy of
+the game state, this shouldn't matter much in the long run:
+inconsistencies are likely to get overwritten.  Future versions of
+DUMB will support TCP as an alternative transport medium.

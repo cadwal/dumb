@@ -69,6 +69,7 @@ const ThingPhase *find_first_thingphase(int id)  {
    stop=nphaseidx-1;
    do {
       t=(start+stop)/2;
+      if(!phaseidx[t]) return NULL; /* should this ever happen??? */
       if(phaseidx[t]->id==id) break;
       if(start>=stop) 
       	logprintf(LOG_FATAL,'O',"Can't find ThingPhase id=%d",id);

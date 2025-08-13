@@ -100,28 +100,40 @@ void draw_things(XWadInstance *inst,Window w) {
 #define FRONT(i) (FRONTS(i)<0?-1:(inst->side[FRONTS(i)].sector))
 #define BACK(i) (BACKS(i)<0?-1:(inst->side[BACKS(i)].sector))
 
+/* now returns a bitmask */
+#define LINESEL_FRONT_CURRENT  0x0001
+#define LINESEL_FRONT_SELECTED 0x0002
+#define LINESEL_BACK_CURRENT   0x0004
+#define LINESEL_BACK_SELECTED  0x0008
 static int line_is_sel(XWadInstance *inst,int i) {
    int f;
+   int bits = 0;
    switch(inst->mode) {
    case(LineMode):
-      if(i==inst->curselect) return 2;
-      if(inst->enttbl[i]&ENT_SELECTED) return 1;
+      if(i==inst->curselect) 
+      	 bits |= LINESEL_FRONT_CURRENT | LINESEL_BACK_CURRENT;
+      if(inst->enttbl[i]&ENT_SELECTED) 
+      	 bits |= LINESEL_FRONT_SELECTED | LINESEL_BACK_SELECTED;
       break;
    case(SectMode):
       f=FRONT(i);
       if(f>=0) {
-	 if(f==inst->curselect) return 2;
-	 if(inst->enttbl[f]&ENT_SELECTED) return 1;
+	 if(f==inst->curselect) 
+	    bits |= LINESEL_FRONT_CURRENT;
+	 if(inst->enttbl[f]&ENT_SELECTED)
+	    bits |= LINESEL_FRONT_SELECTED;
       };
       f=BACK(i);
       if(f>=0) {
-	 if(f==inst->curselect) return 2;
-	 if(inst->enttbl[f]&ENT_SELECTED) return 1;
+	 if(f==inst->curselect)
+	    bits |= LINESEL_BACK_CURRENT;
+	 if(inst->enttbl[f]&ENT_SELECTED)
+	    bits |= LINESEL_BACK_SELECTED;
       };
       break;
    default: break;
    };
-   return 0;
+   return bits;
 };
 static int line_is_tagged(XWadInstance *inst,int i) {
    int f,r=0;
@@ -172,10 +184,20 @@ static void draw_line(int x1,int y1,int x2,int y2,
 	 const int oy1=(int)(3.99*sin(a+ARROWA));
 	 const int ox2=(int)(3.99*cos(a-ARROWA));
 	 const int oy2=(int)(3.99*sin(a-ARROWA));
-	 if(sel>1) XSetForeground(dpy,mapgc2,CTLC(MapCurSelectFg));
-	 else XSetForeground(dpy,mapgc2,CTLC(MapSelectFg));
-	 XDrawLine(dpy,w,mapgc2,x1+ox1,y1+oy1,x2-ox2,y2-oy2);
-	 XDrawLine(dpy,w,mapgc2,x1+ox2,y1+oy2,x2-ox1,y2-oy1);
+	 if(sel & LINESEL_FRONT_CURRENT) {
+	    XSetForeground(dpy,mapgc2,CTLC(MapCurSelectFg));
+	    XDrawLine(dpy,w,mapgc2,x1+ox2,y1+oy2,x2-ox1,y2-oy1);
+	 } else if(sel & LINESEL_FRONT_SELECTED) {
+	    XSetForeground(dpy,mapgc2,CTLC(MapSelectFg));
+	    XDrawLine(dpy,w,mapgc2,x1+ox2,y1+oy2,x2-ox1,y2-oy1);
+	 }
+	 if(sel & LINESEL_BACK_CURRENT) {
+	    XSetForeground(dpy,mapgc2,CTLC(MapCurSelectFg));
+	    XDrawLine(dpy,w,mapgc2,x1+ox1,y1+oy1,x2-ox2,y2-oy2);
+	 } else if(sel & LINESEL_BACK_SELECTED) {
+	    XSetForeground(dpy,mapgc2,CTLC(MapSelectFg));
+	    XDrawLine(dpy,w,mapgc2,x1+ox1,y1+oy1,x2-ox2,y2-oy2);
+	 }
       };
 
    };

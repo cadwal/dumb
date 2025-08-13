@@ -42,7 +42,7 @@ void set_playpal(int idx,SetPalFunc func) {
 
 /* pixcvt stuff */
 
-extern inline unsigned short pix8topix16(unsigned char p) { 
+inline unsigned short pix8topix16(unsigned char p) { 
    const unsigned char *pp=playpal+(int)p*3;
    LE_int16 _r;
    unsigned short r;
@@ -53,7 +53,7 @@ extern inline unsigned short pix8topix16(unsigned char p) {
    if(r==0xffff) r=0xfffe;
    return r;
 };
-extern inline unsigned int pix8topix32(unsigned char p) {
+inline unsigned int pix8topix32(unsigned char p) {
    const unsigned char *pp=playpal+(int)p*3;
    union {
       unsigned int r;
@@ -105,7 +105,7 @@ static void paste_pict_on_texture(Texture *t,const PictData *p,int x,int y) {
     case(2): init_playpal(); ppot16(t,p,x,y); break;
     case(4): init_playpal(); ppot32(t,p,x,y); break;
     default:
-      logprintf(LOG_ERROR,'T',"Bad BBP value in paste_pict");
+      logprintf(LOG_ERROR,'T',"Bad BPP value in paste_pict");
    };
 };
 static void paste_jpatch_on_texture(Texture *t,const AltPictData *p,int x,int y) {
@@ -114,7 +114,7 @@ static void paste_jpatch_on_texture(Texture *t,const AltPictData *p,int x,int y)
     case(2): init_playpal(); jpot16(t,p,x,y); break;
     case(4): init_playpal(); jpot32(t,p,x,y); break;
     default:
-      logprintf(LOG_ERROR,'T',"Bad BBP value in paste_jpatch");
+      logprintf(LOG_ERROR,'T',"Bad BPP value in paste_jpatch");
    };
 };
 

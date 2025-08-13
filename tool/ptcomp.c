@@ -247,6 +247,11 @@ int parm_num(void) {
    if(s==NULL||*s=='\n') synerr("integer parameter expected");
    return atoi(s);
 };
+int parm_dbl(void) {
+   const char *s=next_token();
+   if(s==NULL||*s=='\n') synerr("floating-point parameter expected");
+   return atof(s);
+};
 
 int time_units(const char *s,int n) {
    while(*s&&isdigit(*s)) s++;
@@ -302,7 +307,7 @@ fixed arc_units(const char *s,int n) {
       m=atoi(s+3);
       if(m) return (FIXED_PI*n)/m;
    };
-   synerr("strange timing unit");
+   synerr("strange arc unit");
    return n;
 };
 
@@ -869,6 +874,7 @@ void protocomp(void) {
       else if(!strcasecmp(s,"Bogus")) p->pt.flags|=PT_BOGUS|PT_PHANTOM;
       else if(!strcasecmp(s,"SpawnSpot")) p->pt.flags|=PT_SPAWNSPOT;
       else if(!strcasecmp(s,"NoHurtOwner")) p->pt.flags|=PT_NOHURTO;
+      else if(!strcasecmp(s,"TurnWhenHitting")) p->pt.flags|=PT_TURNWHENHITTING;
       else if(!strcasecmp(s,"SeeArc")) p->pt.see_arc=parm_arc();
       else if(!strcasecmp(s,"AimArc")) p->pt.aim_arc=parm_arc();
       else if(!strcasecmp(s,"ShootMany")) {

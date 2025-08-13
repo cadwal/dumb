@@ -239,7 +239,7 @@ void xproto_enter_phase(XPInstance *inst,int ph) {
    inst->curphase=ph;
    inst->phcount=CURPHASE.wait;
    if(CURPHASE.sound>=0) 
-      play_dsound(CURPHASE.sound+CURPROTO.sound,0,0,0);
+      play_dsound_local(CURPHASE.sound+CURPROTO.sound,0,0,0);
 };
 
 void xproto_sendsig(XPInstance *inst,ThingSignal sig) {

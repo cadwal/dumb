@@ -179,6 +179,7 @@ void generate_updates(LevData *ld) {
 void apply_update(LevData *ld,MapLumpType mlt,int ofs,
 		  const void *code,int codelen) {
    char *p;
+   if(!got_slave_info) return;
    if(mlt<0||mlt>=ML_NTYPES)
       logfatal('M',"bad maplumptype (%d) in apply_update()",(int)mlt);
    if(mlti[mlt].decode==NULL)
@@ -191,6 +192,7 @@ void apply_update(LevData *ld,MapLumpType mlt,int ofs,
 };
 
 void apply_plinfo_update(LevData *ld,int player,int offset,int value) {
+   if(!got_slave_info) return;
    if(ld->plinfo[player])
       ld->plinfo[player][offset]=value;
    else 

@@ -47,12 +47,12 @@ PhaseTable HeldChainsaw
   Phase -       C
   Phase -       D  _ContSound DSSAWIDL Goto IDLE
 
-  Default NoSigs
-  Phase SAW     A  Melee SigShoot Sound DSSAWFUL
+  Default NoSigs Duration 300msec
+  Phase SAW     A  SigShoot Sound DSSAWFUL
   Phase -       B  Melee
-  Phase -       A  Melee
+  Phase -       A  /* enough time for DSSAWFUL to play? */
   Phase -       B  Melee Goto IDLE
-
+  
   
 PhaseTable HeldPistol
   Default Duration 120msec
@@ -113,37 +113,39 @@ PhaseTable HeldRocketLauncher
 
   Phase IDLE    A  Goto IDLE
 
+  Default Duration 60msec
   Default NoSigs
   Phase SHOOT   A  _OverlaySprite(MISFA0) SigShoot 
   Phase -       A  _OverlaySprite(MISFB0)
-  Phase -       A  _OverlaySprite(MISFC0)
-  Phase -       A  _OverlaySprite(MISFD0) Sound DSRLAUNC
-  Phase -       B  Shoot Duration 600msec Goto IDLE
+  Phase -       A  _OverlaySprite(MISFC0) Sound DSRLAUNC
+  Phase -       A  _OverlaySprite(MISFD0) Shoot
+  Phase -       B  Duration 500msec Goto IDLE
 
 
 PhaseTable HeldPlasmaRifle
-  Default Duration 170msec
+  Default Duration 40msec
 
   Phase IDLE    A  Goto IDLE
 
-  Phase SHOOT   C  NoSigs Sprite PLSF SigShoot Sound DSPLASMA
-  Phase -       D  NoSigs Sprite PLSF Shoot 
+  Phase SHOOT   A  NoSigs Sprite PLSF Sound DSPLASMA SigShoot
+  Phase -       B  NoSigs Sprite PLSF Shoot 
+  Phase -       B  Duration 50msec Sprite PLSF
 
-  Phase COCK    B  Goto IDLE
+  Phase COCK    B  NoSigs Duration 300msec Goto IDLE
 
 
 PhaseTable HeldBFG
-  Default Duration 400msec
+  Default Duration 350msec
 
   Phase IDLE    A  Goto IDLE
 
   Default NoSigs
-  Phase SHOOT   A  SigShoot
-  Phase -       B  _OverlaySprite(BFGFA0) Sound DSBFG 
-  Phase -       B  _OverlaySprite(BFGFA0) Shoot
-  Phase -       B  Duration 500msec
-
-  Phase COCK    C  Duration 600msec Goto IDLE
+  Phase SHOOT   B  Duration 200msec SigShoot
+  Phase -       B  _OverlaySprite(BFGFA0) Sound DSBFG
+  Phase -       B  _OverlaySprite(BFGFB0) 
+  Phase -       C  Shoot
+  Phase -       B
+  Phase -       A  Duration 500msec Goto IDLE
 
 
 /* protos for weapon bogus-objects(tm) */
@@ -153,6 +155,22 @@ PhaseTable HeldBFG
    collide with anything.  They are invisible to the renderer, but are 
    drawn onto the players view after the renderer has finished. */ 
 
+Proto Fist 991
+  Sprite PUNG
+  AimArc 45deg
+  Size 32 56
+  Bogus
+  NoHurtOwner
+  Damage 1
+
+Proto HeldChainsaw
+  Sprite SAWG
+  AimArc 45deg
+  Size 32 56
+  Bogus
+  NoHurtOwner
+  Damage 2 TurnWhenHitting
+
 Proto HeldPistol
   Sprite PISG
   AimArc 10deg
@@ -160,15 +178,6 @@ Proto HeldPistol
   Bogus Shooter
   NoHurtOwner
   Shoots Bullet
-
-Proto HeldChaingun
-  Sprite CHGG
-  AimArc 10deg
-  Size 32 56
-  Bogus Shooter
-  NoHurtOwner
-  Shoots Bullet
-  ShootMany 1 10deg
 
 Proto HeldShotgun
   Sprite SHTG
@@ -178,6 +187,15 @@ Proto HeldShotgun
   NoHurtOwner
   Shoots Bullet
   ShootMany 6 5deg
+
+Proto HeldChaingun
+  Sprite CHGG
+  AimArc 10deg
+  Size 32 56
+  Bogus Shooter
+  NoHurtOwner
+  Shoots Bullet
+  ShootMany 1 10deg
 
 Proto HeldSuperShotgun
   Sprite SHT2
@@ -193,6 +211,7 @@ Proto HeldPlasmaRifle
   AimArc 10deg
   Size 32 56
   Bogus
+  NoHurtOwner
   Shoots PlasmaBall
 
 Proto HeldBFG
@@ -200,6 +219,7 @@ Proto HeldBFG
   AimArc 20deg
   Size 32 56
   Bogus
+  NoHurtOwner
   Shoots BFGBall
 
 Proto HeldRocketLauncher
@@ -215,10 +235,19 @@ Proto HeldChainsaw
   Size 32 56
   Bogus
   NoHurtOwner
-  Damage 10
+  Damage 4
 
 
 /* now gettable entries for weapons */
+
+Gettable Chainsaw
+  Initial 0
+  Collect 1
+  UseNum 0
+  WepSel
+  Bogotype HeldChainsaw
+  GotThe Message CHAINSAW..._FIND_SOME_MEAT!
+  PickupSound DSWPNUP
 
 Gettable Pistol
   Initial 1
@@ -229,6 +258,16 @@ Gettable Pistol
   GotThe Message PISTOL
   PickupSound DSWPNUP
 
+Gettable BrassKnuckles
+  Initial 1
+  Collect 1
+  Usenum 0
+  WepSel
+  Bogotype Fist
+  GotThe Message BRASS_KNUCKLES
+  PickupSound DSWPNUP
+
+/* 3a - shotgun */
 Gettable Shotgun
   Collect 1
   WepSel
@@ -238,6 +277,7 @@ Gettable Shotgun
   GotThe Message SHOTGUN
   PickupSound DSWPNUP
 
+/* 3b - super shotgun */
 Gettable SuperShotgun
   Collect 1
   WepSel
@@ -248,14 +288,7 @@ Gettable SuperShotgun
   GotThe Message SUPER_SHOTGUN
   PickupSound DSWPNUP
 
-Gettable Chainsaw
-  Collect 1
-  Usenum 0
-  WepSel
-  BogoType HeldChainsaw
-  GotThe Message CHAINSAW___LETS_FIND_SOME_MEAT
-  PickupSound DSSAWUP
-
+/* 4 - chaingun */
 Gettable Chaingun
   Collect 1
   WepSel
@@ -265,16 +298,7 @@ Gettable Chaingun
   GotThe Message CHAINGUN
   PickupSound DSWPNUP
 
-Gettable PlasmaRifle
-  Collect 1
-  WepSel
-  Bogotype HeldPlasmaRifle
-  Ammo Cell
-  AddAmmo 40
-  UseNum 1
-  GotThe Message PLASMA_RIFLE
-  PickupSound DSWPNUP
-
+/* 5 - rocket launcher */
 Gettable RocketLauncher
   Collect 1
   WepSel
@@ -285,6 +309,18 @@ Gettable RocketLauncher
   GotThe Message ROCKET_LAUNCHER
   PickupSound DSWPNUP
 
+/* 6 - plasma rifle */
+Gettable PlasmaRifle
+  Collect 1
+  WepSel
+  Bogotype HeldPlasmaRifle
+  Ammo Cell
+  AddAmmo 40
+  UseNum 1
+  GotThe Message PLASMA_RIFLE
+  PickupSound DSWPNUP
+
+/* 7 - BFG-9000 */
 Gettable BFG
   Collect 1
   WepSel
@@ -294,7 +330,6 @@ Gettable BFG
   UseNum 40
   GotThe Message BFG___OH_YES
   PickupSound DSWPNUP
-
 
 /* now the actual proto entries */
 

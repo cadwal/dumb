@@ -1,5 +1,7 @@
 
-extern inline void SLICE_STRING(int rshift,
+#define PIXEL_GUARD_VAL ((TPixel) ~0)
+
+static inline void SLICE_STRING(int rshift,
 			   int count,const TPixel *tex_base,
 			   Pixel *end,
 			   fixed tex_y,fixed tex_dy 
@@ -61,8 +63,7 @@ static void draw_wall_slice(Pixel *start, Pixel *end, const TPixel *tex_base,
      case 10: SLICE_STRING(22,count,tex_base,end,tex_y,tex_dy); break;
      }
 }
-
-extern inline void TSLICE_STRING(int rshift,
+static inline void TSLICE_STRING(int rshift,
 			   int count,const TPixel *tex_base,
 			   Pixel *end,
 			   fixed tex_y,fixed tex_dy 
@@ -133,7 +134,7 @@ static void draw_invis_slice(Pixel *start, Pixel *end,
 					    int log2_tex_height)
 {
    unsigned int utex_y;
-   Pixel p;
+   TPixel p;
 
    utex_y = (unsigned int) tex_y;
    
@@ -143,26 +144,16 @@ static void draw_invis_slice(Pixel *start, Pixel *end,
    while (start >= end) {
       p = tex_base[utex_y >> (32-log2_tex_height)];
 #if BPP==1
-      if (p != 0xff)
+      if (p != PIXEL_GUARD_VAL)
 	*start=invismap[*start];
 #elif BPP==2
-      if (p != 0xffff)
+      if (p != PIXEL_GUARD_VAL)
 	*start&=0x0eff;
 #elif BPP==4
-      if (p != 0xffffffff)
+      if (p != PIXEL_GUARD_VAL)
 	*start&=0x0000ffff;
 #endif
       utex_y += tex_dy;
       start -= fb_width;
-   };
-};
-
-
-
-
-
-
-
-
-
-
+   }
+}

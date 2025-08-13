@@ -59,6 +59,11 @@ int thing2player(const LevData *ld,int th) {
       if(ld->player[i]==th) return i;
    return -1;
 };
+void touch_player(LevData *ld,int pl) {
+  /* trivially change a player to force update */
+  if(ld->player[pl]>=0)
+    ldthingd(ld)[ld->player[pl]].x++;
+};
 
 void thing_to_view(const LevData *ld,int th,View *v,const ViewTrans *vx)  {
    ThingDyn *td=ldthingd(ld)+th;

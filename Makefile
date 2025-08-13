@@ -1,11 +1,10 @@
-
 ### Choose your platform
 
 # HPUX on codex.anu.edu.au
 #CC=gcc
 #RM=rm -f
 #PLATFLAGS=-pipe -I/usr/include/X11R6 -DNO_MMAP -DBENDIAN
-#BINARIES=xdumb XWad $(GAME).wad
+#BINARIES=xdumb XWad
 #SOUND=dummy
 #FBREREND=generic
 #XLIBS=-lX11 -lXext
@@ -16,7 +15,7 @@
 #CC=gcc -D_XOPEN_SOURCE_EXTENDED
 #RM=rm -f
 #PLATFLAGS=-DNO_1P_KLUDGE -DNO_MMAP -I/misc/hacks/include
-#BINARIES=xdumb XWad $(GAME).wad
+#BINARIES=xdumb XWad
 #SOUND=mme
 #FBREREND=le64
 #XLIBS=-lX11 -lXext
@@ -25,10 +24,10 @@
 # linux-ppc
 #CC=gcc
 #RM=rm -f
-#PLATFLAGS=-pipe -DBENDIAN
+#PLATFLAGS=-pipe -DBENDIAN -DNO_DGA
 #PLATPRODFLAGS=-fomit-frame-pointer -mcpu=powerpc -mmultiple -mstring
 #PLATXOPTFLAGS=
-#BINARIES=ldumb xdumb XWad XProtoThing $(GAME).wad
+#BINARIES=ldumb xdumb XWad XProtoThing
 #SOUND=linux
 #NETWORK=unix
 #FBREREND=generic
@@ -41,11 +40,11 @@ RM=rm -f
 PLATFLAGS=-pipe -m486 # you might need -DSYSV, too
 PLATPRODFLAGS=-fomit-frame-pointer
 PLATXOPTFLAGS=
-BINARIES=ldumb xdumb XWad XProtoThing $(GAME).wad
+BINARIES=ldumb xdumb XWad XProtoThing
 SOUND=linux
 NETWORK=unix
 FBREREND=le32
-XLIBS=-L/usr/X11/lib -lX11 -lXext
+XLIBS=-L/usr/X11/lib -lX11 -lXext -lXxf86dga
 
 # This for MS-DOS (haven't tried it in a while)
 #CC=gcc
@@ -80,7 +79,7 @@ CFGFLAGS=-DWANT_2BPP -DWANT_1BPP -DWANT_4BPP
 # (we assume that you have DUMB in ~/dumb on this machine)
 # you don't need this unless you explicitly invoke "make balanced"
 
-OTHER_HOST=cmbsb77
+OTHER_HOST=carnap
 
 ### Choose your level of optimization
 
@@ -176,7 +175,7 @@ GGIDUMB_OBJS=$(COREOBJS) plat/ggi_video.o
 
 LDUMB_OBJS=$(COREOBJS) plat/linux_video.o plat/linux_input.o
 
-XDUMB_OBJS=$(COREOBJS) plat/x11_video.o
+XDUMB_OBJS=$(COREOBJS) plat/x11_video.o plat/ctlkey_input.o
 
 DDUMB_OBJS=$(COREOBJS) plat/dummy_video.o plat/dummy_input.o
 
@@ -465,7 +464,9 @@ dumb/bogothing.o: render/view.h lib/fixed.h dumb/levdyn.h dumb/levdata.h
 dumb/bogothing.o: wad/wadstruct.h lib/endian.h dumb/texture.h dumb/prothing.h
 dumb/bogothing.o: dumb/bogothing.h
 dumb/dsound.o: wad/wadstruct.h lib/endian.h wad/wadio.h lib/log.h lib/safem.h
-dumb/dsound.o: plat/sound.h lib/fixed.h dumb/dsound.h render/view.h
+dumb/dsound.o: plat/sound.h lib/fixed.h dumb/netplay.h dumb/levdata.h
+dumb/dsound.o: dumb/texture.h plat/input.h lib/conf.h dumb/netio.h
+dumb/dsound.o: dumb/dsound.h render/view.h
 dumb/dumb.o: lib/log.h lib/safem.h wad/wadio.h lib/timer.h lib/conf.h
 dumb/dumb.o: dumb/texture.h dumb/gettable.h lib/fixed.h lib/endian.h
 dumb/dumb.o: dumb/levdata.h wad/wadstruct.h plat/video.h render/render.h
@@ -491,19 +492,22 @@ dumb/levdata.o: lib/log.h lib/safem.h wad/wadio.h dumb/levdata.h lib/fixed.h
 dumb/levdata.o: wad/wadstruct.h lib/endian.h dumb/texture.h dumb/levdyn.h
 dumb/levdata.o: dumb/prothing.h dumb/dyncode.h dumb/netplay.h plat/input.h
 dumb/levdata.o: lib/conf.h dumb/netio.h
-dumb/levdyn.o: lib/log.h lib/fixed.h dumb/things.h render/view.h
+dumb/levdyn.o: lib/log.h lib/fixed.h lib/timer.h dumb/things.h render/view.h
 dumb/levdyn.o: dumb/levdyn.h dumb/levdata.h wad/wadstruct.h lib/endian.h
 dumb/levdyn.o: wad/wadio.h dumb/texture.h dumb/prothing.h dumb/levinfo.h
-dumb/levdyn.o: dumb/animtex.h
-dumb/levinfo.o: lib/log.h wad/wadio.h dumb/levinfo.h lib/endian.h
-dumb/levinfo.o: dumb/levdata.h lib/fixed.h wad/wadstruct.h dumb/texture.h
+dumb/levdyn.o: dumb/animtex.h dumb/game.h plat/input.h lib/conf.h
+dumb/levinfo.o: lib/log.h wad/wadio.h dumb/levdyn.h dumb/levdata.h
+dumb/levinfo.o: lib/fixed.h wad/wadstruct.h lib/endian.h dumb/texture.h
+dumb/levinfo.o: dumb/prothing.h dumb/levinfo.h
 dumb/linetype.o: lib/log.h wad/wadio.h dumb/linetype.h lib/endian.h
 dumb/linetype.o: lib/fixed.h dumb/levdata.h wad/wadstruct.h dumb/texture.h
-dumb/netio.o: lib/log.h dumb/netio.h plat/net.h lib/conf.h dumb/netplay.h
-dumb/netplay.o: lib/log.h lib/safem.h lib/timer.h dumb/game.h plat/input.h
-dumb/netplay.o: lib/conf.h lib/endian.h dumb/levdata.h lib/fixed.h
-dumb/netplay.o: wad/wadstruct.h wad/wadio.h dumb/texture.h dumb/netplay.h
-dumb/netplay.o: dumb/netio.h
+dumb/netio.o: lib/log.h lib/safem.h dumb/netio.h plat/net.h lib/conf.h
+dumb/netio.o: dumb/netplay.h
+dumb/netplay.o: lib/log.h lib/safem.h lib/timer.h dumb/dsound.h lib/fixed.h
+dumb/netplay.o: lib/endian.h render/view.h dumb/game.h plat/input.h
+dumb/netplay.o: lib/conf.h dumb/levdata.h wad/wadstruct.h wad/wadio.h
+dumb/netplay.o: dumb/texture.h dumb/things.h dumb/levdyn.h dumb/prothing.h
+dumb/netplay.o: dumb/netplay.h dumb/netio.h
 dumb/prothing.o: lib/log.h lib/safem.h wad/wadio.h dumb/prothing.h
 dumb/prothing.o: lib/fixed.h lib/endian.h dumb/texture.h
 dumb/termtype.o: lib/log.h dumb/levdyn.h dumb/levdata.h lib/fixed.h
@@ -516,9 +520,10 @@ dumb/thinghit.o: wad/wadstruct.h lib/endian.h wad/wadio.h dumb/texture.h
 dumb/thinghit.o: dumb/prothing.h dumb/things.h render/view.h dumb/updmap.h
 dumb/thinghit.o: dumb/game.h plat/input.h lib/conf.h dumb/gettable.h
 dumb/thinghit.o: dumb/linetype.h
-dumb/thingm.o: lib/log.h lib/fixed.h dumb/dsound.h lib/endian.h render/view.h
-dumb/thingm.o: dumb/things.h dumb/levdyn.h dumb/levdata.h wad/wadstruct.h
-dumb/thingm.o: wad/wadio.h dumb/texture.h dumb/prothing.h
+dumb/thingm.o: lib/log.h lib/fixed.h lib/timer.h dumb/dsound.h lib/endian.h
+dumb/thingm.o: render/view.h dumb/things.h dumb/levdyn.h dumb/levdata.h
+dumb/thingm.o: wad/wadstruct.h wad/wadio.h dumb/texture.h dumb/prothing.h
+dumb/thingm.o: dumb/game.h plat/input.h lib/conf.h
 dumb/things.o: lib/log.h dumb/things.h render/view.h lib/fixed.h
 dumb/things.o: dumb/levdyn.h dumb/levdata.h wad/wadstruct.h lib/endian.h
 dumb/things.o: wad/wadio.h dumb/texture.h dumb/prothing.h
@@ -531,9 +536,9 @@ dumb/updthing.o: lib/log.h lib/timer.h dumb/levdata.h lib/fixed.h
 dumb/updthing.o: wad/wadstruct.h lib/endian.h wad/wadio.h dumb/texture.h
 dumb/updthing.o: dumb/gettable.h dumb/things.h render/view.h dumb/levdyn.h
 dumb/updthing.o: dumb/prothing.h
-dumb/useitem.o: dumb/things.h render/view.h lib/fixed.h dumb/levdyn.h
-dumb/useitem.o: dumb/levdata.h wad/wadstruct.h lib/endian.h wad/wadio.h
-dumb/useitem.o: dumb/texture.h dumb/prothing.h dumb/gettable.h
+dumb/useitem.o: lib/log.h dumb/things.h render/view.h lib/fixed.h
+dumb/useitem.o: dumb/levdyn.h dumb/levdata.h wad/wadstruct.h lib/endian.h
+dumb/useitem.o: wad/wadio.h dumb/texture.h dumb/prothing.h dumb/gettable.h
 lib/conf.o: lib/conf.h
 lib/fixed.o: lib/fixed.h
 lib/log.o: lib/log.h
@@ -542,6 +547,8 @@ lib/safem.o: lib/log.h lib/safem.h
 lib/timer.o: lib/timer.h
 plat/aalib_input.o: lib/log.h plat/input.h lib/conf.h lib/endian.h
 plat/aalib_video.o: lib/log.h plat/video.h lib/conf.h
+plat/ctlkey_input.o: plat/ctlkey_input.h plat/input.h lib/conf.h lib/endian.h
+plat/ctlkey_input.o: lib/fixed.h lib/log.h
 plat/dosinput.o: plat/input.h lib/conf.h lib/endian.h
 plat/dosvideo.o: lib/log.h plat/video.h lib/conf.h lib/safem.h
 plat/dummy_input.o: plat/input.h lib/conf.h lib/endian.h
@@ -563,7 +570,7 @@ plat/mme_sound.o: lib/log.h lib/safem.h plat/sound.h lib/fixed.h
 plat/unix_net.o: lib/log.h lib/safem.h plat/net.h lib/conf.h dumb/netplay.h
 plat/vgagl_video.o: lib/safem.h lib/log.h plat/video.h lib/conf.h
 plat/x11_video.o: lib/log.h lib/safem.h plat/input.h lib/conf.h lib/endian.h
-plat/x11_video.o: plat/video.h
+plat/x11_video.o: plat/video.h plat/ctlkey_input.h
 render/draw.o: render/draw.h dumb/texture.h wad/wadio.h
 render/render.o: wad/wadio.h lib/log.h lib/fixed.h render/view.h
 render/render.o: dumb/levdyn.h dumb/levdata.h wad/wadstruct.h lib/endian.h
