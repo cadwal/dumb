@@ -2,7 +2,7 @@
 #ifndef BANNER_H
 #define BANNER_H
 
-#include "texture.h"
+#include "libdumb/texture.h"
 
 int init_banner(int baseline,int start,int stop,int speed);
 void reset_banner(int banner);

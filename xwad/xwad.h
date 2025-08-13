@@ -2,9 +2,9 @@
 #ifndef XWAD_H
 #define XWAD_H
 #define PI M_PI
-#include "lib/fixed.h"
-#include "wad/wadstruct.h"
-#include "wad/wadio.h"
+#include "libdumbutil/fixed.h"
+#include "libdumbwad/wadstruct.h"
+#include "libdumbwad/wadio.h"
 #include "controls.h"
 #include "choose.h"
 
@@ -63,8 +63,8 @@ typedef struct AppInstance {
    XWadMode mode;
    Window mapframe,map;
    CSetInstance genctls,modectls,mapctls;
-   int min_width,min_height;
-   int map_width,map_height;
+   unsigned int min_width,min_height;
+   unsigned int map_width,map_height;
    int xoffset,yoffset;
    int scale;
    int curselect;
@@ -110,8 +110,10 @@ void qmessage(XWadInstance *inst,const char *msg);
 int maxsel(const XWadInstance *inst);
 
 void connect_sel_vers(XWadInstance *inst,int ccw);
+void join_lines_at_vertex(XWadInstance *inst, int joinver);
 void make_sector_from_sel_lines(XWadInstance *inst);
 void split_sel_lines(XWadInstance *inst);
+void cross_sel_lines(XWadInstance *inst);
 
 int make_corridor_between(XWadInstance *inst,int line1,int line2);
 void make_stairs(XWadInstance *inst,int sect,int inc);

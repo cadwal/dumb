@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
@@ -8,12 +10,12 @@
 #ifdef __cplusplus
 extern "C" {
 #include <ppm.h>
-};
+}
 #else
 #include <ppm.h>
 #endif
 
-#include "wad/wadstruct.h"
+#include "libdumbwad/wadstruct.h"
 
 typedef enum {NoMode,
 	      MkFlat,MkPatch,
@@ -45,28 +47,28 @@ static void usage(void) {
 	   "  -i            : turn on id compatibility\n"  
 	   "\n",playpal_fn);
    exit(2);
-};
+}
 
 static void err(const char *m) {
    fprintf(stderr,"ppmtodumb: %s (errno=%d)\n",m,errno);
    exit(1);
-};
+}
 /*static void warn(const char *m) {
    fprintf(stderr,"ppmtodumb: %s (converted anyway)\n",m);
-};*/
+}*/
 
 static int mylog2(int i) {
    int j=0;
    while(j<32&&i>(1<<j)) j++;
    return j;
-};
+}
 
 void loadpal(void) {
    FILE *f=fopen(playpal_fn,"rb");
    if(f==NULL) err("can't open playpal");
    fread(playpal,3,256,f);
    fclose(f);
-};
+}
 
 #define SQ(i) (((double)(i))*((double)(i)))
 unsigned char lookup_closest(int r, int g, int b) 
@@ -83,11 +85,11 @@ unsigned char lookup_closest(int r, int g, int b)
       if(dist<mindist) {
 	 minent=i;
 	 mindist=dist;
-      };
+      }
       if(mindist<1.0) break;
-   };
+   }
    return minent;
-};
+}
 
 unsigned char lookup_pal(pixel p,pixval maxval) {
    int i;
@@ -99,16 +101,16 @@ unsigned char lookup_pal(pixel p,pixval maxval) {
       p.r=(int)(((float)p.r/mvf)*256.0);
       p.g=(int)(((float)p.g/mvf)*256.0);
       p.b=(int)(((float)p.b/mvf)*256.0);
-   };
+   }
    /* normal lookup */
    for(i=0;i<256;i++) {
       const unsigned char *pp=playpal+(i*3);
       if(p.r==pp[0]&&p.g==pp[1]&&p.b==pp[2]) return i;
-   };
+   }
    /*warn("pixel matched none in palette");
    return 255;*/
    return lookup_closest(p.r,p.g,p.b);
-};
+}
 
 
 void mkflat(void) {
@@ -122,7 +124,7 @@ void mkflat(void) {
       for(y=0;y<rows;y++) for(x=0;x<cols;x++)
 	 putchar(lookup_pal(pix[y][x],maxval));
    else err("this ppm is the wrong size for a flat");
-};
+}
 
 void mkpatch(void) {
    PictData *p;
@@ -147,9 +149,9 @@ void mkpatch(void) {
 	 p->data[o++]=lookup_pal(pix[y][x],maxval);
       p->data[o++]=0;
       p->data[o++]=0xff; /* no more posts in this column */
-   };
+   }
    fwrite(p,1,o,stdout);
-};
+}
 
 void mkjpatch(void) {
    LE_int32 lebuf;
@@ -169,7 +171,7 @@ void mkjpatch(void) {
    for(x=0;x<cols;x++) for(y=0;y<ph;y++)
       if(y<rows) putchar(lookup_pal(pix[(rows-1)-y][(cols-1)-x],maxval));
       else putchar(255);
-};
+}
 
 void mkpal(void) {
    int cols,rows,x,y,i=0;
@@ -183,13 +185,13 @@ void mkpal(void) {
       putchar((unsigned char)(pix[y][x].g));
       putchar((unsigned char)(pix[y][x].b));
       i++;
-   };
+   }
    while(i++<256) {
       putchar(0);
       putchar(0);
       putchar(0);
-   };
-};
+   }
+}
 
 static unsigned int pack_colour(unsigned int r,unsigned int g,unsigned int b)
 { 
@@ -198,7 +200,7 @@ static unsigned int pack_colour(unsigned int r,unsigned int g,unsigned int b)
    p|=(g>>2)<<5;
    p|=(r>>3)<<11;
    return p;
-};
+}
 
 #define NCMAPS 30
 void mkcmap(int bpp) {
@@ -223,10 +225,10 @@ void mkcmap(int bpp) {
 	 case(4):
 	    putchar(b);putchar(g);putchar(r);putchar(0);
 	    break;
-	 };
-      };
-   };
-};
+	 }
+      }
+   }
+}
 
 int main(int argc, char **argv) {
    int i;
@@ -244,8 +246,8 @@ int main(int argc, char **argv) {
       case('P'): mode=MkPatch; break;
       case('i'): compat=1; break;
       default: usage();
-      };
-   };
+      }
+   }
    /* don't need to be interactive */
    setvbuf(stdout,NULL,_IOFBF,4096);
    setvbuf(stdin,NULL,_IOFBF,4096);
@@ -256,9 +258,9 @@ int main(int argc, char **argv) {
    case(MkPlayPal): mkpal(); break;
    case(MkColormap): mkcmap(bpp); break;
    case(NoMode): usage(); break;
-   };
+   }
    return 0;
-};
+}
 
 
 

@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <errno.h>
@@ -6,17 +8,16 @@
 #include <ctype.h>
 #include <errno.h>
 
-#include "lib/timer.h"
-#include "lib/log.h"
-#include "lib/safem.h"
-
-#include "dumb/levdata.h"
-#include "dumb/prothing.h"
-#include "dumb/gettable.h"
-#include "dumb/linetype.h"
-#include "dumb/animtex.h"
-#include "dumb/dsound.h"
-#include "dumb/levinfo.h"
+#include "libdumbutil/timer.h"
+#include "libdumbutil/log.h"
+#include "libdumbutil/safem.h"
+#include "libdumb/dsound.h"
+#include "libdumb/animtexstruct.h"
+#include "libdumb/gettablestruct.h"
+#include "libdumb/levinfostruct.h"
+#include "libdumb/linetypestruct.h"
+#include "libdumb/prothingstruct.h"
+#include "libdumb/levdatanums.h"
 
 #define NAMELEN 32
 #define ALLOC_BLK 64
@@ -91,8 +92,8 @@ void chkuniqueid(int id) {
 	 printf("ptcomp: line %d (%s): ID %d not unique (clashes with %s)\n",
 		line,cppfile,id,protos[i].name);
 	 exit(2);
-      };
-};
+      }
+}
 
 #define unget_token() tok_ungot++;
 
@@ -103,14 +104,14 @@ const char *next_token(void) {
    if(tok_ungot) {
       tok_ungot=0;
       return tokbuf;
-   };
+   }
    memset(tokbuf,0,256);
    while(1) {
       if(feof(fin)) return NULL;
       i=getc(fin);
       *s = (char)i;
       if(*s!=' '&&*s!='\t'&&*s!='\r'&&i!=-1) break;
-   };
+   }
    if(*s=='#') {
       while((*s++=getc(fin))!='\n') if(feof(fin)) return NULL;
       line=atoi(tokbuf+1);
@@ -121,17 +122,17 @@ const char *next_token(void) {
 	 while(*s!='"') *t++=*s++;
 	 *t=0;
 	 if(*cppfile==0) strcpy(cppfile,"stdin");
-      };
+      }
       /*printf("line=%d file=(%s)\n",line,cppfile);*/
       s=tokbuf;
       *s=0;
       return "\n";
-   };
+   }
    if(*s=='\n') {
       line++;
       *s=0;
       return "\n";
-   };
+   }
    do {
       if(feof(fin)) return tokbuf;
       s++;
@@ -141,19 +142,19 @@ const char *next_token(void) {
    if(*s=='\n'||*s=='#') ungetc(*s,fin);
    *s=0;
    return tokbuf;
-};
+}
 
 void synerr(const char *detail) {
    printf("ptcomp: syntax error near line %d (%s), token '%s'\n",
 	  line,cppfile,tokbuf);
    if(detail) printf("        %s\n",detail);
    exit(3);
-};
+}
 void err(const char *detail) {
    printf("ptcomp: fatal error near line %d (%s)\n",line,cppfile);
    if(detail) printf("        %s\n",detail);
    exit(3);
-};
+}
 
 ThingPhaseRec *find_ph_tbl(const char *s) {
    int i;
@@ -161,7 +162,7 @@ ThingPhaseRec *find_ph_tbl(const char *s) {
       if(!strcasecmp(phases[i].name,s))
 	 return phases+i;
    return NULL;
-};
+}
 ThingPhaseRec *parm_ph_tbl(void) {
    const char *s=next_token();
    ThingPhaseRec *tpr;
@@ -169,7 +170,7 @@ ThingPhaseRec *parm_ph_tbl(void) {
    tpr=find_ph_tbl(s);
    if(!tpr) synerr("phase table name unrecognised");
    return tpr;
-};
+}
 int parm_phase(ThingPhaseRec *p) {
    int i;
    const char *s=next_token();
@@ -180,7 +181,7 @@ int parm_phase(ThingPhaseRec *p) {
 	 return i;
    synerr("phase name unrecognised");
    return -1;
-};
+}
 int parm_proto(void) {
    int i;
    const char *s=next_token();
@@ -191,7 +192,7 @@ int parm_proto(void) {
 	 return protos[i].pt.id;
    synerr("proto name unrecognised");
    return -1;
-};
+}
 int parm_gett(void) {
    int i;
    const char *s=next_token();
@@ -202,7 +203,7 @@ int parm_gett(void) {
 	 return i;
    synerr("gettable name unrecognised");
    return -1;
-};
+}
 
 static int new_sound(const char *name) {
    int i;
@@ -213,11 +214,11 @@ static int new_sound(const char *name) {
    if(nsounds>=maxsounds) {
       maxsounds+=ALLOC_BLK;
       sounds=(SoundRec *)safe_realloc(sounds,maxsounds*sizeof(SoundRec));
-   };
+   }
    strcpy(sounds[i].name,name);
    strcpy(sounds[i].s.lumpname,name);
    return i;
-};
+}
 
 int parm_sound(void) {
    int i;
@@ -229,29 +230,29 @@ int parm_sound(void) {
 	 return i;
    /* sound name unrecognised */
    return new_sound(s);
-};
+}
 
 void parm_str(char *buf,int n) {
    const char *s=next_token();
    if(s==NULL||*s=='\n') synerr("string parameter expected");
    strncpy(buf,s,n-1);
    buf[n-1]=0;
-};
+}
 char parm_ch(void) {
    const char *s=next_token();
    if(s==NULL||*s=='\n'||s[1]) synerr("character parameter expected");
    return *s;
-};
+}
 int parm_num(void) {
    const char *s=next_token();
    if(s==NULL||*s=='\n') synerr("integer parameter expected");
    return atoi(s);
-};
+}
 int parm_dbl(void) {
    const char *s=next_token();
    if(s==NULL||*s=='\n') synerr("floating-point parameter expected");
    return atof(s);
-};
+}
 
 int time_units(const char *s,int n) {
    while(*s&&isdigit(*s)) s++;
@@ -262,13 +263,13 @@ int time_units(const char *s,int n) {
    if(!strcasecmp(s,"ticks")) return n;
    synerr("strange timing unit");
    return n;
-};
+}
 
 int parm_time(void) {
    const char *s=next_token();
    if(s==NULL||*s=='\n') synerr("time parameter expected");
    return time_units(s,atoi(s));
-};
+}
 
 int speed_units(const char *s,int n) {
    while(*s&&isdigit(*s)) s++;
@@ -281,13 +282,13 @@ int speed_units(const char *s,int n) {
    if(!strcasecmp(s,"/tick")) return n;
    synerr("strange timing unit");
    return n;
-};
+}
 
 int parm_speed(void) {
    const char *s=next_token();
    if(s==NULL||*s=='\n') synerr("speed parameter expected");
    return speed_units(s,atoi(s));
-};
+}
 
 fixed arc_units(const char *s,int n) {
    while(*s&&isdigit(*s)) s++;
@@ -295,27 +296,27 @@ fixed arc_units(const char *s,int n) {
       /* backwards compatibility */
       if(n==0) return 0;
       return FIXED_PI/n; 
-   };
+   }
    if(!strcasecmp(s,"deg")) return (n*FIXED_PI)/180;
    if(!strcasecmp(s,"pi")) {
       if(n==0) n=1;
       return FIXED_PI*n;
-   };
+   }
    if(!strncasecmp(s,"pi/",3)) {
       int m;
       if(n==0) n=1;
       m=atoi(s+3);
       if(m) return (FIXED_PI*n)/m;
-   };
+   }
    synerr("strange arc unit");
    return n;
-};
+}
 
 fixed parm_arc(void) {
    const char *s=next_token();
    if(s==NULL||*s=='\n') synerr("arc parameter expected");
    return arc_units(s,atoi(s));
-};
+}
 
 LT_TermType parm_termtype(void) {
    const char *s=next_token();
@@ -367,13 +368,13 @@ LT_TermType parm_termtype(void) {
    /* none of the above */
    else synerr("termtype parameter expected");
    return 0;
-};
+}
 
 void parm_msg(char *buf,int n) {
    char *s;
    parm_str(buf,n);
    for(s=buf;*s;s++) if(*s=='_') *s=' ';
-};
+}
 
 int atolumptype(const char *s) {
    if(!strcasecmp(s,"Sector")) return ML_SECTOR;
@@ -381,7 +382,7 @@ int atolumptype(const char *s) {
    else if(!strcasecmp(s,"Thing")) return ML_THING;
    else synerr("strange lumptype");
    return 0;
-};
+}
 int atoeventtype(const char *s) {
    if(!strcasecmp(s,"Ceiling")) return ME_CEILING;
    else if(!strcasecmp(s,"CeilingTexture")) return ME_CEILING_TEX;
@@ -398,7 +399,7 @@ int atoeventtype(const char *s) {
    else if(!strcasecmp(s,"NewLevel")) return ME_NEWLEVEL;
    else synerr("strange eventtype");
    return 0;
-};
+}
 
 void secomp(void) {
    const char *s;
@@ -421,9 +422,9 @@ void secomp(void) {
 	 sr->s.nredir++;
       }
       else break;
-   };
+   }
    unget_token();
-};
+}
 
 int ltacomp(const char *s,LT_Action *lta,int *stage) {
       if(!strcasecmp(s,"WaitFor")) {
@@ -469,7 +470,7 @@ int ltacomp(const char *s,LT_Action *lta,int *stage) {
       else if(!strcasecmp(s,"StopSound")) lta->stopsound=parm_sound();
       else return 0;
       return -1;
-};
+}
 
 void ltcomp(int issect) {
    const char *s;
@@ -493,7 +494,7 @@ void ltcomp(int issect) {
 	 maxsts=id+ALLOC_BLK;
 	 sts=(LineTypeRec*)safe_realloc(sts,maxsts*sizeof(LineTypeRec));
 	 memset(sts+nsts,0,(maxsts-nsts)*sizeof(LineTypeRec));
-      };
+      }
       /* deal with id */
       if(id>=nsts) nsts=id+1;
       p=sts+id;
@@ -505,17 +506,17 @@ void ltcomp(int issect) {
 	 maxlts=id+ALLOC_BLK;
 	 lts=(LineTypeRec*)safe_realloc(lts,maxlts*sizeof(LineTypeRec));
 	 memset(lts+nlts,0,(maxlts-nlts)*sizeof(LineTypeRec));
-      };
+      }
       /* deal with id */
       if(id>=nlts) nlts=id+1;
       p=lts+id;
-   };
+   }
    /* check uniqueness */
    if(p->name[0]) {
       printf("ptcomp: line %d (%s): ID %d (%s) not unique (clashes with %s)\n",
 	     line,cppfile,id,myname,p->name);
       exit(2);
-   };
+   }
    strcpy(p->name,myname);
    /* start filling in data */
    while(1) {
@@ -548,9 +549,9 @@ void ltcomp(int issect) {
       else if(lta==NULL) break;
       else if(ltacomp(s,lta,&stage));
       else break;
-   };
+   }
    unget_token();
-};
+}
 
 void gettcomp(void) {
    const char *s;
@@ -559,7 +560,7 @@ void gettcomp(void) {
    if(ngetts>=maxgetts-1) {
       maxgetts+=ALLOC_BLK;
       getts=(GettableRec*)safe_realloc(getts,sizeof(GettableRec)*maxgetts);
-   };
+   }
    p=getts+(ngetts++);
    memset(p,0,sizeof(GettableRec));
    p->g.bulletkind=-1;
@@ -612,9 +613,9 @@ void gettcomp(void) {
 	 p->g.yo=parm_num();
       }
       else break;
-   };
+   }
    unget_token();
-};
+}
 
 void animcomp(int is_sw) {
    const char *s;
@@ -626,7 +627,7 @@ void animcomp(int is_sw) {
    if(nanims>=maxanims-1) {
       maxanims+=ALLOC_BLK;
       anims=(AnimRec*)safe_realloc(anims,sizeof(AnimRec)*maxanims);
-   };
+   }
    p=anims+(nanims++);
    memset(p,0,sizeof(AnimRec));
    p->maxtbl=ALLOC_BLK;
@@ -660,9 +661,8 @@ void animcomp(int is_sw) {
 	    if(is_flat) at->flags|=AT_FLAT;
 	    at->myseqnum=i;
 	    at->duration=defdur;
-	 };
-      }
-      else if(!strcasecmp(s,"Tag")) {
+	 }
+      } else if(!strcasecmp(s,"Tag")) {
 	 if(p->ntbl) synerr("Tag must come before any Texture");
 	 p->ntbl++;
 	 memset(p->tbl,0,sizeof(AnimTexTable));
@@ -676,7 +676,7 @@ void animcomp(int is_sw) {
 	    p->maxtbl+=ALLOC_BLK;
 	    p->tbl=(AnimTexTable*)safe_realloc(p->tbl,
 					       p->maxtbl*sizeof(AnimRec));
-	 };
+	 }
 	 memset(at,0,sizeof(AnimTexTable));
 	 parm_str(at->name,9);
 	 if(is_sw) at->flags|=AT_SWITCH;
@@ -685,11 +685,13 @@ void animcomp(int is_sw) {
 	 at->duration=defdur;
       }
       else break;
-   };
+   }
    unget_token();
-};
+}
 
-void phasecomp(void) {
+void
+phasecomp(void)
+{
    const char *s;
    ThingPhaseRec *p;
    ThingPhase def;
@@ -704,7 +706,7 @@ void phasecomp(void) {
       maxphasetbls+=ALLOC_BLK;
       phases=(ThingPhaseRec*)safe_realloc(phases,
 					  sizeof(ThingPhaseRec)*maxphasetbls);
-   };
+   }
    p=phases+(nphasetbls++);
    memset(p,0,sizeof(ThingPhaseRec));
    memset(p->signals,-1,sizeof(short)*NUM_THINGSIGS);
@@ -728,7 +730,7 @@ void phasecomp(void) {
 	    p->maxphases+=ALLOC_BLK;
 	    p->tp=(ThingPhase*)safe_realloc(p->tp,p->maxphases*sizeof(ThingPhase));
 	    p->tpname=(char*)safe_realloc(p->tpname,p->maxphases*NAMELEN);
-	 };
+	 }
 	 tp=p->tp+p->nphases;
 	 memcpy(tp,&def,sizeof(ThingPhase));
 	 def.id=0;
@@ -756,19 +758,32 @@ void phasecomp(void) {
       else if(!strcasecmp(s,"SigInit")) 
 	 p->signals[TS_INIT]=p->nphases-1;
       else if(!strcasecmp(s,"Glow")) tp->flags|=TPH_GLOW;
+      else if(!strcasecmp(s,"NoGlow")) tp->flags &= ~TPH_GLOW;
       else if(!strcasecmp(s,"Destroy")) tp->flags|=TPH_DESTROY;
+      else if(!strcasecmp(s,"NoDestroy")) tp->flags &= ~TPH_DESTROY;
       else if(!strcasecmp(s,"NoSigs")) tp->flags|=TPH_NOSIGS;
+      else if(!strcasecmp(s,"Sigs")) tp->flags &= ~TPH_NOSIGS;
       else if(!strcasecmp(s,"Strategy")) tp->flags|=TPH_STRATEGY;
+      else if(!strcasecmp(s,"NoStrategy")) tp->flags &= ~TPH_STRATEGY;
       else if(!strcasecmp(s,"HeatSeek")) tp->flags|=TPH_HEATSEEK;
+      else if(!strcasecmp(s,"NoHeatSeek")) tp->flags &= ~TPH_HEATSEEK;
       else if(!strcasecmp(s,"Shoot")) tp->flags|=TPH_SHOOT;
+      else if(!strcasecmp(s,"NoShoot")) tp->flags &= ~TPH_SHOOT;
       else if(!strcasecmp(s,"Explode")) tp->flags|=TPH_EXPLODE;
+      else if(!strcasecmp(s,"NoExplode")) tp->flags &= ~TPH_EXPLODE;
       else if(!strcasecmp(s,"Melee")) tp->flags|=TPH_MELEE;
+      else if(!strcasecmp(s,"NoMelee")) tp->flags &= ~TPH_MELEE;
       else if(!strcasecmp(s,"Spawn2")) tp->flags|=TPH_SPAWN2;
+      else if(!strcasecmp(s,"NoSpawn2")) tp->flags &= ~TPH_SPAWN2;
       else if(!strcasecmp(s,"RSpawn2")) tp->flags|=TPH_RSPAWN2;
+      else if(!strcasecmp(s,"NoRSpawn2")) tp->flags &= ~TPH_RSPAWN2;
       else if(!strcasecmp(s,"Idle")) tp->flags|=TPH_IDLE;
+      else if(!strcasecmp(s,"NoIdle")) tp->flags &= ~TPH_IDLE;
       /*else if(!strcasecmp(s,"Noisy")) tp->flags|=TPH_NOISY;*/
       else if(!strcasecmp(s,"BFGEffect")) tp->flags|=TPH_BFGEFFECT;
+      else if(!strcasecmp(s,"NoBFGEffect")) tp->flags &= ~TPH_BFGEFFECT;
       else if(!strcasecmp(s,"Spawn")) tp->flags|=TPH_SHOOT;
+      else if(!strcasecmp(s,"NoSpawn")) tp->flags &= ~TPH_SHOOT;
       else if(!strcasecmp(s,"Become")) {
 	 tp->flags|=TPH_BECOME;
 	 tp->next=0;
@@ -784,17 +799,17 @@ void phasecomp(void) {
       else if(!strcasecmp(s,"SpritePh")) tp->spr_phase=parm_ch();
       else if(!strcasecmp(s,"Sprite")) parm_str(tp->sprite,5);
       else break;
-   };
+   }
    p->tp=(ThingPhase*)safe_realloc(p->tp,p->nphases*sizeof(ThingPhase));
    p->tpname=(char *)safe_realloc(p->tpname,p->nphases*NAMELEN);
    p->maxphases=p->nphases;
    unget_token();
-};
+}
 
 static void set_phid(ProtoThingRec *p,ThingPhaseRec *tpr) {
    p->pt.phase_id=tpr->tp->id;
    memcpy(p->pt.signals,tpr->signals,sizeof(short)*NUM_THINGSIGS);
-};
+}
 
 void protocomp(void) {
    const char *s;
@@ -805,7 +820,7 @@ void protocomp(void) {
       maxprotos+=ALLOC_BLK;
       protos=(ProtoThingRec*)safe_realloc(protos,
 					  sizeof(ProtoThingRec)*maxprotos);
-   };
+   }
    p=protos+(nprotos++);
    memset(p,0,sizeof(ProtoThingRec));
    p->pt.hits=-1;
@@ -870,7 +885,7 @@ void protocomp(void) {
 	 else {
 	    p->pt.realmass=p->pt.friction=FIXED_ONE;
 	    p->pt.flags|=PT_CAN_FLY;
-	 };
+	 }
       }
       else if(!strcasecmp(s,"Hits")) p->pt.hits=parm_num();
       else if(!strcasecmp(s,"Shooter")) p->pt.flags|=PT_SHOOTER;
@@ -919,9 +934,9 @@ void protocomp(void) {
 	 p->pt.artinum=parm_num();
       }
       else break;
-   };
+   }
    unget_token();
-};
+}
 
 static int lookup_linfo(const char *n) {
    int i;
@@ -930,7 +945,7 @@ static int lookup_linfo(const char *n) {
       if(!strcasecmp(li->l.name,n)) return i;
    printf("unrecognised levelname: %s\n",n);
    return -1;
-};
+}
 void licomp(void) {
    const char *s;
    LevInfoRec *li;
@@ -939,7 +954,7 @@ void licomp(void) {
       maxlinfos+=ALLOC_BLK;
       linfos=(LevInfoRec*)safe_realloc(linfos,
 				    sizeof(LevInfoRec)*maxlinfos);
-   };
+   }
    li=linfos+(nlinfos++);
    memset(li,0,sizeof(LevInfoRec));
    li->l.secret=-1;
@@ -960,9 +975,9 @@ void licomp(void) {
       else if(!strcasecmp(s,"Secret")) parm_str(li->secret,9);
       else if(!strcasecmp(s,"Next")) parm_str(li->next,9);
       else break;
-   };
+   }
    unget_token();
-};
+}
 
 void ptcomp(void) {
    while(1) {
@@ -982,15 +997,15 @@ void ptcomp(void) {
       else if(!strcasecmp(s,"TimeUnits")) default_time_units=parm_time();
       else if(!strcasecmp(s,"DefaultSpeed")) default_speed=parm_speed();
       else synerr(NULL);
-   };
-};
+   }
+}
 
 void wrphases(FILE *fout) {
    int i;
    printf("%5d phase tables\n",nphasetbls);
    for(i=0;i<nphasetbls;i++)
       fwrite(phases[i].tp,sizeof(ThingPhase),phases[i].nphases,fout);
-};
+}
 void wrprotos(FILE *fout) {
    int i;
    printf("%5d protos\n",nprotos);
@@ -999,32 +1014,32 @@ void wrprotos(FILE *fout) {
 	 printf("warning: proto %s (%d) has no phasetable\n",
 		protos[i].name,(int)(protos[i].pt.id));
       fwrite(&protos[i].pt,sizeof(ProtoThing),1,fout);
-   };
-};
+   }
+}
 void wrgetts(FILE *fout) {
    int i;
    printf("%5d gettables\n",ngetts);
    for(i=0;i<ngetts;i++) 
       fwrite(&getts[i].g,sizeof(Gettable),1,fout);
-};
+}
 void wrlts(FILE *fout) {
    int i;
    printf("%5d linetypes\n",nlts);
    for(i=0;i<nlts;i++) 
       fwrite(&lts[i].l,sizeof(LineType),1,fout);
-};
+}
 void wrsts(FILE *fout) {
    int i;
    printf("%5d sectortypes\n",nsts);
    for(i=0;i<nsts;i++) 
       fwrite(&sts[i].l,sizeof(LineType),1,fout);
-};
+}
 void wrsounds(FILE *fout) {
    int i;
    printf("%5d sounds\n",nsounds);
    for(i=0;i<nsounds;i++) 
       fwrite(&sounds[i].s,sizeof(SoundEnt),1,fout);
-};
+}
 void wrlinfos(FILE *fout) {
    int i;
    printf("%5d levinfos\n",nlinfos);
@@ -1034,8 +1049,8 @@ void wrlinfos(FILE *fout) {
       if(linfos[i].next[0])
 	 linfos[i].l.next=lookup_linfo(linfos[i].next);
       fwrite(&linfos[i].l,sizeof(LevInfo),1,fout);
-   };
-};
+   }
+}
 void wranims(FILE *fout) {
    int i;
    printf("%5d animtexes\n",nanims);
@@ -1045,8 +1060,8 @@ void wranims(FILE *fout) {
       for(j=0;j<anims[i].ntbl;j++)
 	 anims[i].tbl[j].seqlen=anims[i].ntbl;
       fwrite(anims[i].tbl,sizeof(AnimTexTable),anims[i].ntbl,fout);
-   };
-};
+   }
+}
 
 static int ptcmp(const void *p1,const void *p2) {
    if(((const ProtoThingRec *)p1)->pt.id>((const ProtoThingRec *)p2)->pt.id) 
@@ -1054,7 +1069,7 @@ static int ptcmp(const void *p1,const void *p2) {
    if(((const ProtoThingRec *)p1)->pt.id<((const ProtoThingRec *)p2)->pt.id) 
       return -1;
    return 0;
-};
+}
 
 int main(int argc,char **argv) {
    FILE *fout;
@@ -1067,7 +1082,7 @@ int main(int argc,char **argv) {
 	     "into files of the form <dir>/PROTOS.lump\n"
 	     "\n");
       return 1;
-   };
+   }
    log_stdout(); /* for error messages from safem */
    maxlinfos=maxprotos=maxphasetbls=maxgetts=
       maxlts=maxsts=maxsounds=maxanims=ALLOC_BLK;
@@ -1083,7 +1098,7 @@ int main(int argc,char **argv) {
    /*if(fin==NULL) {
       printf("Error %d opening source file\n",errno);
       return 2;
-   };*/
+   }*/
 
    printf("ptcomp: compiling...\n");
    ptcomp();
@@ -1142,4 +1157,4 @@ int main(int argc,char **argv) {
    }
    else printf("Error %d opening levinfo file %s\n",errno,foutname);
    return 0;
-};
+}

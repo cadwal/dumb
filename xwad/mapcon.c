@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -5,7 +7,7 @@
 
 #include <X11/Xlib.h>
 
-#include "lib/log.h"
+#include "libdumbutil/log.h"
 
 #include "xwad.h"
 #include "xwadmap.h"
@@ -27,10 +29,10 @@ static int nearest_vertex(int x,int y,const XWadInstance *inst) {
       if(dist<min) {
 	 j=i;
 	 min=dist;
-      };
-   };
+      }
+   }
    return j;
-}; 
+}
 static int nearest_thing(int x,int y,const XWadInstance *inst) {
    int i,j=-1;
    float min=BIGFLOAT;
@@ -40,10 +42,10 @@ static int nearest_thing(int x,int y,const XWadInstance *inst) {
       if(dist<min) {
 	 j=i;
 	 min=dist;
-      };
-   };
+      }
+   }
    return j;
-}; 
+}
 
 static double line_dist(const XWadInstance *inst,int line,int x,int y) {
    const double cx=x,cy=y;
@@ -66,7 +68,7 @@ static double line_dist(const XWadInstance *inst,int line,int x,int y) {
    else return s;
    if(s>0.0) return t;
    else return -t;
-};
+}
 
 static int nearest_line(int x,int y,const XWadInstance *inst) {
    int i,j=-1;
@@ -76,10 +78,10 @@ static int nearest_line(int x,int y,const XWadInstance *inst) {
       if(dist<min) {
 	 j=i;
 	 min=dist;
-      };
-   };
+      }
+   }
    return j;
-}; 
+}
 
 static int nearest_sector(int x,int y,const XWadInstance *inst) {
    int line=nearest_line(x,y,inst);
@@ -87,7 +89,7 @@ static int nearest_sector(int x,int y,const XWadInstance *inst) {
    int side=inst->line[line].side[dist>0.0?0:1];
    if(side<0) return -1;
    return inst->side[side].sector;
-}; 
+}
 
 
 /* create new map objects */
@@ -100,7 +102,7 @@ void new_entity(int x,int y,XWadInstance *inst,int extend) {
    if(inst->showgrid) {
       x=GRIDIFY(x);
       y=GRIDIFY(y);
-   };
+   }
    switch(inst->mode) {
    case(VerMode):
       i=inst->nvers++;
@@ -116,9 +118,9 @@ void new_entity(int x,int y,XWadInstance *inst,int extend) {
    default:
       message(inst,"No Create function for this mode yet!");
       break;
-   };
+   }
    new_selection(i,inst,extend);
-};
+}
 
 
 /* move selected objects */
@@ -130,9 +132,9 @@ extern inline int ver_selected_for_move(XWadInstance *inst,int v) {
       /* TODO: add other cases */
    default:
       break;
-   };
+   }
    return 0;
-};
+}
 
 void move_entity(int x,int y,XWadInstance *inst) {
    int i;
@@ -153,14 +155,14 @@ void move_entity(int x,int y,XWadInstance *inst) {
 	    x+=tx-GRIDIFY(tx);
 	    y+=ty-GRIDIFY(ty);
 	    do_adjust=0;
-	 };
+	 }
 	 inst->ver[i].x-=x;
 	 inst->ver[i].y-=y;
-      };
+      }
    /* in thingmode or vermode, current selection's stats may have changed */
    if(inst->mode==ThingMode||inst->mode==VerMode)
       rdoutp_cseti(&inst->modectls,inst);
-};
+}
 
 
 /* mouse action helpers */
@@ -171,8 +173,8 @@ static void selection_by_mouse(int x,int y,XWadInstance *inst,int ext) {
    case(VerMode): new_selection(nearest_vertex(x,y,inst),inst,ext); break;
    case(LineMode): new_selection(nearest_line(x,y,inst),inst,ext); break;
    case(SectMode): new_selection(nearest_sector(x,y,inst),inst,ext); break;
-   };
-};
+   }
+}
 
 static void drag_start(XWadInstance *inst,int x,int y,DragMode mode) {
    inst->dragstartx=x;
@@ -182,8 +184,8 @@ static void drag_start(XWadInstance *inst,int x,int y,DragMode mode) {
    case(DragObj): XDefineCursor(dpy,inst->map,drag_obj_cursor); break;
    case(DragMap): XDefineCursor(dpy,inst->map,drag_map_cursor); break;
    case(NoDrag): break;
-   };
-};
+   }
+}
 static void drag_update(XWadInstance *inst,int x,int y) {
    int mapdx=UNSCALE(inst->dragstartx-x);
    int mapdy=-UNSCALE(inst->dragstarty-y);
@@ -198,16 +200,16 @@ static void drag_update(XWadInstance *inst,int x,int y) {
       move_entity(mapdx,mapdy,inst);
       break;
    case(NoDrag): break;
-   };
+   }
    inst->dragstartx=x;
    inst->dragstarty=y;
-};
+}
 static void drag_end(XWadInstance *inst,int x,int y) {
    drag_update(inst,x,y);
    inst->dragmode=NoDrag;
    XClearArea(dpy,inst->map,0,0,0,0,True);
    XUndefineCursor(dpy,inst->map);
-};
+}
 
 
 /* event handlers */
@@ -238,13 +240,13 @@ void map_button(XButtonEvent *ev,XWadInstance *inst) {
 	 drag_end(inst,ev->x,ev->y);
       else if(ev->button==1&&inst->dragmode==DragObj)
 	 drag_end(inst,ev->x,ev->y);
-   };
-};
+   }
+}
 void map_motion(XMotionEvent *ev,XWadInstance *inst) {
    //logprintf(LOG_DEBUG,'M',"mapmotion s=%d",ev->state);
    if(inst->dragmode!=NoDrag) {
       drag_update(inst,ev->x,ev->y);
       draw_map(inst,inst->map,1);
-   };
-};
+   }
+}
 

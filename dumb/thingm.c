@@ -1,12 +1,14 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 
-#include "lib/log.h"
-#include "lib/fixed.h"
-#include "lib/timer.h"
-#include "dsound.h"
+#include "libdumbutil/log.h"
+#include "libdumbutil/fixed.h"
+#include "libdumbutil/timer.h"
+#include "libdumb/dsound.h"
 #include "things.h"
 #include "game.h"
 
@@ -17,7 +19,7 @@ void player_apply_lookup(const LevData *ld,int th,int lookup) {
    ThingDyn *td=ldthingd(ld)+th;
    td->delev+=INT_TO_FIXED(lookup)/12;
    td->delev-=td->elev/12;
-};
+}
 
 static int appropriate_target(const LevData *ld,int targ,int th,fixed arc)  {
    const ThingDyn *td=ldthingd(ld)+th;
@@ -31,7 +33,7 @@ static int appropriate_target(const LevData *ld,int targ,int th,fixed arc)  {
    t=fix_vec2angle(ttd->x-td->x,ttd->y-td->y)-td->angle;
    NORMALIZE_ANGLE(t);
    return t<arc/2||t>(FIXED_2PI-arc/2);
-};
+}
 
 #define AUTOTARG_MAXDIST (512<<12)
 
@@ -50,15 +52,15 @@ void thing_autotarget(const LevData *ld,int th,fixed arc) {
 	 if(l<minlen)  {
 	    minlen=l;
 	    td->target=i;
-	    };
-      };
+	 }
+      }
       i++;
       if(i>=ldnthings(ld)) i=0;
    } while(i!=is);
 #ifdef THINGM_DEBUG
    logprintf(LOG_DEBUG,'O',"thing_autotarget(%d) targ=%d",th,td->target);
 #endif
-};
+}
 
 #define HEATSEEK_ARC (FIXED_PI/3) /* 60 degrees */
 
@@ -88,8 +90,8 @@ static void do_heatseek(const LevData *ld,int th)  {
       /*logprintf(LOG_DEBUG,'O',"heatseek: dz=%f speed=%f elev=%f",
 		  FIXED_TO_FLOAT(td->dz),FIXED_TO_FLOAT(speed),
 		  FIXED_TO_FLOAT(td->elev));*/
-   };
-};
+   }
+}
 
 int thing_can_see(const LevData *ld,int th,int targ) {
    if(reject_thing_thing(ld,th,targ)) return 0;
@@ -104,14 +106,14 @@ int thing_can_see(const LevData *ld,int th,int targ) {
 	 else return 0;
       }
       else return 0;
-   };
-};
+   }
+}
 
 
 extern inline double pyth_sq(fixed x,fixed y) {
    double dx=FIXED_TO_FLOAT(x),dy=FIXED_TO_FLOAT(y);
    return dx*dx+dy*dy;
-}; 
+}
 #define SQ(x) ((x)*(x))
 
 /* for now, everyone hates players! */
@@ -134,7 +136,7 @@ void thing_find_enemy(const LevData *ld,int th) {
 	    {
 	       td->target=targ;
 	       break;
-	    };
+	    }
 	 targ++;
 	 if(targ>=ldnthings(ld)) targ=0;
       } while (targ!=ts);
@@ -150,12 +152,12 @@ void thing_find_enemy(const LevData *ld,int th) {
 	    thing_can_see(ld,th,ld->player[targ])) {
 	    td->target=ld->player[targ];
 	    break;
-	 };
+	 }
 	 targ++;
 	 if(targ==MAXPLAYERS) targ=0;
-      } while(targ!=ts) ;
-   };
-};
+      } while(targ!=ts);
+   }
+}
 
 #define CLOSE_ENOUGH_ARC (FIXED_PI/16)
 static void do_strategy(const LevData *ld,int th) {
@@ -171,7 +173,7 @@ static void do_strategy(const LevData *ld,int th) {
       if(td->target>=0) 
 	 logprintf(LOG_DEBUG,'O',"thing %d is out to get %d!",th,td->target);
 #endif
-   };
+   }
    
    /* chase after and attack our target */
    if(td->target>=0) {
@@ -221,19 +223,19 @@ static void do_strategy(const LevData *ld,int th) {
 	    thingd_apply_up(td,-movespeed/2);
 	 else if(dz>0)
 	    thingd_apply_up(td,movespeed/4);
-	 else if(dz<-td->proto->height);
+	 else if(dz<-td->proto->height)
 	    thingd_apply_up(td,-movespeed/4);
-      };
+      }
       /* give up if they seem dead */
       if(!(ttd->proto->flags&PT_BEASTIE)) td->target=-1;
       if(ttd->hits<=0) td->target=-1;
-   };
-};
+   }
+}
 
 static void spawn_or_hurl(const LevData *ld,int th,int prid)  {
    ThingDyn *td=ldthingd(ld)+th;
    new_thing(ld,prid,td->x,td->y,td->z);
-};
+}
 
 /* wake anyone who can see me */
 void thing_wake_others(const LevData *ld,int th,int tickspassed) {
@@ -242,11 +244,12 @@ void thing_wake_others(const LevData *ld,int th,int tickspassed) {
       ThingDyn *td=ldthingd(ld)+i;
       const ThingPhase *tph=td->phase_tbl+td->phase;
       td->wakeness+=tickspassed;
-      if((td->wakeness>=WAKE_TICKS)&&i!=th&&td->proto&&(tph->flags&TPH_IDLE)&&thing_can_see(ld,i,th))
+      if((td->wakeness>=WAKE_TICKS) && i!=th && td->proto
+	 && (tph->flags&TPH_IDLE) && thing_can_see(ld,i,th))
 	 thing_send_sig(ld,i,TS_DETECT);
       td->wakeness%=WAKE_TICKS;
-   };
-};
+   }
+}
 
 /* take damage, potentially ouching, dying, or exploding */
 void thing_take_damage(const LevData *ld,int th,int dmg) {
@@ -257,7 +260,7 @@ void thing_take_damage(const LevData *ld,int th,int dmg) {
    if(td->proto->flags&PT_EXPLOSIVE) {
       td->dx=td->dy=td->dz=0; /* stop explosions from being knocked around */
       thing_send_sig(ld,th,TS_EXPLODE);
-   };
+   }
    /* if hits<0 either we're already dead, 
     * or we were invulernable to begin with (proto->hits==-1)
     */
@@ -273,12 +276,12 @@ void thing_take_damage(const LevData *ld,int th,int dmg) {
    if(td->hits>0) {
       thing_send_sig(ld,th,TS_OUCH);
       return;
-   };
+   }
    /* we didn't: how sad, never mind */
    if(td->hits<-td->proto->hits&&thing_send_sig(ld,th,TS_EXPLODE)!=-1) 
       return; 
    thing_send_sig(ld,th,TS_DIE);
-};
+}
 
 /* apply torque so that td turns towards angle 
    intensity should be between 1 and 0 
@@ -289,13 +292,13 @@ void thing_take_damage(const LevData *ld,int th,int dmg) {
    NORMALIZE_ANGLE(angle);
    if(angle<FIXED_PI) td->dangle+=fixmul(angle,intensity);
    else td->dangle+=fixmul(FIXED_2PI-angle,intensity);
-};*/
+}*/
 
 static int unowned_owner(const LevData *ld,int th) {
    int o;
    while((o=ldthingd(ld)[th].owner)>=0) th=o;
    return th;
-};
+}
 
 /* do (explosion-like) damage to nearby monsters */
 #define EXPLODE_RADIUS (FIXED_ONE*8)
@@ -333,8 +336,8 @@ static void do_damage(const LevData *ld,int th,fixed arc) {
 	 thingd_apply_up(ttd,INT_TO_FIXED(dmg)/32);
       /* 3) they take damage */
       thing_take_damage(ld,targ,dmg);
-   };
-};
+   }
+}
 
 #define MELEE_DISTANCE (24<<12)
 
@@ -349,10 +352,11 @@ static void do_melee_damage(const LevData *ld,int th,fixed knockback) {
    if((dist>td->proto->radius+ttd->proto->radius+MELEE_DISTANCE)&&
       !(td->proto->flags&PT_BULLET)) {
 #ifdef THINGM_DEBUG
-      logprintf(LOG_DEBUG,'O',"melee: %d's attack on %d failed",th,td->target);
+      logprintf(LOG_DEBUG,'O',"melee: %d's attack on %d failed",
+		th,td->target);
 #endif
       return;
-   };
+   }
    /* piss them off */
    myowner=unowned_owner(ld,th);
    if(myowner!=td->target) ttd->target=myowner;
@@ -370,9 +374,10 @@ static void do_melee_damage(const LevData *ld,int th,fixed knockback) {
        = fix_vec2angle(ttd->x - ldthingd(ld)[myowner].x,
 		       ttd->y - ldthingd(ld)[myowner].y);
    }
-};
+}
 
-void thing_autoaim(const LevData *ld,int th,fixed arc,fixed *angle,fixed *elev) {
+void thing_autoaim(const LevData *ld,int th,fixed arc,fixed *angle,
+		   fixed *elev) {
    ThingDyn *td=ldthingd(ld)+th;
    /* *angle=*elev=FIXED_ZERO;*/
    /* figure out angle to target */
@@ -388,8 +393,8 @@ void thing_autoaim(const LevData *ld,int th,fixed arc,fixed *angle,fixed *elev) 
       else if(t>(FIXED_2PI-arc/2)) {*angle=t; *elev=e;}
       else if(t<FIXED_PI) {*angle=arc/2; *elev=e;}
       else {*angle=FIXED_2PI-arc/2; *elev=e;}
-   };
-};
+   }
+}
 
 /*
   TPH_SHOOT encompasses many activities: it is supposed to do
@@ -412,7 +417,7 @@ static void do_shoot(LevData *ld,int th) {
       thing_hurl(ld,th,td->proto->spawn1,angle,elev,
 		  td->proto->shootarc,td->proto->shootnum,
 		  td->proto->flags&PT_PARA_SHOOT);
-};
+}
 
 void thing_become(LevData *ld,int th,int id) {
    ThingDyn *td=ldthingd(ld)+th;
@@ -425,11 +430,11 @@ void thing_become(LevData *ld,int th,int id) {
    td->phase_tbl=find_first_thingphase(td->proto->phase_id);
    td->hits=td->proto->hits;
    td->phase=td->proto->signals[TS_INIT];
-};
+}
 
 static int rnd(int n) {
    return (int)(((float)n)*rand()/(RAND_MAX+1.0));
-};
+}
 
 void thing_enter_phase(LevData *ld,int th,int ph)  {
    ThingDyn *td=ldthingd(ld)+th;
@@ -443,19 +448,19 @@ void thing_enter_phase(LevData *ld,int th,int ph)  {
    if(old->flags&TPH_DESTROY)  {
       td->proto=NULL;
       return;
-   };
+   }
    if(old->flags&TPH_BECOME) {
       thing_become(ld,th,td->proto->become1);
       if(td->proto==NULL) return;
       ph=td->phase;
       nu=td->phase_tbl+ph;
-   };
+   }
    if(old->flags&TPH_BECOME2) {
       thing_become(ld,th,td->proto->become2);
       if(td->proto==NULL) return;
       ph=td->phase;
       nu=td->phase_tbl+ph;
-   };
+   }
    /* update phase */
    td->phase=ph;
    td->phase_wait=nu->wait+rnd(nu->rwait);
@@ -475,7 +480,7 @@ void thing_enter_phase(LevData *ld,int th,int ph)  {
    if(nu->flags&TPH_SHOOT) do_shoot(ld,th);
    if(nu->flags&TPH_SPAWN2||((nu->flags&TPH_RSPAWN2)&&(rand()&1)))
      spawn_or_hurl(ld,th,td->proto->spawn2);
-};
+}
 
 int thing_sig_ok(const LevData *ld,int th,ThingSignal ts)  {
    ThingDyn *td=ldthingd(ld)+th;
@@ -489,28 +494,28 @@ int thing_sig_ok(const LevData *ld,int th,ThingSignal ts)  {
       !(td->phase_tbl[td->phase].flags&TPH_NOSIGS))
       return 1;
    else return 0;
-};
+}
 int thing_send_sig(const LevData *ld,int th,ThingSignal ts)  {
    ThingDyn *td=ldthingd(ld)+th;
    if(thing_sig_ok(ld,th,ts))
       td->pending_signal=ts;
    else return -1;
    return 0;
-};
+}
 
 void thingd_apply_polar(ThingDyn *td,fixed f,fixed a) {
    if(td->proto->flags&PT_INF_MASS) return;
    td->dx+=fixmul(fixcos(a),fixdiv(f,td->proto->realmass));
    td->dy+=fixmul(fixsin(a),fixdiv(f,td->proto->realmass));
-};
+}
 void thingd_apply_torque(ThingDyn *td,fixed t) {
    if(td->proto->flags&PT_INF_MASS) return;
    td->dangle+=fixdiv(t,td->proto->realmass);
-};
+}
 void thingd_apply_up(ThingDyn *td,fixed f) {
    if(td->proto->flags&PT_INF_MASS) return;
    td->dz+=fixdiv(f,td->proto->realmass);
-};
+}
 
 /* the angle between each rotation of a sprite in the wadfile */
 #define THETA (FIXED_PI/4)
@@ -529,7 +534,7 @@ void thing_rotate_image(const LevData *ld,int th,fixed angle)  {
       td->image->name[6]==td->phase_tbl[td->phase].spr_phase) 
         td->mirror_image=1;
    else td->mirror_image=0;
-};
+}
 
 
 

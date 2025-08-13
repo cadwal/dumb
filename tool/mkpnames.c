@@ -1,9 +1,11 @@
+#include <config.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "lib/endian.h"
-#include "wad/wadstruct.h"
+#include "libdumbutil/endiantypes.h"
+#include "libdumbwad/wadstruct.h"
 
 FILE *fin,*fpn,*ft;
 int line;
@@ -22,7 +24,7 @@ int get_pnum(const char *s) {
    pnames->num+=1;
    strncpy(pnames->name+8*i,s,8);
    return i;
-};
+}
 
 #define TDSIZE(t) ((t)->npatches*10+22)
 
@@ -36,7 +38,7 @@ void add_texture(const char *s,int x,int y) {
    td[ntexs]->dx=x;
    td[ntexs]->dy=y;
    ntexs++;
-};
+}
 
 void add_patch(const char *s,int x,int y) {
    TextureData *t=td[ntexs-1];
@@ -44,23 +46,23 @@ void add_patch(const char *s,int x,int y) {
    if(ntexs<=0) {
       printf("mkpnames: patch with no texture in line %d (ignored)\n",line);
       return;
-   };
+   }
    t->patch[t->npatches].x=x;
    t->patch[t->npatches].y=y;
    t->patch[t->npatches].pnum=get_pnum(s);
    t->npatches+=1;
-};
+}
 
 /* return 1 if there's a problem */
 int eatws(FILE *f) {
    int c;
    do {
-      c=getc(fin);
+      c=getc(f);
       if(c==EOF) return 1;
       } while(c==' ');
-   ungetc(c,fin);
+   ungetc(c,f);
    return 0;
-};
+}
 
 /* return 1 if there's more to come, 0 if done */
 int scan(char **name,char *sep,int *x,int *y) {
@@ -77,9 +79,9 @@ int scan(char **name,char *sep,int *x,int *y) {
       if(ch=='#') {
 	 while(!feof(fin)&&getc(fin)!='\n');
 	 return 1;
-      };
+      }
       i++;
-   };
+   }
    buf[i]=0;
    /* scan for seperator */
    if(eatws(fin)) return 0;
@@ -91,7 +93,7 @@ int scan(char **name,char *sep,int *x,int *y) {
    while(!feof(fin)&&getc(fin)!='\n');
    *name=buf;
    return 1;
-};
+}
 
 int main(int argc, char **argv) {
    int i,o;
@@ -103,7 +105,7 @@ int main(int argc, char **argv) {
 	     "into the PNAMES and TEXTURE1 lumps used by dumb.\n"
 	     "The only option is -d, which prints debugging info.\n\n");
       return 2;
-   };
+   }
    if(argc>4) debug=1;
    /* allocate some huge arrays */
    td=malloc(8*65536);
@@ -125,12 +127,11 @@ int main(int argc, char **argv) {
 	 else if(sep=='@') add_patch(name,x,y);
 	 else printf("mkpnames: don't understand line %d (ignoring)\n",line);
 	 line++;
-      };
-   }
-   else {
+      }
+   } else {
       printf("mkpnames: couldn't open the files specified\n");
       return 1;
-   };
+   }
    /* squirt out lumps */
    fwrite(pnames,1,sizeof(int)+8*pnames->num,fpn);
    lebuf=ntexs;fwrite(&lebuf,sizeof(int),1,ft);
@@ -138,7 +139,7 @@ int main(int argc, char **argv) {
    for(i=0;i<ntexs;i++) {
       lebuf=o;fwrite(&lebuf,sizeof(int),1,ft);
       o+=TDSIZE(td[i]);
-   };
+   }
    for(i=0;i<ntexs;i++) 
       fwrite(td[i],TDSIZE(td[i]),1,ft);
 
@@ -149,6 +150,6 @@ int main(int argc, char **argv) {
    fclose(fpn);
    fclose(fin);
    return 0;
-};
+}
 
 

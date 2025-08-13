@@ -1,7 +1,9 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "lib/log.h"
+#include "libdumbutil/log.h"
 #include "things.h"
 #include "gettable.h"
 #include "netplay.h"
@@ -17,14 +19,14 @@ void game_vmessage(int pl,const char *fmt,va_list argl) {
    vsprintf(buf,fmt,argl);
    /*logprintf(LOG_DEBUG,'D',"game_message: `%s'",buf);*/
    gmsg(pl,buf);
-};
+}
 
 void game_message(int pl,const char *fmt,...) {
    va_list ap;
    va_start(ap,fmt);
    game_vmessage(pl,fmt,ap);
    va_end(ap);
-};
+}
 
 
 /* process player input stuff */
@@ -49,14 +51,14 @@ static void process_input_ms(LevData *ld,
    /* things that need to be done both on slave and master */
    if(in->quit)
       game_want_quit(1);
-};
+}
 
 void slave_input(LevData *ld,const PlayerInput *in,int tickspassed) {
    /* this function called only on slave, so pl is always localplayer */
    process_input_ms(ld,in,tickspassed,ld->localplayer);
    send_input(ld,in,tickspassed);
    if(in->quit) net_bufflush();
-};
+}
 void process_input(LevData *ld,const PlayerInput *in,int tickspassed,int pl) {
    int cheated=0;
    /* this function called only on master */
@@ -68,29 +70,29 @@ void process_input(LevData *ld,const PlayerInput *in,int tickspassed,int pl) {
       if(!(ld->plflags[pl]&PLF_CHEAT)) {
 	 game_message(-1,"PLAYER %d WARPED",pl+1);
 	 game_want_newlvl(1);
-      };
-   };
+      }
+   }
    if(in->select[2]) {
       cheated++;
       if(!(ld->plflags[pl]&PLF_CHEAT)) {
 	 game_message(-1,"PLAYER %d CHEATED",pl+1);
 	 cheat_gettables(ld,pl);
-      };
-   };
+      }
+   }
    if(in->select[3]) { 
       cheated++;
       if(!(ld->plflags[pl]&PLF_CHEAT)) {
 	 game_message(-1,"PLAYER %d WIBBLED LOUDLY",pl+1);
 	 do_tag666(ld);
-      };
-   };
+      }
+   }
    if(in->select[4]) { 
       cheated++;
       if(!(ld->plflags[pl]&PLF_CHEAT)) {
 	 game_message(-1,"PLAYER %d RETURNED",pl+1);
 	 thing_send_sig(ld,ld->player[pl],TS_ANIMATE);
-      };
-   };
+      }
+   }
    if(cheated) ld->plflags[pl]|=PLF_CHEAT;
    else ld->plflags[pl]&=~PLF_CHEAT;
 
@@ -138,5 +140,5 @@ void process_input(LevData *ld,const PlayerInput *in,int tickspassed,int pl) {
    if(in->s_sel) ld->plflags[pl]|=PLF_SSEL;
    else ld->plflags[pl]&=~PLF_SSEL;
    
-};
+}
 

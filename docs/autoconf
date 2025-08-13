@@ -1,27 +1,28 @@
-This corresponds to DUMB 0.09.kn.4, which has not been released
-because DUMB 0.10 was released before it.
+						       -*- outline -*-
+This corresponds to DUMB 0.12.beta1.
 
-* Not Yet Implemented:
- - cross compilation (endianness is one reason)
- - srcdir
- - make install
- - full CFLAGS support
- - all #ifdefs
+* Not Yet Implemented
 
-* Installation:
+Cross compilation (because of endianness, setvbuf(), having to run
+ptcomp)
+
+All #ifdefs (see docs/ifnames)
+
+* Installation
 
 Change to the dumb root directory (so that this file is
 ./docs/autoconf).
 
-Run "./configure".  If you extracted it from a patch, you may have to
-make it executable first.  (man chmod)  A Makefile will be generated.
+Run "./configure".  A Makefile will be generated.
 
-Run "make".  Put the binaries to suitable places.  A future version
-will probably support "make install" to do this automatically.
+Run "make install".  It'll build everything and install the binaries
+in /usr/local/bin unless you told "configure" to use another
+directory.
 
 If you want special features, give parameters to "configure".  Use
---help to get a list of options.  If you give options that
-"./configure" doesn't understand, it'll silently ignore them.  Sorry.
+--help to get a list of options.  If you give --with or --enable
+options that "./configure" doesn't understand, it'll silently ignore
+them.  Sorry.
 
 * Main options
 
@@ -31,27 +32,21 @@ If you want special features, give parameters to "configure".  Use
 
 * Graphics options
 
-These options have three states: yes, no, autodetect.  Autodetect is
-the default.  It means "configure" will automatically detect if the
-required libraries are available.  You can disable graphics drivers
-with --without-<name> and force them to be used with --with-<name>.
+There used to be a lot more options but I removed them.  If you need
+the ability to force/disable a graphics driver on the command line,
+please write to tosi@stekt.oulu.fi.
 
-You can specify as many graphics drivers as you like.  You'll get a
-separate game binary for each of them.
+For each graphics system found, a separate DUMB executable will be built:
 
---with-aalib, --without-aalib
-  Force or disable use of the AALIB graphics library.
+	aadumb       AA-lib
+	dummydumb    dummy video
+	ggidumb      GGI
+	ldumb        SVGAlib
+	xdumb        X11 (including DGA)
 
---with-ggi, --without-ggi
-  Force or disable use of the Generic Graphics Interface.
-
---with-grx20, --without-grx20
-  Force or disable use of the GRX20 graphics library.  I believe this
-  library is for DOS only, and "configure" doesn't run in DOS, so this
-  option is rather useless.
-
---with-svgalib, --without-svgalib
-  Force or disable use of the SVGALIB (or VGALIB) graphics library.
+Each of these executables is only linked with the (possibly dynamic)
+libraries it requires, so you can copy them to machines that don't
+have all the libraries your build machine had.
 
 --with-x, --without-x
   Force or disable use of the X Window System.  If X is used, you'll
@@ -61,26 +56,24 @@ separate game binary for each of them.
   "configure" can autodetect them.  (In which case you wouldn't need
   to give --with-x either.)
 
-  The X graphics driver supports a few extensions.  Normally these are
-  enabled if the system you're compiling on has the required header
-  files, but you can disable them if they give you trouble:
+--enable-dummy-video
+  Build the dummydumb dummy-video executable in addition to any
+  others.  Dummy video means that the program won't open any window or
+  such to show you what's going on; it'll just sit and calculate.  It
+  also means that you can't control the game.  And it's rather boring
+  to play.
 
-  --disable-dga
-    Disable use of the XFree86 Direct Graphics Access extension.
+  Dummy video might be useful for a dedicated DUMB server that doesn't
+  waste CPU time drawing the world.  In the current implementation
+  however, DUMB still renders the image as a bitmap even though it
+  doesn't draw it on the screen, and that slows things down.
 
-  --disable-xshm
-    Disable use of the MIT Shared Memory extension.
+  Dummy video might also be useful if you really don't have any real
+  video library and still want to see that DUMB compiles and runs.
+  But in that case, you'd better get AA-lib.
 
-  --disable-xkb
-    Disable use of the X Keyboard extension.
-
-  These extensions are automatically disabled in runtime if the X
-  server doesn't support them or if you tell so in the command line or
-  in the configuration file.
- 
---with-dummy-video
-  The dummy video driver is automatically enabled if all other drivers
-  are disabled or unavailable.  Of course you can disable it too.
+  In DUMB 0.11, dummy video was automatically enabled if no video
+  libraries were found.  Not any more.
 
 * Sound options
 
@@ -92,10 +85,10 @@ it can use, it'll stop looking.
 --without-sound
   Disable sound.  Overrides the options below.
 
---with-uss, --without-uss
-  Use the Unix Sound System that was created by Hannu Savolainen for
+--with-oss, --without-oss
+  Use the Open Sound System that was created by Hannu Savolainen for
   Linux and has been ported to BSD at least.  There are free and
-  commercial versions of USS; DUMB doesn't care which you have.
+  commercial versions of OSS; DUMB doesn't care which you have.
 
 --with-mme, --without-mme
   Use the MME library included in Digital Unix.  The interface seems
@@ -109,6 +102,28 @@ Both sound drivers support these options:
 
 --disable-stereo-sound
   Force mono sound.
+
+* DOOM and Heretic options
+
+DUMB supports playing DOOM and Heretic levels if you tell "configure"
+where the WADs are.
+
+The GNU Coding Standards say that --with options shouldn't be used for
+file names but I couldn't find any other way of implementing this.
+
+--with-doom-wad=FILE
+  Use doom*.wad from FILE.  It is an error if the file doesn't exist
+  or is unreadable or a directory.
+
+  If this option isn't given, "configure" will look for doom.wad and
+  doom1.wad in some obvious places.  See configure.in for the list.
+
+--without-doom-wad
+  Don't look for doom.wad.  
+
+--with-heretic-wad=FILE
+--without-heretic-wad
+  As above but for heretic.wad.
 
 * Framebuffer options
 
@@ -128,7 +143,7 @@ you can leave it out to speed up compilation:
   Disable support of framebuffers with 4 bytes (32 bits) per pixel.
 
 If you disable all BPPs, "configure" will warn you but continue.  The
-game can't then be played.
+game can't then be played.  But tools like ptcomp will work.
 
 * Networking
 

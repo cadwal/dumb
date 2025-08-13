@@ -1,0 +1,621 @@
+# Makefile.in generated automatically by automake 1.2 from Makefile.am
+
+# Copyright (C) 1994, 1995, 1996, 1997 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy, distribute and modify it.
+
+
+SHELL = /bin/sh
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
+
+NORMAL_INSTALL = true
+PRE_INSTALL = true
+POST_INSTALL = true
+NORMAL_UNINSTALL = true
+PRE_UNINSTALL = true
+POST_UNINSTALL = true
+CC = @CC@
+CPP = @CPP@
+CXX = @CXX@
+DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
+DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
+DUMB_CONFIG_SOUND = @DUMB_CONFIG_SOUND@
+DUMB_CONFIG_SOUND_LDADD = @DUMB_CONFIG_SOUND_LDADD@
+DUMB_DGA_LDADD = @DUMB_DGA_LDADD@
+DUMB_FBREREND_SOURCES = @DUMB_FBREREND_SOURCES@
+DUMB_NETWORK_LDADD = @DUMB_NETWORK_LDADD@
+DUMB_NETWORK_SOURCES = @DUMB_NETWORK_SOURCES@
+DUMB_RENDER_SOURCES = @DUMB_RENDER_SOURCES@
+DUMB_XKB_LDADD = @DUMB_XKB_LDADD@
+DUMB_XSHM_LDADD = @DUMB_XSHM_LDADD@
+LN_S = @LN_S@
+MAKEINFO = @MAKEINFO@
+PACKAGE = @PACKAGE@
+RANLIB = @RANLIB@
+VERSION = @VERSION@
+
+render_objs = $(DUMB_RENDER_SOURCES:.c=.o)
+fbrerend_objs = $(DUMB_FBREREND_SOURCES:.c=.o)
+network_objs = $(DUMB_NETWORK_SOURCES:.c=.o)
+
+# These sources aren't currently used at all but I think it's better to
+# keep them in the distribution.
+EXTRA_DIST = dosinput.c dosvideo.c vgagl_video.c
+
+@DUMB_CONFIG_AALIB_TRUE@aalib_bin_programs = aadumb
+@DUMB_CONFIG_AALIB_FALSE@aalib_bin_programs =
+
+@DUMB_CONFIG_DUMMYVIDEO_TRUE@dummy_bin_programs = dummydumb
+@DUMB_CONFIG_DUMMYVIDEO_FALSE@dummy_bin_programs = 
+
+@DUMB_CONFIG_GGI_TRUE@ggi_bin_programs = ggidumb
+@DUMB_CONFIG_GGI_FALSE@ggi_bin_programs = 
+
+@DUMB_CONFIG_SVGALIB_TRUE@svgalib_bin_programs = ldumb
+@DUMB_CONFIG_SVGALIB_FALSE@svgalib_bin_programs = 
+
+@DUMB_CONFIG_X_TRUE@x_bin_programs = xdumb
+@DUMB_CONFIG_X_FALSE@x_bin_programs = 
+
+bin_PROGRAMS = $(aalib_bin_programs) $(dummy_bin_programs) \
+ $(ggi_bin_programs) $(svgalib_bin_programs) $(x_bin_programs)
+
+core_sources = dumb.c animtex.c animtex.h bangbang.c banner.c banner.h \
+ bogothing.c bogothing.h dyncode.c dyncode.h game.c game.h gettable.c \
+ gettable.h levdata.c levdata.h levdyn.c levdyn.h levinfo.c levinfo.h \
+ linetype.c linetype.h netio.c netio.h netplay.c netplay.h termtype.c \
+ thinghit.c thingm.c things.c things.h updmap.c updmap.h updthing.c useitem.c \
+ ctlkey.c ctlkey.h keymap.c keymap.h keymapconf.c keymapconf.h \
+ $(DUMB_FBREREND_SOURCES) fbrerend.h \
+ $(DUMB_RENDER_SOURCES) render.h renderc.h rendcore.h rendflat.h rendsl.h \
+ rendsl86.h draw.c draw.h \
+ $(DUMB_NETWORK_SOURCES) net.h \
+ input.h video.h
+
+keyname_sources = keyname.c keyname.h
+
+extra_sources = render8.c render16.c render32.c \
+ generic_fbrerend.c le32_fbrerend.c le64_fbrerend.c \
+ dummy_net.c unix_net.c
+
+aalib_ldadd = -laa
+dummy_ldadd = 
+ggi_ldadd = -lggi
+svgalib_ldadd = -lvga
+x_ldadd = $(X_LIBS) $(X_PRE_LIBS) \
+ $(DUMB_DGA_LDADD) $(DUMB_XSHM_LDADD) $(DUMB_XKB_LDADD) \
+ -lX11 $(X_EXTRA_LIBS)
+
+aadumb_SOURCES = aalib_video.c aalib_input.c $(keyname_sources) \
+ $(core_sources)
+EXTRA_aadumb_SOURCES = $(extra_sources)
+
+dummydumb_SOURCES = dummy_video.c dummy_input.c keymapdummy.c \
+ $(core_sources)
+EXTRA_dummydumb_SOURCES = $(extra_sources)
+
+ggidumb_SOURCES = ggi_video.c keymapdummy.c \
+ $(core_sources)
+EXTRA_ggidumb_SOURCES = $(extra_sources)
+
+ldumb_SOURCES = linux_video.c linux_input.c keymapdummy.c \
+ $(core_sources)
+EXTRA_ldumb_SOURCES = $(extra_sources)
+
+xdumb_SOURCES = x11_video.c $(keyname_sources) \
+ $(core_sources) 
+EXTRA_xdumb_SOURCES = $(extra_sources)
+
+# Don't use srcdir or top_srcdir here!
+LDADD = $(render_objs) $(fbrerend_objs) $(network_objs) \
+ ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
+ ../libdumbutil/libdumbutil.a $(DUMB_CONFIG_SOUND_LDADD)
+
+dependencies = $(render_objs) $(fbrerend_objs) $(network_objs) \
+ ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
+ ../libdumbutil/libdumbutil.a
+
+aadumb_LDADD = $(LDADD) $(aalib_ldadd)
+aadumb_DEPENDENCIES = $(dependencies)
+
+dummydumb_LDADD = $(LDADD) $(dummy_ldadd)
+dummydumb_DEPENDENCIES = $(dependencies)
+
+ggidumb_LDADD = $(LDADD) $(ggi_ldadd)
+ggidumb_DEPENDENCIES = $(dependencies)
+
+ldumb_LDADD = $(LDADD) $(svgalib_ldadd)
+ldumb_DEPENDENCIES = $(dependencies)
+
+xdumb_LDADD = $(LDADD) $(x_ldadd)
+xdumb_DEPENDENCIES = $(dependencies)
+
+# Now here's a hack...
+# I use -MM instead of -M in MKDEP.  This way, I get the dependencies
+# built even on machines that don't have all the header files used on
+# other machines.  The resulting dependency lists won't include system
+# headers but their locations wouldn't be portable anyway.
+MKDEP = gcc -MM $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../config.h
+CONFIG_CLEAN_FILES = 
+PROGRAMS =  $(bin_PROGRAMS)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I..
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+X_CFLAGS = @X_CFLAGS@
+X_LIBS = @X_LIBS@
+X_EXTRA_LIBS = @X_EXTRA_LIBS@
+X_PRE_LIBS = @X_PRE_LIBS@
+aadumb_OBJECTS =  aalib_video.o aalib_input.o keyname.o dumb.o animtex.o \
+bangbang.o banner.o bogothing.o dyncode.o game.o gettable.o levdata.o \
+levdyn.o levinfo.o linetype.o netio.o netplay.o termtype.o thinghit.o \
+thingm.o things.o updmap.o updthing.o useitem.o ctlkey.o keymap.o \
+keymapconf.o draw.o
+aadumb_LDFLAGS = 
+dummydumb_OBJECTS =  dummy_video.o dummy_input.o keymapdummy.o dumb.o \
+animtex.o bangbang.o banner.o bogothing.o dyncode.o game.o gettable.o \
+levdata.o levdyn.o levinfo.o linetype.o netio.o netplay.o termtype.o \
+thinghit.o thingm.o things.o updmap.o updthing.o useitem.o ctlkey.o \
+keymap.o keymapconf.o draw.o
+dummydumb_LDFLAGS = 
+ggidumb_OBJECTS =  ggi_video.o keymapdummy.o dumb.o animtex.o bangbang.o \
+banner.o bogothing.o dyncode.o game.o gettable.o levdata.o levdyn.o \
+levinfo.o linetype.o netio.o netplay.o termtype.o thinghit.o thingm.o \
+things.o updmap.o updthing.o useitem.o ctlkey.o keymap.o keymapconf.o \
+draw.o
+ggidumb_LDFLAGS = 
+ldumb_OBJECTS =  linux_video.o linux_input.o keymapdummy.o dumb.o \
+animtex.o bangbang.o banner.o bogothing.o dyncode.o game.o gettable.o \
+levdata.o levdyn.o levinfo.o linetype.o netio.o netplay.o termtype.o \
+thinghit.o thingm.o things.o updmap.o updthing.o useitem.o ctlkey.o \
+keymap.o keymapconf.o draw.o
+ldumb_LDFLAGS = 
+xdumb_OBJECTS =  x11_video.o keyname.o dumb.o animtex.o bangbang.o \
+banner.o bogothing.o dyncode.o game.o gettable.o levdata.o levdyn.o \
+levinfo.o linetype.o netio.o netplay.o termtype.o thinghit.o thingm.o \
+things.o updmap.o updthing.o useitem.o ctlkey.o keymap.o keymapconf.o \
+draw.o
+xdumb_LDFLAGS = 
+CFLAGS = @CFLAGS@
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+LINK = $(CC) $(CFLAGS) $(LDFLAGS) -o $@
+DIST_COMMON =  Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = tar
+GZIP = --best
+SOURCES = $(aadumb_SOURCES) $(EXTRA_aadumb_SOURCES) $(dummydumb_SOURCES) $(EXTRA_dummydumb_SOURCES) $(ggidumb_SOURCES) $(EXTRA_ggidumb_SOURCES) $(ldumb_SOURCES) $(EXTRA_ldumb_SOURCES) $(xdumb_SOURCES) $(EXTRA_xdumb_SOURCES)
+OBJECTS = $(aadumb_OBJECTS) $(dummydumb_OBJECTS) $(ggidumb_OBJECTS) $(ldumb_OBJECTS) $(xdumb_OBJECTS)
+
+default: all
+
+.SUFFIXES:
+.SUFFIXES: .c .o
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps dumb/Makefile
+
+Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+mostlyclean-binPROGRAMS:
+
+clean-binPROGRAMS:
+	test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+
+distclean-binPROGRAMS:
+
+maintainer-clean-binPROGRAMS:
+
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(bindir)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo "  $(INSTALL_PROGRAM) $$p $(bindir)/`echo $$p|sed '$(transform)'`"; \
+	     $(INSTALL_PROGRAM) $$p $(bindir)/`echo $$p|sed '$(transform)'`; \
+	  else :; fi; \
+	done
+
+uninstall-binPROGRAMS:
+	$(NORMAL_UNINSTALL)
+	list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  rm -f $(bindir)/`echo $$p|sed '$(transform)'`; \
+	done
+
+.c.o:
+	$(COMPILE) -c $<
+
+mostlyclean-compile:
+	rm -f *.o core
+
+clean-compile:
+
+distclean-compile:
+	rm -f *.tab.c
+
+maintainer-clean-compile:
+
+aadumb: $(aadumb_OBJECTS) $(aadumb_DEPENDENCIES)
+	@rm -f aadumb
+	$(LINK) $(aadumb_LDFLAGS) $(aadumb_OBJECTS) $(aadumb_LDADD) $(LIBS)
+
+dummydumb: $(dummydumb_OBJECTS) $(dummydumb_DEPENDENCIES)
+	@rm -f dummydumb
+	$(LINK) $(dummydumb_LDFLAGS) $(dummydumb_OBJECTS) $(dummydumb_LDADD) $(LIBS)
+
+ggidumb: $(ggidumb_OBJECTS) $(ggidumb_DEPENDENCIES)
+	@rm -f ggidumb
+	$(LINK) $(ggidumb_LDFLAGS) $(ggidumb_OBJECTS) $(ggidumb_LDADD) $(LIBS)
+
+ldumb: $(ldumb_OBJECTS) $(ldumb_DEPENDENCIES)
+	@rm -f ldumb
+	$(LINK) $(ldumb_LDFLAGS) $(ldumb_OBJECTS) $(ldumb_LDADD) $(LIBS)
+
+xdumb: $(xdumb_OBJECTS) $(xdumb_DEPENDENCIES)
+	@rm -f xdumb
+	$(LINK) $(xdumb_LDFLAGS) $(xdumb_OBJECTS) $(xdumb_LDADD) $(LIBS)
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES)
+	here=`pwd` && cd $(srcdir) && mkid -f$$here/ID $(SOURCES) $(HEADERS)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES)
+	tags=; \
+	here=`pwd`; \
+	test -z "$(ETAGS_ARGS)$(SOURCES)$(HEADERS)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $(SOURCES) $(HEADERS) -o $$here/TAGS)
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = dumb
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  test -f $(distdir)/$$file \
+	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	  || cp -p $$d/$$file $(distdir)/$$file; \
+	done
+aalib_input.o aalib_input.lo: aalib_input.c ../libdumbutil/log.h input.h \
+	../libdumbutil/confdef.h ../libdumbutil/endiantypes.h keymap.h \
+	ctlkey.h keyname.h
+aalib_video.o aalib_video.lo: aalib_video.c ../libdumbutil/log.h video.h \
+	../libdumbutil/confdef.h
+animtex.o animtex.lo: animtex.c ../libdumbutil/safem.h \
+	../libdumbutil/log.h ../libdumbwad/wadio.h animtex.h \
+	../libdumb/animtexstruct.h ../libdumb/texture.h
+bangbang.o bangbang.lo: bangbang.c ../libdumbutil/log.h \
+	../libdumbutil/fixed.h things.h ../libdumb/view.h levdyn.h \
+	../libdumb/texture.h ../libdumbwad/wadio.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h \
+	../libdumbutil/endiantypes.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h
+banner.o banner.lo: banner.c ../libdumbutil/safem.h ../libdumbutil/log.h \
+	draw.h ../libdumb/texture.h ../libdumbwad/wadio.h banner.h
+bogothing.o bogothing.lo: bogothing.c draw.h ../libdumb/texture.h \
+	../libdumbwad/wadio.h things.h ../libdumb/view.h \
+	../libdumbutil/fixed.h levdyn.h ../libdumb/prothing.h \
+	../libdumb/prothingstruct.h ../libdumbutil/endiantypes.h \
+	levdata.h ../libdumbwad/wadstruct.h ../libdumb/levdatanums.h \
+	bogothing.h
+ctlkey.o ctlkey.lo: ctlkey.c ../libdumbutil/fixed.h ../libdumbutil/log.h \
+	ctlkey.h input.h ../libdumbutil/confdef.h \
+	../libdumbutil/endiantypes.h
+draw.o draw.lo: draw.c draw.h ../libdumb/texture.h ../libdumbwad/wadio.h
+dumb.o dumb.lo: dumb.c ../libdumbutil/confdef.h \
+	../libdumbutil/confargs.h ../libdumbutil/conffile.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h \
+	../libdumbutil/timer.h ../libdumbwad/wadio.h \
+	../libdumb/dsound.h ../libdumbutil/fixed.h \
+	../libdumbutil/endiantypes.h ../libdumb/view.h \
+	../libdumb/sound.h ../libdumb/texture.h banner.h bogothing.h \
+	levdata.h ../libdumbwad/wadstruct.h ../libdumb/levdatanums.h \
+	draw.h fbrerend.h render.h game.h input.h gettable.h \
+	../libdumb/gettablestruct.h keymap.h ctlkey.h keymapconf.h \
+	levinfo.h ../libdumb/levinfostruct.h linetype.h \
+	../libdumb/linetypestruct.h net.h netplay.h netio.h things.h \
+	levdyn.h ../libdumb/prothing.h ../libdumb/prothingstruct.h \
+	updmap.h video.h
+dummy_input.o dummy_input.lo: dummy_input.c input.h \
+	../libdumbutil/confdef.h ../libdumbutil/endiantypes.h
+dummy_net.o dummy_net.lo: dummy_net.c ../libdumbutil/log.h net.h \
+	../libdumbutil/confdef.h
+dummy_video.o dummy_video.lo: dummy_video.c ../libdumbutil/log.h \
+	../libdumbutil/safem.h video.h ../libdumbutil/confdef.h
+dyncode.o dyncode.lo: dyncode.c levdyn.h ../libdumbutil/fixed.h \
+	../libdumb/texture.h ../libdumbwad/wadio.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h \
+	../libdumbutil/endiantypes.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h things.h \
+	../libdumb/view.h dyncode.h
+game.o game.lo: game.c ../libdumbutil/log.h things.h ../libdumb/view.h \
+	../libdumbutil/fixed.h levdyn.h ../libdumb/texture.h \
+	../libdumbwad/wadio.h ../libdumb/prothing.h \
+	../libdumb/prothingstruct.h ../libdumbutil/endiantypes.h \
+	levdata.h ../libdumbwad/wadstruct.h ../libdumb/levdatanums.h \
+	gettable.h ../libdumb/gettablestruct.h netplay.h \
+	../libdumbutil/confdef.h input.h net.h netio.h game.h
+generic_fbrerend.o generic_fbrerend.lo: generic_fbrerend.c render.h \
+	../libdumb/view.h ../libdumbutil/fixed.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
+	../libdumbwad/wadio.h ../libdumb/texture.h \
+	../libdumb/levdatanums.h fbrerend.h
+gettable.o gettable.lo: gettable.c ../libdumbutil/safem.h \
+	../libdumbutil/log.h ../libdumbwad/wadio.h ../libdumb/texture.h \
+	../libdumb/dsound.h ../libdumbutil/fixed.h \
+	../libdumbutil/endiantypes.h ../libdumb/view.h banner.h draw.h \
+	game.h input.h ../libdumbutil/confdef.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h gettable.h \
+	../libdumb/gettablestruct.h things.h levdyn.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h
+ggi_video.o ggi_video.lo: ggi_video.c ../libdumbutil/safem.h \
+	../libdumbutil/log.h input.h ../libdumbutil/confdef.h \
+	../libdumbutil/endiantypes.h video.h
+keymapconf.o keymapconf.lo: keymapconf.c ../libdumbutil/confeng.h \
+	../libdumbutil/confdef.h ../libdumbutil/log.h keymap.h ctlkey.h \
+	input.h ../libdumbutil/endiantypes.h keymapconf.h
+keymapdummy.o keymapdummy.lo: keymapdummy.c keymap.h ctlkey.h input.h \
+	../libdumbutil/confdef.h ../libdumbutil/endiantypes.h
+keymap.o keymap.lo: keymap.c ../libdumbutil/log.h ../libdumbutil/safem.h \
+	keymap.h ctlkey.h input.h ../libdumbutil/confdef.h \
+	../libdumbutil/endiantypes.h
+keyname.o keyname.lo: keyname.c keyname.h
+levdata.o levdata.lo: levdata.c ../libdumbutil/log.h \
+	../libdumbutil/safem.h ../libdumbwad/wadio.h levdata.h \
+	../libdumbutil/fixed.h ../libdumbwad/wadstruct.h \
+	../libdumbutil/endiantypes.h ../libdumb/texture.h \
+	../libdumb/levdatanums.h levdyn.h ../libdumb/prothing.h \
+	../libdumb/prothingstruct.h dyncode.h netplay.h \
+	../libdumbutil/confdef.h input.h net.h netio.h
+levdyn.o levdyn.lo: levdyn.c ../libdumbutil/log.h ../libdumbutil/fixed.h \
+	../libdumbutil/timer.h things.h ../libdumb/view.h levdyn.h \
+	../libdumb/texture.h ../libdumbwad/wadio.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h \
+	../libdumbutil/endiantypes.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h levinfo.h \
+	../libdumb/levinfostruct.h updmap.h animtex.h \
+	../libdumb/animtexstruct.h game.h input.h \
+	../libdumbutil/confdef.h
+levinfo.o levinfo.lo: levinfo.c ../libdumbutil/log.h \
+	../libdumbwad/wadio.h levdyn.h ../libdumbutil/fixed.h \
+	../libdumb/texture.h ../libdumb/prothing.h \
+	../libdumb/prothingstruct.h ../libdumbutil/endiantypes.h \
+	levdata.h ../libdumbwad/wadstruct.h ../libdumb/levdatanums.h \
+	levinfo.h ../libdumb/levinfostruct.h
+le32_fbrerend.o le32_fbrerend.lo: le32_fbrerend.c render.h \
+	../libdumb/view.h ../libdumbutil/fixed.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
+	../libdumbwad/wadio.h ../libdumb/texture.h \
+	../libdumb/levdatanums.h fbrerend.h
+le64_fbrerend.o le64_fbrerend.lo: le64_fbrerend.c render.h \
+	../libdumb/view.h ../libdumbutil/fixed.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
+	../libdumbwad/wadio.h ../libdumb/texture.h \
+	../libdumb/levdatanums.h fbrerend.h
+linetype.o linetype.lo: linetype.c ../libdumbutil/log.h \
+	../libdumbwad/wadio.h linetype.h ../libdumb/linetypestruct.h \
+	../libdumbutil/endiantypes.h ../libdumbutil/fixed.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumb/texture.h \
+	../libdumb/levdatanums.h
+linux_input.o linux_input.lo: linux_input.c ../libdumbutil/log.h input.h \
+	../libdumbutil/confdef.h ../libdumbutil/endiantypes.h
+linux_video.o linux_video.lo: linux_video.c ../libdumbutil/safem.h \
+	../libdumbutil/log.h video.h ../libdumbutil/confdef.h
+netio.o netio.lo: netio.c ../libdumbutil/log.h ../libdumbutil/safem.h \
+	netplay.h ../libdumbutil/confdef.h levdata.h \
+	../libdumbutil/fixed.h ../libdumbwad/wadstruct.h \
+	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h \
+	../libdumb/texture.h ../libdumb/levdatanums.h input.h net.h \
+	netio.h
+netplay.o netplay.lo: netplay.c ../libdumbutil/log.h \
+	../libdumbutil/safem.h ../libdumbutil/timer.h \
+	../libdumb/dsound.h ../libdumbutil/fixed.h \
+	../libdumbutil/endiantypes.h ../libdumb/view.h game.h input.h \
+	../libdumbutil/confdef.h levdata.h ../libdumbwad/wadstruct.h \
+	../libdumbwad/wadio.h ../libdumb/texture.h \
+	../libdumb/levdatanums.h things.h levdyn.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h netplay.h \
+	net.h netio.h
+render16.o render16.lo: render16.c render.h ../libdumb/view.h \
+	../libdumbutil/fixed.h levdata.h ../libdumbwad/wadstruct.h \
+	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h \
+	../libdumb/texture.h ../libdumb/levdatanums.h renderc.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h levdyn.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h things.h \
+	rendsl.h rendflat.h rendcore.h
+render32.o render32.lo: render32.c render.h ../libdumb/view.h \
+	../libdumbutil/fixed.h levdata.h ../libdumbwad/wadstruct.h \
+	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h \
+	../libdumb/texture.h ../libdumb/levdatanums.h renderc.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h levdyn.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h things.h \
+	rendsl.h rendflat.h rendcore.h
+render8.o render8.lo: render8.c render.h ../libdumb/view.h \
+	../libdumbutil/fixed.h levdata.h ../libdumbwad/wadstruct.h \
+	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h \
+	../libdumb/texture.h ../libdumb/levdatanums.h renderc.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h levdyn.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h things.h \
+	rendsl.h rendflat.h rendcore.h
+termtype.o termtype.lo: termtype.c ../libdumbutil/log.h levdyn.h \
+	../libdumbutil/fixed.h ../libdumb/texture.h \
+	../libdumbwad/wadio.h ../libdumb/prothing.h \
+	../libdumb/prothingstruct.h ../libdumbutil/endiantypes.h \
+	levdata.h ../libdumbwad/wadstruct.h ../libdumb/levdatanums.h \
+	linetype.h ../libdumb/linetypestruct.h
+thinghit.o thinghit.lo: thinghit.c ../libdumbutil/log.h levdyn.h \
+	../libdumbutil/fixed.h ../libdumb/texture.h \
+	../libdumbwad/wadio.h ../libdumb/prothing.h \
+	../libdumb/prothingstruct.h ../libdumbutil/endiantypes.h \
+	levdata.h ../libdumbwad/wadstruct.h ../libdumb/levdatanums.h \
+	things.h ../libdumb/view.h updmap.h game.h input.h \
+	../libdumbutil/confdef.h gettable.h ../libdumb/gettablestruct.h \
+	linetype.h ../libdumb/linetypestruct.h
+thingm.o thingm.lo: thingm.c ../libdumbutil/log.h ../libdumbutil/fixed.h \
+	../libdumbutil/timer.h ../libdumb/dsound.h \
+	../libdumbutil/endiantypes.h ../libdumb/view.h things.h \
+	levdyn.h ../libdumb/texture.h ../libdumbwad/wadio.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h game.h \
+	input.h ../libdumbutil/confdef.h
+things.o things.lo: things.c ../libdumbutil/log.h ../libdumbutil/fixed.h \
+	things.h ../libdumb/view.h levdyn.h ../libdumb/texture.h \
+	../libdumbwad/wadio.h ../libdumb/prothing.h \
+	../libdumb/prothingstruct.h ../libdumbutil/endiantypes.h \
+	levdata.h ../libdumbwad/wadstruct.h ../libdumb/levdatanums.h
+unix_net.o unix_net.lo: unix_net.c ../libdumbutil/log.h \
+	../libdumbutil/safem.h netplay.h ../libdumbutil/confdef.h \
+	levdata.h ../libdumbutil/fixed.h ../libdumbwad/wadstruct.h \
+	../libdumbutil/endiantypes.h ../libdumbwad/wadio.h \
+	../libdumb/texture.h ../libdumb/levdatanums.h input.h net.h \
+	netio.h
+updmap.o updmap.lo: updmap.c ../libdumbutil/log.h ../libdumb/dsound.h \
+	../libdumbutil/fixed.h ../libdumbutil/endiantypes.h \
+	../libdumb/view.h levdyn.h ../libdumb/texture.h \
+	../libdumbwad/wadio.h ../libdumb/prothing.h \
+	../libdumb/prothingstruct.h levdata.h ../libdumbwad/wadstruct.h \
+	../libdumb/levdatanums.h animtex.h ../libdumb/animtexstruct.h \
+	updmap.h things.h linetype.h ../libdumb/linetypestruct.h game.h \
+	input.h ../libdumbutil/confdef.h
+updthing.o updthing.lo: updthing.c ../libdumbutil/log.h \
+	../libdumbutil/timer.h levdata.h ../libdumbutil/fixed.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h \
+	../libdumbwad/wadio.h ../libdumb/texture.h \
+	../libdumb/levdatanums.h gettable.h ../libdumb/gettablestruct.h \
+	linetype.h ../libdumb/linetypestruct.h things.h \
+	../libdumb/view.h levdyn.h ../libdumb/prothing.h \
+	../libdumb/prothingstruct.h
+useitem.o useitem.lo: useitem.c ../libdumbutil/log.h things.h \
+	../libdumb/view.h ../libdumbutil/fixed.h levdyn.h \
+	../libdumb/texture.h ../libdumbwad/wadio.h \
+	../libdumb/prothing.h ../libdumb/prothingstruct.h \
+	../libdumbutil/endiantypes.h levdata.h \
+	../libdumbwad/wadstruct.h ../libdumb/levdatanums.h gettable.h \
+	../libdumb/gettablestruct.h
+x11_video.o x11_video.lo: x11_video.c ../libdumbutil/log.h \
+	../libdumbutil/safem.h input.h ../libdumbutil/confdef.h \
+	../libdumbutil/endiantypes.h video.h keymap.h ctlkey.h \
+	keyname.h
+
+info:
+dvi:
+check: all
+	$(MAKE)
+installcheck:
+install-exec: install-binPROGRAMS
+	@$(NORMAL_INSTALL)
+
+install-data: 
+	@$(NORMAL_INSTALL)
+
+install: install-exec install-data all
+	@:
+
+uninstall: uninstall-binPROGRAMS
+
+all: Makefile $(PROGRAMS)
+
+install-strip:
+	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' INSTALL_SCRIPT='$(INSTALL_PROGRAM)' install
+installdirs:
+	$(mkinstalldirs)  $(bindir)
+
+
+mostlyclean-generic:
+	test -z "$(MOSTLYCLEANFILES)" || rm -f $(MOSTLYCLEANFILES)
+
+clean-generic:
+	test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+
+distclean-generic:
+	rm -f Makefile $(DISTCLEANFILES)
+	rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+
+maintainer-clean-generic:
+	test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
+	test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
+mostlyclean:  mostlyclean-binPROGRAMS mostlyclean-compile \
+		mostlyclean-tags mostlyclean-generic
+
+clean:  clean-binPROGRAMS clean-compile clean-tags clean-generic \
+		mostlyclean
+
+distclean:  distclean-binPROGRAMS distclean-compile distclean-tags \
+		distclean-generic clean
+	rm -f config.status
+
+maintainer-clean:  maintainer-clean-binPROGRAMS maintainer-clean-compile \
+		maintainer-clean-tags maintainer-clean-generic \
+		distclean
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+.PHONY: default mostlyclean-binPROGRAMS distclean-binPROGRAMS \
+clean-binPROGRAMS maintainer-clean-binPROGRAMS uninstall-binPROGRAMS \
+install-binPROGRAMS mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir info dvi installcheck \
+install-exec install-data install uninstall all installdirs \
+mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+
+
+INCLUDES += -I$(top_srcdir)
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

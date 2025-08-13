@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,9 +15,9 @@
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 
-#include "lib/log.h"
-#include "lib/safem.h"
-#include "wad/wadio.h"
+#include "libdumbutil/log.h"
+#include "libdumbutil/safem.h"
+#include "libdumbwad/wadio.h"
 
 #include "xwad.h"
 #include "colour.h"
@@ -28,13 +30,13 @@ XFontStruct *msgfont,*detailfont,*lilfont;
 static XWadInstance inst[1];
 
 #ifndef NO_FORK
-void sigchld_handler(int i) {
+RETSIGTYPE sigchld_handler(int i) {
    int status;
    wait(&status);
-   //logprintf(LOG_DEBUG,'C',"child returned %d",status);
+   /* logprintf(LOG_DEBUG,'C',"child returned %d",status); */
    qmessage(inst,"Level Saved.");
    XFlush(dpy);
-};
+}
 #endif
 
 static void usage(const char *name)  {
@@ -46,7 +48,7 @@ static void usage(const char *name)  {
 	  "\t-m <mapname>\n"
 	  "\t-d <display>\n",name);
    exit(1);
-};
+}
 
 #define usage() usage(argv[0])
 
@@ -58,7 +60,7 @@ static int wadmapcmp(const char *wname,const char *mname) {
    if(s==NULL) s=wname;
    else s++;
    return strncasecmp(s,mname,l)||strcasecmp(s+l,".wad");
-};
+}
 
 int main(int argc,char **argv) {
    int nwads=0;
@@ -82,10 +84,10 @@ int main(int argc,char **argv) {
 	    if(argv[i][0]=='-')  {
 	       i--;
 	       break;
-	    };
+	    }
 	    if(nwads<MAX_WADS) 
 	       wadf[nwads++]=argv[i];
-	 };
+	 }
 	 break;
 	 /* l = log */
       case('l'):
@@ -93,9 +95,9 @@ int main(int argc,char **argv) {
 	    if(argv[i][0]=='-')  {
 	       i--;
 	       break;
-	    };
+	    }
 	    log_file(argv[i],LOG_ALL,NULL);
-	 };
+	 }
 	 break;
 	 /* m = map */
       case('m'):
@@ -111,14 +113,14 @@ int main(int argc,char **argv) {
       case('?'):
       default:
 	 usage();
-      };
-   };
+      }
+   }
 
    /* start logging */
    if(!quiet) {
       /*setlinebuf(stdout);*/ /* if stdout is a socket, we'll need this */
       log_stdout();
-   };
+   }
    logprintf(LOG_BANNER,'M',"XWAD");
   
    /* start Xlib */
@@ -161,10 +163,10 @@ int main(int argc,char **argv) {
 	 /* OK, load the PWAD */
 	 else init_pwad(wadf[i]);
 	 i++;
-      };
+      }
    }
    else if(*mapname=='E'||*mapname=='e')
-      init_iwad("doom.wad");
+      init_iwad("doom.wad");	/* FIXME: from .dumbrc or config.h */
    else
       init_iwad("doom2.wad");
 
@@ -192,7 +194,7 @@ int main(int argc,char **argv) {
 				 ButtonMotionMask|PointerMotionMask,&ev));
       /* dispatch events to window */
       dispatch(&ev);
-   };
+   }
 
    /* close windows, free map */
    free_instance(inst);
@@ -211,7 +213,7 @@ int main(int argc,char **argv) {
    /* done */
    log_exit();
    return 0;
-};
+}
 
 static void mapdhf(XEvent *ev,XWadInstance *inst,void *info) {
    switch(ev->type) {
@@ -238,10 +240,10 @@ static void mapdhf(XEvent *ev,XWadInstance *inst,void *info) {
       if(inst->qmsg) {
 	 message(inst,inst->qmsg);
 	 inst->qmsg=NULL;
-      };
+      }
       break;
-   };
-};
+   }
+}
 static void framedhf(XEvent *ev,XWadInstance *inst,void *info) {
    switch(ev->type) {
    case(ConfigureNotify):
@@ -255,9 +257,9 @@ static void framedhf(XEvent *ev,XWadInstance *inst,void *info) {
       case(XK_S): enter_mode(inst,SectMode); break;
       case(XK_T): enter_mode(inst,ThingMode); break;
       break;
-      };
-   };
-};
+      }
+   }
+}
 
 #define MAP_BUTMASK ButtonPressMask|ButtonReleaseMask|ButtonMotionMask
 #define MAP_MSCMASK ExposureMask
@@ -312,7 +314,7 @@ void init_instance(XWadInstance *inst) {
 
    /* init Texture chooser */
    init_tchoose(inst);
-};
+}
 void free_instance(XWadInstance *inst) {
    free_tchoose(inst);
    free_cseti(&inst->genctls);
@@ -325,7 +327,7 @@ void free_instance(XWadInstance *inst) {
    safe_vfree(inst->side,sizeof(SideData)*MAXENTS);
    safe_vfree(inst->sect,sizeof(SectorData)*MAXENTS);
    safe_vfree(inst->enttbl,sizeof(EntFlags)*MAXENTS);
-};
+}
 
 void load_instance(XWadInstance *inst,const char *mapname) {
    strncpy(inst->mapname,mapname,8);
@@ -362,7 +364,7 @@ void load_instance(XWadInstance *inst,const char *mapname) {
    /* force redo *everything* */
    inst->mode=NumModes;
    enter_mode(inst,VerMode);
-};
+}
 
 
 void update_wmtitle(XWadInstance *inst) {
@@ -389,7 +391,7 @@ void update_wmtitle(XWadInstance *inst) {
 		      argv, 1,
                       &size_hints, NULL, &class_hint);
 
-};
+}
 
 #define XSPACE 12
 #define YSPACE 8
@@ -399,8 +401,8 @@ void update_intgeo(XWadInstance *inst) {
    int genc_width,genc_height;
    int modec_width,modec_height;
    int map_width,map_height;
-   int frame_width,frame_height;
-   int frame_x,frame_y,frame_depth,frame_border;
+   int frame_x,frame_y;
+   unsigned int frame_width, frame_height, frame_depth, frame_border;
    Window frame_root;
 
    /* get control panel sizes */
@@ -423,7 +425,7 @@ void update_intgeo(XWadInstance *inst) {
       if(frame_width<inst->min_width) frame_width=inst->min_width;
       if(frame_height<inst->min_height) frame_height=inst->min_height;
       XResizeWindow(dpy,inst->mapframe,frame_width,frame_height);
-   };
+   }
 
    /* arrange subwindows */
    if(frame_height>genc_height+modec_height+YSPACE*3) {
@@ -463,18 +465,17 @@ void update_intgeo(XWadInstance *inst) {
       XMoveResizeWindow(dpy,inst->mapctls.w,
 			frame_width-(mapc_width+XSPACE),map_height+YSPACE*2,
 			mapc_width,mapc_height);
-   };
+   }
    if(inst->bigmap) {
       XMoveResizeWindow(dpy,inst->map,
 			0,0,
 			inst->map_width=frame_width,
 			inst->map_height=frame_height);
-   }
-   else {
+   } else {
       inst->map_width=map_width;
       inst->map_height=map_height;
-   };
-};
+   }
+}
 
 int maxsel(const XWadInstance *inst) {
    switch(inst->mode) {
@@ -482,9 +483,9 @@ int maxsel(const XWadInstance *inst) {
    case(SectMode): return inst->nsects;
    case(LineMode): return inst->nlines;
    case(ThingMode): return inst->nthings;
-   };
+   }
    return 0;
-};
+}
 
 void enter_mode(XWadInstance *inst,XWadMode mode) {
    if(inst->mode==mode) return;
@@ -496,7 +497,7 @@ void enter_mode(XWadInstance *inst,XWadMode mode) {
    XClearArea(dpy,inst->modectls.w,0,0,0,0,True);
    rdlights_cseti(&inst->genctls,inst);
    new_selection(-1,inst,0);
-};
+}
 
 void new_selection(int which,XWadInstance *inst,int extend) {
    int i,n=maxsel(inst);
@@ -506,14 +507,14 @@ void new_selection(int which,XWadInstance *inst,int extend) {
       if(inst->curselect>=0&&!(inst->enttbl[inst->curselect]&ENT_SELECTED)) { 
 	 inst->enttbl[inst->curselect]|=ENT_SELECTED;
 	 want_redraw=1;
-      };
+      }
    }
    /* no extend? unselect whatever's selected now */
    else for(i=0;i<n;i++)
       if(inst->enttbl[i]&ENT_SELECTED) {
 	 full_redraw=1;
 	 inst->enttbl[i]^=ENT_SELECTED;
-      };
+      }
    /* new current selection */
    if(which!=inst->curselect) {
       if(inst->curselect<0) want_redraw=1;
@@ -521,13 +522,13 @@ void new_selection(int which,XWadInstance *inst,int extend) {
       inst->curselect=which;
       rdoutp_cseti(&inst->modectls,inst);
       rdlights_cseti(&inst->modectls,inst);
-   };
+   }
    /* want redraw? */
    if(full_redraw)
       XClearArea(dpy,inst->map,0,0,0,0,True);
    else if(want_redraw)
       draw_map(inst,inst->map,0);
-};
+}
 
 
 

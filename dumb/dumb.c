@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,48 +8,51 @@
 #include <setjmp.h>
 #include <signal.h>
 
-#include "lib/log.h"
-#include "lib/safem.h"
-#include "wad/wadio.h"
-#include "lib/timer.h"
-#include "lib/conf.h"
-#include "texture.h"
-#include "gettable.h"
-#include "plat/video.h"
-#include "render/render.h"
-#include "plat/fbrerend.h"
-#include "render/draw.h"
+#include "libdumbutil/confdef.h"
+#include "libdumbutil/confargs.h"
+#include "libdumbutil/conffile.h"
+#include "libdumbutil/log.h"
+#include "libdumbutil/safem.h"
+#include "libdumbutil/timer.h"
+#include "libdumbwad/wadio.h"
+#include "libdumb/dsound.h"
+#include "libdumb/sound.h"
+#include "libdumb/texture.h"
 #include "banner.h"
+#include "bogothing.h"
+#include "draw.h"
+#include "fbrerend.h"
+#include "game.h"
+#include "gettable.h"
+#include "input.h"
+#include "keymap.h"
+#include "keymapconf.h"
+#include "levinfo.h"
+#include "linetype.h"
+#include "net.h"
+#include "netplay.h"
+#include "render.h"
 #include "things.h"
 #include "updmap.h"
-#include "dsound.h"
-#include "linetype.h"
-#include "levinfo.h"
-#include "netplay.h"
-#include "bogothing.h"
-#include "game.h"
-#include "plat/input.h"
-#include "plat/sound.h"
-#include "plat/net.h"
+#include "video.h"
 
 /*#define WATCHDOG*/
 
-#define DUMB "DUMB"
-#define VERSION "0.11"
-
 #ifdef __cplusplus
-#define BANNER (DUMB "++ " VERSION)
+#define BANNER (PACKAGE "++ " VERSION)
 #else
-#define BANNER (DUMB " " VERSION)
+#define BANNER (PACKAGE " " VERSION)
 #endif
 
 #ifdef WATCHDOG
 static jmp_buf alarm_jb;
-static void alarm_handler(int i) {
+static RETSIGTYPE
+alarm_handler(int i)
+{
    logprintf(LOG_ERROR,'D',
 	     "got SIGALRM: renderer must have gotten stuck...");
    longjmp(alarm_jb,1);
-};
+}
 #endif 
 
 ConfItem mainconf[]={
@@ -117,8 +122,10 @@ ConfModule dumbconf[]={
    {netplay_conf,"netplay","Network Play"},
    {mainconf,"dumb","General Game Control"},
    {playconf,"player","Player Interface"},
+   {keymapconf,"keymap","Keyboard Mapping"},
    {NULL,NULL,NULL}
 };
+
 
 /* this should all get moved into game.c */
 static int master=0,slave=0;
@@ -129,25 +136,39 @@ static int width=0,height=0,vwidth=0,vheight=0,bpp=0,
 
 static int banner=-1,wbanner=-1,bfont=-1;
 
-static void do_gmsg(const char *s) {
+static void
+do_gmsg(const char *s)
+{
    add_to_banner(banner,NULL,width,0);
    add_str_to_banner(banner,bfont,s);
-};
-void gmsg(int pl,const char *s) {
+}
+
+void
+gmsg(int pl,const char *s)
+{
    if(pl<0&&!slave) do_gmsg(s);
    if(pl==ld->localplayer) do_gmsg(s);
    else send_message(pl,s);
-};
+}
+
 static int want_new_lvl=0,want_quit=0;
-void game_want_newlvl(int x) {
+
+void
+game_want_newlvl(int x)
+{
    want_new_lvl=1+x;
-};
-void game_want_quit(int x) {
+}
+
+void
+game_want_quit(int x)
+{
    (void)x;
    want_quit=1;
-};
+}
 
-void do_preload(LevData *ld,int bpp) {
+void
+do_preload(LevData *ld,int bpp)
+{
    int i;
    logprintf(LOG_INFO,'D',"Preloading wall textures");
    for(i=0;i<ldnsides(ld);i++) {
@@ -155,13 +176,13 @@ void do_preload(LevData *ld,int bpp) {
       if(sd->mtex) load_texels(sd->mtex,bpp);
       if(sd->ltex) load_texels(sd->ltex,bpp);
       if(sd->utex) load_texels(sd->utex,bpp);
-   };
+   }
    logprintf(LOG_INFO,'D',"Preloading floor/ceiling textures");
    for(i=0;i<ldnsectors(ld);i++) {
       const SectorDyn *sd=ldsectord(ld)+i;
       if(sd->ctex) load_texels(sd->ctex,bpp);
       if(sd->ftex) load_texels(sd->ftex,bpp);
-   };
+   }
    logprintf(LOG_INFO,'D',"Preloading sprites");
    for(i=0;i<ldnthings(ld);i++) {
       const ProtoThing *proto=ldthingd(ld)[i].proto;
@@ -171,14 +192,16 @@ void do_preload(LevData *ld,int bpp) {
 	 Texture *t;
 	 t=find_phase_sprite(proto,ldthingd(ld)[i].phase,j);
 	 if(t) cond_load_texels(t,1);
-      };
-   };
-};
+      }
+   }
+}
 
 /* control how much we're allowed to speed up the action */
 #define MAXTICKS (500/MSEC_PER_TICK)
 
-int main(int argc,char **argv) {
+int
+main(int argc,char **argv)
+{
    char conf_file[256];
    void *fb,*rendfb=NULL,*fbptr;
    View view;
@@ -217,7 +240,7 @@ int main(int argc,char **argv) {
    if(!cnf_quiet) {
       /*setlinebuf(stdout);*/ /* if stdout is a socket, we'll want this */
       log_stdout();
-   };
+   }
    logprintf(LOG_BANNER,'D',BANNER);
 
    if(!load_failed) 
@@ -247,35 +270,32 @@ int main(int argc,char **argv) {
       char **s=cnf_wad;
       init_iwad(*(s++));
       while(*s) init_pwad(*(s++));
-   }
-   else if(*cnf_map=='E'||*cnf_map=='e') {
-     init_iwad("doom.wad");
-     init_pwad("doom4dum.wad");
-   }
-   else {
+   } else if(*cnf_map=='E'||*cnf_map=='e') {
+     init_iwad("doom.wad");	/* FIXME: get these from .dumbrc */
+     init_pwad("doom4dum.wad");	/* or from config.h */
+   } else {
      init_iwad("doom2.wad");
      init_pwad("doom4dum.wad");
-   };
+   }
    init_wadhashing();
    
-   if(cnf_slave) {
+   if (cnf_slave) {
       logprintf(LOG_INFO,'D',"network mode: slave");
       slave=1;
       net_init();
       net_initmaster(*cnf_slave);
-   }
-   else if(cnf_master) {
+   } else if (cnf_master) {
       char **s=cnf_master;
       logprintf(LOG_INFO,'D',"network mode: master");
       master=1;
       net_init();
-      while(*s) {net_initslave(*s++); master++;};
-   };
+      while(*s) {net_initslave(*s++); master++;}
+   }
 
    if(want_sound) {
       init_sound(11025);
       init_dsound();
-   };
+   }
    init_textures();
    init_linetypes();
    init_levinfo();
@@ -286,27 +306,28 @@ int main(int argc,char **argv) {
 		 slave_info.difficulty,
 		 slave_info.mplayer);
       ld->localplayer=slave_info.plnum;
-   }
-   else if(cnf_single) load_level(ld,cnf_map,cnf_difficulty,0); 
-   else load_level(ld,cnf_map,cnf_difficulty,master);
+   } else if(cnf_single)
+      load_level(ld,cnf_map,cnf_difficulty,0); 
+   else
+      load_level(ld,cnf_map,cnf_difficulty,master);
    if(cnf_preload) do_preload(ld,1);
    if(master) wait_slaveinit(ld);
 
    if(vwidth==width&&vheight==height) {
-     init_video(&vwidth,&vheight,&bpp,&real_width);
-     width=vwidth;
-     height=vheight;
-   }
-   else init_video(&vwidth,&vheight,&bpp,&real_width);
-   if ((xmul & ymul) == 1) {
-     rend2fb = 1;
-     xlace = ylace = 0;
+      init_video(&vwidth,&vheight,&bpp,&real_width);
+      width=vwidth;
+      height=vheight;
+   } else
+      init_video(&vwidth,&vheight,&bpp,&real_width);
+   if (xmul == 1 && ymul == 1) {
+      rend2fb = 1;
+      xlace = ylace = 0;
    } else {
-     rendfb = safe_malloc(width*height*bpp);
-     if (xlace >= xmul)
-       xlace = xmul-1;
-     if (ylace >= ymul)
-       ylace = ymul-1;
+      rendfb = safe_malloc(real_width/xmul*height*bpp);
+      if (xlace >= xmul)
+	 xlace = xmul-1;
+      if (ylace >= ymul)
+	 ylace = ymul-1;
    }
    video_winstuff(cnf_map,vwidth,vheight);
    cnf_width=vwidth/xmul;
@@ -315,21 +336,21 @@ int main(int argc,char **argv) {
    cnf_ylace=ylace;
    cnf_bpp=bpp;
    switch(bpp) {
-#ifdef WANT_1BPP
+#ifdef DUMB_CONFIG_8BPP
    case(1):
       init_renderer=init_renderer8;
       render=render8;
       fbrerender=fbrerender8;
       break;
 #endif
-#ifdef WANT_2BPP
+#ifdef DUMB_CONFIG_16BPP
    case(2):
       init_renderer=init_renderer16;
       render=render16;
       fbrerender=fbrerender16;
       break;
 #endif
-#ifdef WANT_4BPP
+#ifdef DUMB_CONFIG_32BPP
    case(4):
       init_renderer=init_renderer32;
       render=render32;
@@ -338,7 +359,9 @@ int main(int argc,char **argv) {
 #endif
    default:
       logfatal('D',"Unsupported BPP=%d",bpp);
-   };
+   }
+   keymap_init();
+   keymapconf_after_load();
    init_input();
    set_playpal(0,video_setpal);
 
@@ -355,8 +378,8 @@ int main(int argc,char **argv) {
      logprintf(LOG_ERROR,'D',"Can't find sector for player");
    view.sector=td->sector;
    sd=ldsectord(ld)+td->sector;
-   init_renderer(width,height,real_width,height);
-   init_draw(width,height,bpp,real_width);
+   init_renderer(width,height,real_width/xmul,height);
+   init_draw(width,height,bpp,real_width/xmul);
 
    init_gettables();
 
@@ -370,12 +393,14 @@ int main(int argc,char **argv) {
       add_to_banner(banner,get_misc_texture("DUMBLOGO"),width,64);
    if(crowd&&have_lump("WAFFLE")) {
       LumpNum w=getlump("WAFFLE");
+      if (w==0) goto skip; /* This is needed for Digital Unix but not
+			      for Linux, weird! */
       add_to_banner(wbanner,NULL,width,0);
       add_text_to_banner(wbanner,bfont,
 			 (const char *)load_lump(w),
 			 get_lump_len(w));
-   };
-
+   }
+skip:
    if(cnf_xhair) txh=get_font_texture(bfont,'+');
 
    /*
@@ -384,7 +409,7 @@ int main(int argc,char **argv) {
       logprintf(LOG_DEBUG,'D',"texture %s: real=%dx%d log=%dx%d",
 		tdraw->name,tdraw->width,tdraw->height,
 		1<<tdraw->log2width,1<<tdraw->log2height);
-   };
+   }
    */
 
    /* fill all video pages with our startup screen */
@@ -397,8 +422,8 @@ int main(int argc,char **argv) {
 	 draw_center(fb,t1);
 	 draw_center(fb,t2);
 	 video_updateframe(fb);
-      };
-   };*/
+      }
+   }*/
    
    logprintf(LOG_INFO,'D',"starting game");
    want_quit=0;
@@ -426,7 +451,7 @@ int main(int argc,char **argv) {
 	 if(txh) draw(fbptr,txh,(width-txh->width)/2,(height-txh->height)/2);
 	 if(crowd) draw_bogothings(ld,fbptr,width,height);
 	 if (!rend2fb)
-            fbptr = fbrerender(rendfb, fb, width, height, 
+            fbptr = fbrerender(rendfb, fb, real_width/xmul, height, 
 			       xmul, ymul, xlace, ylace);
 	 video_updateframe(fb);
 	 if(want_sound) poll_sound();
@@ -437,12 +462,12 @@ int main(int argc,char **argv) {
 	       fplay=NULL;
 	    }
 	    else fread(&in,sizeof(in),1,fplay);
-	 };
+	 }
 	 if(fplay==NULL) get_input(&in);
 	 if(frec) {
 	    fwrite(&in,sizeof(in),1,frec);
 	    fflush(frec);
-	 };
+	 }
 	 tickspassed=read_timer();
 	 
 	 if(slave) slave_input(ld,&in,tickspassed);
@@ -457,7 +482,7 @@ int main(int argc,char **argv) {
 	    video_winstuff(ld->name,vwidth,vheight);
 	    want_new_lvl=0;
 	    continue;
-	 };
+	 }
 
 	 /* check for special functions */
 	 if(in.select[9]) {
@@ -466,7 +491,7 @@ int main(int argc,char **argv) {
 	    const unsigned char *f=(const unsigned char *)fb;
 	    FILE *fout;
 	    logprintf(LOG_INFO,'D',"saving snapshot...");
-	    fout=fopen("snapshot.ppm","w");
+	    fout=fopen("snapshot.ppm","wb");
 	    fprintf(fout,"P6\n%d %d\n%d\n",width,height,bpp==2?63:255);
 	    for(y=0;y<height;y++) for(x=0;x<width;x++) 
 	       switch(bpp) {
@@ -489,28 +514,28 @@ int main(int argc,char **argv) {
 		  putc(0,fout);
 		  f++;
 		  break;
-	       };
+	       }
 	    fclose(fout);
 	       logprintf(LOG_INFO,'D',"snapshot done");
-	 };
+	 }
 	 
 	 /* back to ordinary main loop */
 	 if(tickspassed>MAXTICKS) { 
 	    logprintf(LOG_DEBUG,'D',"%d ticks passed with MAXTICKS=%d",
 		      tickspassed,MAXTICKS);
 	    tickspassed=MAXTICKS;
-	 };
+	 }
 	 if(!slave) {
 	    int p;
 	    for(p=0;p<MAXPLAYERS;p++)
 	      if(ld->player[p]>=0) 
 		 thing_wake_others(ld,ld->player[p],tickspassed);
-	 };
+	 }
 	 if(cnf_vt_rotate) {	    
 	    viewtrans.angle+=(FIXED_PI*cnf_vt_rotate*tickspassed)
 	      /(180*1000/MSEC_PER_TICK); /* so vt_rotate is in degrees/sec */
 	    NORMALIZE_ANGLE(viewtrans.angle);
-	 };
+	 }
 	 if(tickspassed>0) {
 	    reset_timer();
 	    if(!slave) update_things(ld,tickspassed);
@@ -519,28 +544,27 @@ int main(int argc,char **argv) {
 	    if(master) generate_updates(ld);
 	    if(slave) send_sync(1,ld->map_ticks);
 	    if(master||slave) netplay_poll(ld);
-	 }
-	 else if(!(seen_too_fast_msg++)) {
+	 } else if(!(seen_too_fast_msg++)) {
 	    logprintf(LOG_ERROR,'D',
 		      "WARNING: "
 		      "this system is running faster than the timer resolution"
 		      );
 	    logprintf(LOG_ERROR,'D',
 		      "Try running DUMB in a larger window.");
-	 };
+	 }
 
 	 if(player_alive&&td->hits<=0) {
 	    gmsg(ld->localplayer,"YOU DIED.  TOO BAD...");
 	    if(ld->plwep[ld->localplayer]>=0)
 	       ldthingd(ld)[ld->plwep[ld->localplayer]].proto=NULL;
-	 };
+	 }
 
 	 if(master||slave) net_bufflush();
 	 frames++;
 	 if(cnf_maxframes&&frames>cnf_maxframes) break;
-      };
+      }
 #ifdef WATCHDOG
-   };
+   }
    signal(SIGALRM,SIG_IGN);
 #endif
    tt=time(NULL)-tt;
@@ -553,7 +577,7 @@ int main(int argc,char **argv) {
    if(want_sound) {
       reset_sound();
       reset_dsound();
-   };
+   }
    reset_gettables();
    free_level(ld);
    reset_levinfo();
@@ -568,10 +592,13 @@ int main(int argc,char **argv) {
       safe_free(rendfb);
    if(cnf_save||cnf_auto_save) {
       logprintf(LOG_INFO,'D',"Saving config to %s",conf_file);
+      keymapconf_before_save();
       save_conf(dumbconf,conf_file,DIRT_ARGS);
-   };
+   }
    log_exit();
    return 0;
-};
+}
 
-
+// Local Variables:
+// c-basic-offset: 3
+// End:

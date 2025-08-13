@@ -1,7 +1,9 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "lib/log.h"
+#include "libdumbutil/log.h"
 #include "levdyn.h"
 #include "things.h"
 #include "updmap.h"
@@ -15,9 +17,9 @@ static int find_taggedsect(const LevData *ld,int tag,int i) {
    while(i<ldnsectors(ld)) {
       if(ldsector(ld)[i].tag==tag) return i;
       i++;
-   };
+   }
    return -1;
-};
+}
 
 static int find_next_step(const LevData *ld,int sect) {
    int i;
@@ -32,7 +34,7 @@ static int find_next_step(const LevData *ld,int sect) {
    if(ldsectord(ld)[nusect].ftex!=ldsectord(ld)[sect].ftex) return -1;
    /* done */
    return nusect;
-};
+}
 
 static int find_num_model(const LevData *ld,int sect) {
    int i,j;
@@ -43,12 +45,12 @@ static int find_num_model(const LevData *ld,int sect) {
 	 return ldside(ld)[ldline(ld)[i].side[1-j]].sector;
    /* failed */
    return -1;
-};
+}
 
 static int find_donut_sector(const LevData *ld,int core) {
    /* TODO: write this function */
    return core;
-};
+}
 
 static int find_spot(const LevData *ld,const LineType *lt,int tag) {
    int i;
@@ -61,10 +63,10 @@ static int find_spot(const LevData *ld,const LineType *lt,int tag) {
       if(td->proto&&td->proto->id==lt->spottype&&td->sector==sector) {
 	 logprintf(LOG_DEBUG,'M',"find_spot: found %d",i);
 	 return i;
-      };
+      }
    logprintf(LOG_DEBUG,'M',"find_spot: no spot found");
    return -1;
-};
+}
 
 /* th is where to make the fog, who is who is being teleported */
 static void spawn_fog(LevData *ld,int th,int who,int prid) {
@@ -75,7 +77,7 @@ static void spawn_fog(LevData *ld,int th,int who,int prid) {
    y+=(9*fixsin(td->angle))/8;
    z+=(3*tdwho->proto->height)/4;
    new_thing(ld,prid,x,y,z);
-};
+}
 
 static void perform_666(LevData *ld,int sect) {
    MapEvent *me;
@@ -83,15 +85,15 @@ static void perform_666(LevData *ld,int sect) {
    unqueue_event(ld,ML_SECTOR,ME_FLOOR,sect,NULL);
    me=insert_event(ld,ML_SECTOR,ME_FLOOR,sect,NULL);
    me->delta[0]=-1<<10;
-   me->term[0]=get_term_type(ld,HighestAdjacentFloor,sect);
-};
+   me->term[0]=get_term_type(ld,LowestAdjacentFloor,sect);
+}
 
 void do_tag666(LevData *ld) {
    int i;
    for(i=0;i<ldnsectors(ld);i++)
       if(ldsector(ld)[i].tag==666)
 	 perform_666(ld,i);
-};
+}
 
 
 static void perform(LevData *ld,const LT_Action *lta,int on,int targ) {
@@ -110,7 +112,7 @@ static void perform(LevData *ld,const LT_Action *lta,int on,int targ) {
       if(lta->spawntype>0) {
 	 spawn_fog(ld,on,on,lta->spawntype);
 	 if(targ>=0) spawn_fog(ld,targ,on,lta->spawntype);
-      };
+      }
 
       /* prevent queuing of events that are already happening */ 
       /* this also bails out of Escher stairs */
@@ -153,8 +155,8 @@ static void perform(LevData *ld,const LT_Action *lta,int on,int targ) {
 	 if(lta->lumptype==ML_SECTOR) {
 	    me->term[i]=get_term_type(ld,(int)(lta->term_type[i]),ttfrom);
 	    me->term[i]+=stairiter*(fixed)(lta->term_offset[i])<<12;
-	 };
-      };
+	 }
+      }
 
       /* deal with targ */
       if(targ>=0&&lta->lumptype==ML_THING) {
@@ -163,14 +165,14 @@ static void perform(LevData *ld,const LT_Action *lta,int on,int targ) {
 	 me->y=td->y;
 	 me->z=td->z;
 	 me->angle=td->angle;
-      };
+      }
 
       /* find next stair, if applicable */
       if(lta->flags&LTA_STAIR) on=find_next_step(ld,on);
       else on=-1;
       stairiter++;
-   };
-};
+   }
+}
 
 void thing_hit_wall(LevData *ld,int thing,int wall,int isback,WallHitType t)  {
    int front,back,i,pl;
@@ -203,7 +205,7 @@ void thing_hit_wall(LevData *ld,int thing,int wall,int isback,WallHitType t)  {
       logprintf(LOG_ERROR,'M',
 		"strange WallHitType (%d) in thing_hit_wall()",t);
       return;
-   };
+   }
 
    /* check if player / monster is allowed */
    /* if t==Damaged, td might be a missile or bullet, so skip this test */
@@ -215,7 +217,7 @@ void thing_hit_wall(LevData *ld,int thing,int wall,int isback,WallHitType t)  {
 		   (int)(ldline(ld)[wall].type));
 #endif
 	 return;
-      };
+      }
       if(!(td->proto->flags&PT_PLAYER)&&!(lt->flags&LT_ALLOW_NONPLAYER)) {
 #ifdef THINGHIT_DEBUG
 	 logprintf(LOG_DEBUG,'M',
@@ -223,8 +225,8 @@ void thing_hit_wall(LevData *ld,int thing,int wall,int isback,WallHitType t)  {
 		   (int)(ldline(ld)[wall].type));
 #endif
 	 return;
-      };
-   };
+      }
+   }
 
    /* check keytype */
    pl=thing2player(ld,thing);
@@ -232,7 +234,7 @@ void thing_hit_wall(LevData *ld,int thing,int wall,int isback,WallHitType t)  {
       if(!wd->had_keymsg) game_message(pl,"YOU NEED A KEY!");
       wd->had_keymsg=1;
       return;
-   };
+   }
 
    /* looks like we can go ahead */
 #ifdef THINGHIT_DEBUG
@@ -265,16 +267,14 @@ void thing_hit_wall(LevData *ld,int thing,int wall,int isback,WallHitType t)  {
 			 "tried manual action on wall with no back?");
 	    else
 	       perform(ld,lta,ldside(ld)[back].sector,-1); 
-	 } 
-	 else if(lta->flags&LTA_MANUAL_FRONT) {
+	 } else if(lta->flags&LTA_MANUAL_FRONT) {
 	    if(front<0||ldside(ld)[front].sector<0) 
 	       logprintf(LOG_ERROR,'M',
 			 "tried manual_f action on wall with no front?");
 	    else
 	       perform(ld,lta,ldside(ld)[front].sector,-1); 
-	 } 
-	 /* act on all tagged sectors */ 
-	 else { 
+	 } else { 
+	    /* act on all tagged sectors */ 
 	    int j,tag=ldline(ld)[wall].tag;
 	    for(j=0;j<ldnsectors(ld);j++) 
 	       if(ldsector(ld)[j].tag==tag)
@@ -284,7 +284,7 @@ void thing_hit_wall(LevData *ld,int thing,int wall,int isback,WallHitType t)  {
 		     if(k>=0) perform(ld,lta,k,model);
 		  }
 		  else perform(ld,lta,j,model);
-	 };
+	 }
 	 break;
 
       case(ML_SIDE):
@@ -307,18 +307,10 @@ void thing_hit_wall(LevData *ld,int thing,int wall,int isback,WallHitType t)  {
 		   "strange lumptype (%d) while performing actions",
 		   (int)(lta->lumptype)); 
 	 break; 
-      }; 
-   };
-};
+      }
+   }
+}
 
-
-
-
-
-
-
-
-
-
-
-
+// Local Variables:
+// c-basic-offset: 3
+// End:

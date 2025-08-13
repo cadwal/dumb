@@ -1,11 +1,13 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 
-#include "lib/log.h"
+#include "libdumbutil/log.h"
+#include "libdumbutil/fixed.h"
 #include "things.h"
-#include "lib/fixed.h"
 
 /* Return the region in which a point falls.  The method for determining
 **   this is simple--probably too much so.  We shoot a ray horizontally
@@ -47,23 +49,23 @@ int findsector(const LevData *ld, fixed x, fixed y, fixed z) {
    }
    if(closest_region>=0) return ldside(ld)[closest_region].sector;
    else return -1;
-};
+}
 
 void thingd_findsector(const LevData *ld,ThingDyn *td) {
    td->sector=findsector(ld,td->x,td->y,td->z);
-};
+}
 
 int thing2player(const LevData *ld,int th) {
    int i;
    for(i=0;i<MAXPLAYERS;i++) 
       if(ld->player[i]==th) return i;
    return -1;
-};
+}
 void touch_player(LevData *ld,int pl) {
   /* trivially change a player to force update */
   if(ld->player[pl]>=0)
     ldthingd(ld)[ld->player[pl]].x++;
-};
+}
 
 void thing_to_view(const LevData *ld,int th,View *v,const ViewTrans *vx)  {
    ThingDyn *td=ldthingd(ld)+th;
@@ -82,18 +84,15 @@ void thing_to_view(const LevData *ld,int th,View *v,const ViewTrans *vx)  {
    if(sd&&(td->proto==NULL||td->hits<=0)) {
       v->height=sd->floor+(2<<12);
       v->horizon=-FIXED_ONE/4;
-   }
-   else if(sd&&v->height<sd->floor) {
+   } else if(sd&&v->height<sd->floor) {
       v->height=sd->floor+(2<<12);
       v->horizon=-FIXED_ONE/4;
-   }
-   else if(sd&&v->height<sd->floor+FIXED_ONE/4) {
+   } else if(sd&&v->height<sd->floor+FIXED_ONE/4) {
       v->horizon=v->height-(sd->floor+FIXED_ONE/4);
       v->height+=(2<<12);
-   }
-   else
+   } else
       v->horizon=-fixsin(td->elev);
-};
+}
 
 /* These are now inlined */
 /*
@@ -104,7 +103,7 @@ int reject_sectors(LevData *ld,int s1,int s2) {
    byte=bit/8;
    bit%=8;
    return (ldreject(ld)[byte]>>bit)&1;
-};
+}
 
 int reject_sector_wall(LevData *ld,int s,int w) {
    int side0=ldline(ld)[w].side[0];
@@ -112,7 +111,7 @@ int reject_sector_wall(LevData *ld,int s,int w) {
    if(!reject_sectors(ld,s,ldside(ld)[side0].sector)) return 0;
    if(side1>0&&!reject_sectors(ld,s,ldside(ld)[side1].sector)) return 0;
    return 1;
-};
+}
 */
 
 

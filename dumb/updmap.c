@@ -1,12 +1,14 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
 
-#include "lib/log.h"
+#include "libdumbutil/log.h"
+#include "libdumb/dsound.h"
 #include "levdyn.h"
 #include "animtex.h"
-#include "dsound.h"
 #include "updmap.h"
 #include "things.h"
 #include "linetype.h"
@@ -21,7 +23,7 @@ void change_sector_type(LevData *ld,int sector,int type) {
    /* change type */
    sd->type=type;
    /* start up new type */
-};
+}
 
 /* deal with ML_SECTOR events */
 static void do_sector_event(LevData *ld,MapEvent *me,int tickspassed) {
@@ -45,7 +47,7 @@ static void do_sector_event(LevData *ld,MapEvent *me,int tickspassed) {
 	 sd->ctex=mod->ctex;
 	 sd->canim=mod->canim;
 	 sd->canimstate=mod->canimstate;
-      };
+      }
       me->type=ME_NONE;
       return;
    case(ME_FLOOR_TYPE):
@@ -60,10 +62,10 @@ static void do_sector_event(LevData *ld,MapEvent *me,int tickspassed) {
 	 sd->ftex=mod->ftex;
 	 sd->fanim=mod->fanim;
 	 sd->fanimstate=mod->fanimstate;
-      };
+      }
       me->type=ME_NONE;
       return;
-   };
+   }
 
    /* check that it's not time to stop */
    if(me->curdelta==0) {
@@ -72,7 +74,7 @@ static void do_sector_event(LevData *ld,MapEvent *me,int tickspassed) {
 		me->entity,me->type);
 #endif
       me->type=ME_NONE;
-   };
+   }
    /* work out what we're acting on */
    switch(me->type)  {
    case(ME_NONE): break;
@@ -83,7 +85,7 @@ static void do_sector_event(LevData *ld,MapEvent *me,int tickspassed) {
       logprintf(LOG_ERROR,'M',"do_sector_event: strange eventtype (%d)",
 		me->type);
       me->type=ME_NONE;
-   };
+   }
    /* act on it */
    if(q) {
       *q+=delta;
@@ -92,8 +94,8 @@ static void do_sector_event(LevData *ld,MapEvent *me,int tickspassed) {
 	 /* go to next stage */
 	 *q=term;
 	 NEXT_STAGE(me);
-      };
-   };
+      }
+   }
    /* do start sound (only if the event didn't terminate) */
    if(me->type!=ME_NONE&&me->stage>=0&&me->sound>=0) {
       if(sd->cent_r==0) 
@@ -101,7 +103,7 @@ static void do_sector_event(LevData *ld,MapEvent *me,int tickspassed) {
       else 
 	play_dsound(me->sound,sd->cent_x,sd->cent_y,sd->cent_r);
       me->sound=-1;
-   };
+   }
    /* do stop sound (only if start sound got to play) */
    if(me->type==ME_NONE&&me->sound<0&&me->stopsound>=0) {
       if(sd->cent_r==0) 
@@ -109,8 +111,8 @@ static void do_sector_event(LevData *ld,MapEvent *me,int tickspassed) {
       else 
 	play_dsound(me->stopsound,sd->cent_x,sd->cent_y,sd->cent_r);
       me->stopsound=-1;
-   };
-};
+   }
+}
 
 /* deal with ML_THING events */
 static void do_thing_event(LevData *ld,MapEvent *me) {
@@ -137,8 +139,8 @@ static void do_thing_event(LevData *ld,MapEvent *me) {
       logprintf(LOG_ERROR,'M',"do_thing_event: strange eventtype (%d)",
 		me->type); 
       me->type=ME_NONE;
-   };
-};
+   }
+}
 
 /* deal with ML_SIDE events */
 static void do_side_event(LevData *ld,MapEvent *me) {
@@ -164,15 +166,15 @@ static void do_side_event(LevData *ld,MapEvent *me) {
       logprintf(LOG_ERROR,'M',"do_side_event: strange eventtype (%d)",
 		me->type); 
       me->type=ME_NONE;
-   };
+   }
    /* deal with sounds */
    if(me->sound>=0) {
       play_dsound(me->sound,
 		  sd->lined->cent_x,sd->lined->cent_y,
 		  sd->lined->length/2);
       me->sound=-1;
-   };
-};
+   }
+}
 
 static MapEvent bogus_event;
 
@@ -188,7 +190,7 @@ MapEvent *insert_event(LevData *ld,
       logprintf(LOG_ERROR,'M',"No free event in insert_event(%d,%d,%d)",
 		lumptype,etype,entity);
       return &bogus_event;
-   };
+   }
    me=ld->event+i;
    /* init event */
    /*logprintf(LOG_DEBUG,'M',"insert_event(%d,%d,%d)",lumptype,etype,entity);*/
@@ -202,7 +204,7 @@ MapEvent *insert_event(LevData *ld,
    me->stage=-2;
    me->key=key;
    return me;
-};
+}
 
 int unqueue_event(LevData *ld,
 		  MapLumpType lumptype,
@@ -218,10 +220,10 @@ int unqueue_event(LevData *ld,
 	 /*logprintf(LOG_DEBUG,'M',"event %d unqueued",i);*/
 	 j++;
 	 memset(ld->event+i,0,sizeof(MapEvent));
-      };
-   };
+      }
+   }
    return j;
-};
+}
 
 MapEvent *find_active_event(LevData *ld,
 			    MapLumpType lumptype,
@@ -234,9 +236,9 @@ MapEvent *find_active_event(LevData *ld,
       if(ld->event[i].ltype==lumptype&&
 	 ld->event[i].type==etype&&
 	 ld->event[i].entity==entity) return ld->event+i;
-   };
+   }
    return NULL;
-};
+}
 
 int find_event(LevData *ld,
 		     MapLumpType lumptype,
@@ -248,9 +250,9 @@ int find_event(LevData *ld,
       if(ld->event[i].ltype==lumptype&&
 	 ld->event[i].type==etype&&
 	 ld->event[i].entity==entity) j++;
-   };
+   }
    return j;
-};
+}
 
 
 #define ANIM_UPD(ch) if(sd->ch##anim>=0) {\
@@ -266,8 +268,8 @@ static void um_sides(const LevData *ld,int tickspassed) {
       ANIM_UPD(u);
       ANIM_UPD(m);
       ANIM_UPD(l);
-   };
-};
+   }
+}
 
 static void um_sectors(const LevData *ld,int tickspassed) {
    int i;
@@ -276,8 +278,8 @@ static void um_sectors(const LevData *ld,int tickspassed) {
       /* update animated floors & ceilings (if any) */
       ANIM_UPD(f);
       ANIM_UPD(c);
-   };
-};
+   }
+}
 
 static void um_events(LevData *ld,int tickspassed) {
    int i;
@@ -289,7 +291,7 @@ static void um_events(LevData *ld,int tickspassed) {
 	 logprintf(LOG_DEBUG,'M',"event %d passed its stop date",i);
 	 memset(me,0,sizeof(MapEvent));
 	 continue;
-      };
+      }
       /* should event run now? */
       if(me->start<=ld->map_ticks) {
 	 /* check wait */
@@ -307,7 +309,7 @@ static void um_events(LevData *ld,int tickspassed) {
 	    me->curdelta=me->delta[me->stage];
 	    if(me->ltype==ML_SECTOR) 
 	       ldsectord(ld)[me->entity].crush_effect=me->crush_effect;
-	 };
+	 }
 	 /* run entity type specific event code */
 	 switch(me->ltype) {
 	 case(ML_SECTOR): do_sector_event(ld,me,tickspassed); break;
@@ -316,17 +318,17 @@ static void um_events(LevData *ld,int tickspassed) {
 	 default:
 	    logprintf(LOG_ERROR,'M',"Strange lumptype %d in um_events",
 		      me->ltype);
-	 };
-      };
-   };
-};
+	 }
+      }
+   }
+}
 
 void update_map(LevData *ld,int tickspassed) {
    ld->map_ticks+=tickspassed;
    um_events(ld,tickspassed);
    um_sides(ld,tickspassed);
    um_sectors(ld,tickspassed);
-};
+}
 
 /* need a better place to put this function */
 void sector_crush_thing(LevData *ld,int sector,int thing) {
@@ -343,7 +345,7 @@ void sector_crush_thing(LevData *ld,int sector,int thing) {
 		thing,sector);
 #endif
       return;
-   };
+   }
    /* what to do? */
    switch(sd->crush_effect) {
 
@@ -376,8 +378,8 @@ void sector_crush_thing(LevData *ld,int sector,int thing) {
       unqueue_event(ld,ML_SECTOR,ME_CEILING,sector,NULL);
       break;
 
-   };
-};
+   }
+}
 
 
 

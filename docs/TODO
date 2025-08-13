@@ -1,30 +1,62 @@
-allow reconfiguration of keyboard
-implement invincibility, light goggles, etc....
+aim to monster nearest to screen center, not necessarily closest to player
 allow objects to award multiple gettables (eg. MegaSphere)
-mapping
+armor should absorb damage
+change sectortype too when changing texture (as with rising bridges)
+clear previous map events when switching levels!
+configuration menus
 continuous sounds for moving sectors
 do something about music
-scrolling walls
-monsters should be smarter
-multi-threaded sound driver
-make loops over things more efficient perhaps?
 finish off heretic protos
+fix wall collision checks!
+get rid of C++ on big-endian machines
+Guile scripts in wads
+idspispopd
+implement invincibility, light goggles, etc....
 implement sectortypes
-X11: set icon in program, not in window manager config
-DOOM: make player pick up things farther away (like armor in E1M2)
-DOOM: fist
+internationalize
+jumping instead of levitation
+light areas should be lighter, dark ones darker (0=almost impossible to see)
+make a libdumbworld that both dumb and XWad use
+make loops over things more efficient perhaps?
+mapping
+monsters should be smarter
+moving vertices, sideways opening & hinged doors
+multi-threaded sound driver
+runtime choosing of sound bits & channels
+scrolling walls
+sectors above&below each other
+sector shouldn't give damage while player is in air
+snapshot.ppm when BPP=1 (8 bits)
+sound shouldn't get through closed doors
+special shooting
+speed up rendering by checking recursively which sectors can be seen?
+switching to previous weapon
+"Uff!" when the hero runs against a wall
 weapon numbering
+write documents in Texinfo or something
+ctlkey: mouse
+ctlkey: look at GGI's General Input Interface
+conf: don't forget aadumb settings with xdumb -S, etc.
+conf: halt on bogus parameters to enumerated switches
+conf: quote special characters in .dumbrc strings
+conf: support floating-point entries (for aadumb --vid-gamma)
+AA-lib: ASCII snapshot
+AA-lib: special handling for AA_RESIZE and AA_MOUSE
+AA-lib: more parameters
+AA-lib: mouse
+AA-lib: use real ticks in autorelease
+DOOM: automate 666 effect
+DOOM: doors should crush corpses to bloodsplats
+DOOM: make player pick up things farther away (like armor in E1M2)
+DOOM: monsters should be immune to radiation
+DOOM: rising staircases should be slower
+DOOM: spheres & suit shouldn't expire so fast
+DOOM: staircase doesn't work in E1M8
+keymap: alternative keynames; recognize both Shift_L and Shift_R as Shift
+keymap: conditional entries like X11:KP_Up AA:8
+keymap: keymap_keyname_to_keycode()
 X11: KeymapNotify
+X11: set icon in program, not in window manager config
 X11: turn autorepeat off when window has focus and XKB isn't available
 X11: use timestamps from keyboard events
-sound shouldn't get through closed doors
-DOOM: light amplification visor
-light areas should be lighter, dark ones darker (0=almost impossible to see)
-DOOM: 666 effect (in E1M8 it should lower all the way to the ground)
-DOOM: spheres & suit shouldn't expire so fast
-switching to previous weapon
-special shooting
-DOOM: rising staircases should be slower
-DOOM: staircase doesn't work in E1M8
-lib/conf.c: halt on bogus parameters to enumerated switches
-"Uff!" when the hero runs against a wall
+XWad: preview window, could even be a full game

@@ -1,9 +1,11 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
 
-#include "lib/log.h"
+#include "libdumbutil/log.h"
 #include "levdyn.h"
 #include "linetype.h"
 
@@ -22,9 +24,9 @@ static fixed lc(const LevData *ld,int sector,int adj,int next)  {
       else if(back==sector) g=ldsectord(ld)[front].ceiling;
       if(next&&g<=ldsectord(ld)[sector].ceiling) continue;
       if(g<f) f=g;
-   };
+   }
    return f;
-};
+}
 static fixed lf(const LevData *ld,int sector,int adj,int next)  {
    int wall;
    fixed f=FIXED_MAX;
@@ -40,9 +42,9 @@ static fixed lf(const LevData *ld,int sector,int adj,int next)  {
       else if(back==sector) g=ldsectord(ld)[front].floor;
       if(next&&g<=ldsectord(ld)[sector].floor) continue;
       if(g<f) f=g;
-   };
+   }
    return f;
-};
+}
 
 static fixed hc(const LevData *ld,int sector,int adj,int next)  {
    int wall;
@@ -59,9 +61,9 @@ static fixed hc(const LevData *ld,int sector,int adj,int next)  {
       else if(back==sector) g=ldsectord(ld)[front].ceiling;
       if(next&&g>=ldsectord(ld)[sector].ceiling) continue;
       if(g>f) f=g;
-   };
+   }
    return f;
-};
+}
 static fixed hf(const LevData *ld,int sector,int adj,int next)  {
    int wall;
    fixed f=FIXED_MIN;
@@ -77,9 +79,9 @@ static fixed hf(const LevData *ld,int sector,int adj,int next)  {
       else if(back==sector) g=ldsectord(ld)[front].floor;
       if(next&&g>=ldsectord(ld)[sector].floor) continue;
       if(g>f) f=g;
-   };
+   }
    return f;
-};
+}
 
 static fixed darkest(const LevData *ld,int sector,int adj)  {
    int wall;
@@ -95,9 +97,9 @@ static fixed darkest(const LevData *ld,int sector,int adj)  {
       if(front==sector) g=ldsectord(ld)[back].dark;
       else if(back==sector) g=ldsectord(ld)[front].dark;
       if(g>f) f=g;
-   };
+   }
    return f;
-};
+}
 static fixed lightest(const LevData *ld,int sector,int adj)  {
    int wall;
    fixed f=FIXED_MAX;
@@ -112,9 +114,9 @@ static fixed lightest(const LevData *ld,int sector,int adj)  {
       if(front==sector) g=ldsectord(ld)[back].dark;
       else if(back==sector) g=ldsectord(ld)[front].dark;
       if(g<f) f=g;
-   };
+   }
    return f;
-};
+}
 
 
 fixed get_term_type(const LevData *ld,LT_TermType ltt,int sector) {
@@ -149,7 +151,7 @@ fixed get_term_type(const LevData *ld,LT_TermType ltt,int sector) {
    case(NextLowestFloor): return hf(ld,sector,1,1);
    default:
       logprintf(LOG_ERROR,'M',"unimplemented LT_TermType %d",(int)ltt);
-   };
+   }
    return sd->floor;
-};
+}
 

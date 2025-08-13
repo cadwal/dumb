@@ -13,7 +13,7 @@ typedef struct {
    int curitem;
    int scroll;
    int sbdragstart;
-   int width,height;
+   unsigned int width,height;
    Window w,wscroll;
    void **tbl;
    const char *(*text)(int item,AppInst *inst);

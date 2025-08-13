@@ -1,10 +1,12 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "lib/safem.h"
-#include "lib/log.h"
-#include "wad/wadwr.h"
-#include "wad/wadstruct.h"
+#include "libdumbutil/safem.h"
+#include "libdumbutil/log.h"
+#include "libdumbwad/wadwr.h"
+#include "libdumbwad/wadstruct.h"
 
 /* a quick hack, if ever there was one */
 
@@ -52,7 +54,7 @@ int main(int argc,char **argv) {
    if(argc!=3) {
       printf("Usage: mknulmap <filename> <mapname>\n");
       return 0;
-   };
+   }
    log_stdout();
    w=wadwr_open(argv[1],'P');
    wadwr_lump(w,argv[2]);
@@ -79,4 +81,4 @@ int main(int argc,char **argv) {
    /* write it all */
    wadwr_close(w);
    return 0;
-};
+}

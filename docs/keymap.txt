@@ -1,41 +1,169 @@
-Each ctlkey has two names: pretty and ugly.  The ugly name will be
-used in the keyboard configuration file and the pretty name will be
-shown to the player in the keyboard configuration menu.
+* Ctlkey: an action that keyboard keys can be bound to.
 
-The ugly name consists of lower-case letters, numbers and underlines
-only.  This isn't strictly necessary but helps keep the name ugly.
-Ugly names closely follow the names of the enum ctlkey constants.
+Type: enum ctlkey, defined in ctlkey.h
+Example: CTLKEY_TURN_LEFT
 
-Pretty names contain all kinds of characters for the player's
-pleasure.
+These correspond almost directly to things that the player can do.
 
-This separation has (at least) these advantages over using just one
-name per ctlkey:
-- Pretty names can be translated to the player's native language
-  and the old configuration files will still work.
-- Pretty names can be changed for aesthetic reasons and the old
-  configuration files will still work.
-- Pretty names might even be changed in the WAD.  Most probably the
-  weapon names.
-- Because the character set of ugly names is so limited, it is easy
-  for the game to parse the configuration file.
-- The configuration file looks more technical.
+Ctlkeys can be pressed and released.
 
-As you might guess from the above, ugly names are used in the
-configuration file only.
+** Pretty and ugly names
+
+Each ctlkey has two names: pretty and ugly.  The ugly names are
+defined in keymapconf.c and used in the configuration file.  The
+pretty names are defined in keymap.c and will be shown to the player
+in the keyboard configuration menu when that's implemented.
+
+The ugly name consists of lower-case letters, numbers and dashes only.
+This way, they can be used as command-line options by prepending
+--keymap-.  Ugly names closely follow the names of the enum ctlkey
+constants.
+
+Pretty names contain all kind of characters for the player's pleasure.
+
+Having separate pretty and ugly names allows us to change the pretty
+names and still use the same configuration files.  And the pretty
+names can use spaces and other metacharacters that would cause
+problems in the ugly names.
 
 The pretty names are accessed with a function in ctlkey.h:
-	const char *ctlkey_pretty_name(enum ctlkey);
-All the translation hooks can be put to this function when the time
-comes.
 
-For symmetry, ugly names are accessed with a function too:
-	const char *ctlkey_ugly_name(enum ctlkey);
+const char *ctlkey_pretty_name(enum ctlkey);
 
-Currently, pretty and ugly names are in the same static array in
-ctlkey.c.  But when we implement translations, we'll have to read the
-pretty names from a database.  We could key them on the ugly name or
-directly on the numeric index.  Or we could retain "default" pretty
-names and key the translated ones on them.  Then if there were names
-in WADs ("Select laser shotgun"), we could feed them to the
-translation database lookup too.
+There is no corresponding function for the ugly names.  They shouldn't
+be accessed outside keymapconf.c except by the configuration parser.
+
+* Keyname: a string that identifies a key on the keyboard.
+
+Type: const char *
+Example: "BackSpace"
+
+Each key on the keyboard should have a unique keyname.  Otherwise the
+program won't be able to know which of them was pressed.
+
+Keynames can be bound to ctlkeys.  This means that when the key is
+pressed, the action corresponding to the ctlkey is taken.  Each
+keyname can only be bound to one ctlkey at a time but many keynames
+can be bound to the same ctlkey.
+
+Keynames are supposed to be portable between different input systems
+so that if the user binds "Up" to CTLKEY_MOVE_FORWARD it will work the
+same with both X11 and AA-lib. 
+
+The keyname of a key that normally means one character (like ".")
+should be that character.  This way, the keynames will look good in
+the configuration menu.  Whitespace and control characters are an
+exception.  They should have longer, capitalized names like "Space"
+and "Tab".
+
+* Keycode: the numeric version of a keyname.
+
+Type: keymap_keycode, defined in keymap.h as long int
+Example: XK_Num_Lock
+
+In at least X and AA-lib, keyboard events contain a number describing
+the key that was pressed or released.  The DUMB keycodes are an
+optimization that allows using these numbers for keymap lookup
+directly without comparing keyname strings.  It is assumed that
+there's a one-to-one match between keynames and keycodes.
+
+Keycodes are never saved to the configuration file.
+
+** Example
+
+In the X11 input driver, the keyname for spacebar is the string
+"Space" (which comes from keyname.c) whereas the corresponding keyname
+is the constant XK_space (0x020) from <X11/keysymdef.h>.  In the X11
+world, they talk about keycodes and keysyms.  DUMB ignores the X11
+keycodes as an implementation detail and pretends the X11 keysyms are
+keycodes.  (However, one could optimize by using X11 keycodes as DUMB
+keycodes directly and doing the keysym conversions in
+keymap_keycode_to_keyname().  Feel free to do that if you want, but
+remember to call keymap_clear_caches() when the X keymap changes.)
+
+When the player hits the spacebar in the game, handle_keyevent() in
+x11_video.c calls keymap_press_keycode(XK_space, 1).  At this phase,
+the X11 driver hasn't examined the keycode at all (except converted it
+from an X keycode to an X keysym).  Then keymap_press_keycode() calls
+keymap_keycode_to_ctlkey(XK_space) which again calls
+keymap_find_keycode(XK_space) to find a binding for the key.  That
+function scans the keymap but doesn't find 0x020 there so it returns
+NULL.
+
+Had the spacebar been pressed before, 0x020 would have already been
+cached in the keymap and keymap_find_keycode() would have returned a
+pointer to struct keymap_binding and keymap_keycode_to_ctlkey() would
+have read the action field from the structure and returned that.
+
+But keymap_find_keycode() returned NULL, so keymap_keycode_to_ctlkey()
+takes another route and calls keymap_keycode_to_keyname(XK_space) to
+find the keyname corresponding to keycode 0x020.  That function is
+defined in the input driver; in this case, x11_video.c.  It returns
+"Space".  Now keymap_keycode_to_ctlkey() calls
+keymap_find_keyname("Space") which scans the keymap, compares strings,
+finds the correct binding and returns a pointer to it.  The binding
+structure contains the name "Space", the action CTLKEY_ACTIVATE and an
+empty slot for the keycode.  keymap_keycode_to_ctlkey() puts
+XK_space=0x020 in that empty slot and returns CTLKEY_ACTIVATE.
+Control goes back to keymap_press_keycode() which calls
+ctlkey_press(CTLKEY_ACTIVATE, 1) which does its deed.
+
+The next time keymap_keycode_to_ctlkey(XK_space) is called, the
+binding will be found without string comparisons.
+
+* Ideas for future versions.
+
+** Speeding up the caching even more.
+
+I'm pretty satisfied with this implementation.  It could still be sped
+up with hashes or something but it works fast enough for me as it is.
+Also, one could optimize by scanning the keymap once when the program
+is started and resolving all keynames to keycodes.  That would speed
+up processing of unbound keys.  (Currently, they are not cached at
+all.)  But then every input driver would have to provide a new
+function:
+
+keymap_keycode keymap_keyname_to_keycode(const char *keyname);
+
+Currently, only the opposite conversion is required.  And that
+function we need anyway, to be able to present a keyboard
+configuration menu where the player can press the key to which he
+wants to assign a new action and the key's name will be shown to him.
+
+** Runtime selection of ctlkey pretty names.
+
+I'm planning to make it possible to redefine the pretty names with a
+lump in the WAD.  This would be especially useful for the weapon
+names.
+
+Also, I hope to get DUMB internationalized.  Then there would have to
+be separate pretty names for each language.
+
+Here's the algorithm that should be implemented in
+ctlkey_pretty_name():
+
+if a WAD contains the pretty name in the current language
+   use that name
+else if a WAD contains the pretty name at all
+   try to translate it with gettext()
+else
+   take a hardcoded default and try to translate it with gettext().
+
+** Remember which keyboard keys are being pressed.
+
+Currently, DUMB only remembers which ctlkeys are being pressed.  If
+two keynames -- like h and Left -- are both bound to CTLKEY_TURN_LEFT,
+you can fool the system by first pressing both keys and then releasing
+one of them: ctlkey.c will think that CTLKEY_TURN_LEFT is no longer
+pressed and stop turning.
+
+Nobody has complained about this, though.
+
+One way to fix it would be to keep a counter for each ctlkey.  It
+would count how many real keys are being held.  It would be
+incremented on each keypress and decremented on each release.  And the
+ctlkey would only be counted as having been released when the counter
+reached zero.  But this is not a good way.  If the key release event
+didn't arrive for some reason, the ctlkey would be stuck forever and
+the user couldn't release it by pressing and releasing the key again,
+as he now can.

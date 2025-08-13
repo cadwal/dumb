@@ -2,7 +2,7 @@
 #ifndef THINGS_H
 #define THINGS_H
 
-#include "render/view.h"
+#include "libdumb/view.h"
 #include "levdyn.h"
 
 #define SHOOT_HEIGHT(td) ((3*(td)->proto->height)/4)
@@ -81,7 +81,7 @@ static inline int reject_sectors(const LevData *ld,int s1,int s2) {
    bit%=8;
    return (ldreject(ld)[byte]>>bit)&1;
 #endif
-};
+}
 
 static inline int reject_sector_wall(const LevData *ld,int s,int w) {
    int side0=ldline(ld)[w].side[0];
@@ -89,15 +89,15 @@ static inline int reject_sector_wall(const LevData *ld,int s,int w) {
    if(!reject_sectors(ld,s,ldside(ld)[side0].sector)) return 0;
    if(side1>0&&!reject_sectors(ld,s,ldside(ld)[side1].sector)) return 0;
    return 1;
-};
+}
 
 static inline int reject_sector_thing(const LevData *ld,int s,int t) {
    return reject_sectors(ld,s,ldthingd(ld)[t].sector);
-};
+}
 
 static inline int reject_thing_thing(const LevData *ld,int t1,int t2) {
    return reject_sector_thing(ld,ldthingd(ld)[t1].sector,t2);
-};
+}
 
 #endif
 

@@ -1,11 +1,13 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-#include "lib/log.h"
-#include "lib/fixed.h"
-#include "lib/timer.h"
+#include "libdumbutil/log.h"
+#include "libdumbutil/fixed.h"
+#include "libdumbutil/timer.h"
 #include "things.h"
 #include "levdyn.h"
 #include "levinfo.h"
@@ -19,7 +21,7 @@ LD_DYNDECL(Vertex) {
    LD_DYNINIT(Vertex,dyn,lump);
    dyn->x=MAPORD_TO_RENDERORD(lump->x);
    dyn->y=MAPORD_TO_RENDERORD(lump->y);
-};
+}
 
 LD_DYNDECL(Sector) {
    const char *tname;
@@ -33,7 +35,7 @@ LD_DYNDECL(Sector) {
    if(!strncmp(tname,"F_SKY",5)) {
       tname=get_skyname(ld);
       dyn->sky|=2;
-   };
+   }
    if((dyn->fanim=get_animtex(tname))>=0)
      dyn->ftex=get_anim_texture(dyn->fanim,0);
    else if(dyn->sky&2)
@@ -46,7 +48,7 @@ LD_DYNDECL(Sector) {
    if(!strncmp(tname,"F_SKY",5)) {
       tname=get_skyname(ld);
       dyn->sky|=1;
-   };
+   }
    if((dyn->canim=get_animtex(tname))>=0)
      dyn->ctex=get_anim_texture(dyn->canim,0);
    else if(dyn->sky&1)
@@ -68,23 +70,23 @@ LD_DYNDECL(Sector) {
 	 dyn->cent_x+=l->cent_x;
 	 dyn->cent_y+=l->cent_y;
 	 if(dyn->cent_r<l->length) dyn->cent_r=l->length;
-      };
+      }
    if(j>0) {
       dyn->cent_x/=j;
       dyn->cent_y/=j;
-   };
+   }
    
    /* set up initial sector type */
    dyn->type=0;
    change_sector_type(ld,lump-ldsector(ld),lump->type);
-};
+}
 
 static Texture *get_wtex(const char *n) {
    Texture *t;
    if(*n=='-'||*n==0) return NULL;
    t=get_wall_texture(n);
    return t;
-};
+}
 LD_DYNDECL(Side) {
    LD_DYNINIT(Side,dyn,lump);
    /* upper texture */
@@ -101,7 +103,7 @@ LD_DYNDECL(Side) {
    else dyn->ltex=get_wtex(lump->ltexture);
    /* pointer to my lined */
    dyn->lined=NULL;
-};
+}
 
 LD_DYNDECL(Line) {
    LD_DYNINIT(Line,dyn,lump);
@@ -117,7 +119,7 @@ LD_DYNDECL(Line) {
 	     FIXED_TO_FLOAT(v1->y),
 	     FIXED_TO_FLOAT(v2->x),
 	     FIXED_TO_FLOAT(v2->y));*/
-};
+}
 
 #define BOUNCEMAX (4*FIXED_ONE)
 
@@ -130,13 +132,13 @@ int find_empty_thing(const LevData *ld)  {
       if(ldthingd(ld)[i].proto==NULL) return i;
    } while(i!=last);
    return -1;
-};
+}
 int safe_find_empty_thing(const LevData *ld)  {
    int i=find_empty_thing(ld);
    if(i<0)
      logprintf(LOG_FATAL,'O',"Ran out of thing slots");
    return i;
-};
+}
 
 int new_thing(const LevData *ld,int prid,fixed x, fixed y, fixed z)  {
    int th=safe_find_empty_thing(ld);
@@ -156,9 +158,9 @@ int new_thing(const LevData *ld,int prid,fixed x, fixed y, fixed z)  {
       td->hits=td->proto->hits;
       td->phase_tbl=find_thingphase(td->proto->phase_id,0);
       td->phase=td->proto->signals[TS_INIT];
-   };
+   }
    return th;
-};
+}
 
 /* return one if difficulty level OK for this thing */
 static int diffchk(const ThingData *t,const LevData *ld) {
@@ -175,11 +177,11 @@ static int diffchk(const ThingData *t,const LevData *ld) {
    case(5):
       if(t->flags&THING_45) return 1;
       else return 0;
-   };
+   }
    logprintf(LOG_ERROR,'O',"diffchk: strange difficulty??? (%d)",
 	     ld->difficulty);
    return 0;
-};
+}
 
 #define D2R(a) fixmul(INT_TO_FIXED(a)/360,FIXED_2PI)
 LD_DYNDECL(Thing) {
@@ -205,7 +207,7 @@ LD_DYNDECL(Thing) {
 	 init_player(ld,
 		     lump->type-1,
 		     dyn-ldthingd(ld));
-   };
+   }
    /* finish off generic initialisation */
    dyn->owner=dyn->target=-1;
    if(dyn->proto) {
@@ -217,9 +219,9 @@ LD_DYNDECL(Thing) {
 	    dyn->z=(sd->ceiling+sd->floor)/2;
 	 else
 	    dyn->z=sd->floor;
-      };
+      }
       dyn->hits=dyn->proto->hits;
       dyn->phase_tbl=find_thingphase(dyn->proto->phase_id,0);
       dyn->phase=dyn->proto->signals[TS_INIT];
-   };
-};
+   }
+}

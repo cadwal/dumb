@@ -1,0 +1,59 @@
+This version of DUMB has been changed a lot.  Files have been moved,
+added and removed.  Previously there was a single Makefile.in; now
+each directory has its own, generated from a Makefile.am written
+almost from scratch.  The configure script has been heavily edited.
+
+Because of all this, it is possible that DUMB doesn't run or even
+compile on your machine.
+
+The system where I've been developing and testing it:
+- PC, 486DX2/80, 32M RAM, Cirrus Logic GD5428 card
+- Debian GNU/Linux 1.3
+- libc 5.4.33
+- GCC 2.7.2.1
+- Autoconf 2.12
+- GNU Automake 1.2
+- GNU Make 2.75
+- GNU m4 1.4
+- netpbm Release 7
+- XFree86 3.3 (XShm, XKB)
+- AA-lib 1.2
+- GGI 0.0.9 (Dali)
+
+These work fine:
+- aadumb
+- dummydumb
+- ggidumb
+- xdumb
+- single-machine networking (localhost:PORT)
+
+These work but not perfectly:
+- OSS/Free (bad clicks & distortion on SB Pro)
+- ldumb under GGI's SVGAlib emulation (mouse lags)
+
+Totally untested:
+- 64-bit machines
+- big-endian machines
+- MME sound
+- real SVGAlib
+- Heretic
+- real networking
+
+Tested and failed:
+- DGA: seems to get a fatal signal, possibly related to --dumb-xmul failures
+- profiling (gcc -pg): messes the renderer up
+- --dumb-xmul 3 --dumb-ymul 1
+
+Things that definitely don't work:
+- vgagl: the configure script doesn't check for it
+- DOS (and grx20 graphics): can't run the script at all
+
+The --with-doom-wad and --with-heretic-wad options must be given an
+absolute filename.  Relative ones will cause an error when compiling
+the patch WADs.
+
+It's good to have CFLAGS="-O2 -g -Wall" in the environment when
+running the configure script.  Otherwise it will assume "-g -O2" and
+the compiler won't warn you if there's something suspicious.
+
+Read the docs/TODO file; it lists some bugs you should know about.

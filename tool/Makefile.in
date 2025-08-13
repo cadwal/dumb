@@ -1,0 +1,399 @@
+# Makefile.in generated automatically by automake 1.2 from Makefile.am
+
+# Copyright (C) 1994, 1995, 1996, 1997 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy, distribute and modify it.
+
+
+SHELL = /bin/sh
+
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
+
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = ..
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
+
+NORMAL_INSTALL = true
+PRE_INSTALL = true
+POST_INSTALL = true
+NORMAL_UNINSTALL = true
+PRE_UNINSTALL = true
+POST_UNINSTALL = true
+CC = @CC@
+CPP = @CPP@
+CXX = @CXX@
+DUMB_CONFIG_DOOM_WAD = @DUMB_CONFIG_DOOM_WAD@
+DUMB_CONFIG_HERETIC_WAD = @DUMB_CONFIG_HERETIC_WAD@
+DUMB_CONFIG_SOUND = @DUMB_CONFIG_SOUND@
+DUMB_CONFIG_SOUND_LDADD = @DUMB_CONFIG_SOUND_LDADD@
+DUMB_DGA_LDADD = @DUMB_DGA_LDADD@
+DUMB_FBREREND_SOURCES = @DUMB_FBREREND_SOURCES@
+DUMB_NETWORK_LDADD = @DUMB_NETWORK_LDADD@
+DUMB_NETWORK_SOURCES = @DUMB_NETWORK_SOURCES@
+DUMB_RENDER_SOURCES = @DUMB_RENDER_SOURCES@
+DUMB_XKB_LDADD = @DUMB_XKB_LDADD@
+DUMB_XSHM_LDADD = @DUMB_XSHM_LDADD@
+LN_S = @LN_S@
+MAKEINFO = @MAKEINFO@
+PACKAGE = @PACKAGE@
+RANLIB = @RANLIB@
+VERSION = @VERSION@
+
+@DUMB_CONFIG_X_TRUE@x_noinst_programs = mkdfnt
+@DUMB_CONFIG_X_FALSE@x_noinst_programs = 
+
+@DUMB_CONFIG_LIBPPM_TRUE@ppm_bin_programs = dark2trans ppmtodumb
+@DUMB_CONFIG_LIBPPM_FALSE@ppm_bin_programs = 
+
+bin_PROGRAMS = ptcomp wadtool mknulmap $(ppm_bin_programs)
+noinst_PROGRAMS = fixed_bm mkpnames $(x_noinst_programs)
+
+x_ldadd = $(X_LIBS) $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS)
+
+ppm_ldadd = -lppm -lpgm -lpbm
+ppm_cflags = 
+
+# Don't use srcdir or top_srcdir here!
+LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
+ ../libdumbutil/libdumbutil.a
+
+mkdfnt_LDADD = $(LDADD) $(x_ldadd)
+mkdfnt_CFLAGS = $(CFLAGS) $(X_CFLAGS)
+
+ppmtodumb_LDADD = $(LDADD) $(ppm_ldadd)
+ppmtodumb_CFLAGS = $(CFLAGS) $(ppm_cflags)
+
+dark2trans_LDADD = $(LDADD) $(ppm_ldadd)
+dark2trans_CFLAGS = $(CFLAGS) $(ppm_cflags)
+
+# fixed_bm should not be optimized because that's cheating.
+fixed_bm_CFLAGS = 
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = ../config.h
+CONFIG_CLEAN_FILES = 
+PROGRAMS =  $(bin_PROGRAMS) $(noinst_PROGRAMS)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I..
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+X_CFLAGS = @X_CFLAGS@
+X_LIBS = @X_LIBS@
+X_EXTRA_LIBS = @X_EXTRA_LIBS@
+X_PRE_LIBS = @X_PRE_LIBS@
+ptcomp_SOURCES = ptcomp.c
+ptcomp_OBJECTS =  ptcomp.o
+ptcomp_LDADD = $(LDADD)
+ptcomp_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
+../libdumbutil/libdumbutil.a
+ptcomp_LDFLAGS = 
+wadtool_SOURCES = wadtool.c
+wadtool_OBJECTS =  wadtool.o
+wadtool_LDADD = $(LDADD)
+wadtool_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
+../libdumbutil/libdumbutil.a
+wadtool_LDFLAGS = 
+mknulmap_SOURCES = mknulmap.c
+mknulmap_OBJECTS =  mknulmap.o
+mknulmap_LDADD = $(LDADD)
+mknulmap_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
+../libdumbutil/libdumbutil.a
+mknulmap_LDFLAGS = 
+dark2trans_SOURCES = dark2trans.c
+dark2trans_OBJECTS =  dark2trans.o
+dark2trans_DEPENDENCIES =  ../libdumb/libdumb.a \
+../libdumbwad/libdumbwad.a ../libdumbutil/libdumbutil.a
+dark2trans_LDFLAGS = 
+ppmtodumb_SOURCES = ppmtodumb.c
+ppmtodumb_OBJECTS =  ppmtodumb.o
+ppmtodumb_DEPENDENCIES =  ../libdumb/libdumb.a \
+../libdumbwad/libdumbwad.a ../libdumbutil/libdumbutil.a
+ppmtodumb_LDFLAGS = 
+fixed_bm_SOURCES = fixed_bm.c
+fixed_bm_OBJECTS =  fixed_bm.o
+fixed_bm_LDADD = $(LDADD)
+fixed_bm_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
+../libdumbutil/libdumbutil.a
+fixed_bm_LDFLAGS = 
+mkpnames_SOURCES = mkpnames.c
+mkpnames_OBJECTS =  mkpnames.o
+mkpnames_LDADD = $(LDADD)
+mkpnames_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
+../libdumbutil/libdumbutil.a
+mkpnames_LDFLAGS = 
+mkdfnt_SOURCES = mkdfnt.c
+mkdfnt_OBJECTS =  mkdfnt.o
+mkdfnt_DEPENDENCIES =  ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a \
+../libdumbutil/libdumbutil.a
+mkdfnt_LDFLAGS = 
+CFLAGS = @CFLAGS@
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+LINK = $(CC) $(CFLAGS) $(LDFLAGS) -o $@
+DIST_COMMON =  Makefile.am Makefile.in
+
+
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+
+TAR = tar
+GZIP = --best
+SOURCES = ptcomp.c wadtool.c mknulmap.c dark2trans.c ppmtodumb.c fixed_bm.c mkpnames.c mkdfnt.c
+OBJECTS = ptcomp.o wadtool.o mknulmap.o dark2trans.o ppmtodumb.o fixed_bm.o mkpnames.o mkdfnt.o
+
+default: all
+
+.SUFFIXES:
+.SUFFIXES: .c .o
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu --include-deps tool/Makefile
+
+Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+mostlyclean-binPROGRAMS:
+
+clean-binPROGRAMS:
+	test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+
+distclean-binPROGRAMS:
+
+maintainer-clean-binPROGRAMS:
+
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(bindir)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo "  $(INSTALL_PROGRAM) $$p $(bindir)/`echo $$p|sed '$(transform)'`"; \
+	     $(INSTALL_PROGRAM) $$p $(bindir)/`echo $$p|sed '$(transform)'`; \
+	  else :; fi; \
+	done
+
+uninstall-binPROGRAMS:
+	$(NORMAL_UNINSTALL)
+	list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  rm -f $(bindir)/`echo $$p|sed '$(transform)'`; \
+	done
+
+mostlyclean-noinstPROGRAMS:
+
+clean-noinstPROGRAMS:
+	test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
+
+distclean-noinstPROGRAMS:
+
+maintainer-clean-noinstPROGRAMS:
+
+.c.o:
+	$(COMPILE) -c $<
+
+mostlyclean-compile:
+	rm -f *.o core
+
+clean-compile:
+
+distclean-compile:
+	rm -f *.tab.c
+
+maintainer-clean-compile:
+
+ptcomp: $(ptcomp_OBJECTS) $(ptcomp_DEPENDENCIES)
+	@rm -f ptcomp
+	$(LINK) $(ptcomp_LDFLAGS) $(ptcomp_OBJECTS) $(ptcomp_LDADD) $(LIBS)
+
+wadtool: $(wadtool_OBJECTS) $(wadtool_DEPENDENCIES)
+	@rm -f wadtool
+	$(LINK) $(wadtool_LDFLAGS) $(wadtool_OBJECTS) $(wadtool_LDADD) $(LIBS)
+
+mknulmap: $(mknulmap_OBJECTS) $(mknulmap_DEPENDENCIES)
+	@rm -f mknulmap
+	$(LINK) $(mknulmap_LDFLAGS) $(mknulmap_OBJECTS) $(mknulmap_LDADD) $(LIBS)
+
+dark2trans: $(dark2trans_OBJECTS) $(dark2trans_DEPENDENCIES)
+	@rm -f dark2trans
+	$(LINK) $(dark2trans_LDFLAGS) $(dark2trans_OBJECTS) $(dark2trans_LDADD) $(LIBS)
+
+ppmtodumb: $(ppmtodumb_OBJECTS) $(ppmtodumb_DEPENDENCIES)
+	@rm -f ppmtodumb
+	$(LINK) $(ppmtodumb_LDFLAGS) $(ppmtodumb_OBJECTS) $(ppmtodumb_LDADD) $(LIBS)
+
+fixed_bm: $(fixed_bm_OBJECTS) $(fixed_bm_DEPENDENCIES)
+	@rm -f fixed_bm
+	$(LINK) $(fixed_bm_LDFLAGS) $(fixed_bm_OBJECTS) $(fixed_bm_LDADD) $(LIBS)
+
+mkpnames: $(mkpnames_OBJECTS) $(mkpnames_DEPENDENCIES)
+	@rm -f mkpnames
+	$(LINK) $(mkpnames_LDFLAGS) $(mkpnames_OBJECTS) $(mkpnames_LDADD) $(LIBS)
+
+mkdfnt: $(mkdfnt_OBJECTS) $(mkdfnt_DEPENDENCIES)
+	@rm -f mkdfnt
+	$(LINK) $(mkdfnt_LDFLAGS) $(mkdfnt_OBJECTS) $(mkdfnt_LDADD) $(LIBS)
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES)
+	here=`pwd` && cd $(srcdir) && mkid -f$$here/ID $(SOURCES) $(HEADERS)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES)
+	tags=; \
+	here=`pwd`; \
+	test -z "$(ETAGS_ARGS)$(SOURCES)$(HEADERS)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $(SOURCES) $(HEADERS) -o $$here/TAGS)
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = tool
+
+distdir: $(DISTFILES)
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  test -f $(distdir)/$$file \
+	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	  || cp -p $$d/$$file $(distdir)/$$file; \
+	done
+dark2trans.o dark2trans.lo: dark2trans.c ../config.h
+fixed_bm.o fixed_bm.lo: fixed_bm.c ../config.h ../libdumbutil/fixed.h
+mkdfnt.o mkdfnt.lo: mkdfnt.c ../config.h
+mknulmap.o mknulmap.lo: mknulmap.c ../config.h ../libdumbutil/safem.h \
+	../libdumbutil/log.h ../libdumbwad/wadwr.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h
+mkpnames.o mkpnames.lo: mkpnames.c ../config.h \
+	../libdumbutil/endiantypes.h ../libdumbwad/wadstruct.h
+ppmtodumb.o ppmtodumb.lo: ppmtodumb.c ../config.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h
+ptcomp.o ptcomp.lo: ptcomp.c ../config.h ../libdumbutil/timer.h \
+	../libdumbutil/log.h ../libdumbutil/safem.h ../libdumb/dsound.h \
+	../libdumbutil/fixed.h ../libdumbutil/endiantypes.h \
+	../libdumb/view.h ../libdumb/animtexstruct.h \
+	../libdumb/gettablestruct.h ../libdumb/levinfostruct.h \
+	../libdumb/linetypestruct.h ../libdumb/prothingstruct.h \
+	../libdumb/levdatanums.h
+wadtool.o wadtool.lo: wadtool.c ../config.h ../libdumbutil/log.h \
+	../libdumbwad/wadio.h ../libdumbwad/wadwr.h \
+	../libdumbwad/wadstruct.h ../libdumbutil/endiantypes.h
+
+info:
+dvi:
+check: all
+	$(MAKE)
+installcheck:
+install-exec: install-binPROGRAMS
+	@$(NORMAL_INSTALL)
+
+install-data: 
+	@$(NORMAL_INSTALL)
+
+install: install-exec install-data all
+	@:
+
+uninstall: uninstall-binPROGRAMS
+
+all: Makefile $(PROGRAMS)
+
+install-strip:
+	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' INSTALL_SCRIPT='$(INSTALL_PROGRAM)' install
+installdirs:
+	$(mkinstalldirs)  $(bindir)
+
+
+mostlyclean-generic:
+	test -z "$(MOSTLYCLEANFILES)" || rm -f $(MOSTLYCLEANFILES)
+
+clean-generic:
+	test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+
+distclean-generic:
+	rm -f Makefile $(DISTCLEANFILES)
+	rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+
+maintainer-clean-generic:
+	test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
+	test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
+mostlyclean:  mostlyclean-binPROGRAMS mostlyclean-noinstPROGRAMS \
+		mostlyclean-compile mostlyclean-tags \
+		mostlyclean-generic
+
+clean:  clean-binPROGRAMS clean-noinstPROGRAMS clean-compile clean-tags \
+		clean-generic mostlyclean
+
+distclean:  distclean-binPROGRAMS distclean-noinstPROGRAMS \
+		distclean-compile distclean-tags distclean-generic \
+		clean
+	rm -f config.status
+
+maintainer-clean:  maintainer-clean-binPROGRAMS \
+		maintainer-clean-noinstPROGRAMS \
+		maintainer-clean-compile maintainer-clean-tags \
+		maintainer-clean-generic distclean
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+.PHONY: default mostlyclean-binPROGRAMS distclean-binPROGRAMS \
+clean-binPROGRAMS maintainer-clean-binPROGRAMS uninstall-binPROGRAMS \
+install-binPROGRAMS mostlyclean-noinstPROGRAMS distclean-noinstPROGRAMS \
+clean-noinstPROGRAMS maintainer-clean-noinstPROGRAMS \
+mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir info dvi installcheck \
+install-exec install-data install uninstall all installdirs \
+mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+
+
+INCLUDES += -I$(top_srcdir)
+
+# Special rules for building objects that need special CFLAGS
+mkdfnt.o: mkdfnt.c
+	$(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(mkdfnt_CFLAGS) -c $<
+ppmtodumb.o: ppmtodumb.c
+	$(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(ppmtodumb_CFLAGS) -c $<
+dark2trans.o: dark2trans.c
+	$(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(dark2trans_CFLAGS) -c $<
+fixed_bm.o: fixed_bm.c
+	$(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(fixed_bm_CFLAGS) -c $<
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

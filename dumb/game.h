@@ -1,7 +1,7 @@
 
 #ifndef GAME_H
 
-#include "plat/input.h"
+#include "input.h"
 #include "levdata.h"
 
 /* mostly what's declared here gets defined in dumb.c

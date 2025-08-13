@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <stddef.h>
 
 #include <X11/Xlib.h>
@@ -44,9 +46,9 @@ void init_colour(void) {
    ctl_cmap=pal_cmap=DefaultColormap(dpy,screen);
    for(i=0;i<NumCtlColours;i++) 
       XAllocColor(dpy,ctl_cmap,ctl_colours+i);
-};
+}
 
 void reset_colour(void) {
-};
+}
 
 

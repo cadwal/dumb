@@ -1,6 +1,8 @@
+#include <config.h>
+
 #include <stddef.h>
 
-#include "render/draw.h"
+#include "draw.h"
 #include "things.h"
 #include "bogothing.h"
 
@@ -14,5 +16,5 @@ void draw_bogothings(const LevData *ld,void *fb,int width,int height) {
       if(td->image) draw(fb,td->image,
 			 (width-td->image->width)/2,
 			 height-td->image->height);
-   };
-};
+   }
+}

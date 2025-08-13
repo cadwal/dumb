@@ -47,11 +47,12 @@ PhaseTable HeldChainsaw
   Phase -       C
   Phase -       D  _ContSound DSSAWIDL Goto IDLE
 
-  Default NoSigs Duration 300msec
-  Phase SAW     A  SigShoot Sound DSSAWFUL
+  Default NoSigs Duration 320msec
+  Phase SAW     A  SigShoot Melee Sound DSSAWFUL
   Phase -       B  Melee
-  Phase -       A  /* enough time for DSSAWFUL to play? */
-  Phase -       B  Melee Goto IDLE
+  Phase -       A  Melee /* enough time for DSSAWFUL to play? */
+  Phase -       B  Melee 
+  Phase -       A  Duration 10msec Sigs Goto IDLE
   
   
 PhaseTable HeldPistol

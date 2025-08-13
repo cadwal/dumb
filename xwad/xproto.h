@@ -1,9 +1,9 @@
 
 #ifndef XWAD_XPROTO_H
 #define XWAD_XPROTO_H
-#include "lib/fixed.h"
-#include "wad/wadio.h"
-#include "dumb/prothing.h"
+#include "libdumbutil/fixed.h"
+#include "libdumbwad/wadio.h"
+#include "libdumb/prothing.h"
 #include "controls.h"
 #include "choose.h"
 

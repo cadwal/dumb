@@ -1,12 +1,14 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
-#include "lib/log.h"
-#include "wad/wadio.h"
-#include "wad/wadwr.h"
+#include "libdumbutil/log.h"
+#include "libdumbwad/wadio.h"
+#include "libdumbwad/wadwr.h"
 
 int usage(void)  {
    printf("Usage:  wadtool <option> <file> <file>... <option> <file>...\n\n"
@@ -25,7 +27,7 @@ int usage(void)  {
 	  " -F <rawfile> : copy raw file to lump (adding to current)\n"
 	  " -n <s> <d>   : copy lump 's' to lump 'd'\n");
    exit(1);
-};
+}
 
 typedef enum  {
    None, ReadWad, WriteIWad, WritePWad, WriteDir, PatchWad, CatWad, 
@@ -56,10 +58,10 @@ void catwad(WADWR *wr,FILE *fin) {
 	 fread(buf,dir[i].size,1,fin);
 	 wadwr_write(wr,buf,dir[i].size);
 	 free(buf);
-      };
-   };
+      }
+   }
    free(dir);
-};
+}
 
 int main(int argc,char **argv) {
    int i;
@@ -113,7 +115,7 @@ int main(int argc,char **argv) {
 	    for(s=buf;*s;s++) *s=toupper(*s);
 	    logprintf(LOG_INFO,'W',"copying %s to %s",argv[i],buf);
 	    wadwr_lump(wr,buf);
-	 };
+	 }
 	 /* nobreak */
       case(WriteRawCurrent):
 	 if(wr) {
@@ -122,7 +124,7 @@ int main(int argc,char **argv) {
 	    while(f&&!feof(f)) 
 	       wadwr_write(wr,buf,fread(buf,1,1024,f));
 	    if(f) fclose(f);
-	 };
+	 }
 	 break;
       case(SpitLump):
 	 if(wr) wadwr_lump(wr,argv[i]);
@@ -134,7 +136,7 @@ int main(int argc,char **argv) {
 	    wadwr_lump(wr,argv[i]);
 	    wadwr_write(wr,load_lump(ln),get_lump_len(ln));
 	    free_lump(ln);
-	 };
+	 }
 	 break;
       case(ExtractLump):
 	 ln=getlump(argv[i]);
@@ -148,9 +150,9 @@ int main(int argc,char **argv) {
 	    if(f) {
 	       fwrite(load_lump(ln),get_lump_len(ln),1,f);
 	       fclose(f);
-	    };
+	    }
 	    free_lump(ln);
-	 };
+	 }
 	 break;
       case(RenameLump):
 	 ln=getlump(argv[i]);
@@ -160,7 +162,7 @@ int main(int argc,char **argv) {
 	    wadwr_write(wr,load_lump(ln),get_lump_len(ln));
 	    free_lump(ln);
 	    i++;
-	 };
+	 }
 	 break;
       case(CatWad): 
 	 if(wr) {
@@ -168,13 +170,13 @@ int main(int argc,char **argv) {
 	    if(fin) {
 	       catwad(wr,fin);
 	       fclose(fin);
-	    };
-	 };
+	    }
+	 }
 	 break;
       case(None): usage(); break;
-      };
-   };
+      }
+   }
    if(wr) wadwr_close(wr);
    reset_wad();
    return 0;
-};
+}

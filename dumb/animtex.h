@@ -2,18 +2,8 @@
 #ifndef ANIMTEX_H
 #define ANIMTEX_H
 
-#include "texture.h"
-
-typedef struct {
-   unsigned char seqlen;
-   unsigned char myseqnum;
-   char name[9];
-   unsigned char flags;
-   int duration,_spare;
-} AnimTexTable;
-
-#define AT_FLAT 0x0001
-#define AT_SWITCH 0x0002
+#include "libdumb/animtexstruct.h"
+#include "libdumb/texture.h"
 
 typedef short AnimTexNum;
 

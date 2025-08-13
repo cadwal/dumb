@@ -1,12 +1,14 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <math.h>
 
-#include "lib/log.h"
+#include "libdumbutil/log.h"
+#include "libdumbutil/fixed.h"
 #include "things.h"
-#include "lib/fixed.h"
 
 int thing_hurl(LevData *ld,int thnum,int mtype,fixed a,fixed elev,
 	       fixed arc,int num,int para)  {
@@ -39,16 +41,16 @@ int thing_hurl(LevData *ld,int thnum,int mtype,fixed a,fixed elev,
       if(para) {
 	 md->x+=fixmul(ofs,sina);
 	 md->y+=fixmul(ofs,cosa);
-      };
+      }
       /* find sector that missile ended up in */
       thingd_findsector(ld,md);
       /* early check for collisions */
       thing_chk_collide(ld,missile);
       /* next missile */
       ofs+=step;
-   };
+   }
    return missile;
-};
+}
 
 
 #define WALL_VER1(i) (ldvertexd(ld)[ldline(ld)[i].ver1])
@@ -57,8 +59,9 @@ int thing_hurl(LevData *ld,int thnum,int mtype,fixed a,fixed elev,
 #define WALL_SCT(i,j) (ldsectord(ld)[ldside(ld)[ldline(ld)[i].side[j]].sector])
 #define WALL_SCTN(i,j) (ldside(ld)[ldline(ld)[i].side[j]].sector)
 #define WALL_2S(i) (ldline(ld)[i].side[1]>=0)
-static fixed wall_ray_intersection(const LevData *ld,fixed Vx, fixed Vy,
-					  fixed Ox,fixed Oy,int wall,int *side)
+static fixed 
+wall_ray_intersection(const LevData *ld,fixed Vx, fixed Vy,
+		      fixed Ox,fixed Oy,int wall,int *side)
 {
      fixed denominator;
      
@@ -74,23 +77,21 @@ static fixed wall_ray_intersection(const LevData *ld,fixed Vx, fixed Vy,
 	if(t>0||t<-denominator) return FIXED_ZERO;
 	*side=0;
 	return -fixdiv(t,denominator);
-     }
-     else if (denominator < -FIXED_ONE) {
+     } else if (denominator < -FIXED_ONE) {
 	const fixed t=fixmul(Nx, WALL_VER1(wall).x-Ox) +
 	   fixmul(Ny, WALL_VER1(wall).y-Oy);
 	if(t>0||t<-denominator) return FIXED_ZERO;
 	*side=1;
 	return FIXED_ONE+fixdiv(t,denominator);
-     }
-     else
+     } else
 	return FIXED_ZERO;
-};
+}
 
 
 inline double pyth_sq(fixed x,fixed y) {
    double dx=FIXED_TO_FLOAT(x),dy=FIXED_TO_FLOAT(y);
    return dx*dx+dy*dy;
-}; 
+}
 
 int thing_can_shoot_at(const LevData *ld,int looker,int target) {
    /* mostly borrowed from bullet code, below */
@@ -119,7 +120,7 @@ int thing_can_shoot_at(const LevData *ld,int looker,int target) {
       if(WALL_2S(i)) {
 	 const SectorDyn *front=&WALL_SCT(i,0),*back=&WALL_SCT(i,1);
 	 if(front->floor<front->ceiling&&back->floor<back->ceiling) continue;
-      };
+      }
 
       t=wall_ray_intersection(ld,vx,vy,std->x,std->y,i,&side);
       if(t<=FIXED_ZERO||t>FIXED_ONE) continue;
@@ -137,11 +138,11 @@ int thing_can_shoot_at(const LevData *ld,int looker,int target) {
 
       /* it's a funny kind of for() loop :) */
       return 0;
-   };
+   }
 
    /* no walls seemed to intervene; they can shoot each other, if they want */
    return 1;
-};
+}
 
 void thing_activate(LevData *ld,int thingnum,fixed maxdist) {
    double mindist_sq=FIXED_TO_FLOAT(maxdist)*FIXED_TO_FLOAT(maxdist);
@@ -178,19 +179,19 @@ void thing_activate(LevData *ld,int thingnum,fixed maxdist) {
 	 const SectorDyn *front=&WALL_SCT(i,side),*back=&WALL_SCT(i,1-side);
 	 /* skip walls with no lower or middle surface */
 	 if(front->floor>=back->floor) continue;
-      };
+      }
 
       /* phew! we might hit this wall */
       wall=i;
       wall_side=side;
       mindist_sq=dsq;
-   };
+   }
 
    /* TODO: allow activation of things, floors, ceilings? */
 
    /* now do the activation */
    if(wall>=0) thing_hit_wall(ld,thingnum,wall,wall_side,Activated);
-};
+}
 
 static int thing_shoot_single(LevData *ld,int shooter,int bullet_id,
 			      fixed angle,fixed elev) 
@@ -256,7 +257,7 @@ static int thing_shoot_single(LevData *ld,int shooter,int bullet_id,
 	 }
 	 /* 5) the middle */
 	 else continue;
-      };
+      }
 
       /* will we hit a floor or ceiling? */
       if(sz>WALL_SCT(i,side).ceiling) {
@@ -274,8 +275,7 @@ static int thing_shoot_single(LevData *ld,int shooter,int bullet_id,
 	 /* record what we did */
 	 fsect=wall=-1;
 	 csect=WALL_SCTN(i,side);
-      }
-      else if(sz<WALL_SCT(i,side).floor) {
+      } else if(sz<WALL_SCT(i,side).floor) {
 	 fixed diff;
 	 /* if we're travelling parallel to the sector, there's
 	    another wall we'll hit first */
@@ -297,7 +297,7 @@ static int thing_shoot_single(LevData *ld,int shooter,int bullet_id,
 	 csect=fsect=-1;
 	 wall=i;
 	 wall_side=side;
-      };
+      }
 
       /* these divisions put the puff FIXED_ONE_HALF in front of the wall
 	 that's about 8 pixels worth */
@@ -305,7 +305,7 @@ static int thing_shoot_single(LevData *ld,int shooter,int bullet_id,
       by=sy-vy/2;
       bz=sz-vz/2;
       mindist_sq=dsq;
-   };
+   }
 
    /* now see if things will be hit */
    for(i=0;i<ldnthings(ld);i++) {
@@ -334,7 +334,7 @@ static int thing_shoot_single(LevData *ld,int shooter,int bullet_id,
       bx=sx-(10*vx)/8;
       by=sy-(10*vy)/8;
       bz=sz-(10*vz)/8;
-   };
+   }
 
    /* bloodspurt "kludge" */
    if(thing>=0&&
@@ -363,7 +363,7 @@ static int thing_shoot_single(LevData *ld,int shooter,int bullet_id,
    */
 
    return i;
-};
+}
 
 void thing_shoot(LevData *ld,int th,int bullet_id,
 		 fixed angle,fixed elev,fixed arc,int num,int para) 
@@ -373,10 +373,10 @@ void thing_shoot(LevData *ld,int th,int bullet_id,
       if(arc>FIXED_EPSILON) {
 	 a=(rand()%arc)-arc/2;
 	 e=(rand()%(arc/8))-arc/16;
-      };
+      }
       thing_shoot_single(ld,th,bullet_id,angle+a,elev+e);
-   };
-};
+   }
+}
 
 
 

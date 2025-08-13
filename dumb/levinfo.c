@@ -1,9 +1,11 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "lib/log.h"
-#include "wad/wadio.h"
+#include "libdumbutil/log.h"
+#include "libdumbwad/wadio.h"
 #include "levdyn.h"
 #include "levinfo.h"
 
@@ -18,18 +20,18 @@ void init_levinfo(void) {
       logprintf(LOG_ERROR,'M',"warning: no LEVINFO lump for this game");
       ninfo=-1;
       return;
-   };
+   }
    ninfo=get_lump_len(info_ln)/sizeof(LevInfo);
    info=load_lump(info_ln);
    logprintf(LOG_INFO,'M',"Init %d levels",ninfo);
-};
+}
 
 void reset_levinfo(void) {
    if(LUMPNUM_OK(info_ln)) free_lump(info_ln);
    info_ln=BAD_LUMPNUM;
    info=NULL;
    ninfo=0;
-};
+}
 
 const LevInfo *find_levinfo(LevData *ld) {
    int i;
@@ -42,7 +44,7 @@ const LevInfo *find_levinfo(LevData *ld) {
    if(i>=ninfo) return NULL;
    ld->levinfo_id=i;
    return li;
-};
+}
 
 static void load(LevData *ld,const LevInfo *li) {
    int d=ld->difficulty,m=ld->mplayer,i;
@@ -51,26 +53,27 @@ static void load(LevData *ld,const LevInfo *li) {
    if(li==NULL||li>info+ninfo) 
       logfatal('M',"bogus levinfo pointer in levinfo_load");
    /* save old level's player hit points */
-   for(i=0;i<MAXPLAYERS;i++)
+   for(i=0;i<MAXPLAYERS;i++) {
       if(ld->player[i]>=0) {
 	 plhits[i]=ldthingd(ld)[ld->player[i]].hits;
 	 plarm[i]=ldthingd(ld)[ld->player[i]].armour;
-      }
-      else {
+      } else {
 	 plhits[i]=-1;
 	 plarm[i]=-1;
-      };
+      }
+   }
    /* load new level */
    reset_level(ld);
    load_level(ld,li->name,d,m);
    ld->levinfo_id=li-info;
    /* restore player hps */
-   for(i=0;i<MAXPLAYERS;i++)
+   for(i=0;i<MAXPLAYERS;i++) {
       if(ld->player[i]>=0&&plhits[i]>=0) {
 	 ldthingd(ld)[ld->player[i]].hits=plhits[i];
 	 ldthingd(ld)[ld->player[i]].armour=plarm[i];
-      };
-};
+      }
+   }
+}
 
 void levinfo_startgame(LevData *ld,int episode,int difficulty,int mplayer);
 
@@ -83,11 +86,11 @@ void levinfo_next(LevData *ld,int secret) {
    else id=li->next;
    if(id>=0) load(ld,info+id);
    else load(ld,++li);
-};
+}
 
 const char *get_skyname(LevData *ld) {
    const LevInfo *li=find_levinfo(ld);
    if(!li) return "SKY1";
    return li->sky;
-};
+}
 

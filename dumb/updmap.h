@@ -2,7 +2,7 @@
 #ifndef UPDMAP_H
 #define UPDMAP_H
 
-#include "lib/fixed.h"
+#include "libdumbutil/fixed.h"
 #include "levdata.h"
 
 void update_map(LevData *ld,int tickspassed);

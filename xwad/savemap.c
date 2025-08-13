@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -5,10 +7,10 @@
 
 #include <X11/Xlib.h>
 
-#include "lib/log.h"
-#include "lib/safem.h"
-#include "wad/wadwr.h"
-#include "wad/wadstruct.h"
+#include "libdumbutil/log.h"
+#include "libdumbutil/safem.h"
+#include "libdumbwad/wadwr.h"
+#include "libdumbwad/wadstruct.h"
 #include "xwad.h"
 
 
@@ -72,7 +74,7 @@ extern inline int IsLineDefInside(int x1, int y1, int x2, int y2,
 		  }
 	    }
       }
-};
+}
 
 #define V(i,n) inst->ver[inst->line[i].ver##n]
 #define lineinblk(i,x,y,inst) IsLineDefInside( \
@@ -96,7 +98,7 @@ static void wrblkmap(WADWR *w,const XWadInstance *inst) {
       if(y>maxy) maxy=y;
       if(x<minx) minx=x;
       if(y<miny) miny=y;
-   };
+   }
    minx-=8;
    miny-=8;
    maxx+=8;
@@ -122,12 +124,12 @@ static void wrblkmap(WADWR *w,const XWadInstance *inst) {
       for(i=0;i<inst->nlines;i++)
 	 if(lineinblk(i,x,y,inst)) bm->data[o++]=i;
       bm->data[o++]=0xffff;
-   };
+   }
 
    /* clean up */
    wadwr_write(w,bm,o*2);
    safe_vfree(bm,65536*2);
-};
+}
 
 void save_level(XWadInstance *inst) {
    WADWR *w;
@@ -165,8 +167,8 @@ void save_level(XWadInstance *inst) {
       /* write it all */
       wadwr_close(w);
       exit(0);
-   };
-};
+   }
+}
 
 
 #define SCOUNT(v) if((v)>=0&&(v)<n) tbl[v]++
@@ -181,7 +183,7 @@ static void gc_vers(XWadInstance *inst) {
    for(i=0;i<inst->nlines;i++) {
       COUNT(inst->line[i].ver1);
       COUNT(inst->line[i].ver2);
-   };
+   }
    /* turn reference table into a map, moving vers as we go */
    j=0;
    for(i=0;i<n;i++) {
@@ -190,16 +192,16 @@ static void gc_vers(XWadInstance *inst) {
 	 tbl[i]=j++;
       }
       else tbl[i]=-1;
-   };
+   }
    /* use map to fixup references */
    for(i=0;i<inst->nlines;i++) {
       CVT(inst->line[i].ver1);
       CVT(inst->line[i].ver2);
-   };
+   }
    /* tidy up */
    safe_free(tbl);
    inst->nvers=j;
-};
+}
 
 static void gc_sides(XWadInstance *inst) {
    int i,j,n=inst->nsides;
@@ -208,7 +210,7 @@ static void gc_sides(XWadInstance *inst) {
    for(i=0;i<inst->nlines;i++) {
       SCOUNT(inst->line[i].side[0]);
       SCOUNT(inst->line[i].side[1]);
-   };
+   }
    /* turn reference table into a map, moving sides as we go */
    j=0;
    for(i=0;i<n;i++) {
@@ -217,16 +219,16 @@ static void gc_sides(XWadInstance *inst) {
 	 tbl[i]=j++;
       }
       else tbl[i]=-1;
-   };
+   }
    /* use map to fixup references */
    for(i=0;i<inst->nlines;i++) {
       SCVT(inst->line[i].side[0]);
       SCVT(inst->line[i].side[1]);
-   };
+   }
    /* tidy up */
    safe_free(tbl);
    inst->nsides=j;
-};
+}
 
 static void gc_sects(XWadInstance *inst) {
    int i,j,n=inst->nsects;
@@ -242,14 +244,14 @@ static void gc_sects(XWadInstance *inst) {
 	 tbl[i]=j++;
       }
       else tbl[i]=-1;
-   };
+   }
    /* use map to fixup references */
    for(i=0;i<inst->nsides;i++) 
       SCVT(inst->side[i].sector);
    /* tidy up */
    safe_free(tbl);
    inst->nsects=j;
-};
+}
 
 void garbage_collect(XWadInstance *inst) {
    /* 
@@ -261,4 +263,4 @@ void garbage_collect(XWadInstance *inst) {
    gc_sides(inst);
    gc_sects(inst);
    new_selection(-1,inst,0);
-};
+}

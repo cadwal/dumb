@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <string.h>
 #include <math.h>
 
@@ -18,12 +20,12 @@ void message(XWadInstance *inst,const char *text) {
    y+=asc+dsc+2;
    /* now do it */
    XDrawImageString(dpy,inst->map,msggc,x,y,text,len);
-};
+}
 
 void qmessage(XWadInstance *inst,const char *text) {
    inst->qmsg=text;
    XClearArea(dpy,inst->map,0,0,0,0,True);
-};
+}
 
 typedef void (*VertexDrawFunc)(int x,int y,Window w,int v,XWadInstance *inst);
 
@@ -31,12 +33,12 @@ typedef void (*VertexDrawFunc)(int x,int y,Window w,int v,XWadInstance *inst);
 void vd_cross(int x,int y,Window w,int v,XWadInstance *inst) {
    XDrawLine(dpy,w,mapgc,x-CROSSRAD,y-CROSSRAD,x+CROSSRAD,y+CROSSRAD);
    XDrawLine(dpy,w,mapgc,x-CROSSRAD,y+CROSSRAD,x+CROSSRAD,y+-CROSSRAD);
-};
+}
 #define VERBOX 8
 #define VERBIGBOX 16
 void vd_box(int x,int y,Window w,int v,XWadInstance *inst) {
    XDrawRectangle(dpy,w,mapgc,x-VERBOX/2,y-VERBOX/2,VERBOX,VERBOX);
-};
+}
 
 void draw_vertices(XWadInstance *inst,Window w,VertexDrawFunc func) {
    int i;
@@ -58,9 +60,9 @@ void draw_vertices(XWadInstance *inst,Window w,VertexDrawFunc func) {
 	 XDrawRectangle(dpy,w,mapgc2,
 			x-VERBIGBOX/2,y-VERBIGBOX/2,
 			VERBIGBOX,VERBIGBOX);
-      };
-   };
-};
+      }
+   }
+}
 
 #define TH_CIRCX 12
 #define TH_CIRCY 12
@@ -90,15 +92,16 @@ void draw_things(XWadInstance *inst,Window w) {
 	 XDrawRectangle(dpy,w,mapgc2,
 			x-TH_BOXX/2,y-TH_BOXY/2,
 			TH_BOXX,TH_BOXY);
-      };
-   };
-};
+      }
+   }
+}
 
 #define FRONTS(i) (inst->line[i].side[0]) 
 #define BACKS(i) (inst->line[i].side[1]) 
 
-#define FRONT(i) (FRONTS(i)<0?-1:(inst->side[FRONTS(i)].sector))
-#define BACK(i) (BACKS(i)<0?-1:(inst->side[BACKS(i)].sector))
+/* the casts to int clear an ambiguity when compiling as C++ */
+#define FRONT(i) (FRONTS(i)<0?(int)-1:(int)(inst->side[FRONTS(i)].sector))
+#define BACK(i) (BACKS(i)<0?(int)-1:(int)(inst->side[BACKS(i)].sector))
 
 /* now returns a bitmask */
 #define LINESEL_FRONT_CURRENT  0x0001
@@ -122,19 +125,19 @@ static int line_is_sel(XWadInstance *inst,int i) {
 	    bits |= LINESEL_FRONT_CURRENT;
 	 if(inst->enttbl[f]&ENT_SELECTED)
 	    bits |= LINESEL_FRONT_SELECTED;
-      };
+      }
       f=BACK(i);
       if(f>=0) {
 	 if(f==inst->curselect)
 	    bits |= LINESEL_BACK_CURRENT;
 	 if(inst->enttbl[f]&ENT_SELECTED)
 	    bits |= LINESEL_BACK_SELECTED;
-      };
+      }
       break;
    default: break;
-   };
+   }
    return bits;
-};
+}
 static int line_is_tagged(XWadInstance *inst,int i) {
    int f,r=0;
    if(inst->curselect<0) return 0;
@@ -153,9 +156,9 @@ static int line_is_tagged(XWadInstance *inst,int i) {
 	 r|=(inst->sect[f].tag==inst->line[inst->curselect].tag);
       break;
    default: break;
-   };
+   }
    return r;
-};
+}
 
 #define ARROWA (PI/6.0)
 #define RIGHTA (PI/2.0)
@@ -176,7 +179,7 @@ static void draw_line(int x1,int y1,int x2,int y2,
 	 XDrawLine(dpy,w,mapgc,x2,y2,
 		   x2-(int)(8*cos(a-ARROWA)),
 		   y2-(int)(8*sin(a-ARROWA)));
-      };
+      }
 
       /* show selection */
       if(sel) {
@@ -198,10 +201,10 @@ static void draw_line(int x1,int y1,int x2,int y2,
 	    XSetForeground(dpy,mapgc2,CTLC(MapSelectFg));
 	    XDrawLine(dpy,w,mapgc2,x1+ox1,y1+oy1,x2-ox2,y2-oy2);
 	 }
-      };
+      }
 
-   };
-};
+   }
+}
 
 void draw_lines(XWadInstance *inst,Window w,int detail) {
    int i;
@@ -215,8 +218,8 @@ void draw_lines(XWadInstance *inst,Window w,int detail) {
       if(tagged) XSetForeground(dpy,mapgc,CTLC(MapTaggedFg));
       draw_line(x1,y1,x2,y2,w,i,inst,detail);
       if(tagged) XSetForeground(dpy,mapgc,CTLC(MapFg));
-   };
-};
+   }
+}
 
 void draw_grid(XWadInstance *inst,Window w) {
    int i,j,k;
@@ -235,7 +238,7 @@ void draw_grid(XWadInstance *inst,Window w) {
 	 XDrawLine(dpy,w,mapgc2,0,i,inst->map_width,i);
    gcv.line_style=LineSolid;
    XChangeGC(dpy,mapgc2,GCLineStyle,&gcv);
-};
+}
 
 void draw_map(XWadInstance *inst,Window w,int clear) {
    /* clear window, if we're not responding to an Expose */
@@ -250,7 +253,7 @@ void draw_map(XWadInstance *inst,Window w,int clear) {
 	 draw_vertices(inst,w,vd_cross);
       else {
 	 draw_lines(inst,w,0);
-      };
+      }
    }
    /* normal redraw */
    else {
@@ -268,7 +271,7 @@ void draw_map(XWadInstance *inst,Window w,int clear) {
 	 draw_lines(inst,w,0);
 	 draw_things(inst,w);
 	 break;
-      };
-   };
-};
+      }
+   }
+}
 

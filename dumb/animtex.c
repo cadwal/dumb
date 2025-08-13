@@ -1,10 +1,12 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "lib/safem.h"
-#include "lib/log.h"
-#include "wad/wadio.h"
+#include "libdumbutil/safem.h"
+#include "libdumbutil/log.h"
+#include "libdumbwad/wadio.h"
 #include "animtex.h"
 
 static LumpNum animtex_ln=BAD_LUMPNUM;
@@ -21,14 +23,14 @@ AnimTexNum get_animtex(const char *name) {
 	 if(att[i].myseqnum>=att[i].seqlen) return i+1;
 	 /* otherwise, I'll do */
 	 else return i;
-      };
+      }
       /* bogus seqnums indicate this is an alias for the next set
        * of anims, whose individual names should be ignored
        */
       if(att[i].myseqnum>=att[i].seqlen) i+=att[i].seqlen;
-     };
+   }
    return -1;
-};
+}
 
 int update_anim_state(AnimTexNum num,int snum,int tickspassed) {
    int tnum=snum&0xffff;
@@ -39,10 +41,10 @@ int update_anim_state(AnimTexNum num,int snum,int tickspassed) {
    if(att[num].flags&AT_SWITCH) return snum;
    snum>>=16;
    tnum+=tickspassed;
-   if(tnum>=att[num+snum].duration) {tnum=0;snum++;};
+   if(tnum>=att[num+snum].duration) {tnum=0;snum++;}
    if(snum>=att[num].seqlen) snum=0;
    return (snum<<16)|(tnum&0xffff);
-};
+}
 
 Texture *get_anim_texture(AnimTexNum num,int snum) {
    if(!attd) init_animtex();
@@ -54,9 +56,9 @@ Texture *get_anim_texture(AnimTexNum num,int snum) {
    if(attd[num]==NULL)  {
       if(att[num].flags&AT_FLAT) attd[num]=get_flat_texture(att[num].name);
       else attd[num]=get_wall_texture(att[num].name);
-   };
+   }
    return attd[num];
-};
+}
 
 void init_animtex(void) {
    if(att) reset_animtex();
@@ -65,12 +67,11 @@ void init_animtex(void) {
       natt=get_lump_len(animtex_ln)/sizeof(AnimTexTable);
       att=(const AnimTexTable *)load_lump(animtex_ln);
       attd=(Texture **)safe_calloc(sizeof(Texture *),natt);
-   }
-   else  {
+   } else {
       att=NULL;
       natt=0;
-   };
- };
+   }
+}
 
 void reset_animtex(void) {
    if(LUMPNUM_OK(animtex_ln)) free_lump(animtex_ln);
@@ -79,5 +80,5 @@ void reset_animtex(void) {
    attd=NULL;
    natt=0;
    animtex_ln=BAD_LUMPNUM;
-};
+}
 

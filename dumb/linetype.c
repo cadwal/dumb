@@ -1,9 +1,11 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "lib/log.h"
-#include "wad/wadio.h"
+#include "libdumbutil/log.h"
+#include "libdumbwad/wadio.h"
 #include "linetype.h"
 
 static LumpNum linetype_ln=BAD_LUMPNUM;
@@ -31,9 +33,9 @@ void init_linetypes(void) {
       st=load_lump(sectortype_ln);
       nsts=get_lump_len(sectortype_ln)/sizeof(SectorType);
       logprintf(LOG_INFO,'M',"Loaded %d sectortypes",nsts);
-   }
-   else logprintf(LOG_ERROR,'M',"Failed to find SECTTYPE in wad");
-};
+   } else 
+      logprintf(LOG_ERROR,'M',"Failed to find SECTTYPE in wad");
+}
 
 void reset_linetypes(void) {
    if(LUMPNUM_OK(linetype_ln)&&lt) free_lump(linetype_ln);
@@ -41,7 +43,7 @@ void reset_linetypes(void) {
    sectortype_ln=linetype_ln=BAD_LUMPNUM;
    st=lt=NULL;
    nsts=nlts=0;
-};
+}
 
 #ifdef FAKE_LINETYPE_LUMP
 static const LineType *fake_linetype(int id) {
@@ -76,9 +78,9 @@ static const LineType *fake_linetype(int id) {
       mylt.action[1].term_type[0]=Floor;
       mylt.action[1].speed[0]=-(1<<11);
       return &mylt;
-   };
+   }
    return NULL;
-};
+}
 #endif
 
 const LineType *lookup_linetype(int id) {
@@ -87,10 +89,13 @@ const LineType *lookup_linetype(int id) {
 #endif
    if(id>0&&id<=nlts) return lt+id;
    else return NULL;
-};
+}
 
 const SectorType *lookup_sectortype(int id) {
    if(id>0&&id<=nsts) return st+id;
    else return NULL;
-};
+}
 
+// Local Variables:
+// c-basic-offset: 3
+// End:

@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -24,18 +26,18 @@ static void preview(XWadInstance *inst) {
 	    t=get_texture_bynum(inst->tch_type,inst->tch.curitem),0);
    sprintf(buf,"%dx%d",t->width,t->height);
    XDrawImageString(dpy,inst->tch_preview,msggc,0,8,buf,strlen(buf));
-};
+}
 
 static const char *text(int item,AppInst *inst) {
    Texture *t=get_texture_bynum(inst->tch_type,item);
    return t->name;
-};
+}
 static int find(const char *prefix,AppInst *inst) {
    return 0;
-};
+}
 static void chcur(int item,AppInst *inst) {
    XClearArea(dpy,inst->tch_preview,0,0,0,0,True);
-};
+}
 static void choose(int item,AppInst *inst) {
    Texture *t;
    if(item>=0) {
@@ -46,9 +48,9 @@ static void choose(int item,AppInst *inst) {
 	 strncpy(inst->tch_buf,t->name,8);
       inst->tch_buf=NULL;
       rdoutp_cseti(&inst->modectls,inst);
-   };
+   }
    XUnmapWindow(dpy,inst->tch_frame);
-};
+}
 
 
 #define XSPACE 12
@@ -70,7 +72,7 @@ static void setwmstuff(XWadInstance *inst,int set) {
    case(TT_SPRITE): strcpy(buf,"Sprite"); break;
    case(TT_PATCH): strcpy(buf,"Patch"); break;
    default: strcpy(buf,"???"); break;
-   };
+   }
    strcat(buf," Texture Browser");
 
    XStringListToTextProperty(&win_name, 1, &w_name_prop);
@@ -88,7 +90,7 @@ static void setwmstuff(XWadInstance *inst,int set) {
 		    &size_hints, NULL, &class_hint);
    if(set) XResizeWindow(dpy,inst->tch_frame,
 			 size_hints.min_width,size_hints.min_height);
-};
+}
 static void chksize(AppInst *inst) {
    int frame_width,frame_height,ctl_width,ctl_height;
    int frame_x,frame_y,frame_depth,frame_border;
@@ -113,20 +115,20 @@ static void chksize(AppInst *inst) {
 		     XSPACE*2+ctl_width,YSPACE,
 		     frame_width-XSPACE*3-ctl_width,frame_height-YSPACE*2);
 
-};
+}
 static void framedhf(XEvent *ev,AppInst *inst,void *info) {
    switch(ev->type) {
    case(KeyPress):
       {
 	 KeySym key=XLookupKeysym(&ev->xkey,0);
 	 choose_keycmd(&inst->tch,key,inst);
-      };
+      }
       break;
    case(ConfigureNotify):
       chksize(inst);
       break;
-   };
-};
+   }
+}
 
 static void prevdhf(XEvent *ev,AppInst *inst,void *info) {
    if(ev->type==Expose&&inst->tch_do_preview) {
@@ -142,21 +144,21 @@ static void prevdhf(XEvent *ev,AppInst *inst,void *info) {
 			      ExposureMask,&ev2));
       /* now redraw */
       preview(inst);
-   };
-};
+   }
+}
 
-static CTLACTION(act_ok) {choose_cur(&inst->tch,inst->tch.curitem,inst);};
-static CTLACTION(act_cancel) {choose_cur(&inst->tch,-1,inst);};
+static CTLACTION(act_ok) {choose_cur(&inst->tch,inst->tch.curitem,inst);}
+static CTLACTION(act_cancel) {choose_cur(&inst->tch,-1,inst);}
 static CTLACTION(tog_prev) {
    inst->tch_do_preview=!inst->tch_do_preview;
    XClearArea(dpy,inst->tch_preview,0,0,0,0,True);
-};
-static CTLPRED(is_prev) {return inst->tch_do_preview;};
+}
+static CTLPRED(is_prev) {return inst->tch_do_preview;}
 static const Control tch_ctl[3]={
 IBUTTON("OK!",act_ok,0),
 IBUTTON("Cancel",act_cancel,CTLF_DANGER),
 LBUTTON("Preview",tog_prev,is_prev,0)
-}; 
+};
 static const ControlSet tch_ctls={3,1,tch_ctl};
 
 void init_tchoose(XWadInstance *inst) {
@@ -193,7 +195,7 @@ void init_tchoose(XWadInstance *inst) {
    inst->tch.chcur=chcur;
    /* */
    setwmstuff(inst,1);
-};
+}
 
 void do_tchoose(XWadInstance *inst,TextureType tt,char *buf) {
    inst->tch_buf=buf;
@@ -202,24 +204,24 @@ void do_tchoose(XWadInstance *inst,TextureType tt,char *buf) {
    if(buf) choose_setcur(&inst->tch,get_texture_num(tt,buf),inst);
    setwmstuff(inst,0);
    XMapRaised(dpy,inst->tch_frame);
-};
+}
 
 void tchoose_wall(XWadInstance *inst,char *buf) {
    do_tchoose(inst,TT_WALL,buf);
-};
+}
 void tchoose_flat(XWadInstance *inst,char *buf) {
    do_tchoose(inst,TT_FLAT,buf);
-};
+}
 void tchoose_sprite(XWadInstance *inst,char *buf) {
    do_tchoose(inst,TT_SPRITE,buf);
-};
+}
 void tchoose_patch(XWadInstance *inst,char *buf) {
    do_tchoose(inst,TT_PATCH,buf);
-};
+}
 
 void free_tchoose(XWadInstance *inst) {
    free_cseti(&inst->tchctls);
    free_choose(&inst->tch);
    inst->tch_buf=NULL;
    inst->tch_type=TT_BAD;
-};
+}

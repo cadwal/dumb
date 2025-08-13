@@ -1,0 +1,418 @@
+* Changes in DUMB 0.12.beta1.
+
+** New maintainer: Kalle Niemitalo <tosi@stekt.oulu.fi>.
+
+I'll be uploading new versions to both x2ftp.oulu.fi and samba.anu.edu.au.
+
+Suggestions, wishes and patches (I prefer unified format) are welcome.
+I have both MIME and uudecode.
+
+Naturally, I'm on the DUMB mailing list.  (So please don't CC to me!)
+
+** Aadumb enhancements.
+
+*** Shift key supported.
+
+The input driver now notes if the key pressed is an upper-case letter
+and concludes that Shift was pressed.  Likewise, the arrival of a
+lower-case letter tells it that Shift has been released.
+
+The Shift key has an autorelease function like the other keys, except
+it is controlled with the new --input-autorelease-shift option.
+
+A later version may support Control and Meta too.
+
+*** Keymap support in aadumb.
+
+You can use all the usual keymap options like --keymap-shoot x to
+specify actions for keys.
+
+Possible keynames: all printable characters, Space, Escape, BackSpace,
+Up, Down, Left, Right, Tab, Linefeed, Return, Shift and char_xxx where
+xxx is the ASCII code of an unprintable character that wasn't in the
+list above.  There are also special keynames Resize and Mouse but
+those aren't very useful and will be removed in the future.  Escape
+sequences that AA-lib doesn't understand become aalib_xxx where xxx is
+a number.  Unfortunately, the number seems to be stuck at 400
+(=AA_UNKNOWN defined in aalib.h) when using the ncurses driver of
+AA-lib.  Under X, different keys do give different numbers.
+
+*** --input-autorelease <integer>: ticks to pass before key autorelease or 0
+
+This makes the input driver assume that a key has been released when a
+certain number of ticks (actually, game loop iterations) has passed
+since it was pressed.  The default value 1 seems to work great when
+the keyboard has fast autorepeat.  It can also be set to 0; then the
+driver will assume a key is held down until another one is pressed.
+That means you'll have to hit Space or something else to stop
+movements.
+
+Under X, AA-lib knows when keys are released and sends events to
+DUMB.  This option is then ignored.
+
+A future version may use real ticks.
+
+*** --input-autorelease-shift <integer>: ticks before shift autorelease or 0
+
+This is like --input-autorelease but applies to the Shift key and is
+used even when AA-lib reports key releases separately.  That's because
+AA-lib doesn't have a way to report the state of the Shift key at all.
+
+This option defaults to 1 just like --input-autorelease does.
+
+*** --vid-fastrender: very fast (but not as perfect)
+
+This feature was previously controlled by a compile-time symbol.  Now
+you can turn it on and off with this new option.  It is off by default.
+
+*** --vid-bright, --vid-contrast, --vid-gamma, --vid-dither, --vid-randomval
+
+The variables controlled by these options were hard-coded constants in
+previous versions.  The old constants are now just defaults.
+
+These have no effect if --vid-fastrender is on.
+
+In the future, --vid-gamma will probably be changed to use floating
+point and default to 1.0.
+
+** Keymapping changes.
+
+*** New AA-lib compatible defaults added in keymap.
+
+These are letters so the use of Shift (and Caps Lock!) can be
+detected.
+
+k	move forward
+j	move backward
+h	turn left
+l	turn right
+d	aim up
+c	aim down
+s	shoot
+
+*** Key bindings changed in ggidumb and ldumb.
+
+The GGI and SVGAlib versions still doesn't use the keymap system but
+now their bindings match the keymap defaults.  You can get the old
+bindings back by commenting out #define KALLE_KEYS in ggi_video.c and
+linux_input.c and recompiling.
+
+*** Keymap is a separate configuration module.
+
+If you previously used --input-keymap-foo, now you must use
+--keymap-foo instead.
+
+You must also search & replace in your .dumbrc if you want to keep
+your keymap.
+
+Because the keymap system is no longer considered part of the input
+driver, it is also present in versions like ggidumb that don't
+actually use it yet.
+
+*** The keyname of any graphic character is the character itself.
+
+Previously, you'd have used "--input-keymap-move-left comma" to make
+the hero sidestep left when you press the comma key (although this is
+the default too).  Now you'd use "--keymap-move-left ," instead.
+
+This change applies to the configuration file too.
+
+Non-ASCII characters like Ö were previously called Odiaeresis and
+such.  Now they are just Ö.
+
+The purpose of this change was to make the keyboard configuration menu
+look better when it is eventually implemented.
+
+In the future, the configuration file may have some quoting.
+
+** Unix networking allows HOST:PORT.
+
+This can be used for pseudo-networking on a single machine.  
+Read docs/README.netplay.
+
+** DOOM chainsaw made faster again.
+
+** Negative forms of keywords for PhaseTable definitions.
+
+The keywords NoGlow, NoDestroy, NoStrategy, NoHeatSeek, NoShoot,
+NoExplode, NoMelee, NoSpawn2, NoRSpawn2, NoIdle, NoBFGEffect and
+NoSpawn are now recognized by ptcomp when compiling a PhaseTable.
+Each of them negates the effect of the corresponding positive form.
+There is also Sigs which negates NoSigs.  
+
+These new keywords aren't probably useful outside "Default"
+directives.
+
+* version 0.11.kn.1:
+JoinLines and Crossing in XWad
+
+* version 0.11: 
+Kalle Niemitalo's patches to 0.10a.kn.4 (incl. autoconf support!)
+fixed aalib_video.c for new init_video() args
+fixed x11_video.c to work with NO_XSHM
+changed MAXTICKS message to be more accurate
+debugging on by default in Makefile.in
+big changes to netplay.c: keep packets 4-byte aligned for alpha/sparc/etc.
+netplay.c: give up on whole datagram after seeing a weird packet
+thing_take_damage(): bail out on dmg<=0
+Kalle's patches to save keymap info + lib/conf.* renovations
+My fixes to Kalle's patches :)
+skip collision checks if not moving in x / y plane (updthing.c)
+
+* version pre0.11.kn.1:
+merged 0.10a.kn.4 and pre-0.11
+configurable keymap in xdumb
+
+* version pre-0.11 (released as source patches on dumb-list):
+silent mode for XProtoThing 
+fixed bullets (broken by chainsaw fix in 0.10)
+check that both player AND weapon are ready before shooting (useitem.c)
+x11_video.c: DGA off by default
+laid foundations for sector types
+UDP broadcast support: use (eg.) --net-broadcast 150.203.231.255
+
+* version 0.10a.kn.4:
+No user-visible changes.
+
+* version 0.10a.kn.3:
+climbing stairs backwards now turns the view in the opposite direction
+
+* version 0.10a.kn.2:
+don't try to build game.wad
+three-way --input-grab-kbd
+
+* version 0.10a.kn.1:
+merged 0.10a and 0.09.kn.4
+
+* version 0.09.kn.4 (not distributed):
+Autoconf
+
+* version 0.10a:
+ggi update from Andrew Apted (new arguments to init_video)
+
+* version 0.10:
+** the following stuff was coded at UNSW's Linux Party, Feb '98
+fixed a problem with XProtoThing failing to compile
+fixed up XF86-DGA
+x11_video: ability to grab keyboard while running in window
+player reanimation sequence
+player reanimate cheat key
+silly rotation
+fixed blocking objects so that they're really blocking
+improved monsters' turning circles
+asynchronous network mode (try --netplay-async)
+network resume (with help from Andrew Tridgell)
+** this all came after the party
+removed $(GAME) from $(BINARIES) in Makefile
+applied Andrew Apted's monster wakefulness patch
+applied Kalle Niemitalo's massive set of patches (see CHANGES.Niemitalo)
+fixed a problem with Kalle's changes on big endian processors
+(manually) applied Ben Bullock's patches
+fixed up use of "inline" to compile w/no optimization
+tweaked player speed a bit more (dumb/game.c)
+fixed player's ability to keep shooting after death
+fixed broadcast gmsgs in non-network mode
+fixed a bug with weapon selection: only rotate when wep_sel becomes 1
+fixed chainsaw (was too devastating)
+
+* version 0.09.kn.3:
+rearranged Doom weapons
+TurnWhenHitting in chainsaw
+Soulsphere fix
+xshm predeletion bugfix
+i386 BPP>1 partial invisibility bugfix
+
+* version 0.09.kn.2:
+combined looking and aiming again (#ifndef COMPLEX_LOOKING)
+fixed texture pegging again (previous fix had a bug)
+
+* version 0.09:
+added proper phasetable for player to doom/monsters.pt htic/monsters.pt
+fixed bigendian stuff (again)
+added linux-ppc config stuff to Makefile
+use (long long) to do fixed point multiplies on non-intel machines
+different auto-aiming arcs for different weapons
+heretic ambient sounds from Andrew Apted
+fixbm: benchmark fixed point ops in fixed.h
+changed format of PlayerInput to make it saveable/networkable
+multiplayer support: big changes to gettables.c, game.c, dumb.c
+NOHURTO stops weapons from shooting their owners
+sound and game messages network aware
+animating icons for gettables 
+fixed a bug in conf.c that caused sigsegvs when configuring list args
+
+--- Oops: version 0.09 went out with "0.08" as its version number in dumb.c 
+
+* version 0.08:
+bogothings
+player weapons reimplemented using bogothings
+DEC Alpha fixes, x11_video run/strafe fix, fbrerender from Marcus Sundberg
+heretic .pt tweaks from Andrew Apted
+flying monsters try to meet you eye-to-eye (thingm.c)
+fixed x11_video.c to cope with 32bpp modes
+fixed gravity problems
+monsters slow down when they close with you (fixed trouble with htic's imps)
+new proto elements: see_arc, aim_arc (kws: SeeArc AimArc)
+PT_NOHURTO: don't hurt owner
+config help now tells you about enumerated options
+beginnings of network game synch code: dyncode.*, levdata.*, netplay.*
+updated docs for first time in ages
+fixed jpot to deal with pasting transparencies (pastepic.c)
+GGI timer use fix from Marcus Sundberg
+fixed draw() to deal with negative origin pos'n
+twiddled timing-independent player movement
+round up when calcing banner update (banner.c)
+texture preloading: use --dumb-preload (dumb.c)
+
+--- some copies of an unreleased version of 0.08 got out at the CLUG talk
+
+* version 0.07a:
+fixed a bug in the first release of 0.07 that stopped it compiling w/C++
+
+* version 0.07:
+rotated floor and ceiling textures 90 degrees to agree with Doom (flrender.c)
+wadwr.c: fixed bug to do with freeing (NULL) on error
+wadwr.c,wadtool.c: added ability to write output to a directory of lumps 
+debug messages in levdata.c to track down alignment woes on non-intel ports
+linetype tweaks from Andrew Apted
+ptcomp now produces ANIMTEX lump
+doom/linetypes.pt modified to support heretic
+heretic: keys, switches, animtexs, some monsters
+timer.c patch from Marcus Sundberg
+slowed down turbo stairs to medium speed (twice as fast as normal stairs)
+x11_input.c: spacebar sets input.action
+dumb/dumb.c: call thing_activate on input.action
+automagically look up/down when climbing stairs (updthing.c)
+termtype.c: implemented DarkestSector, etc., NextHighestCeiling, etc.
+fixed a bug in ptcomp: NULL dereference when phasename used before Phases kw
+made ptcomp check that every proto has a phasetable
+fixed a bug in XProtoThing auto-rotation + speeded up auto-animation
+PT_FLOATSUP, PT_ZPEGGED, and PT_BOUNCY added (updthing.c, rendcore.c, ptcomp.c)
+tweaked player turning speed, volume in linux_sound
+bullet puffs and smoke float up (doom/missiles.pt)
+fixed missing call to XInstallColormap in x11_video.c
+rewrote sprite lookup code in textures.c to cope with sprite PWADs
+sprite browser for XWad
+LEVINFO mechanism (dumb/levinfo.*, tool/ptcomp.c) 
+fixed diameters in doom/furnishings.pt
+implemented texture copying linetypes
+dumb/bangbang.c optimized a bit, smoothed monster TSIG_DETECT checking
+lib/conf.*: configuration files, new command line parsing arrangement
+cute little crosshair: --dumb-crosshair switch
+svgalib mouse support and new GGI driver from Andrew Apted
+
+* version 0.06.kn.2:
+separate looking and aiming
+xkb
+
+* version 0.06.kn.1:
+X shared memory segment is predeleted to avoid leaving it if DUMB crashes
+texture pegging bugfix when ceiling is below adjacent floor
+XWad single-side sector highlight
+XWad thing deletion bugfix
+
+* version 0.06:
+manual door keytypes fixed
+subtle legal change: derived libraries may go under LGPL instead of GPL
+processor timing independence (lib/timer.* dumb/upd*.c)
+DUnix: MME sound driver from Marcus Sundberg
+"local" gettables
+spectre patch (Andrew Apted again)
+judicious use of const LevData * and static inline (thanks to Gareth Jones)
+support for aalib (Yay! Doom on an MDA! :)
+extra sanity checking in wadio.c
+loads of linetypes from Andrew Apted
+tagged sector highlighting in xwad (xwad/drawmap.c)
+dark areas darker, more sinister (see top of render.c to fine-tune)
+partial invisibility (not quite like Doom's, but it looks OK)
+crushing ceilings and non-crushing doors
+PT_BULLETPROOF flag
+missiles of same type don't explode each other
+changed game behaviour on player death
+modified Makefile to use makedepend
+peg PT_HANGING objects to ceilings when they move
+MAX_SPARE_THINGS revved to 64
+fixed anomalously glowing barrels
+"Speed" keyword for monster and missile protos (ptcomp.c, prothing.h) 
+tweaks to monster strategy (still not smart enough though)
+some objects get Mass so they go up and down with floors
+tweaks to melee/bullet code for Archvile
+
+* version 0.05a:
+more monster sounds and bend patch from Andrew Apted
+
+* version 0.05:
+more GGI twiddling for mouse support from Andreas Beck
+"minor fixes" to doom/*.pt from Andrew Apted
+preprocess .pt sources with -lang-c++ for // comments 
+memory allocation in tool/ptcomp.c rationalised
+thinghit.c now uses a linetype database (doom/linetypes.pt)
+animtex.c modified to deal with switches
+made teleport fogs wake monsters
+sound added
+different timing for different player weapons
+fixed monster diameters
+XProtoThing updated to incorporate sound
+fight sequences twiddled (Demon, Chaingun Guy, Baron)
+fixed mirroring problem with some monsters
+
+* version 0.04:
+twiddled bullet code to make Archvile attack nicer
+hacked sources to allow compilation under GNU C++: "DUMB++"
+(DUMB++ only) byteorder fixes
+reduced LOTS in ptcomp.c
+kludge to x11_video.c for 24-bit truecolour modes on Matrox cards
+fixed 32-bit pixel conversion in texture.c 
+more alpha/DUNIX stuff from Marcus Sundberg
+doom player's bloodtype fixed
+modularised XWad a bit
+texture browser for XWad
+fixed "maxval too large" errors with some builds of netpbm
+new GGI driver from Andreas Beck (now with mouse support)
+increased resolution of fields in PlayerInput (plat/*.c) for mouse support
+XProtoThing tool created (soon it will do more)
+decaying gettables (gettables.c, doom/gettables.pt)
+fixed bug that caused missiles to slide along the ground
+fixed view height to conform with Doom
+fixed sizes of many doom gettables (gettables.pt)
+fixed pillar collision problem
+new hashing algorithm for wadio.c (much faster) 
+
+* version 0.03:
+render/draw.c: draw transparent images over the framebuffer
+GETTABLES lump (dumb/gettable.h)
+changed format of PROTOS!!!
+hanging and flying objects
+mechanics rationalised (updthing.c)
+melee fixed up
+.pt sources preprocessed with cpp
+banners (dumb/banner.h)
+restricted auto-aiming for player
+bugfixes from Steffen Moeller
+more 64bit stuff from Marcus Sundberg
+yet more doom.pt additions from Andrew Apted
+GGI stuff from Andreas Beck
+heretic stuff (htic/*)
+fixed trouble with transparency at bpp>1
+teleportation (dumb/thinghit.c, dumb/updmap.c)
+remote doors (dumb/thinghit.c) 
+
+* version 0.02a:
+doom.pt additions from Andrew Apted
+bugfixes and additions to ptcomp
+docs/README.ptcomp
+
+* version 0.02:
+64bit cleanliness and Makefile changes from Marcus Sundberg
+complete rewrite of updmap.c
+new ptcomp tool for creating PHASES and PROTOS lumps
+XWad made usuable
+more original textures and even a sprite!
+monsters now wake out of their IDLE states when the player gets near
+x11_video tidied up
+x86 renderer assembly tidied: removed reliance on -fomit-frame-pointer
+miscellaneous bugfixes
+
+* version 0.01:
+first released
+

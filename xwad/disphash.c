@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <string.h>
 #include <stdlib.h>
 
@@ -25,8 +27,8 @@ void init_dh(void) {
    for(i=0;i<HASHSIZE;i++) {
       tbl[i].w=None;
       tbl[i].chain=NULL;
-   };
-};
+   }
+}
 
 void add_dh(Window w,DispatchFunc func,AppInst *inst,void *info) {
    DHEnt *dh=tbl+HASH(w);
@@ -34,18 +36,18 @@ void add_dh(Window w,DispatchFunc func,AppInst *inst,void *info) {
    if(dh->w!=None&&dh->w!=w) {
       dh->chain=calloc(1,sizeof(DHEnt));
       dh=dh->chain;
-   };
+   }
    dh->w=w;
    dh->func=func;
    dh->inst=inst;
    dh->info=info;
-};
+}
 
 void remove_dh(Window w) {
    DHEnt *dh=tbl+HASH(w);
    while(dh->w!=w&&dh->chain!=NULL) dh=dh->chain;
    if(dh->w==w) dh->w=None;
-};
+}
 
 int dispatch(XEvent *ev) {
    Window w=ev->xany.window;
@@ -54,5 +56,5 @@ int dispatch(XEvent *ev) {
    if(dh->w==w) dh->func(ev,dh->inst,dh->info);
    else return -1;
    return 0;
-};
+}
 

@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <stdlib.h>
 
 #include <X11/Xlib.h>
@@ -19,14 +21,14 @@
       tx+=(t->width-x-1)<<t->log2height; \
       for(y=t->height-1;y>=0;y--,tx++) \
 	 XPutPixel(image,x,y,*tx==-1?0:*tx); \
-   };
+   }
 #define mirror(Pixel) \
    for(x=0;x<t->width;x++) { \
       Pixel *tx=t->texels; \
       tx+=x<<t->log2height; \
       for(y=t->height-1;y>=0;y--,tx++) \
 	 XPutPixel(image,x,y,*tx==-1?0:*tx); \
-   };
+   }
 
 static Display *cmdpy=NULL;
 static Colormap cmap=None;
@@ -37,21 +39,21 @@ void setpf(unsigned char idx,
    XColor xc={idx,red<<8,green<<8,blue<<8,DoRed|DoGreen|DoBlue,0};   
    if(cmap!=None&&cmdpy!=NULL)
       XStoreColor(cmdpy,cmap,&xc);
-};
+}
 Colormap make_xtexture_cmap(Display *dpy,Window w) {
    if(visual->c_class!=PseudoColor) return None;
    cmap=XCreateColormap(cmdpy=dpy,w,visual,AllocAll);
    if(cmap!=None) set_playpal(0,setpf);
    return cmap;
-};
+}
 
 void set_xtexture_cmap(Display *dpy,Window w) {
    if(cmap==None) make_xtexture_cmap(dpy,w);
    if(cmap!=None) {
       XSetWindowColormap(dpy,w,cmap);
       XInstallColormap(dpy,cmap);
-   };
-};
+   }
+}
 
 void xtexture(Display *dpy,Drawable d,Texture *t,int do_mirror) {
    int width,height;
@@ -87,7 +89,7 @@ void xtexture(Display *dpy,Drawable d,Texture *t,int do_mirror) {
       case(1): rotate(signed char); break;
       case(2): rotate(signed short); break;
       case(4): rotate(signed int); break;
-      };
+      }
       t->xpix[do_mirror]=XCreatePixmap(dpy,d,t->width,t->height,depth);
       XPutImage(dpy,t->xpix[do_mirror]?t->xpix[do_mirror]:d,
 		DefaultGC(dpy,scrn),image,0,0,
@@ -95,8 +97,8 @@ void xtexture(Display *dpy,Drawable d,Texture *t,int do_mirror) {
 		t->width,t->height);
       XDestroyImage(image);
       if(t->xpix[do_mirror]) free_texels(t);
-   };
+   }
    if(t->xpix[do_mirror])
       XCopyArea(dpy,t->xpix[do_mirror],d,DefaultGC(dpy,scrn),
 		0,0,t->width,t->height,xo,yo);
-};
+}

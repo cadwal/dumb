@@ -1,18 +1,20 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "wad/wadio.h"
-#include "lib/safem.h"
-#include "lib/log.h"
-#include "texture.h"
-#include "render/draw.h"
+#include "libdumbutil/safem.h"
+#include "libdumbutil/log.h"
+#include "libdumbwad/wadio.h"
+#include "libdumb/texture.h"
+#include "libdumb/dsound.h"
 #include "banner.h"
+#include "draw.h"
+#include "game.h"
+#include "gettable.h"
 #include "levdata.h"
 #include "things.h"
-#include "dsound.h"
-#include "gettable.h"
-#include "game.h"
 
 static LumpNum ln=BAD_LUMPNUM;
 static int ngetts=0;
@@ -36,9 +38,9 @@ static int *getcount(LevData *ld,int pl,int type) {
    case(2): return &(ldthingd(ld)[ld->player[pl]].armour);
    case(3): return &(ldthingd(ld)[ld->player[pl]].tmpinv);
    case(4): return &(ldthingd(ld)[ld->player[pl]].tmpgod);
-   };
+   }
    return PLCOUNT(pl)+type;   
-};
+}
 static Texture *get_gktex(LevData *ld,int gk) {
    int i,ni;
    if(!gettxt[gk]) return NULL;
@@ -49,15 +51,14 @@ static Texture *get_gktex(LevData *ld,int gk) {
       if(i<ni) return gettxt[gk][i];
       i-=ni;
       return gettxt[gk][(ni-2)-i];
-   }
-   else 
+   } else 
       return gettxt[gk][i%ni];
-};
+}
 
 int get_plinfo_len(void) {
    if(ngetts==0) init_gettables();
    return ngetts+PLEXTRA;
-};
+}
 void init_plinfo(int *pli) {
    int i;
    const Gettable *gt=gett;
@@ -66,7 +67,7 @@ void init_plinfo(int *pli) {
       pli[i]=-1;
    for(i=0;i<ngetts;i++,gt++)
       pli[i+PLEXTRA]=gt->initial;
-};
+}
 
 static void set_bogot(LevData *ld,int pl,const Gettable *gt) {
    ThingDyn *b;
@@ -81,9 +82,9 @@ static void set_bogot(LevData *ld,int pl,const Gettable *gt) {
 	 b->hits=b->proto->hits;
 	 b->phase=b->proto->signals[TS_INIT];
 	 b->phase_wait=b->phase_tbl[b->phase].wait;
-      };
-   };
-};
+      }
+   }
+}
 
 void rotate_selection(LevData *ld,int pl,int type) {
    int i=PLSEL(pl)[type];
@@ -94,7 +95,7 @@ void rotate_selection(LevData *ld,int pl,int type) {
       if(loops++>ngetts) {
 	 i=-1;
 	 break;
-      };
+      }
       /* wrap around if necessary */
       if(i>=ngetts||i<0) i=0;
       /* check selectable */
@@ -105,10 +106,10 @@ void rotate_selection(LevData *ld,int pl,int type) {
       if(gett[i].bulletkind>=0&&PLCOUNT(pl)[gett[i].bulletkind]<1) continue;
       /* a strange loop, but it works */
       break;
-   };
+   }
    PLSEL(pl)[type]=i;
    set_bogot(ld,pl,gett+PLSEL(pl)[type]);
-};
+}
 
 void use_selection(int type,LevData *ld,int pl) {
    const Gettable *gt=gett+PLSEL(pl)[type];
@@ -117,7 +118,7 @@ void use_selection(int type,LevData *ld,int pl) {
    if(PLSEL(pl)[type]<0) {
       rotate_selection(ld,pl,type);
       return;
-   };
+   }
    if(gt->bulletkind>=0) cb=PLCOUNT(pl)+gt->bulletkind;
    if(cd[0]<1||cb[0]<gt->usenum) {
       rotate_selection(ld,pl,type);
@@ -127,7 +128,7 @@ void use_selection(int type,LevData *ld,int pl) {
    cb[0]-=gt->usenum*use_item(ld,pl,gt);
    if(cb[0]<0) cb[0]=0;
    if(gt->sound>=0) play_dsound(gt->sound,0,0,0);
-};
+}
 
 /* pickup */
 
@@ -148,8 +149,7 @@ void pickup_gettable(LevData *ld,int pl,int type,int num) {
       else if(*cnt>=gt->collect&&(gt->flags&GK_GOT_A)) {
 	 game_message(pl,"THAT %s WOULD BE WASTED...",gt->string);
 	 return;
-      }
-      else if(gt->flags&GK_GOT_A) 
+      } else if(gt->flags&GK_GOT_A) 
 	 game_message(pl,"GOT A %s.",gt->string);
       /* do the pickup */
       *cnt+=num;
@@ -157,8 +157,8 @@ void pickup_gettable(LevData *ld,int pl,int type,int num) {
 	 *cnt=gt->collect;
       if(gt->bulletkind>=0&&gt->bulletadd>0)
 	 pickup_gettable(ld,pl,gt->bulletkind,gt->bulletadd);
-   };
-};
+   }
+}
 
 
 /* draw funcs */
@@ -171,8 +171,8 @@ static void init_cfont(void) {
 	 count_font=init_font("SMALLIN%d",10,0);
       else 
 	 count_font=init_font("STYSNUM%d",10,0);
-   };
-};
+   }
+}
 
 static void draw_count(void *fb,int c,int x,int y) {
    unsigned char buf[3]; 
@@ -181,7 +181,7 @@ static void draw_count(void *fb,int c,int x,int y) {
    buf[1]=(c/10)%10;
    buf[2]=c%10;
    drawtext(fb,buf,3,count_font,x,y);
-};
+}
 
 void draw_gettables(LevData *ld,int pl,
 		    void *fb,int width,int height) {
@@ -206,8 +206,8 @@ void draw_gettables(LevData *ld,int pl,
 	 draw(fb,gtx,xo,yo);
       if(gt->collect>1&&!gt->decay) 
 	draw_count(fb,cnt,xo,yo+gtx->height+3);
-   };
-};
+   }
+}
 
 /* do decay stuff */
 void update_gettables(LevData *ld,int ticks) {
@@ -221,9 +221,9 @@ void update_gettables(LevData *ld,int ticks) {
 	 if(gt->decay&&(*count>0))
 	    *count-=ticks*gt->decay;
 	 if(*count<0) *count=0;
-      };
-   };
-};
+      }
+   }
+}
 
 /* cheat */
 void cheat_gettables(LevData *ld,int pl) {
@@ -232,7 +232,7 @@ void cheat_gettables(LevData *ld,int pl) {
    int *count=PLCOUNT(pl);
    for(i=0;i<ngetts;i++,gt++,count++)
       *count=gt->collect;
-};
+}
 
 /* reset locals */
 void reset_local_gettables(LevData *ld) {
@@ -244,8 +244,8 @@ void reset_local_gettables(LevData *ld) {
       if(!PLINFOK(pl)) continue;
       for(i=0;i<ngetts;i++,gt++,count++) 
 	 if(gt->flags&GK_LOCAL) *count=gt->initial;
-   };
-};
+   }
+}
 
 /* return non-zero if we have a key of type <keytype> */
 int gettable_chk_key(const LevData *ld,int pl,int keytype) {
@@ -255,7 +255,7 @@ int gettable_chk_key(const LevData *ld,int pl,int keytype) {
    for(i=0;i<ngetts;i++,gt++,count++)
       if(*count&&gt->key==keytype) return 1;
    return 0;
-};
+}
 
 
 /* init and reset funcs */
@@ -282,10 +282,10 @@ void init_gettables(void) {
 	 for(j=NUMICONS(i)-1;j>=0;j--) {
 	    buf[4]=gett[i].iconname[4]+j;
 	    gettxt[i][j]=get_misc_texture(buf);
-	 };
-      };
-   };
-};
+	 }
+      }
+   }
+}
 
 void reset_gettables(void) {
    if(LUMPNUM_OK(ln)) free_lump(ln);
@@ -294,9 +294,9 @@ void reset_gettables(void) {
       for(i=0;i<ngetts;i++)
 	 if(gettxt[i]) safe_free(gettxt[i]);
       safe_free(gettxt);
-   };
+   }
    ngetts=0;
    gett=NULL;
    gettxt=NULL;
-};
+}
 

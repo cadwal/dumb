@@ -2,11 +2,11 @@
 #ifndef NETPLAY_H
 #define NETPLAY_H
 
+#include "libdumbutil/confdef.h"
 #include "levdata.h"
-#include "plat/input.h"
-#include "plat/net.h"
-#include "dumb/netio.h"
-#include "lib/conf.h"
+#include "input.h"
+#include "net.h"
+#include "netio.h"
 
 extern ConfItem netplay_conf[];
 

@@ -1,15 +1,17 @@
+#include <config.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
 
 #include <sys/time.h>
 
-#include <lib/fixed.h>
+#include "libdumbutil/fixed.h"
 
 static volatile loop;
-static void alrm(int dummy) {
+static RETSIGTYPE alrm(int dummy) {
    loop=0;
-};
+}
 
 static void rtimer(void) {
    struct itimerval it;
@@ -21,7 +23,7 @@ static void rtimer(void) {
    setitimer(ITIMER_REAL,&it,NULL);
    signal(SIGALRM,alrm);
    signal(SIGVTALRM,alrm);
-};
+}
 
 /* these reproduce the losses due to procedure calls with fixmul etc.
    it is impossible to allow inlining with GCC without also allowing
@@ -31,20 +33,19 @@ static void rtimer(void) {
 #define fltdiv(a,b) (FIXED_TO_FLOAT(a)/FIXED_TO_FLOAT(b))
 #else
 static inline float fltmul(fixed a,fixed b) 
-{return FIXED_TO_FLOAT(a)*FIXED_TO_FLOAT(b);};
+{return FIXED_TO_FLOAT(a)*FIXED_TO_FLOAT(b);}
 static inline float fltdiv(fixed a,fixed b) 
-{return FIXED_TO_FLOAT(a)/FIXED_TO_FLOAT(b);};
+{return FIXED_TO_FLOAT(a)/FIXED_TO_FLOAT(b);}
 #endif
 
 
 int main(int argc,char **argv) {
-   time_t tt;
    unsigned int i;
    setvbuf(stdout,NULL,_IONBF,0);
    if(argc>1) {
       printf("Seeding random number generator\n");
       srandom(atoi(argv[1]));
-   };
+   }
    /*
    printf("sizeof(long long)=%d sizeof(long)=%d, sizeof(int)=%d\n",
 	  sizeof(long long),sizeof(long),sizeof(int));
@@ -56,14 +57,14 @@ int main(int argc,char **argv) {
    while(loop) {
       int n=random()+random();
       i++;
-   };
+   }
    printf("  Fixed: %d",i);
    i=0;
    rtimer();
    while(loop) {
       float f=FIXED_TO_FLOAT(random())+FIXED_TO_FLOAT(random());
       i++;
-   };
+   }
    printf("  Float: %d",i);
 
    printf("\nMultiplying random numbers...");
@@ -72,14 +73,14 @@ int main(int argc,char **argv) {
    while(loop) {
       int n=fixmul(random(),random());
       i++;
-   };
+   }
    printf("  Fixed: %d",i);
    i=0;
    rtimer();
    while(loop) {
       float f=fltmul(random(),random());
       i++;
-   };
+   }
    printf("  Float: %d",i);
 
    printf("\nDividing random numbers...");
@@ -89,7 +90,7 @@ int main(int argc,char **argv) {
       fixed a=random()&0xffffff;
       int n=fixdiv(a,a+FIXED_ONE);
       i++;
-   };
+   }
    printf("  Fixed: %d",i);
    i=0;
    rtimer();
@@ -97,11 +98,11 @@ int main(int argc,char **argv) {
       fixed a=random()&0xffffff;
       float f=fltdiv(a,a+FIXED_ONE);
       i++;
-   };
+   }
    printf("  Float: %d",i);
 
    printf("\n");
    return 0;
-};
+}
 
 

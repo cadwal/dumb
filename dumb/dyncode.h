@@ -2,8 +2,8 @@
 #ifndef DYNCODE_H
 #define DYNCODE_H
 
+#include "libdumbutil/endiantypes.h"
 #include "levdata.h"
-#include "lib/endian.h"
 
 typedef struct {
    LE_int16 uas,las,mas,_spare;

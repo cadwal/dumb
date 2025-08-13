@@ -2,7 +2,7 @@
 #ifndef XTEXTURE_H
 #define XTEXTURE_H
 
-#include "dumb/texture.h"
+#include "libdumb/texture.h"
 
 Colormap make_xtexture_cmap(Display *dpy,Window w);
 void set_xtexture_cmap(Display *dpy,Window w);

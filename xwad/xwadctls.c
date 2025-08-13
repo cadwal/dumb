@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,19 +15,19 @@
 
 /* general control */
 
-/*static CTLACTION(see_patches) {char buf[10];tchoose_patch(inst,buf);};*/
-static CTLACTION(see_sprites) {char buf[10];tchoose_sprite(inst,buf);};
+/*static CTLACTION(see_patches) {char buf[10];tchoose_patch(inst,buf);}*/
+static CTLACTION(see_sprites) {char buf[10];tchoose_sprite(inst,buf);}
 
-static CTLACTION(quit) {inst->want_quit=1;};
-static CTLACTION(load) {load_instance(inst,inst->loadname);};
-static CTLACTION(save) {save_level(inst);};
+static CTLACTION(quit) {inst->want_quit=1;}
+static CTLACTION(load) {load_instance(inst,inst->loadname);}
+static CTLACTION(save) {save_level(inst);}
 
 static CTLACTION(prev) {
    int i=inst->curselect;
    i--;
    if(i<0) i=maxsel(inst)-1;
    new_selection(i,inst,0);
-};
+}
 
 static CTLACTION(next) {
    int i=inst->curselect,n=maxsel(inst);
@@ -33,7 +35,7 @@ static CTLACTION(next) {
    if(n==0) i=-1;
    else if(i>=n) i=0;
    new_selection(i,inst,0);
-};
+}
 
 static CTLACTION(del_thing) {
    /* Changed to an O(nthings) algorithm that has less bugs too. */
@@ -58,31 +60,42 @@ static CTLACTION(del_thing) {
       newsel = -1;  /* sanity check */
    inst->curselect = newsel+1; /* force redraw */
    new_selection(newsel, inst, 0);
-};
+}
 
 static CTLACTION(del_line) {
-   int i=0,sel=inst->curselect;
-   int survivor=-1;
-   if(sel>=0) inst->enttbl[sel]|=ENT_SELECTED;
-   while(i<inst->nlines) {
-      if(inst->enttbl[i]&ENT_SELECTED) {
-	 memmove(inst->line+i,
-		 inst->line+i+1,
-		 ((--inst->nlines)-i)*sizeof(LineData));
-	 inst->enttbl[i]^=ENT_SELECTED;
+   /* Changed to use the same algorithm as del_thing().  */
+   int getind, putind, newsel=-1;
+   if (inst->curselect >= 0)
+      inst->enttbl[inst->curselect] |= ENT_SELECTED;
+   for (getind = putind = 0; getind < inst->nlines; getind++) {
+      if (getind == inst->curselect)
+         newsel = putind;
+      if (inst->enttbl[getind] & ENT_SELECTED) {
+         /* delete it by skipping */
+         inst->enttbl[getind] &= ~ENT_SELECTED; /* clear marks */
+      } else {
+         /* retain */
+         if (putind != getind)
+            inst->line[putind] = inst->line[getind];
+         putind++; /* can't combine with above line because it's in the if */
       }
-      else if(survivor==-1) survivor=i++;
-      else i++;
-   };
-   if(sel>=inst->nlines) sel=survivor;
-   inst->curselect=sel+1;
-   new_selection(sel,inst,0);
-};
+   }
+   inst->nlines = putind;
+   if (newsel < 0 || newsel >= inst->nlines)
+      newsel = -1;  /* sanity check */
+   inst->curselect = newsel+1; /* force redraw */
+   new_selection(newsel, inst, 0);
+}
 
-static CTLACTION(line_split) {split_sel_lines(inst);RDRAW;};
-static CTLACTION(mksector) {make_sector_from_sel_lines(inst);};
-static CTLACTION(connect_selected_vertices) {connect_sel_vers(inst,0);};
-static CTLACTION(connect_selected_vertices_ccw) {connect_sel_vers(inst,1);};
+static CTLACTION(line_split) {split_sel_lines(inst);RDRAW;}
+static CTLACTION(line_crossing) {cross_sel_lines(inst);RDRAW;}
+static CTLACTION(mksector) {make_sector_from_sel_lines(inst);}
+static CTLACTION(connect_selected_vertices) {connect_sel_vers(inst,0);}
+static CTLACTION(connect_selected_vertices_ccw) {connect_sel_vers(inst,1);}
+
+static CTLACTION(join_lines) {
+   join_lines_at_vertex(inst, inst->curselect);
+}
 
 static CTLACTION(mkcorridor) {
    int s1=inst->curselect,s2;
@@ -95,27 +108,27 @@ static CTLACTION(mkcorridor) {
       if(cs>=0) {
 	 enter_mode(inst,SectMode);
 	 new_selection(cs,inst,0);
-      };
-   };
-};
+      }
+   }
+}
 
 #define MS(n) static CTLACTION(mkstairs##n) {\
-  if(inst->curselect>=0) make_stairs(inst,inst->curselect,n);RDRAW;};
+  if(inst->curselect>=0) make_stairs(inst,inst->curselect,n);RDRAW;}
 MS(8);
 MS(16);
 #undef MS
 
 #define INST_STR_INP_FUNX(field,rd) \
-static CTLINPUT(inp_##field) {strcpy(inst->field,buf);rd;}; \
-static CTLOUTPUT(out_##field) {strcpy(buf,inst->field);}; 
+static CTLINPUT(inp_##field) {strcpy(inst->field,buf);rd;} \
+static CTLOUTPUT(out_##field) {strcpy(buf,inst->field);} 
 
 #define INST_NUM_INP_FUNX(field,rd) \
-static CTLINPUT(inp_##field) {inst->field=atoi(buf);rd;}; \
-static CTLOUTPUT(out_##field) {sprintf(buf,"%d",(int)(inst->field));}; 
+static CTLINPUT(inp_##field) {inst->field=atoi(buf);rd;} \
+static CTLOUTPUT(out_##field) {sprintf(buf,"%d",(int)(inst->field));} 
 
 #define INST_FUNX(field,rd) \
-static CTLPRED(is_##field) {return inst->field;}; \
-static CTLACTION(tog_##field) {inst->field=!inst->field;rd;}; 
+static CTLPRED(is_##field) {return inst->field;} \
+static CTLACTION(tog_##field) {inst->field=!inst->field;rd;} 
 
 INST_FUNX(bigmap,update_intgeo(inst));
 INST_FUNX(showgrid,RDRAW);
@@ -127,7 +140,7 @@ INST_NUM_INP_FUNX(gridsize,RDRAW);
 /*INST_NUM_INP_FUNX(scale,RDRAW;RDMAPCTLS);*/
 
 #define MODEFUNX(x,y) \
-static CTLACTION(go##x##mode) {enter_mode(inst,y##Mode);}; \
+static CTLACTION(go##x##mode) {enter_mode(inst,y##Mode);} \
 static CTLPRED(is##x##mode) {return inst->mode==y##Mode;}
 
 MODEFUNX(v,Ver);
@@ -215,7 +228,7 @@ static CTLOUTPUT(th_out_##x) \
 static CTLACTION(th_tog##flag) \
 {if(VALID) {CURF^=THING_##flag;\
 if(CURF&THING_##flag) {SEL(flags|=THING_##flag);} \
-else SEL(flags&=~THING_##flag);};} \
+else SEL(flags&=~THING_##flag);}} \
 static CTLPRED(th_is##flag) {return VALID&&(CURF&THING_##flag);}
 
 FUNX(x,RDRAW);
@@ -252,7 +265,7 @@ static CTLACTION(line_vflip) {
    FORSEL(line) FLIP(inst->line[i]);
    RDMODECTLS;
    RDRAW;
-};
+}
 #undef FLIP
 #define FLIP(l) {int v=l.side[0];l.side[0]=l.side[1];l.side[1]=v;}
 static CTLACTION(line_sflip) {
@@ -261,14 +274,14 @@ static CTLACTION(line_sflip) {
    FORSEL(line) FLIP(inst->line[i]);
    RDMODECTLS;
    /*RDRAW;*/
-};
+}
 #undef FLIP
 
 #define FLFUNX(flag) \
 static CTLACTION(line_tog##flag) \
 {if(VALID) {CURF^=LINE_##flag; \
 if(CURF&LINE_##flag) {SEL(flags|=LINE_##flag);} \
-else SEL(flags&=~LINE_##flag);};} \
+else SEL(flags&=~LINE_##flag);}} \
 static CTLPRED(line_is##flag) {return VALID&&(CURF&LINE_##flag);}
 
 #define FUNX(x,rd) \
@@ -299,12 +312,12 @@ static CTLACTION(line_togTWOSIDED) {
    if((CURF&LINE_TWOSIDED)&&CUR.side[1]==-1) {
       CUR.side[1]=inst->nsides++;
       RDMODECTLS;
-   };
+   }
    FORSEL(line) {
       inst->line[i].flags^=LINE_TWOSIDED;
       if((inst->line[i].flags&LINE_TWOSIDED)&&inst->line[i].side[1]==-1)
 	 inst->line[i].side[1]=inst->nsides++;
-   };
+   }
 } 
 static CTLPRED(line_isTWOSIDED) {return VALID&&(CURF&LINE_TWOSIDED);}
 
@@ -332,13 +345,13 @@ static CTLPRED(line_isTWOSIDED) {return VALID&&(CURF&LINE_TWOSIDED);}
 static CTLINPUT(side##sn##_inp_id) {if(LINEVALID) SIDEID(sn)=atoi(buf);\
 if(SIDEID(sn)>=inst->nsides) inst->nsides=SIDEID(sn)+1;} \
 static CTLOUTPUT(side##sn##_out_id) {if(LINEVALID) \
-sprintf(buf,"%d",(int)(SIDEID(sn))); else *buf=0; };
+sprintf(buf,"%d",(int)(SIDEID(sn))); else *buf=0; }
 
 #define SIDE_IO_SECT(sn) \
 static CTLINPUT(side##sn##_inp_sect) {if(SIDEVALID(sn)) \
 SIDE(sn).sector=atoi(buf); SEL(sn,sector=atoi(buf));} \
 static CTLOUTPUT(side##sn##_out_sect) {if(SIDEVALID(sn)) \
-sprintf(buf,"%d",(int)(SIDE(sn).sector)); else *buf=0; };
+sprintf(buf,"%d",(int)(SIDE(sn).sector)); else *buf=0; }
 
 /* bit of a kludge to pack two offsets into one control */
 static int atoi2(const char *s) {
@@ -346,14 +359,14 @@ static int atoi2(const char *s) {
    if(s==NULL) return 0;
    s++;
    return atoi(s);
-};
+}
 
 #define SIDE_IO_OFS(sn) \
 static CTLINPUT(side##sn##_inp_ofs) { \
 if(SIDEVALID(sn)) {SIDE(sn).xoffset=atoi(buf);SIDE(sn).yoffset=atoi2(buf);} \
 SEL(sn,xoffset=atoi(buf));SEL(sn,yoffset=atoi2(buf));} \
 static CTLOUTPUT(side##sn##_out_ofs) {if(SIDEVALID(sn)) \
-sprintf(buf,"%d/%d",(int)(SIDE(sn).xoffset),(int)(SIDE(sn).yoffset)); else *buf=0; };
+sprintf(buf,"%d/%d",(int)(SIDE(sn).xoffset),(int)(SIDE(sn).yoffset)); else *buf=0; }
 
 #define SIDE_IO_T(sn,t) \
 static CTLACTION(side##sn##_act_##t) {if(SIDEVALID(sn)) \
@@ -361,7 +374,7 @@ tchoose_wall(inst,SIDE(sn).t);} \
 static CTLINPUT(side##sn##_inp_##t) {if(SIDEVALID(sn)) \
 strncpy(SIDE(sn).t,buf,8); SELSTRCPY(sn,t,buf);} \
 static CTLOUTPUT(side##sn##_out_##t) {memset(buf,0,CTLBUFLEN); \
-if(SIDEVALID(sn)) strncpy(buf,SIDE(sn).t,8);};
+if(SIDEVALID(sn)) strncpy(buf,SIDE(sn).t,8);}
 
 SIDE_IO_ID(0);
 SIDE_IO_ID(1);
@@ -385,27 +398,27 @@ static CTLACTION(zoomi) {
    if(inst->scale>-8) {
       inst->scale--;
       RDRAW;RDMAPCTLS;
-   };
-};
+   }
+}
 static CTLACTION(zoomo) {
    if(inst->scale<8) {
       inst->scale++;
       RDRAW;RDMAPCTLS;
-   };
-};
+   }
+}
 
 static CTLOUTPUT(out_scale) {
    if(inst->scale<0) sprintf(buf,"1:%d",1<<-inst->scale);
    else sprintf(buf,"%d:1",1<<inst->scale);
-};
+}
 
 static CTLINPUT(selectinp) {
    new_selection(atoi(buf),inst,0);
-};
+}
 static CTLOUTPUT(selectout) {
    if(inst->curselect<0) *buf=0;
    else sprintf(buf,"%d",inst->curselect);
-};
+}
 
 
 /* control structures */
@@ -433,7 +446,7 @@ LBUTTON("ThingMode",gotmode,istmode,0),
 LBUTTON("Grid:",tog_showgrid,is_showgrid,0),
 INPUTCTL(inp_gridsize,out_gridsize,0),
 IBUTTON("Sprites",see_sprites,0)
-}; 
+};
 
 #define MAPROWS 1
 #define MAPCOLS 4
@@ -454,7 +467,7 @@ INPUTCTL(pref##_inp_##field,pref##_out_##field,f)
 #define INBPAIR(pref,name,field,f) LABELCTL(name,0),\
 INPUTCTLB(pref##_inp_##field,pref##_out_##field,pref##_act_##field,f)
 
-#define VERROWS 4
+#define VERROWS 5
 #define VERCOLS 2
 
 static const Control vermode_ctls[VERROWS*VERCOLS]={
@@ -463,7 +476,9 @@ INPUTCTL(selectinp,selectout,0),
 INPAIR(ver,"X-coord",x,0),
 INPAIR(ver,"Y-coord",y,0),
 IBUTTON("Connect",connect_selected_vertices,0),
-IBUTTON("CCW",connect_selected_vertices_ccw,0)
+IBUTTON("CCW",connect_selected_vertices_ccw,0),
+IBUTTON("JoinLines",join_lines,0),
+NULLCTL
 };
 
 #define SECTROWS 9
@@ -550,7 +565,7 @@ LFLAG_BUTTON("ForceMap",FORCEMAP),
 
 LFLAG_BUTTON("Poster",POSTER),
 NULLCTL,
-NULLCTL,
+IBUTTON("Crossing",line_crossing,0),
 
 IBUTTON("Split",line_split,0),
 IBUTTON("MkSector",mksector,0),

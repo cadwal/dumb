@@ -1,12 +1,14 @@
+#include <config.h>
+
 #include <stdarg.h>
-#include <strings.h>
+#include <string.h>
 #include <stdio.h>
 #include <time.h>
 
-#include "lib/log.h"
-#include "lib/safem.h"
-#include "lib/timer.h"
-#include "dsound.h"
+#include "libdumbutil/log.h"
+#include "libdumbutil/safem.h"
+#include "libdumbutil/timer.h"
+#include "libdumb/dsound.h"
 #include "game.h"
 #include "things.h"
 #include "netplay.h"
@@ -51,13 +53,13 @@ void send_one_slaveinit(const LevData *ld, int station) {
    else if(stations[station].player<0) {
 	   if(pl==ld->localplayer) pl++;
 	   stations[station].player=pl++;
-   };
+   }
 
    logprintf(LOG_DEBUG,'N',"sending slave-init to %s (station %d)",
 	     stations[station].name,station);
    sip.plnum=stations[station].player;
    net_sendto(stations+station,&sip,sizeof(sip));
-};
+}
 
 void send_slaveinit(const LevData *ld) {
    int i;
@@ -66,8 +68,8 @@ void send_slaveinit(const LevData *ld) {
    /* now loop through all the slaves, sending them the init packet */
    for(i=0;i<nstations;i++) {
 	   send_one_slaveinit(ld, i);
-   };
-};
+   }
+}
 
 void wait_slaveinit(LevData *ld) {
    int i,n_uninit;
@@ -82,18 +84,18 @@ void wait_slaveinit(LevData *ld) {
       if(time(NULL)>last_send) {
 	 send_slaveinit(ld);
 	 last_send=time(NULL);
-      };
+      }
       for(i=0;i<nstations;i++) {
 	 if((stations[i].flags&RS_SLAVE)&&!(stations[i].flags&RS_INIT)) {
 	    net_waitpkt(stations+i,cnf_init_to);
 	    netplay_poll(ld);
-	 };
+	 }
 	 if((stations[i].flags&RS_SLAVE)&&!(stations[i].flags&RS_INIT))
 	    n_uninit++;
-      };
+      }
    } while(n_uninit);
    logprintf(LOG_INFO,'N',"all slaves up");
-};
+}
 
 int wait4master(void) {
    int i;
@@ -102,11 +104,11 @@ int wait4master(void) {
 	 if(net_waitpkt(stations+i,cnf_master_to))
 	    return 0;
    return 1;
-};
+}
 
 void send_initrequest(char *name) {
    unsigned char buf[100];
-   int len = strlen(name);
+   size_t len = strlen(name);
    logprintf(LOG_DEBUG,'N',"sending init-request");
    buf[0]=SLAVEINIT_REQ_SIG;
    if (len > sizeof(buf)-3) {
@@ -116,7 +118,7 @@ void send_initrequest(char *name) {
    strncpy(buf+2,name,len);
    buf[2+len] = 0;
    net_sendmaster_nobuf(buf,2+len+1);
-};
+}
 
 void wait_slaveinfo(LevData *ld) {
    time_t last_send=0;
@@ -127,11 +129,11 @@ void wait_slaveinfo(LevData *ld) {
       if(time(NULL)>last_send) {
 	 send_initrequest(myname);
 	 last_send=time(NULL);
-      };
+      }
       wait4master();
       netplay_poll(ld);
-   };
-};
+   }
+}
 
 /* network play synchronisation stuff */
 
@@ -145,7 +147,7 @@ void send_empty(char ch) {
    buf[3]=0;
    net_sendmaster(buf,4);
    net_sendmaster_flush();
-};
+}
 
 void send_slavequit(void) {
    unsigned char buf[4];
@@ -155,7 +157,7 @@ void send_slavequit(void) {
    buf[3]=0;
    net_slavecast(buf,4);
    net_slavecast_flush();
-};
+}
 
 void send_update(MapLumpType mltype,int offset,int codelen,const void *code) {
    unsigned char buf[DYN_CODE_BUF_LEN+sizeof(UpdatePktHdr)];
@@ -168,7 +170,7 @@ void send_update(MapLumpType mltype,int offset,int codelen,const void *code) {
    pkt->offset=offset;
    memcpy(pkt->code,code,codelen);
    net_slavecast(buf,codelen+sizeof(UpdatePktHdr));
-};
+}
 void send_plinfo_update(int player,int offset,int value) { 
    PlayerInfoPkt pkt;
    pkt.sig=PLINFO_SIG;
@@ -177,17 +179,17 @@ void send_plinfo_update(int player,int offset,int value) {
    pkt.offset=offset;
    pkt.value=value;
    net_slavecast(&pkt,sizeof(pkt));
-};
+}
 
 void send_sync(int ack,int ticks) {
    SyncPkt pkt;
    /*logprintf(LOG_DEBUG,'N',"send_%s: ticks=%d",ack?"ack":"sync",ticks);*/
    if(ack) {
-     static last_ack=0;
-     if(cnf_async) return;
-     if(ticks-last_ack<cnf_ack_to/MSEC_PER_TICK) return;
-     last_ack=ticks;
-   };
+      static last_ack=0;
+      if(cnf_async) return;
+      if(ticks-last_ack<cnf_ack_to/MSEC_PER_TICK) return;
+      last_ack=ticks;
+   }
    pkt.sig=(ack?ACK_SIG:SYNC_SIG); 
    pkt.size=sizeof(pkt)-2;
    pkt.tickspassed=ticks;
@@ -195,9 +197,9 @@ void send_sync(int ack,int ticks) {
    else {
       syncsent=ticks;
       net_slavecast(&pkt,sizeof(pkt));
-   };
+   }
    net_bufflush();
-};
+}
 
 /* play_dsound() was originally in dsound.c but I moved it here
  * because it needs send_dsound() and XProtoThing isn't linked with
@@ -206,7 +208,7 @@ void send_sync(int ack,int ticks) {
 void play_dsound(int i,fixed x,fixed y,fixed r) {
    play_dsound_local(i,x,y,r);
    send_dsound(i,x,y,r);
-};
+}
 
 void send_dsound(int sound,fixed x,fixed y,fixed radius) {
    DSoundPkt pkt;
@@ -217,7 +219,7 @@ void send_dsound(int sound,fixed x,fixed y,fixed radius) {
    pkt.y=y;
    pkt.radius=radius;
    net_slavecast(&pkt,sizeof(pkt));
-};
+}
 
 void send_message(int pl,const char *msg) {
    unsigned char buf[256];
@@ -228,18 +230,19 @@ void send_message(int pl,const char *msg) {
    /*buf[2] gets player number */
    strncpy(buf+3,msg,250);
    buf[253]=0;
-   for(i=0;i<nstations;i++)
+   for(i=0;i<nstations;i++) {
       if(pl==-1||stations[i].player==pl) { 
 	 buf[2]=stations[i].player;
 	 net_sendto(stations+i,buf,l+4);
-      };
-};
+      }
+   }
+}
 
 static int allzero(const void *_s,int l) {
    const char *s=(const char *)_s;
    while(l--) if(*(s++)) return 0;
    return 1;
-};
+}
    
 void send_input(LevData *ld,const PlayerInput *in,int tickspassed) {
    InputPkt pkt;
@@ -256,7 +259,7 @@ void send_input(LevData *ld,const PlayerInput *in,int tickspassed) {
    pkt.tickspassed=tickspassed;
    memcpy(&pkt.inp,in,sizeof(PlayerInput));
    net_sendmaster(&pkt,sizeof(pkt));
-};
+}
 
 
 int netplay_wait4slaves(void) {
@@ -271,11 +274,11 @@ int netplay_wait4slaves(void) {
 	    logprintf(LOG_ERROR,'N',"slave '%s' (%d) seems to be dead",
 		      stations[i].name,i);
 	    stations[i].flags&=~RS_LIVE;
-	 };
+	 }
 	 return 1;
-      };
+      }
    return 0;
-};
+}
 
 /* join stuff */
 
@@ -288,7 +291,7 @@ void netplay_join(LevData *ld, int station, const char *name) {
 
 static void play_dspkt(const DSoundPkt *pkt) {
    play_dsound_local(pkt->sound,pkt->x,pkt->y,pkt->radius);
-};
+}
 
 void netplay_poll(LevData *ld) {
    const unsigned char *code;
@@ -301,10 +304,10 @@ void netplay_poll(LevData *ld) {
 
       /* synchronisation */ 
       if(pktlen==0) {
-	if(cnf_async) break;
-	else if(netplay_wait4slaves()) continue;
-	else break;
-      };
+	 if(cnf_async) break;
+	 else if(netplay_wait4slaves()) continue;
+	 else break;
+      }
       /* deal with packet */
       rs=stations+station;
       while(pktlen>0) {
@@ -353,12 +356,14 @@ void netplay_poll(LevData *ld) {
 	 case(SLAVEINIT_REQ_SIG):
 	    /* "I'll be your slave" */
 	    if(rs->flags&RS_LIVE)
-	      logprintf(LOG_INFO,'N',"init request from %s ignored",rs->name);
+	       logprintf(LOG_INFO,'N',"init request from %s ignored",
+			 rs->name);
 	    else {
-	      logprintf(LOG_INFO,'N',
-			"got init request: setting up new station %d",station);
-	      netplay_join(ld, station, code+2);
-	    };
+	       logprintf(LOG_INFO,'N',
+			 "got init request: setting up new station %d",
+			 station);
+	       netplay_join(ld, station, code+2);
+	    }
 	    break;
 	 case(SLAVEINIT_SIG):
 	    /* slave_init packet */
@@ -383,14 +388,18 @@ void netplay_poll(LevData *ld) {
 		      code[0]);
 	    /* don't try to interpret this datagram further */
 	    return;
-	 };
+	 }
 	 code+=codelen+2;
 	 pktlen-=codelen+2;
-      };
+      }
       if(!(rs->flags&RS_LIVE)) {
-	logprintf(LOG_DEBUG,'N',"station %s (%d) lives!",rs->name,station);
-	rs->flags|=RS_LIVE;
-	if(rs->player>=0) touch_player(ld,rs->player);
-      };
-   };
-};
+	 logprintf(LOG_DEBUG,'N',"station %s (%d) lives!",rs->name,station);
+	 rs->flags|=RS_LIVE;
+	 if(rs->player>=0) touch_player(ld,rs->player);
+      }
+   }
+}
+
+// Local Variables:
+// c-basic-offset: 3
+// End:

@@ -1,8 +1,10 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "lib/log.h"
+#include "libdumbutil/log.h"
 #include "things.h"
 #include "gettable.h"
 
@@ -24,7 +26,7 @@ int use_item(LevData *ld,int pl,const Gettable *gt) {
 	 thing_send_sig(ld,ld->player[pl],TS_SHOOT);
 	 thing_send_sig(ld,t,TS_SHOOT);
 	 return 1;
-      };
-   };
+      }
+   }
    return 0;
-};
+}

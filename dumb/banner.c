@@ -1,10 +1,12 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "lib/safem.h"
-#include "lib/log.h"
-#include "render/draw.h"
+#include "libdumbutil/safem.h"
+#include "libdumbutil/log.h"
+#include "draw.h"
 #include "banner.h"
 
 typedef struct _BanLink {
@@ -27,15 +29,15 @@ static BanLink *enqueue(Banner *b) {
    else {
       b->last->next=l;
       b->last=l;
-   };
+   }
    return l;
-};
+}
 static void dequeue(Banner *b) {
    BanLink *l=b->list;
    b->list=l->next;
    if(b->list==NULL) b->last=NULL;
    safe_free(l);
-};
+}
    
 
 #define MAX_BANNERS 16
@@ -50,7 +52,7 @@ int init_banner(int baseline,int start,int stop,int speed) {
    if(i==nbnrs) {
       if(nbnrs>=MAX_BANNERS) logfatal('B',"too many banners");
       nbnrs++;
-   };
+   }
    b=bnr+i;
    b->last=b->list=NULL;
    b->start=start;
@@ -60,19 +62,19 @@ int init_banner(int baseline,int start,int stop,int speed) {
    b->used=1;
    logprintf(LOG_INFO,'B',"init banner %d",i);
    return i;
-};
+}
 
 void reset_banner(int banner) {
    Banner *b=bnr+banner;
    while(b->list) dequeue(b);
    b->used=0;
-};
+}
 
 void reset_banners(void) {
    int i;
    for(i=0;i<nbnrs;i++) reset_banner(i);
    nbnrs=0;
-};
+}
 
 void add_to_banner(int banner,Texture *t,int xoffset,int yoffset) {
    Banner *b=bnr+banner;
@@ -82,7 +84,7 @@ void add_to_banner(int banner,Texture *t,int xoffset,int yoffset) {
    l->y=b->baseline+yoffset-(t?t->height:0);
    l->x=xoffset;
    l->prog=0;
-};
+}
 void add_text_to_banner(int banner,int font,const char *text,int len) {
    int i;
    for(i=0;i<len;i++) {
@@ -102,14 +104,14 @@ void add_text_to_banner(int banner,int font,const char *text,int len) {
 	 case('-'):
 	    yo=-t->height/2-1;
 	    break;
-	 };
+	 }
 	 add_to_banner(banner,t,xo,yo);
-      };
-   };
-};
+      }
+   }
+}
 void add_str_to_banner(int banner,int font,const char *text) {
    add_text_to_banner(banner,font,text,strlen(text));
-};
+}
 
 static void draw_banner(int banner,void *fb) {
    Banner *b=bnr+banner;
@@ -123,15 +125,15 @@ static void draw_banner(int banner,void *fb) {
       if(l->t) draw(fb,l->t,x+l->x,l->y);
       x+=l->len;
       l=l->next;
-   };
-};
+   }
+}
 
 static void update_banner(int banner,void *fb,int ticks) {
    Banner *b=bnr+banner;
    BanLink *l=b->list;
    l->prog+=(ticks*b->speed+7)/8;
    if(l->prog>=l->len) dequeue(b);
-};
+}
 
 void update_banners(void *fb,int ticks) {
    int i;
@@ -139,16 +141,16 @@ void update_banners(void *fb,int ticks) {
       if(bnr[i].used&&bnr[i].list) { 
 	 draw_banner(i,fb);
 	 update_banner(i,fb,ticks);
-      };
-};
+      }
+}
 
 int banner_queuelen(int banner) {
    Banner *b=bnr+banner;
    int i=0;
    BanLink *l=b->list;
-   while(l) {i++;l=l->next;};
+   while(l) {i++;l=l->next;}
    return i;
-};
+}
 
 
 

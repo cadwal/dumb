@@ -1,11 +1,13 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdlib.h>
 #include <math.h>
 #include <limits.h>
 #include <stdio.h>
 
-#include "lib/log.h"
-#include "lib/timer.h"
+#include "libdumbutil/log.h"
+#include "libdumbutil/timer.h"
 #include "levdata.h"
 #include "gettable.h"
 #include "linetype.h"
@@ -39,7 +41,7 @@ fixed line_dist(const LevData *ld,int wall,fixed x,fixed y) {
    else return FLOAT_TO_FIXED(s);
    if(s>0.0) return FLOAT_TO_FIXED(t);
    return -FLOAT_TO_FIXED(t);
-};
+}
 
 /*static void wall_vector(LevData *ld, int wall, fixed *vx, fixed *vy)
 {
@@ -51,7 +53,7 @@ fixed line_dist(const LevData *ld,int wall,fixed x,fixed y) {
    
    *vx = fixdiv(dx,ll);
    *vy = fixdiv(dy,ll);
-};*/
+}*/
 
 static fixed wall_angle(const LevData *ld, int wall)
 {
@@ -60,7 +62,7 @@ static fixed wall_angle(const LevData *ld, int wall)
    fixed dx = vd2->x-vd1->x;
    fixed dy = vd2->y-vd1->y;
    return fix_vec2angle(dx,dy);
-};
+}
 
 static const LE_int16 *get_blockmap(const LevData *ld,fixed x,fixed y)  {
    const BlockMapHdr *h=&(ldblockmap(ld)->UMEMB(hdr));
@@ -71,7 +73,7 @@ static const LE_int16 *get_blockmap(const LevData *ld,fixed x,fixed y)  {
    y/=BM_BLOCKSIZE<<12;
    if(x>=h->numx||y>=h->numy) return NULL;
    return ldblockmap(ld)->data+h->idx[x+y*h->numx];
-};
+}
 static void get_blockmaps(const LE_int16 **maps,
 			  const LevData *ld,fixed x,fixed y,fixed r)  {
    signed char ox,oy; 
@@ -80,14 +82,14 @@ static void get_blockmaps(const LE_int16 **maps,
       *map=get_blockmap(ld,x+ox*r,y+oy*r);
       for(m=maps;m<map&&*map!=NULL;m++) if(*m==*map) *map=NULL;
       if(*map) map++;
-   };
+   }
    *map=NULL;
-};
+}
 
 static double pyth_sq(fixed x,fixed y) {
    double dx=FIXED_TO_FLOAT(x),dy=FIXED_TO_FLOAT(y);
    return dx*dx+dy*dy;
-}; 
+}
 #define SQ(x) ((x)*(x))
 
 
@@ -140,10 +142,10 @@ void thing_chk_collide(LevData *ld,int thingnum) {
 		  if(x>0&&y>0)
 		    td->dx=td->dy=td->dz=0;
 		  break;
-	       };
-	    };
-	 };
-};
+	       }
+	    }
+	 }
+}
 
 void sector_thing_effect(LevData *ld,int sector,int thing,int tickspassed) {
    /*ThingDyn *td=ldthingd(ld)+thing;*/
@@ -155,8 +157,8 @@ void sector_thing_effect(LevData *ld,int sector,int thing,int tickspassed) {
       tmp+=random()&1023; /* not quite 1000, but faster */
       tmp/=1024;
       thing_take_damage(ld,thing,tmp);
-   };
-};
+   }
+}
 
 void update_things(LevData *ld,int tickspassed)  {
    int thingnum;
@@ -190,7 +192,7 @@ void update_things(LevData *ld,int tickspassed)  {
 	 td->pending_signal=TS_NOSIG;
 	 if(next<0) next=td->phase+1;
 	 thing_enter_phase(ld,thingnum,next);
-      };
+      }
       
       /* maybe thing has stopped existing now */
       if(td->proto==NULL) continue;
@@ -205,7 +207,7 @@ void update_things(LevData *ld,int tickspassed)  {
 	 td->angle=p->angle;
 	 td->elev=p->elev;
 	 continue;
-      };
+      }
       
       /* or has fallen off the map somehow */
       if(td->sector<0) continue;
@@ -224,9 +226,9 @@ void update_things(LevData *ld,int tickspassed)  {
 	    else if(td->proto->flags&PT_STUCKDOWN)
 	       td->z=ldsectord(ld)[td->sector].floor;
 #endif
-	 };
+	 }
 	 continue;
-      };
+      }
 
       /* apply gravity */
       if(td->proto->realmass==0||(td->proto->flags&PT_CAN_FLY));
@@ -250,7 +252,7 @@ void update_things(LevData *ld,int tickspassed)  {
 	 td->z+=dz;
 	 td->angle+=dangle;
 	 continue;
-      };
+      }
 
       /* skip collision checking if we're only moving vertically */
       if(dx==0&&dy==0) steps=0;
@@ -265,9 +267,9 @@ void update_things(LevData *ld,int tickspassed)  {
 	    dx=fixdiv(dx,s);
 	    dy=fixdiv(dy,s);
 	    steps=FIXED_TO_INT(s);
-	 }
-	 else steps=1;
-      };
+	 } else
+	    steps=1;
+      }
 	 
       for(i=0;i<steps;i++) {
 #ifndef NO_BLOCKMAP
@@ -311,11 +313,10 @@ void update_things(LevData *ld,int tickspassed)  {
 	    if(dist>0) {
 	       front=ldline(ld)[wall].side[1];
 	       back=ldline(ld)[wall].side[0];
-	    }
-	    else {
+	    } else {
 	       front=ldline(ld)[wall].side[0];
 	       back=ldline(ld)[wall].side[1];
-	    };
+	    }
 	    if(front>=0) front=ldside(ld)[front].sector;
 	    if(back>=0) back=ldside(ld)[back].sector;
 	    if(front<0) continue;
@@ -324,12 +325,11 @@ void update_things(LevData *ld,int tickspassed)  {
 	    if(back<0 || (ldline(ld)[wall].flags&LINE_IMPASSIBLE))  {
 	       headroom=FIXED_MIN;
 	       step_height=FIXED_MAX;
-	    }
-	    else  {
+	    } else {
 	       step_height=ldsectord(ld)[back].floor-
 		  ldsectord(ld)[front].floor;
 	       headroom=ldsectord(ld)[back].ceiling;
-	    };
+	    }
 	    
 	    /* object's height above its sector */
 	    jump_height=td->z-ldsectord(ld)[front].floor;
@@ -358,7 +358,7 @@ void update_things(LevData *ld,int tickspassed)  {
 		  minceiling=ldsectord(ld)[front].ceiling;
 	       if(back>=0&&ldsectord(ld)[back].ceiling<minceiling)
 		  minceiling=ldsectord(ld)[back].ceiling;
-	    };
+	    }
 
 	    /* is this wall passable? */
 	    if(step_height<=jump_height+climb_height&&
@@ -379,12 +379,12 @@ void update_things(LevData *ld,int tickspassed)  {
 		  else if(step_height<-(6<<12)) td->delev -= factor/32;
 		  else if(step_height>10<<12) td->delev += factor/24;
 		  else if(step_height<-(10<<12)) td->delev -= factor/24;
-	       };
+	       }
 	       /* take any "action on crossed" action for this wall */
 	       thing_hit_wall(ld,thingnum,wall,dist>0,Crossed);
 	       walls_crossed++;
 	       continue;
-	    };
+	    }
 	    
 	    /* wall must be impassible */
 	 
@@ -445,17 +445,17 @@ void update_things(LevData *ld,int tickspassed)  {
 			/* and we need to recalc the faked d? vals */
 			dx=((td->dx*tickspassed)/TICKDIV)/steps;
 			dy=((td->dy*tickspassed)/TICKDIV)/steps;
-		     };
-		  };
-	       };
-	    };
-	 };
+		     }
+		  }
+	       }
+	    }
+	 }
 
 	 thing_chk_collide(ld,thingnum);
 	 if(td->dx==0&&td->dy==0) {
 	    dx=dy=0;
 	    break;
-	 };
+	 }
       
 	 if(dx==0&&dy==0) break;
 	 /* update plane position */
@@ -464,7 +464,7 @@ void update_things(LevData *ld,int tickspassed)  {
 	 if(walls_crossed>0) thingd_findsector(ld,td);
 	 
       /*end of "steps" loop */
-      };
+      }
       
       /* now adjust dx and dy back to what they were before "steps" */
       dx*=steps;
@@ -486,7 +486,7 @@ void update_things(LevData *ld,int tickspassed)  {
 	 }
 	 else
 	    dz=maxfloor-td->z;
-      };
+      }
       /* ceiling gets priority so crushers grind you into the ground */
       if(ldsectord(ld)[td->sector].ceiling<minceiling)
 	 minceiling=ldsectord(ld)[td->sector].ceiling;
@@ -495,12 +495,11 @@ void update_things(LevData *ld,int tickspassed)  {
 	 if(td->proto->flags&PT_EXPLOSIVE)  {
 	    dz=dx=dy=td->dx=td->dy=td->dz=0;
 	    thing_send_sig(ld,thingnum,TS_EXPLODE);
-	 }
-	 else {
+	 } else {
 	    dz=r-(td->z+FIXED_EPSILON);
 	    sector_crush_thing(ld,td->sector,thingnum);
-	 };
-      };
+	 }
+      }
    
       /* update angular and vertical position */
       td->z+=dz;
@@ -515,15 +514,15 @@ void update_things(LevData *ld,int tickspassed)  {
 	 td->dy=fixmul(td->dy/1024,r);
 	 td->dz=fixmul(td->dz/1024,r);
 	 td->dangle=fixmul(td->dangle/1024,r);
-      };
+      }
 
       /* now update elev */
       td->elev+=td->delev;
       /* update delev */
       td->delev=td->delev/2;
 
-   };
-};
+   }
+}
 
 // Local Variables:
 // c-basic-offset: 3

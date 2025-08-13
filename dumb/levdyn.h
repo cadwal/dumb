@@ -2,10 +2,10 @@
 #ifndef LEVDYN_H
 #define LEVDYN_H
 
+#include "libdumbutil/fixed.h"
+#include "libdumb/texture.h"
+#include "libdumb/prothing.h"
 #include "levdata.h"
-#include "lib/fixed.h"
-#include "texture.h"
-#include "prothing.h"
 
 #define LD_DYNDECL(type) DYN_INIT_FUNC(type##_dyninit)
 #define LD_DYNINIT(type,dyn,lump) type##Dyn *dyn=_dyn;const type##Data *lump=_lump

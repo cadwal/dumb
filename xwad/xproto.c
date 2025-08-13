@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -11,10 +13,10 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#include "lib/log.h"
-#include "wad/wadio.h"
-#include "dumb/dsound.h"
-#include "plat/sound.h"
+#include "libdumbutil/log.h"
+#include "libdumbwad/wadio.h"
+#include "libdumb/dsound.h"
+#include "libdumb/sound.h"
 
 #include "xproto.h"
 #include "colour.h"
@@ -30,7 +32,7 @@ static int silent=0;
 #define RCOUNT 3
 
 static jmp_buf alarm_jb;
-void sigalarm_handler(int i) {
+RETSIGTYPE sigalarm_handler(int i) {
    int need_redraw=0;
    static int rcount=RCOUNT;
    /* sound */
@@ -43,8 +45,8 @@ void sigalarm_handler(int i) {
 	 if(inst->currot>7) inst->currot=0;
 	 need_redraw=1;
 	 rcount=RCOUNT;
-      };
-   };
+      }
+   }
    /* animate */
    if(inst->animate) {
       inst->phcount-=7;
@@ -56,18 +58,18 @@ void sigalarm_handler(int i) {
 	 }
 	 else xproto_enter_phase(inst,CURPHASE.next);
 	 if(inst->curphase!=oldph) need_redraw=2;
-      };
-   };
+      }
+   }
    /* do redraws */
    if(need_redraw==2) xproto_redraw(inst);
    else if(need_redraw==1) {
       XClearArea(dpy,inst->wdisp,0,0,0,0,False);
       redraw_wdisp(inst);
       rdoutp_cseti(&inst->dispctls,inst);
-   };
+   }
    /* done */
    longjmp(alarm_jb,1);
-};
+}
 
 
 static void usage(const char *name)  {
@@ -79,7 +81,7 @@ static void usage(const char *name)  {
 	  "\t-l <logfile> [logfile] [logfile]...\n"
 	  "\t-d <display>\n",name);
    exit(1);
-};
+}
 
 #define usage() usage(argv[0])
 
@@ -109,10 +111,10 @@ int main(int argc,char **argv) {
 	    if(argv[i][0]=='-')  {
 	       i--;
 	       break;
-	    };
+	    }
 	    if(nwads<MAX_WADS) 
 	       wadf[nwads++]=argv[i];
-	 };
+	 }
 	 break;
 	 /* l = log */
       case('l'):
@@ -120,9 +122,9 @@ int main(int argc,char **argv) {
 	    if(argv[i][0]=='-')  {
 	       i--;
 	       break;
-	    };
+	    }
 	    log_file(argv[i],LOG_ALL,NULL);
-	 };
+	 }
 	 break;
 	 /* d=display */
       case('d'):
@@ -133,14 +135,14 @@ int main(int argc,char **argv) {
       case('?'):
       default:
 	 usage();
-      };
-   };
+      }
+   }
 
    /* start logging */
    if(!quiet) {
       /*setlinebuf(stdout);*/ /* if stdout is a socket, we'll need this */
       log_stdout();
-   };
+   }
    logprintf(LOG_BANNER,'M',"XPROTO");
   
    /* start Xlib */
@@ -161,9 +163,9 @@ int main(int argc,char **argv) {
       while(i<nwads) init_pwad(wadf[i++]);
    }
    else {
-      init_iwad("doom2.wad");
+      init_iwad("doom2.wad");	/* FIXME: from .dumbrc or config.h */
       init_pwad("doom4dum.wad");
-   };
+   }
 
    /* init colormaps */
    init_colour();
@@ -189,7 +191,7 @@ int main(int argc,char **argv) {
 	    setitimer(ITIMER_REAL,&itv,NULL);
 #endif
 	    signal(SIGALRM,sigalarm_handler);
-      };
+      }
       XNextEvent(dpy,&ev);
       alarm(0);
       /* if there are any notifies lurking, we want the latest */
@@ -198,7 +200,7 @@ int main(int argc,char **argv) {
 				 ButtonMotionMask|PointerMotionMask,&ev));
       /* dispatch events to window */
       dispatch(&ev);
-   };
+   }
 
    /* close windows, free map */
    free_instance(inst);
@@ -218,7 +220,7 @@ int main(int argc,char **argv) {
    /* done */
    log_exit();
    return 0;
-};
+}
 
 void redraw_wdisp(XPInstance *inst) {
    if(CURPROTO.sprite[0]) {
@@ -228,8 +230,8 @@ void redraw_wdisp(XPInstance *inst) {
 				   rot);
       if(t) xtexture(dpy,inst->wdisp,t,
 		     t->name[7]==rot&&t->name[6]==CURPHASE.spr_phase);
-   };
-};
+   }
+}
 void xproto_redraw(XPInstance *inst) {
    XClearArea(dpy,inst->wdisp,0,0,0,0,False);
    redraw_wdisp(inst);
@@ -238,7 +240,7 @@ void xproto_redraw(XPInstance *inst) {
    rdoutp_cseti(&inst->dispctls,inst);
    rdlights_cseti(&inst->choctls,inst);
    rdlights_cseti(&inst->dispctls,inst);
-};
+}
 
 void xproto_enter_phase(XPInstance *inst,int ph) {
    if(ph<0) ph=inst->curphase+1;
@@ -246,15 +248,15 @@ void xproto_enter_phase(XPInstance *inst,int ph) {
    inst->phcount=CURPHASE.wait;
    if(CURPHASE.sound>=0&&!silent) 
       play_dsound_local(CURPHASE.sound+CURPROTO.sound,0,0,0);
-};
+}
 
 void xproto_sendsig(XPInstance *inst,ThingSignal sig) {
    int newphase=CURPROTO.signals[sig];
    if(newphase>=0) {
       xproto_enter_phase(inst,newphase);
       xproto_redraw(inst);
-   };
-};
+   }
+}
 
 static void framedhf(XEvent *ev,XPInstance *inst,void *info) {
    switch(ev->type) {
@@ -266,21 +268,21 @@ static void framedhf(XEvent *ev,XPInstance *inst,void *info) {
    case(KeyRelease):
       /* key event */
       break;
-   };
-};
+   }
+}
 static void dispdhf(XEvent *ev,XPInstance *inst,void *info) {
    switch(ev->type) {
    case(Expose):
       redraw_wdisp(inst);
       break;
-   };
-};
+   }
+}
 
 static const char *chotext(int i,XPInstance *inst) {
    static char buf[64];
    sprintf(buf,"%5d %s",inst->protos[i].id,inst->protos[i].sprite);
    return buf;
-};
+}
 static void chocur(int i,XPInstance *inst) {
    int j;
    inst->curphase=0;
@@ -288,7 +290,7 @@ static void chocur(int i,XPInstance *inst) {
    for(j=0;j<NUM_THINGSIGS;j++) 
       cseti_enable(&(inst->actctls),j,CURPROTO.signals[j]>=0);
    xproto_redraw(inst);
-};
+}
 
 void init_instance(XPInstance *inst) {
    /* clean slate */
@@ -338,7 +340,7 @@ void init_instance(XPInstance *inst) {
    XSelectInput(dpy,inst->wdisp,ExposureMask);
    XMapRaised(dpy,inst->frame);
    XSelectInput(dpy,inst->frame,KeyPressMask|StructureNotifyMask);
-};
+}
 
 void free_instance(XPInstance *inst) {
    free_cseti(&inst->choctls);
@@ -346,7 +348,7 @@ void free_instance(XPInstance *inst) {
    free_cseti(&inst->dispctls);
    free_choose(&inst->chooser);
    XDestroyWindow(dpy,inst->frame);
-};
+}
 
 void update_wmtitle(XPInstance *inst) {
      char *argv[2] = { "XProtoThing", NULL };
@@ -369,7 +371,7 @@ void update_wmtitle(XPInstance *inst) {
 		      argv, 1,
                       &size_hints, NULL, &class_hint);
 
-};
+}
 
 #define XSPACE 12
 #define YSPACE 8
@@ -404,7 +406,7 @@ void update_intgeo(XPInstance *inst) {
       if(frame_width<inst->min_width) frame_width=inst->min_width;
       if(frame_height<inst->min_height) frame_height=inst->min_height;
       XResizeWindow(dpy,inst->frame,frame_width,frame_height);
-   };
+   }
 
    /* arrange subwindows */
    XMoveResizeWindow(dpy,inst->chooser.w,
@@ -426,6 +428,6 @@ void update_intgeo(XPInstance *inst) {
    XMoveResizeWindow(dpy,inst->actctls.w,
 		     XSPACE*2+choc_width,YSPACE*3+disp_height+dispc_height,
 		     actc_width,actc_height);
-};
+}
 
 
