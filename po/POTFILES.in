@@ -93,6 +93,7 @@ tool/mknulmap.c
 tool/mkpnames.c
 tool/pngtodumb.c
 tool/ppmtodumb.c
+tool/todumb.c
 tool/wadtool.c
 xwad/connect.c
 xwad/mapcon.c

@@ -1,6 +1,6 @@
-;;; dumb-autoins.el --- Auto-insertion for DUMB .c and .h files
+;;; dumb-autoins.el --- Auto-insertion for DUMB .c, .h, .cc and .hh files
 
-;; Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
+;; Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
 
 ;; Author: Kalle Niemitalo <tosi@stekt.oulu.fi>
 ;; Keywords: local, c
@@ -42,6 +42,33 @@ if the resulting identifier would otherwise begin with a digit."
 	(setq id (concat "_" id)))
     id))
 
+(defconst dumb-free-software-comment
+  '("This program is free software; you can redistribute it and/or modify"
+    "it under the terms of the GNU General Public License as published by"
+    "the Free Software Foundation; either version 2 of the License, or"
+    "(at your option) any later version."
+    nil
+    "This program is distributed in the hope that it will be useful,"
+    "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+    "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU"
+    "General Public License for more details."
+    nil
+    "You should have received a copy of the GNU General Public License"
+    "along with this program; see the file COPYING.  If not, write to"
+    "the Free Software Foundation, Inc., 59 Temple Place - Suite 330,"
+    "Boston, MA 02111, USA.")
+  "The standard GPL comment at the beginning of each source file.
+The function `dumb-free-software-comment' reads this variable.")
+
+(defun dumb-free-software-comment (prefix)
+  "Return the standard GPL comment, as one long string.
+Prepend PREFIX and a space to each text line.
+This uses the variable `dumb-free-software-comment'."
+  (mapconcat
+   (lambda (line) (concat prefix (if line " ") line))
+   dumb-free-software-comment
+   "\n"))
+
 (define-auto-insert '("/dumb-[^/]+/\\(.+\\.c\\'\\)" . "DUMB C source")
   '("Short description: "
     '(setq v1 (match-string 1 buffer-file-name))
@@ -51,21 +78,63 @@ if the resulting identifier would otherwise begin with a digit."
  * " v1 ": " str "
  * Copyright (C) " (format-time-string "%Y") " by " user-full-name " <" user-mail-address ">
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; see the file COPYING.  If not, write to
- * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111, USA.
+" (dumb-free-software-comment " *") "
  */
+
+#include <config.h>
+
+#include \"libdumbutil/dumb-nls.h\"
+
+" _ "/* put the following in main() if you have that */
+#ifdef ENABLE_NLS
+   setlocale(LC_ALL, \"\");
+   bindtextdomain(PACKAGE, LOCALEDIR);
+   textdomain(PACKAGE);
+#endif /* ENABLE_NLS */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 3
+ * End:
+ */
+" '(setq c-basic-offset 3)))
+
+(define-auto-insert '("/dumb-[^/]+/\\(.+\\.h\\'\\)" . "DUMB C header")
+  '("Short description: "
+    '(setq v1 (match-string 1 buffer-file-name))
+    "\
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * " v1 ": " str "
+ * Copyright (C) " (format-time-string "%Y") " by " user-full-name " <" user-mail-address ">
+ *
+" (dumb-free-software-comment " *") "
+ */
+
+#ifndef " (dumb-header-name-to-id v1) "
+#define " (dumb-header-name-to-id v1) "
+
+" _ "
+
+#endif /* " (dumb-header-name-to-id v1) " */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 3
+ * End:
+ */
+" '(setq c-basic-offset 3)))
+
+(define-auto-insert '("/dumb-[^/]+/\\(.+\\.cc\\'\\)" . "DUMB C++ source")
+  '("Short description: "
+    '(setq v1 (match-string 1 buffer-file-name))
+    "\
+// DUMB: A Doom-like 3D game engine.
+//
+// " v1 ": " str "
+// Copyright (C) " (format-time-string "%Y") " by " user-full-name " <" user-mail-address ">
+//
+" (dumb-free-software-comment "//") "
 
 #include <config.h>
 
@@ -83,37 +152,23 @@ if the resulting identifier would otherwise begin with a digit."
 // End:
 " '(setq c-basic-offset 3)))
 
-(define-auto-insert '("/dumb-[^/]+/\\(.+\\.h\\'\\)" . "DUMB C header")
+(define-auto-insert '("/dumb-[^/]+/\\(.+\\.hh\\'\\)" . "DUMB C++ header")
   '("Short description: "
     '(setq v1 (match-string 1 buffer-file-name))
     "\
-/* DUMB: A Doom-like 3D game engine.
- *
- * " v1 ": " str "
- * Copyright (C) " (format-time-string "%Y") " by " user-full-name " <" user-mail-address ">
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; see the file COPYING.  If not, write to
- * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111, USA.
- */
+// DUMB: A Doom-like 3D game engine.
+//
+// " v1 ": " str "
+// Copyright (C) " (format-time-string "%Y") " by " user-full-name " <" user-mail-address ">
+//
+" (dumb-free-software-comment "//") "
 
 #ifndef " (dumb-header-name-to-id v1) "
 #define " (dumb-header-name-to-id v1) "
 
 " _ "
 
-#endif /* " (dumb-header-name-to-id v1) " */
+#endif // " (dumb-header-name-to-id v1) "
 
 // Local Variables:
 // c-basic-offset: 3

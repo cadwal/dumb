@@ -1,8 +1,8 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * tool/mkpnames.c: Compile a pnames script to PNAMES and TEXTURE1 lumps.
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
- * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  */
 
 #include <config.h>
+#include <dircfg.h>
 
 #include <errno.h>
 #include <stdio.h>
@@ -36,6 +37,7 @@
 #include "libdumbutil/endiantypes.h"
 #include "libdumbutil/exitcode.h"
 #include "libdumbutil/align.h"
+#include "libdumbwad/doomstruct.h"
 #include "libdumbwad/wadstruct.h"
 
 /* source_fname is initially NULL, which means to use stdin.  But
@@ -198,7 +200,7 @@ print_version(void)
 {
    static const struct copyright copyrights[] = {
       { "1998", "Josh Parsons" },
-      { "1998", "Kalle Niemitalo" },
+      { "1998-1999", "Kalle Niemitalo" },
       COPYRIGHT_END
    };
    fputs("mkpnames (DUMB) " VERSION "\n", stdout);

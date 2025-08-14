@@ -1,0 +1,398 @@
+\input texinfo                  @c -*- texinfo -*-
+
+@c This file should really become part of dumb.texinfo, but we don't
+@c have that yet.
+
+@c %**start of header
+
+@setfilename dumb-todo.info
+@settitle DUMB To Do list
+
+@c @dircategory Games
+@c @direntry
+@c * DUMB TODO: (dumb-todo).            DUMB To Do list
+@c @end direntry
+
+@c %**end of header
+
+@node Top
+@chapter FOO
+
+Highest-priority queue:
+
+@enumerate
+@item
+Rewrite @code{wadtool} to use @file{wadchain.hh}
+
+@item
+Rewrite @file{libdumbworldb} in C++, but don't get too excited.
+
+@item
+Separate the renderer from rest of the code again.
+
+@item
+Speed up rendering by checking recursively which sectors can be seen.
+This would use the sector/line cross-reference computed by
+libdumbworldb.
+
+@item
+Fix wall collision checks.  Currently, it's possible to climb to some
+forbidden places, and monsters seem to shoot through walls.
+
+@end enumerate
+
+Miscellaneous:
+
+@itemize @minus
+@item
+activation of walls, ceilings, things
+
+@item
+aim to monster nearest to screen center, not necessarily closest to
+player
+
+@item
+let fleshy walls and flats bleed when hit
+
+@item
+compile as C++ on little-endian machines too
+
+@item
+continuous sounds for moving sectors
+
+@item
+end-level statistics (secret%, kill%, collect%, hit%)
+
+@item
+finish off Heretic protos
+
+@item
+get rid of @code{alarm()}, use @code{select()} instead
+
+@item
+get rid of all arbitrary limits
+
+@item
+@uref{http://www.gnu.org/software/guile/guile.html, Guile} or
+@uref{http://pliant.cams.ehess.fr/, Pliant} scripts in wads.
+And then use them to implement cool things like mines!
+
+@item
+implement light goggles, etc....
+
+@item
+implement sectortypes (partially done; lacks Heretic's flowing water)
+
+@item
+jumping instead of levitation
+
+@item
+mapping
+
+@item
+move bpp-independent code to @file{rendcommon.c}
+
+@item
+moving vertices, sideways opening & hinged doors
+(the renderer supports them, something should just make them move)
+
+@item
+polymorphing to a monster (like in NetHack!)
+(might require rethinking input & AI system)
+
+@item
+sector shouldn't give damage while player is in air
+
+@item
+@file{snapshot.ppm} when @code{BPP}=1 (8 bits)
+
+@item
+sound shouldn't get through closed doors
+
+@item
+special shooting
+
+@item
+turning inertia control
+
+@item
+"Uff!" when the hero runs against a wall or falls
+
+@item
+use function keys for special commands, select weapons with numbers
+
+@item
+use regular fixed point instead of @code{UNIT_SPEED}
+
+@item
+weapon numbering
+@end itemize
+
+AA-lib:
+
+@itemize @minus
+@item
+@code{aadumb} doesn't build when using @samp{configure --without-x}
+
+@item
+ASCII snapshot
+
+@item
+draw text as text
+
+@item
+flow control (now it lags horribly at 9600bps)
+
+@item
+special handling for @code{AA_RESIZE} and @code{AA_MOUSE}
+
+@item
+three-state Boolean parameters
+
+@item
+use real ticks in autorelease
+@end itemize
+
+ctlkey:
+
+@itemize @minus
+@item
+mouse
+
+@item
+look at @uref{http://www.ggi-project.org/, GGI's}
+General Input Interface
+@end itemize
+
+Configuration:
+
+@itemize @minus
+@item
+don't forget @code{aadumb} settings with @samp{xdumb -S}, etc.
+
+@item
+dynamic enumerations (like for AA-lib fonts)
+
+@item
+halt on bogus parameters to enumerated switches
+
+@item
+support floating-point entries (for @samp{aadumb --vid-gamma})
+
+@item
+use argp? (from glibc-2.1)
+@end itemize
+
+Doom emulation:
+
+@itemize @minus
+@item
+automate 666 effect (with @code{Boss} keyword)
+
+@item
+doors should crush corpses to bloodsplats
+
+@item
+make player pick up things farther away (like armor in E1M2)
+
+@item
+rising staircases should be slower
+
+@item
+staircase doesn't work in E1M8
+@end itemize
+
+Keymap:
+
+@itemize @minus
+@item
+alternative keynames; recognize both @key{Shift_L} and @key{Shift_R} as
+@key{Shift}
+
+@item
+conditional entries like @samp{X11:KP_Up AA:8}
+
+@item
+@code{keymap_keyname_to_keycode()}
+@end itemize
+
+libdumbworldb:
+
+@itemize @minus
+@item
+make loops over things as efficient as possible
+
+@item
+tunneling
+@end itemize
+
+Logging:
+
+@itemize @minus
+@item
+replace @code{perror()} with something which works in a window too
+@end itemize
+
+Menus:
+
+@itemize @minus
+@item
+configuration menus
+
+@item
+confirm quitting
+
+@item
+load/save/newgame
+@end itemize
+
+Network games:
+
+@itemize @minus
+@item
+fix end of level
+
+@item
+games that anyone can join
+
+@item
+rewrite protocol completely, using libdumbworldb observers
+
+@item
+multicast
+
+@item
+register a port number from IANA (port 7777 is already "cbt")
+@end itemize
+
+Renderer:
+
+@itemize @minus
+@item
+allow using the same sprites for things and icons
+
+@item
+BPP should always mean Bits Per Pixel
+
+@item
+mipmapping
+
+@item
+scale weapons & gettable icons if framebuffer is small
+
+@item
+sectors above & below each other
+
+@item
+truecolor textures
+@end itemize
+
+Sound:
+
+@itemize @minus
+@item
+Doppler effects?
+
+@item
+do something about music
+
+@item
+echoes in sewers
+
+@item
+support ALSA, Enlightened Sound Daemon, rplay and NAS
+
+@item
+multi-threaded sound driver
+
+@item
+output to a file/pipe the user can postprocess any way (s)he wants
+@end itemize
+
+Video:
+
+@itemize @minus
+@item
+gamma control from keyboard
+
+@item
+light areas should be lighter, dark ones darker (0=almost impossible to
+see)
+
+@item
+non-320x200 resolutions (DUMB logo, icon placement, font size)
+
+@item
+mark the selected inventory item in a prettier way
+@end itemize
+
+WAD dependency hierarchy:
+
+@itemize @minus
+@item
+@file{REQUIRE} and @file{PROVIDE} lumps (use and ASCII format) with
+version numbers
+
+@item
+allow each level to specify its own @file{LEVINFO}, @file{PROTOS} and
+@file{PHASES}
+
+@item
+autoload a wad when an IWAD uses one of its textures?
+
+@item
+use heuristics if a wad doesn't contain a @file{REQUIRE} lump
+
+@item
+@code{LumpNum} must stay valid even if more WADs are loaded
+(@file{wadchain.cc} solves this)
+@end itemize
+
+@code{wadtool}:
+
+@itemize @minus
+@item
+a cleaner way to list the contents of a WAD than copying to
+@file{/dev/null}
+
+@item
+@samp{--verbose}
+@end itemize
+
+X11:
+
+@itemize @minus
+@item
+clean up shm on fatal signals
+
+@item
+fix DGA
+
+@item
+@code{KeymapNotify}
+
+@item
+set icon in program, not in window manager config
+
+@item
+turn autorepeat off when window has focus and XKB isn't available
+
+@item
+use timestamps from keyboard events
+@end itemize
+
+@code{XProtoThing}:
+
+@itemize @minus
+@item
+dumps core when stepping past end of Doom's TFOG
+@end itemize
+
+@code{XWad}:
+
+@itemize @minus
+@item
+preview window, could even be a full game
+@end itemize
+
+@bye

@@ -20,6 +20,7 @@
  */
 
 #include <config.h>
+#include <dircfg.h>
 
 #include <limits.h>
 #include <stdio.h>
@@ -171,18 +172,18 @@ parse_args(int argc, char **argv)
 {
    static const struct option long_opts[] =
    {
-      {"map", required_argument, NULL, 'm'},
-      {"difficulty", required_argument, NULL, 'd'},
-      {"verbose", no_argument, &verbose_flag, 1},
-      {"statistics", no_argument, NULL, 'i'},
-      {"sector-sides", required_argument, NULL, 's'},
+      {"map",           required_argument, NULL, 'm'},
+      {"difficulty",    required_argument, NULL, 'd'},
+      {"verbose",       no_argument,       &verbose_flag, 1},
+      {"statistics",    no_argument,       NULL, 'i'},
+      {"sector-sides",  required_argument, NULL, 's'},
       {"sector-things", required_argument, NULL, 't'},
       {"thing-sectors", required_argument, NULL, 'T'},
-      {"set-name", required_argument, NULL, 'n'},
+      {"set-name",      required_argument, NULL, 'n'},
       {"set-long-name", required_argument, NULL, 'l'},
-      {"output-doom", required_argument, NULL, 'o'},
-      {"help", no_argument, NULL, 1},
-      {"version", no_argument, NULL, 2},
+      {"output-doom",   required_argument, NULL, 'o'},
+      {"help",          no_argument,       NULL, 1},
+      {"version",       no_argument,       NULL, 2},
       {0, 0, 0, 0}
    };
    int index;			/* in argv[], used for filenames */

@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/fbrerend.h: Rescaling the framebuffer.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1997 by Marcus Sundberg <e94_msu@e.kth.se>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,12 +25,38 @@
 
 #include "render.h"
 
-void *fbrerender8(Pixel8 *fb, Pixel8 *rendfb, int xsize, int ysize,
-		  int xfact, int yfact, int xlace, int ylace);
-void *fbrerender16(Pixel16 *fb, Pixel16 *rendfb, int xsize, int ysize,
-		   int xfact, int yfact, int xlace, int ylace);
-void *fbrerender32(Pixel32 *fb, Pixel32 *rendfb, int xsize, int ysize,
-		   int xfact, int yfact, int xlace, int ylace);
+/* In DUMB 0.13.9, these functions returned the address of the
+   framebuffer where they had drawn.  It was usually DESTFB but could
+   be SRCFB if XFACT and YFACT were 1.
+
+   However, the video routines expect DUMB to render to the
+   framebuffer returned by video_newframe(), so these functions can't
+   just return another pointer and hope it will work.
+
+   In DUMB 0.13.10, the functions call abort() if they notice there's
+   nothing to do.  The alternative would be to memcpy() the
+   framebuffer but it's better to use the right one in the first
+   place.  */
+
+void fbrerender8(Pixel8 *destfb, const Pixel8 *srcfb,
+		 int xsize, int ysize,
+		 int xfact, int yfact,
+		 int xlace, int ylace);
+void fbrerender16(Pixel16 *destfb, const Pixel16 *srcfb,
+		  int xsize, int ysize,
+		  int xfact, int yfact,
+		  int xlace, int ylace);
+void fbrerender32(Pixel32 *destfb, const Pixel32 *srcfb,
+		  int xsize, int ysize,
+		  int xfact, int yfact,
+		  int xlace, int ylace);
+
+/* Calls one of the above */
+void fbrerender(int bytes_per_pixel,
+		void *destfb, const void *srcfb,
+		int xsize, int ysize,
+		int xfact, int yfact,
+		int xlace, int ylace);
 
 #endif /* FBREREND_H */
 

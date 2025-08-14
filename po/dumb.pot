@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1999-06-09 14:48+0300\n"
+"POT-Creation-Date: 1999-07-16 21:39+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -428,220 +428,220 @@ msgstr ""
 msgid "Video mode: %s (%s)"
 msgstr ""
 
-#: dumb/dumb.c:85
+#: dumb/dumb.c:87
 msgid "got SIGALRM: renderer must have gotten stuck..."
 msgstr ""
 
-#: dumb/dumb.c:93
+#: dumb/dumb.c:95
 msgid "save configuration after every run"
 msgstr ""
 
-#: dumb/dumb.c:94
+#: dumb/dumb.c:96
 msgid "save configuration this time only"
 msgstr ""
 
-#: dumb/dumb.c:95
+#: dumb/dumb.c:97
 msgid "specify wadfiles to load"
 msgstr ""
 
-#: dumb/dumb.c:96
+#: dumb/dumb.c:98
 msgid "directories in which to look for wads"
 msgstr ""
 
-#: dumb/dumb.c:97
+#: dumb/dumb.c:99
 msgid "filename of doom.wad"
 msgstr ""
 
-#: dumb/dumb.c:98
+#: dumb/dumb.c:100
 msgid "filename of doom2.wad"
 msgstr ""
 
-#: dumb/dumb.c:99
+#: dumb/dumb.c:101
 msgid "filename of doom4dum.wad"
 msgstr ""
 
-#: dumb/dumb.c:100
+#: dumb/dumb.c:102
 msgid "set starting map"
 msgstr ""
 
-#: dumb/dumb.c:101
+#: dumb/dumb.c:103
 msgid "don't log to the screen"
 msgstr ""
 
-#: dumb/dumb.c:102
+#: dumb/dumb.c:104
 msgid "don't create any objects, just preview the map"
 msgstr ""
 
-#: dumb/dumb.c:103
+#: dumb/dumb.c:105
 msgid "set difficulty level"
 msgstr ""
 
-#: dumb/dumb.c:104
+#: dumb/dumb.c:106
 msgid "disable sound"
 msgstr ""
 
-#: dumb/dumb.c:105
+#: dumb/dumb.c:107
 msgid "video width"
 msgstr ""
 
-#: dumb/dumb.c:106
+#: dumb/dumb.c:108
 msgid "video height"
 msgstr ""
 
-#: dumb/dumb.c:107
+#: dumb/dumb.c:109
 msgid "video depth (in bytes/pixel)"
 msgstr ""
 
-#: dumb/dumb.c:108
+#: dumb/dumb.c:110
 msgid "log to this file"
 msgstr ""
 
-#: dumb/dumb.c:109
+#: dumb/dumb.c:111
 msgid "record player actions to file"
 msgstr ""
 
-#: dumb/dumb.c:110
+#: dumb/dumb.c:112
 msgid "playback player actions from file"
 msgstr ""
 
-#: dumb/dumb.c:111
+#: dumb/dumb.c:113
 msgid "hide gettables and banners"
 msgstr ""
 
-#: dumb/dumb.c:112
+#: dumb/dumb.c:114
 msgid "show a crosshair in the center of the view"
 msgstr ""
 
-#: dumb/dumb.c:113
+#: dumb/dumb.c:115
 msgid "multiply the pixels x size"
 msgstr ""
 
-#: dumb/dumb.c:114
+#: dumb/dumb.c:116
 msgid "multiply the pixels y size"
 msgstr ""
 
-#: dumb/dumb.c:115
+#: dumb/dumb.c:117
 msgid "skip pixels when multiplying x size"
 msgstr ""
 
-#: dumb/dumb.c:116
+#: dumb/dumb.c:118
 msgid "skip pixels when multiplying y size"
 msgstr ""
 
-#: dumb/dumb.c:117
+#: dumb/dumb.c:119
 msgid "load textures before game starts"
 msgstr ""
 
-#: dumb/dumb.c:118
+#: dumb/dumb.c:120
 msgid "angle from forward of player view"
 msgstr ""
 
-#: dumb/dumb.c:119
+#: dumb/dumb.c:121
 msgid "offset from center of player view"
 msgstr ""
 
-#: dumb/dumb.c:120
+#: dumb/dumb.c:122
 msgid "network play: slave mode"
 msgstr ""
 
-#: dumb/dumb.c:121
+#: dumb/dumb.c:123
 msgid "network play: master mode"
 msgstr ""
 
-#: dumb/dumb.c:122
+#: dumb/dumb.c:124
 msgid "force single player mode"
 msgstr ""
 
-#: dumb/dumb.c:123
+#: dumb/dumb.c:125
 msgid "angle to rotate view by"
 msgstr ""
 
-#: dumb/dumb.c:124
+#: dumb/dumb.c:126
 msgid "maximum frames to render"
 msgstr ""
 
-#: dumb/dumb.c:125
+#: dumb/dumb.c:127
 msgid "enable 3rd person perspective"
 msgstr ""
 
-#: dumb/dumb.c:165
+#: dumb/dumb.c:167
 msgid "Input Driver"
 msgstr ""
 
-#: dumb/dumb.c:166
+#: dumb/dumb.c:168
 msgid "Video Driver"
 msgstr ""
 
-#: dumb/dumb.c:167
+#: dumb/dumb.c:169
 msgid "Sound Driver"
 msgstr ""
 
-#: dumb/dumb.c:168
+#: dumb/dumb.c:170
 msgid "Network Driver"
 msgstr ""
 
-#: dumb/dumb.c:169
+#: dumb/dumb.c:171
 msgid "Network Play"
 msgstr ""
 
-#: dumb/dumb.c:170
+#: dumb/dumb.c:172
 msgid "General Game Control"
 msgstr ""
 
-#: dumb/dumb.c:171
+#: dumb/dumb.c:173
 msgid "Player Interface"
 msgstr ""
 
-#: dumb/dumb.c:172
+#: dumb/dumb.c:174
 msgid "Keyboard Mapping"
 msgstr ""
 
-#: dumb/dumb.c:200 ptcomp/ptcomp.c:146 test/dwdbtest.c:164 test/fixed_bm.c:170
-#: tool/dark2trans.c:148 tool/mkdfnt.c:137 tool/mknulmap.c:208
-#: tool/mkpnames.c:206 tool/pngtodumb.c:249 tool/ppmtodumb.c:241
-#: tool/wadtool.c:119 xwad/xproto.c:373 xwad/xwad.c:113
+#: dumb/dumb.c:202 ptcomp/ptcomp.c:147 test/dwdbtest.c:165 test/fixed_bm.c:171
+#: tool/dark2trans.c:150 tool/mkdfnt.c:139 tool/mknulmap.c:211
+#: tool/mkpnames.c:208 tool/todumb.c:229 tool/wadtool.c:120 xwad/xproto.c:374
+#: xwad/xwad.c:114
 msgid ""
 "This program is free software; you may redistribute it under the terms of\n"
 "the GNU General Public License.  This program has absolutely no warranty.\n"
 msgstr ""
 
-#: dumb/dumb.c:223
+#: dumb/dumb.c:225
 msgid "Preloading wall textures"
 msgstr ""
 
-#: dumb/dumb.c:233
+#: dumb/dumb.c:235
 msgid "Preloading floor/ceiling textures"
 msgstr ""
 
-#: dumb/dumb.c:241
+#: dumb/dumb.c:243
 msgid "Preloading sprites"
 msgstr ""
 
-#: dumb/dumb.c:260
+#: dumb/dumb.c:262
 msgid ""
 "This program was compiled to use MMX, but your processor\n"
 "does not appear to support it.\n"
 msgstr ""
 
-#: dumb/dumb.c:366
+#: dumb/dumb.c:357
 #, c-format
 msgid "Read configuration from %s"
 msgstr ""
 
-#: dumb/dumb.c:412
+#: dumb/dumb.c:403
 msgid "network mode: slave"
 msgstr ""
 
-#: dumb/dumb.c:418
+#: dumb/dumb.c:409
 msgid "network mode: master"
 msgstr ""
 
-#: dumb/dumb.c:490
+#: dumb/dumb.c:478
 #, c-format
 msgid "Unsupported BPP=%d"
 msgstr ""
 
-#: dumb/dumb.c:516
+#: dumb/dumb.c:504
 msgid "Can't find sector for player"
 msgstr ""
 
@@ -668,45 +668,45 @@ msgstr ""
 #. * 	 }
 #. * }
 #.
-#: dumb/dumb.c:553
+#: dumb/dumb.c:541
 msgid "starting game"
 msgstr ""
 
-#: dumb/dumb.c:600
+#: dumb/dumb.c:594
 msgid "Demo ran out..."
 msgstr ""
 
-#: dumb/dumb.c:649
+#: dumb/dumb.c:643
 msgid "saving snapshot..."
 msgstr ""
 
-#: dumb/dumb.c:677
+#: dumb/dumb.c:671
 msgid "snapshot done"
 msgstr ""
 
-#: dumb/dumb.c:681
+#: dumb/dumb.c:675
 #, c-format
 msgid "%d ticks passed with MAXTICKS=%d"
 msgstr ""
 
-#: dumb/dumb.c:711
+#: dumb/dumb.c:705
 msgid "WARNING: this system is running faster than the timer resolution"
 msgstr ""
 
-#: dumb/dumb.c:714
+#: dumb/dumb.c:708
 msgid "Try running DUMB in a larger window."
 msgstr ""
 
-#: dumb/dumb.c:717
+#: dumb/dumb.c:711
 msgid "You died.  Too bad..."
 msgstr ""
 
-#: dumb/dumb.c:733
+#: dumb/dumb.c:727
 #, c-format
 msgid "%d frames, %d seconds, %f fps"
 msgstr ""
 
-#: dumb/dumb.c:759
+#: dumb/dumb.c:753
 #, c-format
 msgid "Saving config to %s"
 msgstr ""
@@ -1112,7 +1112,7 @@ msgstr ""
 msgid "fontless message: %s"
 msgstr ""
 
-#: dumb/msgdom.c:48
+#: dumb/msgdom.c:49
 msgid "warning: MessageDomain not set"
 msgstr ""
 
@@ -1224,58 +1224,66 @@ msgstr ""
 msgid "station %s (%d) lives!"
 msgstr ""
 
-#: dumb/rendcore.h:89 dumb/rendcore.h:175 dumb/rendcore.h:409
+#: dumb/rendcore.h:90 dumb/rendcore.h:176 dumb/rendcore.h:408
 #, c-format
 msgid "start=%d end=%d"
 msgstr ""
 
-#: dumb/rendcore.h:90
+#: dumb/rendcore.h:91
 msgid "problems with fb coords in draw_wall_segment"
 msgstr ""
 
-#: dumb/rendcore.h:176
+#: dumb/rendcore.h:177
 msgid "problems with fb coords in draw_sky_segment"
 msgstr ""
 
-#: dumb/rendcore.h:410
+#: dumb/rendcore.h:409
 msgid "problems with fb coords in draw_obj"
 msgstr ""
 
-#: dumb/rendcore.h:413
+#: dumb/rendcore.h:412
 #, c-format
 msgid "Column (%d) off edge of sprite (width=%d)"
 msgstr ""
 
-#: dumb/renderc.h:329
+#: dumb/renderc.h:335
+msgid "No COLORMAP lump"
+msgstr ""
+
+#: dumb/renderc.h:343
+msgid "Converting colormap"
+msgstr ""
+
+#: dumb/renderc.h:366
 #, c-format
 msgid "init_renderer fb dimensions (%d,%d) view (%d,%d) bpp=%d"
 msgstr ""
 
-#: dumb/renderc.h:548
+#: dumb/renderc.h:584
 #, c-format
 msgid "fb1=%d fb2=%d for wall %d"
 msgstr ""
 
-#: dumb/renderc.h:581 dumb/renderc.h:591
+#: dumb/renderc.h:617 dumb/renderc.h:627
 #, c-format
 msgid "Too many wall start_events column=%d"
 msgstr ""
 
-#: dumb/renderc.h:720
+#: dumb/renderc.h:756
 msgid "Too many obj start_events"
 msgstr ""
 
-#: dumb/renderc.h:784
+#: dumb/renderc.h:820
 #, c-format
 msgid "active_count=%d at rw_column %d"
 msgstr ""
 
-#: dumb/renderc.h:787
+#: dumb/renderc.h:823
 #, c-format
 msgid "active_obj_count=%d at rw_column %d"
 msgstr ""
 
-#: dumb/renderc.h:797
+#: dumb/renderc.h:833
 #, c-format
 msgid "Too many active objects (%d)"
 msgstr ""
@@ -2004,155 +2012,155 @@ msgstr ""
 msgid "sndmix_calc_frag: strange format %d"
 msgstr ""
 
-#: libdumb/texture.c:162
+#: libdumb/texture.c:163
 msgid "Bad BPP value in paste_pict"
 msgstr ""
 
-#: libdumb/texture.c:183
+#: libdumb/texture.c:184
 msgid "Bad BPP value in paste_jpatch"
 msgstr ""
 
-#: libdumb/texture.c:226
+#: libdumb/texture.c:227
 #, c-format
 msgid "... but should be %d"
 msgstr ""
 
-#: libdumb/texture.c:246
+#: libdumb/texture.c:247
 msgid "No metatexture lumps in WAD"
 msgstr ""
 
-#: libdumb/texture.c:253 libdumb/texture.c:257
+#: libdumb/texture.c:254 libdumb/texture.c:258
 #, c-format
 msgid "%s has %d wall textures"
 msgstr ""
 
-#: libdumb/texture.c:353
+#: libdumb/texture.c:354
 msgid "Can't find any sprites in WAD"
 msgstr ""
 
-#: libdumb/texture.c:369
+#: libdumb/texture.c:370
 #, c-format
 msgid "too short sprite: %s"
 msgstr ""
 
-#: libdumb/texture.c:378
+#: libdumb/texture.c:379
 #, c-format
 msgid "Init %d sprites"
 msgstr ""
 
-#: libdumb/texture.c:398
+#: libdumb/texture.c:399
 #, c-format
 msgid "Bad lumpnum for texture %s in load_sprite()"
 msgstr ""
 
-#: libdumb/texture.c:437
+#: libdumb/texture.c:438
 #, c-format
 msgid "Can't find sprite texture %s"
 msgstr ""
 
-#: libdumb/texture.c:487
+#: libdumb/texture.c:488
 msgid "Can't find any flats in WAD"
 msgstr ""
 
-#: libdumb/texture.c:525
+#: libdumb/texture.c:526
 #, c-format
 msgid "funny length (%d) for flat %s"
 msgstr ""
 
-#: libdumb/texture.c:530
+#: libdumb/texture.c:531
 #, c-format
 msgid "Init %d flats"
 msgstr ""
 
-#: libdumb/texture.c:585
+#: libdumb/texture.c:586
 #, c-format
 msgid "Can't find flat texture %s"
 msgstr ""
 
-#: libdumb/texture.c:641
+#: libdumb/texture.c:642
 #, c-format
 msgid "Patchnum %d (%s) doesn't exist"
 msgstr ""
 
-#: libdumb/texture.c:645
+#: libdumb/texture.c:646
 #, c-format
 msgid "loading patchnum %d (%s)"
 msgstr ""
 
-#: libdumb/texture.c:668
+#: libdumb/texture.c:669
 #, c-format
 msgid "init_walltexs(): %d textures"
 msgstr ""
 
-#: libdumb/texture.c:703
+#: libdumb/texture.c:704
 #, c-format
 msgid "Can't find wall texture %s"
 msgstr ""
 
-#: libdumb/texture.c:718
+#: libdumb/texture.c:719
 #, c-format
 msgid "wtex \"%s\" is unaligned with offset %ld!"
 msgstr ""
 
-#: libdumb/texture.c:730
+#: libdumb/texture.c:731
 #, c-format
 msgid "using one-patch kludge for %s"
 msgstr ""
 
-#: libdumb/texture.c:750
+#: libdumb/texture.c:751
 #, c-format
 msgid "load_walltex %s at %d bpp"
 msgstr ""
 
-#: libdumb/texture.c:759
+#: libdumb/texture.c:760
 #, c-format
 msgid "%s: %d patches"
 msgstr ""
 
-#: libdumb/texture.c:770
+#: libdumb/texture.c:771
 #, c-format
 msgid "Can't make sense of patch #%d, texture %s"
 msgstr ""
 
-#: libdumb/texture.c:774
+#: libdumb/texture.c:775
 #, c-format
 msgid "%s: loaded"
 msgstr ""
 
-#: libdumb/texture.c:825
+#: libdumb/texture.c:826
 msgid "too many misc textures"
 msgstr ""
 
-#: libdumb/texture.c:853
+#: libdumb/texture.c:854
 #, c-format
 msgid "get_texture_num: unsupported texture type (%d)"
 msgstr ""
 
-#: libdumb/texture.c:872
+#: libdumb/texture.c:873
 #, c-format
 msgid "get_texture_bynum: unsupported texture type (%d)"
 msgstr ""
 
-#: libdumb/texture.c:892
+#: libdumb/texture.c:893
 #, c-format
 msgid "count_textures: unsupported texture type (%d)"
 msgstr ""
 
-#: libdumb/texture.c:906
+#: libdumb/texture.c:907
 msgid "init_textures(): done"
 msgstr ""
 
-#: libdumb/texture.c:942
+#: libdumb/texture.c:943
 #, c-format
 msgid "Strange texture type (0x%x) in free_texels"
 msgstr ""
 
-#: libdumb/texture.c:953
+#: libdumb/texture.c:954
 #, c-format
 msgid "Strange BPP value (%d) in load_texels"
 msgstr ""
 
-#: libdumb/texture.c:974
+#: libdumb/texture.c:975
 #, c-format
 msgid "Strange texture type (0x%x) in load_texels"
 msgstr ""
@@ -2966,11 +2974,11 @@ msgstr ""
 msgid "ID %d not unique (clashes with %s)"
 msgstr ""
 
-#: ptcomp/ptcomp.c:109
+#: ptcomp/ptcomp.c:110
 msgid "Syntax error"
 msgstr ""
 
-#: ptcomp/ptcomp.c:117
+#: ptcomp/ptcomp.c:118
 #, c-format
 msgid ""
 "Usage: %s -o WADFILE\n"
@@ -2982,7 +2990,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: ptcomp/ptcomp.c:126
+#: ptcomp/ptcomp.c:127
 msgid ""
 "  -o, --output-wad=WADFILE          create WADFILE containing the lumps\n"
 "  -d, --output-directory=DIRECTORY  write *.lump files in DIRECTORY\n"
@@ -2993,31 +3001,31 @@ msgid ""
 "\n"
 msgstr ""
 
-#: ptcomp/ptcomp.c:166 tool/dark2trans.c:73 tool/mkdfnt.c:180
-#: tool/mknulmap.c:112 tool/mkpnames.c:101
+#: ptcomp/ptcomp.c:167 tool/dark2trans.c:74 tool/mkdfnt.c:182
+#: tool/mknulmap.c:114 tool/mkpnames.c:103
 #, c-format
 msgid "%s: Deprecated usage.  Assuming you meant:\n"
 msgstr ""
 
 #. invalid option
-#: ptcomp/ptcomp.c:199 ptcomp/ptcomp.c:208 test/dwdbtest.c:249
-#: test/fixed_bm.c:94 tool/dark2trans.c:187 tool/mkdfnt.c:145
-#: tool/mknulmap.c:216 tool/mkpnames.c:169 tool/pngtodumb.c:257
-#: tool/ppmtodumb.c:249 xwad/xproto.c:153 xwad/xwad.c:190
+#: ptcomp/ptcomp.c:200 ptcomp/ptcomp.c:209 test/dwdbtest.c:250
+#: test/fixed_bm.c:95 tool/dark2trans.c:189 tool/mkdfnt.c:147
+#: tool/mknulmap.c:219 tool/mkpnames.c:171 tool/todumb.c:237 xwad/xproto.c:154
+#: xwad/xwad.c:191
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr ""
 
-#: ptcomp/ptcomp.c:206
+#: ptcomp/ptcomp.c:207
 #, c-format
 msgid "%s: You must use `-d DIRECTORY' or `-o WADFILE'\n"
 msgstr ""
 
-#: ptcomp/ptcomp.c:225 tool/mkpnames.c:408
+#: ptcomp/ptcomp.c:226 tool/mkpnames.c:410
 msgid "stdin"
 msgstr ""
 
-#: ptcomp/ptcomp.c:226
+#: ptcomp/ptcomp.c:227
 #, c-format
 msgid "%s: compiling...\n"
 msgstr ""
@@ -3101,17 +3109,17 @@ msgstr ""
 msgid " at `%s'\n"
 msgstr ""
 
-#: test/dwdbtest.c:112
+#: test/dwdbtest.c:113
 #, c-format
 msgid "%s: initializing map\n"
 msgstr ""
 
-#: test/dwdbtest.c:116
+#: test/dwdbtest.c:117
 #, c-format
 msgid "%s: setting difficulty\n"
 msgstr ""
 
-#: test/dwdbtest.c:131
+#: test/dwdbtest.c:132
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... IWAD [PWAD]...\n"
@@ -3119,7 +3127,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: test/dwdbtest.c:134
+#: test/dwdbtest.c:135
 #, c-format
 msgid ""
 "  Settings:\n"
@@ -3128,7 +3136,7 @@ msgid ""
 "      --verbose              explain what is being done\n"
 msgstr ""
 
-#: test/dwdbtest.c:139
+#: test/dwdbtest.c:140
 msgid ""
 "  Operations:\n"
 "      --statistics           display statistics on the whole map\n"
@@ -3141,7 +3149,7 @@ msgid ""
 "                             .wad won't be appended automatically.\n"
 msgstr ""
 
-#: test/dwdbtest.c:148
+#: test/dwdbtest.c:149
 msgid ""
 "  Other:\n"
 "      --help                 display this help and exit\n"
@@ -3149,112 +3157,112 @@ msgid ""
 "\n"
 msgstr ""
 
-#: test/dwdbtest.c:201
+#: test/dwdbtest.c:202
 #, c-format
 msgid "%s: --difficulty given twice\n"
 msgstr ""
 
-#: test/dwdbtest.c:204
+#: test/dwdbtest.c:205
 #, c-format
 msgid "%s: invalid difficulty `%s'\n"
 msgstr ""
 
-#: test/dwdbtest.c:206
+#: test/dwdbtest.c:207
 #, c-format
 msgid "%s: difficulty must be between 1 and 5\n"
 msgstr ""
 
-#: test/dwdbtest.c:216 test/dwdbtest.c:222
+#: test/dwdbtest.c:217 test/dwdbtest.c:223
 #, c-format
 msgid "%s: invalid sector number `%s'\n"
 msgstr ""
 
-#: test/dwdbtest.c:228
+#: test/dwdbtest.c:229
 #, c-format
 msgid "%s: invalid thing number `%s'\n"
 msgstr ""
 
-#: test/dwdbtest.c:259
+#: test/dwdbtest.c:260
 #, c-format
 msgid "%s: opening files\n"
 msgstr ""
 
-#: test/dwdbtest.c:262
+#: test/dwdbtest.c:263
 #, c-format
 msgid "%s: missing IWAD argument\n"
 msgstr ""
 
-#: test/dwdbtest.c:340
+#: test/dwdbtest.c:341
 #, c-format
 msgid "Statistics for level %s:"
 msgstr ""
 
-#: test/dwdbtest.c:341
+#: test/dwdbtest.c:342
 msgid ""
 "\n"
 "\tVertices: "
 msgstr ""
 
-#: test/dwdbtest.c:343
+#: test/dwdbtest.c:344
 msgid ""
 "\n"
 "\tSectors: "
 msgstr ""
 
-#: test/dwdbtest.c:345
+#: test/dwdbtest.c:346
 msgid ""
 "\n"
 "\tSides: "
 msgstr ""
 
-#: test/dwdbtest.c:347
+#: test/dwdbtest.c:348
 msgid ""
 "\n"
 "\tLines: "
 msgstr ""
 
-#: test/dwdbtest.c:349
+#: test/dwdbtest.c:350
 msgid ""
 "\n"
 "\tThings: "
 msgstr ""
 
-#: test/dwdbtest.c:357
+#: test/dwdbtest.c:358
 #, c-format
 msgid "%u alloced, %u inited, %u free"
 msgstr ""
 
-#: test/dwdbtest.c:366 test/dwdbtest.c:396
+#: test/dwdbtest.c:367 test/dwdbtest.c:397
 #, c-format
 msgid "%s: sector number %d doesn't exist\n"
 msgstr ""
 
-#: test/dwdbtest.c:370
+#: test/dwdbtest.c:371
 #, c-format
 msgid "Sides in sector %d:\n"
 msgstr ""
 
-#: test/dwdbtest.c:383
+#: test/dwdbtest.c:384
 #, c-format
 msgid "\tside %5d, line %5d\n"
 msgstr ""
 
-#: test/dwdbtest.c:386
+#: test/dwdbtest.c:387
 #, c-format
 msgid "\tside %5d, line %5d, opposite sector %5d\n"
 msgstr ""
 
-#: test/dwdbtest.c:400
+#: test/dwdbtest.c:401
 #, c-format
 msgid "Things in sector %d:"
 msgstr ""
 
-#: test/dwdbtest.c:413
+#: test/dwdbtest.c:414
 #, c-format
 msgid "%s: thing number %d doesn't exist\n"
 msgstr ""
 
-#: test/dwdbtest.c:417
+#: test/dwdbtest.c:418
 #, c-format
 msgid "Sectors thing %d is in:"
 msgstr ""
@@ -3262,18 +3270,18 @@ msgstr ""
 #. strtol() couldn't parse it at all, or there is some garbage
 #. * after it.  Note that str may be empty, in which case
 #. * *tail=='\0' but tail==str.
-#: test/fixed_bm.c:80 tool/dark2trans.c:172 tool/mkdfnt.c:292
+#: test/fixed_bm.c:81 tool/dark2trans.c:174 tool/mkdfnt.c:294
 #, c-format
 msgid "%s: invalid integer `%s'\n"
 msgstr ""
 
-#: test/fixed_bm.c:85
+#: test/fixed_bm.c:86
 #, c-format
 msgid "%s: integer `%s' is too large\n"
 msgstr ""
 
 #. --help
-#: test/fixed_bm.c:150
+#: test/fixed_bm.c:151
 #, c-format
 msgid ""
 "Usage: %s [--seed=INTEGER]\n"
@@ -3282,7 +3290,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: test/fixed_bm.c:154
+#: test/fixed_bm.c:155
 msgid ""
 "  -s, --seed=INTEGER  seed for random number generator\n"
 "      --help          display this help and exit\n"
@@ -3290,7 +3298,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: test/fixed_bm.c:179 tool/pngtodumb.c:178 tool/ppmtodumb.c:170
+#: test/fixed_bm.c:180 tool/todumb.c:163
 #, c-format
 msgid "%s: Non-option arguments are not allowed\n"
 msgstr ""
@@ -3299,40 +3307,40 @@ msgstr ""
 #. printf("sizeof(long long)=%d sizeof(long)=%d, sizeof(int)=%d\n",
 #. sizeof(long long),sizeof(long),sizeof(int));
 #.
-#: test/fixed_bm.c:189
+#: test/fixed_bm.c:190
 msgid ""
 "\n"
 "Adding random numbers..."
 msgstr ""
 
-#: test/fixed_bm.c:196 test/fixed_bm.c:212 test/fixed_bm.c:229
+#: test/fixed_bm.c:197 test/fixed_bm.c:213 test/fixed_bm.c:230
 #, c-format
 msgid "  Fixed: %d"
 msgstr ""
 
-#: test/fixed_bm.c:203 test/fixed_bm.c:219 test/fixed_bm.c:237
+#: test/fixed_bm.c:204 test/fixed_bm.c:220 test/fixed_bm.c:238
 #, c-format
 msgid "  Float: %d"
 msgstr ""
 
-#: test/fixed_bm.c:205
+#: test/fixed_bm.c:206
 msgid ""
 "\n"
 "Multiplying random numbers..."
 msgstr ""
 
-#: test/fixed_bm.c:221
+#: test/fixed_bm.c:222
 msgid ""
 "\n"
 "Dividing random numbers..."
 msgstr ""
 
-#: tool/dark2trans.c:104
+#: tool/dark2trans.c:105
 #, c-format
 msgid "%s: You must use `--min=BRIGHTNESS'\n"
 msgstr ""
 
-#: tool/dark2trans.c:125
+#: tool/dark2trans.c:126
 #, c-format
 msgid ""
 "Usage: %s --min=BRIGHTNESS <INPUT.ppm >OUTPUT.ppm\n"
@@ -3343,7 +3351,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: tool/dark2trans.c:130
+#: tool/dark2trans.c:131
 msgid ""
 "  -m, --min=BRIGHTNESS  If a pixel is darker than BRIGHTNESS, it is made\n"
 "                        transparent.  BRIGHTNESS must be an integer.\n"
@@ -3353,16 +3361,16 @@ msgid ""
 "\n"
 msgstr ""
 
-#: tool/dark2trans.c:177 tool/mkdfnt.c:297
+#: tool/dark2trans.c:179 tool/mkdfnt.c:299
 #, c-format
 msgid "%s: integer `%s' should be between %ld and %ld\n"
 msgstr ""
 
-#: tool/mkdfnt.c:97
+#: tool/mkdfnt.c:98
 msgid "trouble with XGetImage\n"
 msgstr ""
 
-#: tool/mkdfnt.c:108
+#: tool/mkdfnt.c:109
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... --character=C >OUTPUT.pgm\n"
@@ -3370,7 +3378,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: tool/mkdfnt.c:111
+#: tool/mkdfnt.c:112
 msgid ""
 "  -f, --font=FONT  Use X font FONT, which should be quoted to protect\n"
 "                   it from the shell.  The default is\n"
@@ -3389,41 +3397,41 @@ msgid ""
 "\n"
 msgstr ""
 
-#: tool/mkdfnt.c:172 tool/mkdfnt.c:220
+#: tool/mkdfnt.c:174 tool/mkdfnt.c:222
 #, c-format
 msgid "%s: Convert one character at a time.\n"
 msgstr ""
 
-#: tool/mkdfnt.c:237
+#: tool/mkdfnt.c:239
 #, c-format
 msgid "%s: You must use `--character=C'.\n"
 msgstr ""
 
-#: tool/mkdfnt.c:245 xwad/xproto.c:178 xwad/xwad.c:212
+#: tool/mkdfnt.c:247 xwad/xproto.c:179 xwad/xwad.c:213
 #, c-format
 msgid "Can't open display %s"
 msgstr ""
 
-#: tool/mkdfnt.c:245 xwad/xproto.c:179 xwad/xwad.c:212
+#: tool/mkdfnt.c:247 xwad/xproto.c:180 xwad/xwad.c:213
 msgid "<default>"
 msgstr ""
 
-#: tool/mkdfnt.c:254
+#: tool/mkdfnt.c:256
 #, c-format
 msgid "%s: font `%s' does not exist\n"
 msgstr ""
 
-#: tool/mknulmap.c:133
+#: tool/mknulmap.c:135
 #, c-format
 msgid "%s: Specify only one output filename.\n"
 msgstr ""
 
-#: tool/mknulmap.c:149
+#: tool/mknulmap.c:151
 #, c-format
 msgid "%s: You must specify an output filename.\n"
 msgstr ""
 
-#: tool/mknulmap.c:188
+#: tool/mknulmap.c:190
 #, c-format
 msgid ""
 "Usage: %s [-m MAPNAME] -o FILENAME\n"
@@ -3432,7 +3440,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: tool/mknulmap.c:191
+#: tool/mknulmap.c:193
 msgid ""
 "  -m, --map=MAPNAME          Name of map to save in the WAD.  Defaults to "
 "E1M1.\n"
@@ -3442,32 +3450,32 @@ msgid ""
 "\n"
 msgstr ""
 
-#: tool/mkpnames.c:120
+#: tool/mkpnames.c:122
 #, c-format
 msgid "%s: PNAMES filename was already given\n"
 msgstr ""
 
-#: tool/mkpnames.c:128
+#: tool/mkpnames.c:130
 #, c-format
 msgid "%s: TEXTURES filename was already given\n"
 msgstr ""
 
-#: tool/mkpnames.c:148
+#: tool/mkpnames.c:150
 #, c-format
 msgid "%s: PNAMES filename was not given\n"
 msgstr ""
 
-#: tool/mkpnames.c:152
+#: tool/mkpnames.c:154
 #, c-format
 msgid "%s: TEXTURES filename was not given\n"
 msgstr ""
 
-#: tool/mkpnames.c:161
+#: tool/mkpnames.c:163
 #, c-format
 msgid "%s: too many parameters\n"
 msgstr ""
 
-#: tool/mkpnames.c:177
+#: tool/mkpnames.c:179
 #, c-format
 msgid ""
 "Usage: %s [-d] -p PNAMES -t TEXTURES [SOURCE]\n"
@@ -3476,7 +3484,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: tool/mkpnames.c:181
+#: tool/mkpnames.c:183
 msgid ""
 "  -d, --debug                     print debugging info\n"
 "  -p, --output-pnames=PNAMES      write the pnames lump to the file PNAMES\n"
@@ -3487,50 +3495,28 @@ msgid ""
 "\n"
 msgstr ""
 
-#: tool/mkpnames.c:187
+#: tool/mkpnames.c:189
 msgid ""
 "The input consists of entries such as the following (from "
 "dumb-game-0.13.1):\n"
 msgstr ""
 
-#: tool/mkpnames.c:249
+#: tool/mkpnames.c:251
 #, c-format
 msgid "%s:%d: patch with no texture (ignored)\n"
 msgstr ""
 
-#: tool/mkpnames.c:326
+#: tool/mkpnames.c:328
 #, c-format
 msgid "%s:%d: syntax error (ignoring)\n"
 msgstr ""
 
-#: tool/mkpnames.c:435
+#: tool/mkpnames.c:437
 #, c-format
 msgid "%s: %ld pnames, %d textures\n"
 msgstr ""
 
-#: tool/pngtodumb.c:141 tool/ppmtodumb.c:133
-#, c-format
-msgid "%s: invalid bytes-per-pixel value `%s'; must be 1, 2 or 4\n"
-msgstr ""
-
-#. as in tar
-#: tool/pngtodumb.c:173 tool/ppmtodumb.c:165
-#, c-format
-msgid "%s: You must specify one of the `-fpPmc' options\n"
-msgstr ""
-
-#. as in tar
-#: tool/pngtodumb.c:192 tool/ppmtodumb.c:184
-#, c-format
-msgid "%s: You may not specify more than one `-fpPmc' option\n"
-msgstr ""
-
-#: tool/pngtodumb.c:205 tool/ppmtodumb.c:197
-#, c-format
-msgid "%s: Only one bytes-per-pixel number is allowed\n"
-msgstr ""
-
-#: tool/pngtodumb.c:215
+#: tool/pngtodumb.c:41
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... <INPUT.png >OUTPUT.lump\n"
@@ -3539,41 +3525,11 @@ msgid ""
 "\n"
 msgstr ""
 
-#: tool/pngtodumb.c:220
-#, c-format
-msgid ""
-"  -f, --flat            create a 64x64 flat-format graphic\n"
-"  -p, --patch           create a transparent patch\n"
-"  -P, --opaque-patch    create a non-transparent patch\n"
-"  -m, --playpal         create a playpal\n"
-"  -c, --colormap        create a colormap (doesn't need INPUT.png)\n"
-"  -M, --use-playpal=PLAYPAL\n"
-"                        read the playpal data from PLAYPAL\n"
-"                        (default: %s)\n"
-"      --bytes-per-pixel=NUMBER\n"
-"                        how many bytes per pixel: 1 (default), 2 or 4\n"
-"  -2                    same as --bytes-per-pixel=2\n"
-"  -4                    same as --bytes-per-pixel=4\n"
-"  -i, --id-compatible   turn on id compatibility\n"
-"      --help            display this help and exit\n"
-"      --version         output version information and exit\n"
-"\n"
-msgstr ""
-
-#: tool/pngtodumb.c:271 tool/ppmtodumb.c:263
-#, c-format
-msgid "%s: out of memory\n"
-msgstr ""
-
-#: tool/pngtodumb.c:351
-msgid "this image is the wrong size for a flat"
-msgstr ""
-
-#: tool/pngtodumb.c:503 tool/pngtodumb.c:509
+#: tool/pngtodumb.c:59 tool/pngtodumb.c:65
 msgid "PNG library initialisation failed\n"
 msgstr ""
 
-#: tool/ppmtodumb.c:207
+#: tool/ppmtodumb.c:44
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... <INPUT.ppm >OUTPUT.lump\n"
@@ -3582,14 +3538,40 @@ msgid ""
 "\n"
 msgstr ""
 
-#: tool/ppmtodumb.c:212
+#: tool/ppmtodumb.c:60
+msgid "bad ppm"
+msgstr ""
+
+#: tool/todumb.c:126
+#, c-format
+msgid "%s: invalid bytes-per-pixel value `%s'; must be 1, 2 or 4\n"
+msgstr ""
+
+#. as in tar
+#: tool/todumb.c:158
+#, c-format
+msgid "%s: You must specify one of the `-fpPmc' options\n"
+msgstr ""
+
+#. as in tar
+#: tool/todumb.c:177
+#, c-format
+msgid "%s: You may not specify more than one `-fpPmc' option\n"
+msgstr ""
+
+#: tool/todumb.c:190
+#, c-format
+msgid "%s: Only one bytes-per-pixel number is allowed\n"
+msgstr ""
+
+#: tool/todumb.c:200
 #, c-format
 msgid ""
 "  -f, --flat            create a 64x64 flat-format graphic\n"
 "  -p, --patch           create a transparent patch\n"
 "  -P, --opaque-patch    create a non-transparent patch\n"
 "  -m, --playpal         create a playpal\n"
-"  -c, --colormap        create a colormap\n"
+"  -c, --colormap        create a colormap (doesn't need INPUT)\n"
 "  -M, --use-playpal=PLAYPAL\n"
 "                        read the playpal data from PLAYPAL\n"
 "                        (default: %s)\n"
@@ -3603,16 +3585,16 @@ msgid ""
 "\n"
 msgstr ""
 
-#: tool/ppmtodumb.c:345 tool/ppmtodumb.c:365 tool/ppmtodumb.c:396
-#: tool/ppmtodumb.c:422
-msgid "bad ppm"
+#: tool/todumb.c:251
+#, c-format
+msgid "%s: out of memory\n"
 msgstr ""
 
-#: tool/ppmtodumb.c:352
-msgid "this ppm is the wrong size for a flat"
+#: tool/todumb.c:331
+msgid "this image is the wrong size for a flat"
 msgstr ""
 
-#: tool/wadtool.c:66
+#: tool/wadtool.c:67
 #, c-format
 msgid ""
 "Usage: %s [OPTION FILE [FILE]...]...\n"
@@ -3620,7 +3602,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: tool/wadtool.c:70
+#: tool/wadtool.c:71
 msgid ""
 "  -r, --read-iwad=FILE               read this file as an IWAD\n"
 "  -p, --read-pwad=FILE [FILE]...     read these files as PWADs\n"
@@ -3643,7 +3625,7 @@ msgid ""
 msgstr ""
 
 #. " -X <s> <d>   : copy lump <s> to raw file <d>\n"
-#: tool/wadtool.c:90
+#: tool/wadtool.c:91
 msgid ""
 "Usage:  wadtool <option> <file> <file>... <option> <file>...\n"
 "\n"
@@ -3663,32 +3645,32 @@ msgid ""
 "\n"
 msgstr ""
 
-#: tool/wadtool.c:156
+#: tool/wadtool.c:157
 #, c-format
 msgid "copying %s(%s) -> %s(%s)\n"
 msgstr ""
 
-#: tool/wadtool.c:268 tool/wadtool.c:288 tool/wadtool.c:306 tool/wadtool.c:311
-#: tool/wadtool.c:351 tool/wadtool.c:372
+#: tool/wadtool.c:269 tool/wadtool.c:289 tool/wadtool.c:307 tool/wadtool.c:312
+#: tool/wadtool.c:352 tool/wadtool.c:373
 msgid "Output WAD not chosen"
 msgstr ""
 
-#: tool/wadtool.c:281
+#: tool/wadtool.c:282
 #, c-format
 msgid "copying %s -> %s(%s)"
 msgstr ""
 
-#: tool/wadtool.c:316 tool/wadtool.c:334 tool/wadtool.c:359
+#: tool/wadtool.c:317 tool/wadtool.c:335 tool/wadtool.c:360
 #, c-format
 msgid "Lump `%s' not found"
 msgstr ""
 
-#: tool/wadtool.c:319 tool/wadtool.c:362
+#: tool/wadtool.c:320 tool/wadtool.c:363
 #, c-format
 msgid "copying %s(%s) -> %s(%s)"
 msgstr ""
 
-#: tool/wadtool.c:353
+#: tool/wadtool.c:354
 msgid "Not enough arguments"
 msgstr ""
 
@@ -3836,12 +3818,12 @@ msgstr ""
 msgid "ID:"
 msgstr ""
 
-#: xwad/xproto.c:128 xwad/xproto.c:164 xwad/xwad.c:165 xwad/xwad.c:198
+#: xwad/xproto.c:129 xwad/xproto.c:165 xwad/xwad.c:166 xwad/xwad.c:199
 #, c-format
 msgid "%s: internal limit on wad files exceeded\n"
 msgstr ""
 
-#: xwad/xproto.c:347
+#: xwad/xproto.c:348
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [WADFILE]...\n"
@@ -3849,7 +3831,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: xwad/xproto.c:350
+#: xwad/xproto.c:351
 msgid ""
 "  -w, --load-wad=FILE    load FILE as a WAD.  WADFILE argument does the "
 "same.\n"
@@ -3862,27 +3844,27 @@ msgid ""
 "\n"
 msgstr ""
 
-#: xwad/xproto.c:358
+#: xwad/xproto.c:359
 msgid ""
 "If no WADFILE nor --load-wad=FILE arguments are given, XProtoThing\n"
 "loads `doom2.wad'.\n"
 "\n"
 msgstr ""
 
-#: xwad/xproto.c:480
+#: xwad/xproto.c:481
 msgid "no PROTOS lump in wad"
 msgstr ""
 
-#: xwad/xproto.c:487
+#: xwad/xproto.c:488
 msgid "no protos"
 msgstr ""
 
 #. logprintf(LOG_DEBUG, 'C', _("child returned %d"), status);
-#: xwad/xwad.c:77
+#: xwad/xwad.c:78
 msgid "Level Saved."
 msgstr ""
 
-#: xwad/xwad.c:86
+#: xwad/xwad.c:87
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [WADFILE]...\n"
@@ -3890,7 +3872,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: xwad/xwad.c:89
+#: xwad/xwad.c:90
 msgid ""
 "  -w, --load-wad=FILE    load FILE as a WAD.  WADFILE argument does the "
 "same.\n"
@@ -3903,7 +3885,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: xwad/xwad.c:97
+#: xwad/xwad.c:98
 msgid ""
 "If no WADFILE nor --load-wad=FILE arguments are given, XWad loads\n"
 "`doom.wad' if the map name begins with `E' and `doom2.wad' otherwise.\n"

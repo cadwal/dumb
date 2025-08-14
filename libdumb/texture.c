@@ -32,6 +32,7 @@
 #include "libdumbutil/log.h"
 #include "libdumbutil/safem.h"
 #include "libdumbwad/wadstruct.h"
+#include "libdumbwad/doomstruct.h"
 #include "texture.h"
 
 /* Uncomment this for loads of debugging msgs */
@@ -78,7 +79,7 @@ set_playpal(int idx, SetPalFunc func)
 
 /* pixcvt stuff */
 
-inline unsigned short
+unsigned short
 pix8topix16(unsigned char p)
 {
    const unsigned char *pp = playpal + (int) p * 3;
@@ -94,7 +95,7 @@ pix8topix16(unsigned char p)
    return r;
 }
 
-inline unsigned int
+unsigned int
 pix8topix32(unsigned char p)
 {
    const unsigned char *pp = playpal + (int) p * 3;

@@ -1,8 +1,8 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * tool/mknulmap.c: Generate a map consisting of just one room.
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
- * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  */
 
 #include <config.h>
+#include <dircfg.h>
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -35,8 +36,9 @@
 #include "libdumbutil/exitcode.h"
 #include "libdumbutil/log.h"
 #include "libdumbutil/safem.h"
-#include "libdumbwad/wadwr.h"
+#include "libdumbwad/doomstruct.h"
 #include "libdumbwad/wadstruct.h"
+#include "libdumbwad/wadwr.h"
 
 static void print_help(FILE *dest);
 static void print_version(void);
@@ -201,6 +203,7 @@ print_version(void)
 {
    static const struct copyright copyrights[] = {
       { "1998", "Josh Parsons" },
+      { "1998-1999", "Kalle Niemitalo" },
       COPYRIGHT_END
    };
    fputs("mknulmap (DUMB) " VERSION "\n", stdout);

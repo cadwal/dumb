@@ -1,7 +1,5 @@
+*.info
 Makefile
 Makefile.in
-dumb-pt.fixed-index
-dumb-pt.index
-dumb-pt.info
 stamp-vti
 version.texi

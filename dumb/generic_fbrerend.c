@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/generic_fbrerend.c: Rescaling the framebuffer.  Generic version.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1997 by Marcus Sundberg <e94_msu@e.kth.se>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,144 +27,132 @@
 #include "render.h"
 #include "fbrerend.h"
 
-void *
-fbrerender8(Pixel8 *fb,
-	    Pixel8 *rendfb,
+void
+fbrerender8(Pixel8 *destfb,
+	    const Pixel8 *srcfb,
 	    int xsize, int ysize,
 	    int xfact, int yfact,
 	    int xlace, int ylace)
 {
-   if ((xfact & yfact) == 1)
-      return fb;
-   else {
-      void *retfb = rendfb;
-      if ((xfact & yfact) == 2 && (xlace & ylace) == 0) {
-	 int i, j, width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register mul = i * xfact;
-	       rendfb[width + mul + 1]
-		  = rendfb[width + mul]
-		  = rendfb[mul + 1]
-		  = rendfb[mul]
-		  = fb[i];
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
+   if (xfact == 1 && yfact == 1)
+      abort();			/* Don't do that, then!  */
+   else if (xfact == 2 && yfact == 2 && xlace == 0 && ylace == 0) {
+      int i, j, width = xsize * xfact;
+      int destinc = width * yfact;
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int mul = i * xfact;
+	    destfb[width + mul + 1]
+	       = destfb[width + mul]
+	       = destfb[mul + 1]
+	       = destfb[mul]
+	       = srcfb[i];
 	 }
-      } else {
-	 int i, j, k, l;
-	 int width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 int xifactor = xfact - xlace, yifactor = yfact - ylace;
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register pixval = fb[i], m = i * xfact;
-	       for (k = 0; k < xifactor; k++)
-		  for (l = 0; l < yifactor; l++) {
-		     rendfb[m + k + width * l] = pixval;
-		  }
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
-	 }
+	 destfb += destinc;
+	 srcfb += xsize;
       }
-      return retfb;
+   } else {
+      int i, j, k, l;
+      int width = xsize * xfact;
+      int destinc = width * yfact;
+      int xifactor = xfact - xlace, yifactor = yfact - ylace;
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int pixval = srcfb[i], m = i * xfact;
+	    for (k = 0; k < xifactor; k++)
+	       for (l = 0; l < yifactor; l++) {
+		  destfb[m + k + width * l] = pixval;
+	       }
+	 }
+	 destfb += destinc;
+	 srcfb += xsize;
+      }
    }
 }
 
-void *
-fbrerender16(Pixel16 *fb,
-	     Pixel16 *rendfb,
+void
+fbrerender16(Pixel16 *destfb,
+	     const Pixel16 *srcfb,
 	     int xsize, int ysize,
 	     int xfact, int yfact,
 	     int xlace, int ylace)
 {
-   if ((xfact & yfact) == 1)
-      return fb;
-   else {
-      void *retfb = rendfb;
-      if ((xfact & yfact) == 2 && (xlace & ylace) == 0) {
-	 int i, j, width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register mul = i * xfact;
-	       rendfb[width + mul + 1]
-		  = rendfb[width + mul]
-		  = rendfb[mul + 1]
-		  = rendfb[mul]
-		  = fb[i];
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
+   if (xfact == 1 && yfact == 1)
+      abort();
+   else if (xfact == 2 && yfact == 2 && xlace == 0 && ylace == 0) {
+      int i, j, width = xsize * xfact;
+      int destinc = width * yfact;
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int mul = i * xfact;
+	    destfb[width + mul + 1]
+	       = destfb[width + mul]
+	       = destfb[mul + 1]
+	       = destfb[mul]
+	       = srcfb[i];
 	 }
-      } else {
-	 int i, j, k, l;
-	 int width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 int xifactor = xfact - xlace, yifactor = yfact - ylace;
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register pixval = fb[i], m = i * xfact;
-	       for (k = 0; k < xifactor; k++)
-		  for (l = 0; l < yifactor; l++) {
-		     rendfb[m + k + width * l] = pixval;
-		  }
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
-	 }
+	 destfb += destinc;
+	 srcfb += xsize;
       }
-      return retfb;
+   } else {
+      int i, j, k, l;
+      int width = xsize * xfact;
+      int destinc = width * yfact;
+      int xifactor = xfact - xlace, yifactor = yfact - ylace;
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int pixval = srcfb[i], m = i * xfact;
+	    for (k = 0; k < xifactor; k++)
+	       for (l = 0; l < yifactor; l++) {
+		  destfb[m + k + width * l] = pixval;
+	       }
+	 }
+	 destfb += destinc;
+	 srcfb += xsize;
+      }
    }
 }
 
-void *
-fbrerender32(Pixel32 *fb,
-	     Pixel32 *rendfb,
+void
+fbrerender32(Pixel32 *destfb,
+	     const Pixel32 *srcfb,
 	     int xsize, int ysize,
 	     int xfact, int yfact,
 	     int xlace, int ylace)
 {
-   if ((xfact & yfact) == 1)
-      return fb;
-   else {
-      void *retfb = rendfb;
-      if ((xfact & yfact) == 2 && (xlace & ylace) == 0) {
-	 int i, j, width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register mul = i * xfact;
-	       rendfb[width + mul + 1]
-		  = rendfb[width + mul]
-		  = rendfb[mul + 1]
-		  = rendfb[mul]
-		  = fb[i];
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
+   if (xfact == 1 && yfact == 1)
+      abort();
+   else if (xfact == 2 && yfact == 2 && xlace == 0 && ylace == 0) {
+      int i, j, width = xsize * xfact;
+      int destinc = width * yfact;
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int mul = i * xfact;
+	    destfb[width + mul + 1]
+	       = destfb[width + mul]
+	       = destfb[mul + 1]
+	       = destfb[mul]
+	       = srcfb[i];
 	 }
-      } else {
-	 int i, j, k, l;
-	 int width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 int xifactor = xfact - xlace, yifactor = yfact - ylace;
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register pixval = fb[i], m = i * xfact;
-	       for (k = 0; k < xifactor; k++)
-		  for (l = 0; l < yifactor; l++) {
-		     rendfb[m + k + width * l] = pixval;
-		  }
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
-	 }
+	 destfb += destinc;
+	 srcfb += xsize;
       }
-      return retfb;
+   } else {
+      int i, j, k, l;
+      int width = xsize * xfact;
+      int destinc = width * yfact;
+      int xifactor = xfact - xlace, yifactor = yfact - ylace;
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int pixval = srcfb[i], m = i * xfact;
+	    for (k = 0; k < xifactor; k++)
+	       for (l = 0; l < yifactor; l++) {
+		  destfb[m + k + width * l] = pixval;
+	       }
+	 }
+	 destfb += destinc;
+	 srcfb += xsize;
+      }
    }
 }
 

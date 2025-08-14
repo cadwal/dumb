@@ -9,231 +9,245 @@
 
     <h1>DUMB source HOWTO</h1>
 
-    <p>This corresponds to DUMB 0.13.4.
+    <p>This corresponds to DUMB 0.13.10.</p>
 
     <ul>
-      <li><a href="#dirs" name="TOCdirs">Directory structure</a>
-      <li><a href="#mkver" name="TOCmkver">Updating the version number</a>
-      <li><a href="#mkdir" name="TOCmkdir">Adding a new directory</a>
-      <li><a href="#mkfile" name="TOCmkfile">Adding a new source file</a>
+      <li><a name="TOCdirs" href="#dirs">Directory structure</a></li>
+      <li><a name="TOCmkver" href="#mkver">Updating the version number</a></li>
+      <li><a name="TOCmkdir" href="#mkdir">Adding a new directory</a></li>
+      <li><a name="TOCmkfile" href="#mkfile">Adding a new source file</a></li>
+      <li><a name="TOCcplusplus" href="#cplusplus">C++</a></li>
     </ul>
 
 
-    <h2><a href="#TOCdirs" name="dirs">Directory structure</a></h2>
+    <h2><a name="dirs" href="#TOCdirs">Directory structure</a></h2>
 
-    <p>There are some rules on how the directories are built.
+    <p>There are some rules on how the directories are built.</p>
 
     <ol>
       <li>Libraries are built before programs and other libraries that
-	need them.
+	need them.</li>
       <li>Most important programs are built first so that <kbd>make
-	  install</kbd> lets you play as soon as possible.
+	  install</kbd> lets you play as soon as possible.</li>
     </ol>
 
-    <p>Here's the list:
+    <p>Here's the list:</p>
 
     <dl>
 
-      <dt>libmissing/
-      <dd>Functions that may be missing from system libraries.
+      <dt>libmissing/</dt>
+      <dd>Functions that may be missing from system libraries.</dd>
 
-      <dt>libdumbutil/
+      <dt>libdumbutil/</dt>
       <dd>Various functions that DUMB uses but which could be used by
-	other, very different programs too.
+	other, very different programs too.</dd>
 
-      <dt>libdumbwad/
-      <dd>Functions for reading and writing WAD files.
+      <dt>libdumbwad/</dt>
+      <dd>Functions for reading and writing WAD files.</dd>
 
-      <dt>libdumbworldb/
+      <dt>libdumbworldb/</dt>
       <dd>The database of what exists in a level.  Doesn't include
 	functions for monster strategy, explosions or such.
-	(Partially implemented.)
+	(Partially implemented.)</dd>
 
-      <dt>libdumbrender/
-      <dd>(Not yet implemented.)
+      <dt>libdumbrender/</dt>
+      <dd>(Not yet implemented.)</dd>
 
-      <dt>libdumb/
+      <dt>libdumb/</dt>
       <dd>Random stuff that is needed by both DUMB and the utility
-	programs in the package.
+	programs in the package.</dd>
 
-      <dt>intl/
+      <dt>intl/</dt>
       <dd>The GNU gettext library.  There's nothing DUMB-specific
 	here.  So when a new version of gettext is released, you can
 	delete this directory and copy the one in the gettext package
-	here.
+	here.</dd>
 
-      <dt>dumb/
-      <dd>The game engine itself.
+      <dt>dumb/</dt>
+      <dd>The game engine itself.</dd>
 
-      <dt>xwad/
+      <dt>xwad/</dt>
       <dd>Two programs that work under the X Window System.
 
 	<dl>
 
-	  <dt>XWad
-	  <dd>A level editor.
+	  <dt>XWad</dt>
+	  <dd>A level editor.</dd>
 
-	  <dt>XProtoThing
+	  <dt>XProtoThing</dt>
 	  <dd>A viewer for protothings.  Protothings define what the
-	    thing type numbers mean.
+	    thing type numbers mean.</dd>
 
-	</dl>
+	</dl></dd>
 
-      <dt>ptcomp/
+      <dt>ptcomp/</dt>
       <dd>A program that compiles .pt source code to binary lumps that
-	can then be included in WADs.
+	can then be included in WADs.</dd>
 
-      <dt>tool/
+      <dt>tool/</dt>
       <dd>Various small utility programs.
 
 	<dl>
 
-	  <dt>dark2trans
+	  <dt>dark2trans</dt>
 	  <dd>A filter for ppm-format pictures.  Turns all "dark"
 	    pixels to R=0,G=0,B=1 which ppmtodumb recognizes as
 	    meaning transparent.  The darkness threshold is given as a
-	    parameter.
+	    parameter.</dd>
 
-	  <dt>mkdfnt
+	  <dt>mkdfnt</dt>
 	  <dd>Turns X11 fonts to pgm-format pictures which can in turn
-	    be converted to DUMB's format and put in WADs.
+	    be converted to DUMB's format and put in WADs.</dd>
 
-	  <dt>mknulmap
-	  <dd>Generates a map containing just an empty room.
+	  <dt>mknulmap</dt>
+	  <dd>Generates a map containing just an empty room.</dd>
 
-	  <dt>mkpnames
-	  <dd>Compiles a textual listing to TEXTURE1 and PNAMES lumps.
+	  <dt>mkpnames</dt>
+	  <dd>Compiles a textual listing to TEXTURE1 and PNAMES lumps.</dd>
 
-	  <dt>ppmtodumb
-	  <dd>Converts ppm-format pictures to the format DUMB uses.
+	  <dt>pngtodumb</dt>
+	  <dd>Converts png-format pictures to the format DUMB uses.</dd>
 
-	  <dt>wadtool
-	  <dd>Copies, builds, extracts and concatenates WAD files.
+	  <dt>ppmtodumb</dt>
+	  <dd>Converts ppm-format pictures to the format DUMB uses.</dd>
 
-	</dl>
+	  <dt>wadtool</dt>
+	  <dd>Copies, builds, extracts and concatenates WAD files.</dd>
 
-      <dt>doom/
+	</dl></dd>
+
+      <dt>doom/</dt>
       <dd>Sources for doom4dum.wad which lets you play Doom and Doom
-	II with DUMB.
+	II with DUMB.</dd>
 
-      <dt>htic/
+      <dt>htic/</dt>
       <dd>Sources for htic4dum.wad which lets you play Heretic with
-	DUMB.
+	DUMB.</dd>
 
-      <dt>test/
+      <dt>test/</dt>
       <dd>Programs to check that the libraries work.
 
 	<dl>
 
-	  <dt>fixed_bm
-	  <dd>A fixed-point benchmark.  Tests how fast your CPU is.
+	  <dt>fixed_bm</dt>
+	  <dd>A fixed-point benchmark.  Tests how fast your CPU is.</dd>
 
-	  <dt>ldltest
-	  <dd>Command-line tests for libdumbworldb.  The library used
-	    to be called libdumblevel.  Hence the name.
+	  <dt>ldwbtest</dt>
+	  <dd>Command-line tests for libdumbworldb.</dd>
 
-	</dl>
+	</dl></dd>
 
-      <dt>po/
-      <dd>Message catalogs for different languages.
+      <dt>po/</dt>
+      <dd>Message catalogs for different languages.</dd>
 
-      <dt>docs/
+      <dt>docs/</dt>
       <dd>The incomplete documentation.
 
 	<dl>
 
-	  <dt>dos/
-	  <dd>Documentation for the DOS port.
+	  <dt>dos/</dt>
+	  <dd>Documentation for the DOS port.</dd>
 
-	  <dt>maint/
-	  <dd>Documentation on maintaining DUMB.  This file is here.
+	  <dt>maint/</dt>
+	  <dd>Documentation on maintaining DUMB.  This file is here.</dd>
 
-	</dl>
+	</dl></dd>
 
-      <dt>aux/
-      <dd>Various files needed by the configure script and Makefiles.
+      <dt>scripts/</dt>
+      <dd>Various files needed by the configure script and Makefiles.</dd>
 
     </dl>
 
 
-    <h2><a href="#TOCmkver" name="mkver">Updating the version number</a></h2>
+    <h2><a name="mkver" href="#TOCmkver">Updating the version number</a></h2>
 
-    <p>These are the files that you should update when you change
-      DUMB's version number:
+    <p>These are the files that you must update when you change DUMB's
+      version number:</p>
 
     <ul>
-      <li>configure.in
-      <li>NEWS
-      <li>ChangeLog
+      <li>configure.in</li>
+      <li>NEWS</li>
+      <li>ChangeLog</li>
     </ul>
 
     <p>The version number is also mentioned in the following files but
       in such a way that you don't have to change them if you feel
-      lazy:
+      lazy:</p>
 
     <ul>
       <li>README: "You should get a directory called something like
-	dumb-0.13.4"
+	dumb-0.13.4"</li>
       <li>docs/configure.txt: "In the following, I'll call that
 	directory /cdrom/sources/dumb-0.13.4.",
-	"/cdrom/sources/dumb-0.13.4/configure"
-      <li>docs/maint/contrib.html: "(it probably is, as
-	dumb-0.12.tar.gz was just 340k :)"
+	"/cdrom/sources/dumb-0.13.4/configure"</li>
     </ul>
 
     <p>After changing the version number in configure.in, run make in
       the build directory.  The change will propagate to configure,
-      config.status and config.h and everything will be recompiled.
+      config.status and config.h and everything will be recompiled.</p>
 
 
-    <h2><a href="#TOCmkdir" name="mkdir">Adding a new directory</a></h2>
+    <h2><a name="mkdir" href="#TOCmkdir">Adding a new directory</a></h2>
 
-    <p>Do the following in the source directory:
+    <p>Do the following in the source directory:</p>
 
     <ol>
 
-      <li>Make directory foo.
+      <li>Make directory foo.</li>
 
       <li>Create foo/Makefile.am.  It can be empty at this phase but I
 	prefer to put one line in it:
 
 	<p><samp>## Process this file with automake to produce
-	    Makefile.in</samp></p>
+	    Makefile.in</samp></p></li>
 
       <li>Add foo in the SUBDIRS definition in the main Makefile.am.
 	The order of the directories matters.  So if foo/Makefile.am
-	uses ptcomp, foo must come after ptcomp in the list.
+	uses ptcomp, foo must come after ptcomp in the list.</li>
 
-      <li>Add foo/Makefile in the AC_OUTPUT statement in configure.in.
+      <li>Add foo/Makefile in the AC_OUTPUT statement in configure.in.</li>
 
     </ol>
 
-    <p>Then in the build directory:
+    <p>Then in the build directory:</p>
 
-    <ol start=5>
+    <ol start="5">
 
       <li>Run <kbd>make foo/Makefile</kbd>.  This causes
 	<tt>aclocal</tt>, <tt>automake</tt>, <tt>autoconf</tt>,
 	<tt>configure</tt> and <tt>config.status</tt> to be run, and
 	then proceeds to generate <tt>foo/Makefile.in</tt> in the
-	source tree and	<tt>foo/Makefile</tt> in the build tree.
+	source tree and	<tt>foo/Makefile</tt> in the build tree.</li>
 
     </ol>
 
 
-    <h2><a href="#TOCmkfile" name="mkfile">Adding a new source file</a></h2>
+    <h2><a name="mkfile" href="#TOCmkfile">Adding a new source file</a></h2>
 
     <p>Copy the boilerplate from docs/maint/template.c, or use
-      docs/maint/dumb-autoins.el which does this (and more)
-      automatically.
+      scripts/dumb-autoins.el which does this (and more)
+      automatically.</p>
 
     <p>Add the name of the file to SOURCES in the Makefile.am of that
       directory.  Or if that isn't appropriate, add it to EXTRA_DIST
-      instead.
+      instead.</p>
 
-    <p>When finished with the directory, change to the root of the
+    <p>When you have added enough files, change to the root of the
       build tree and run "<kbd>make update-po</kbd>".  This scans
-      files for translatable strings and updates po/*.po files.
+      files for translatable strings and updates po/*.po files.</p>
+
+
+    <h2><a name="cplusplus" href="#TOCcplusplus">C++</a></h2>
+
+    <p>So far, the C++ used in DUMB has been trivial.  No exceptions, no
+      templates, no namespaces, no standard C++ library.  New-style
+      casts are used, though.</p>
+
+    <p><code>new</code>/<code>delete</code> is used for classes,
+      <code>malloc</code>/<code>free</code> for everything else.</p>
+
+    <p>The filename extension <samp>.cc</samp> is used for C++ source
+      and <samp>.hh</samp> for C++ headers.</p>
 
 
     <address>

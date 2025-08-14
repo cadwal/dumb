@@ -27,6 +27,9 @@
 
 static utf8_mbstate_t default_state;
 
+/* This function has a bug: it doesn't detect some invalid UTF-8
+   sequences such as 0x80 0xC0.  So far, that hasn't been a problem.  */
+
 size_t
 utf8_mbrtowc(wchar_t *restrict pwc,
 	     const char *restrict s, size_t n,

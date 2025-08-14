@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/rendflat.h: Rendering flats (ceilings and floors).
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.olu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  * Copyright (C) 1994 by Chris Laurel
  *
@@ -172,7 +173,7 @@ draw_flatx(Texture *tex, fixed height, int start_row, int end_row,
          between Doom's textures and ours */
       /* TODO: don't do this; instead, translate the coordinates of
          vertices and things when loading the level */
-      flatx_loop(-y, x, -dy, dx, out, end, colormap + 256 * cmidx, tex);
+      flatx_loop(-y, x, -dy, dx, out, end, all_colormaps[cmidx], tex);
 #else
       flatx_loop(-y, x, -dy, x, out, end, NULL, tex);
 #endif

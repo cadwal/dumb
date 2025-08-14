@@ -56,9 +56,9 @@ linetype.c linetype.h message.c message.h msgdom.c msgdom.h netio.c	\
 netio.h netplay.c netplay.h termtype.c thinghit.c thingm.c things.c	\
 things.h updmap.c updmap.h updthing.c useitem.c ctlkey.c ctlkey.h	\
 keymap.c keymap.h keymapconf.c keymapconf.h $(DUMB_FBREREND_SOURCES)	\
-fbrerend.h render8.c render16.c render32.c render.h renderc.h		\
-rendcore.h rendflat.h rendsl.h rendsl86.h rendcommon.c draw.c draw.h	\
-$(DUMB_NETWORK_SOURCES) net.h input.h video.h
+fbrerend.c fbrerend.h render8.c render16.c render32.c render.h		\
+renderc.h rendcore.h rendflat.h rendsl.h rendsl86.h rendcommon.c	\
+draw.c draw.h $(DUMB_NETWORK_SOURCES) net.h input.h video.h
 
 keyname_sources = keyname.c keyname.h
 

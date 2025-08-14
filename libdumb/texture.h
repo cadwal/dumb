@@ -69,6 +69,8 @@ typedef void (*SetPalFunc) (unsigned char idx,
 			    unsigned char blue);
 
 void set_playpal(int i, SetPalFunc func);
+unsigned short pix8topix16(unsigned char p);
+unsigned int pix8topix32(unsigned char p);
 
 #endif
 

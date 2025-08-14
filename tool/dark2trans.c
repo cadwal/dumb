@@ -21,6 +21,7 @@
  */
 
 #include <config.h>
+#include <dircfg.h>
 
 #include <errno.h>
 #include <stdio.h>
@@ -141,6 +142,7 @@ print_version(void)
 {
    static const struct copyright copyrights[] = {
       { "1998", "Josh Parsons" },
+      { "1998-1999", "Kalle Niemitalo" },
       COPYRIGHT_END
    };
    fputs("dark2trans (DUMB) " VERSION "\n", stdout);

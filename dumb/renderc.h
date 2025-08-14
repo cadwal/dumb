@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/renderc.h: BPP-dependent renderer code.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.olu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  * Copyright (C) 1994 by Chris Laurel
  *
@@ -207,6 +208,7 @@ static Object_start_list *obj_start_events = NULL;
 
 #ifdef USE_COLORMAP
 static LumpNum colormap_ln = BAD_LUMPNUM;
+static const Pixel (*all_colormaps)[256] = NULL;
 static const Pixel *colormap = NULL, *invismap = NULL;
 #endif
 
@@ -283,8 +285,11 @@ reset_renderer(void)
    start_events = NULL;
    obj_start_events = NULL;
 #ifdef USE_COLORMAP
-   if (colormap_ln != BAD_LUMPNUM)
+   if (LUMPNUM_OK(colormap_ln))
       free_lump(colormap_ln);
+   else				/* it was malloced */
+      free(all_colormaps);
+   all_colormaps = NULL;
 #endif
 }
 
@@ -322,8 +327,40 @@ init_renderer(int v_width, int v_height, int real_width, int real_height)
    fb_topleft = xo + yo * real_width;
 
 #ifdef USE_COLORMAP
-   colormap_ln = getlump(COLORMAP);
+   colormap_ln = lookup_lump(COLORMAP, NULL, NULL);
+   if (LUMPNUM_OK(colormap_ln))
+      all_colormaps = (const Pixel (*)[256]) load_lump(colormap_ln);
+   else {
+#if BPP == 1
+      logprintf(LOG_FATAL, 'R', _("No COLORMAP lump"));
+#else
+      /* Generate a 16-bit or 32-bit colormap from the 8-bit colormap
+         and the palette.  */
+      const Pixel8 (*colormap8)[256];
+      Pixel (*new_colormap)[256];
+      LumpNum colormap8_ln = getlump("COLORMAP");
+      unsigned maps, i, j;
+      logprintf(LOG_INFO, 'R', _("Converting colormap"));
+      colormap8 = (const Pixel8 (*)[256]) load_lump(colormap8_ln);
+      maps = get_lump_len(colormap8_ln) / 256;
+      new_colormap = (Pixel (*)[256]) safe_malloc(maps * sizeof(Pixel[256]));
+      for (i = 0; i < maps; i++) {
+	 for (j = 0; j < 256; j++) {
+#if BPP == 2	    
+	    new_colormap[i][j] = pix8topix16(colormap8[i][j]);
+#elif BPP == 4
+	    new_colormap[i][j] = pix8topix32(colormap8[i][j]);
+#else
+#error strange BPP
 #endif
+	 }
+      }
+      free_lump(colormap8_ln);
+      all_colormaps = new_colormap;
+      colormap_ln = BAD_LUMPNUM;
+#endif /* BPP != 1 */
+   }
+#endif /* USE_COLORMAP */
 
    logprintf(LOG_INFO, 'R',
 	     _("init_renderer fb dimensions (%d,%d) view (%d,%d) bpp=%d"),
@@ -339,8 +376,7 @@ render(void *fbp, LevData *w, const View *v)
    view = v;
    fb += fb_topleft;
 #ifdef USE_COLORMAP
-   invismap = (const Pixel *) load_lump(colormap_ln);
-   invismap += 256 * invis;
+   invismap = all_colormaps[invis];
    invis += invinc;
    if (invis == 16 || invis == 8)
       invinc = -invinc;

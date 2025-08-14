@@ -21,6 +21,7 @@
  */
 
 #include <config.h>
+#include <dircfg.h>
 
 #if !(HAVE_SELECT && HAVE_XINTERNALCONNECTIONNUMBERS)
 /* Since you don't have one of those functions, we'll have to
@@ -569,8 +570,8 @@ update_intgeo(XPInstance *inst)
    int choc_width, choc_height;
    int actc_width, actc_height;
    int dispc_width, dispc_height;
-   int frame_width, frame_height;
-   int frame_x, frame_y, frame_depth, frame_border;
+   int frame_x, frame_y;
+   unsigned int frame_width, frame_height, frame_border, frame_depth;
    Window frame_root;
    int disp_width = 0, disp_height = 128, cho_height = 96;
 

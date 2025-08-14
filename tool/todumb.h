@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
- * DIRECTORY/FILE.c: PURPOSE.
- * Copyright (C) 1999 by PERSON <EMAIL>
+ * tool/todumb.h: Convert images to DUMB formats.
+ * Copyright (C) 1999 by Kalle Olavi Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,17 +19,35 @@
  * Boston, MA 02111, USA.
  */
 
-#include <config.h>
+#ifndef TOOL_TODUMB_H
+#define TOOL_TODUMB_H
 
-#include "libdumbutil/dumb-nls.h"
+typedef struct {
+   unsigned char r, g, b, a;
+} RGBA;
 
-/* put the following in main() if you have that */
-#ifdef ENABLE_NLS
-   setlocale(LC_ALL, "");
-   bindtextdomain(PACKAGE, LOCALEDIR);
-   textdomain(PACKAGE);
-#endif /* ENABLE_NLS */
+typedef struct {
+   int width, height;
+   RGBA **rows;
+} Image;
 
-// Local Variables:
-// c-basic-offset: 3
-// End:
+void *xmalloc(size_t);
+
+Image *new_image(int width, int height);
+void free_image(Image *);
+
+void exit_invalid_data(const char *message)
+     __attribute__((noreturn));
+
+/* These must be provided by pngtodumb.c and ppmtodumb.c.  */
+extern const char converter_name[];
+Image *read_image(FILE *);
+void print_converter_usage(const char *argv0);
+
+#endif /* TOOL_TODUMB_H */
+
+/*
+ * Local Variables:
+ * c-basic-offset: 3
+ * End:
+ */

@@ -21,6 +21,7 @@
  */
 
 #include <config.h>
+#include <dircfg.h>
 
 /* If you add or change keywords, please update ../docs/dumb-pt.texi.  */
 

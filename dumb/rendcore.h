@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/rendcore.h: Rendering segments of walls, flats and things.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  * Copyright (C) 1994 by Chris Laurel
  *
@@ -229,7 +230,7 @@ draw_wall(Active_wall *active,
 	       && (pend2 - pstart2 > FIXED_EPSILON));
 
 #ifdef USE_COLORMAP
-   colormap = ((const Pixel *) load_lump(colormap_ln));
+   colormap = all_colormaps[0];	/* for sky */
 #endif
 
    if (bottom < pfend) {
@@ -265,7 +266,7 @@ draw_wall(Active_wall *active,
    dark = FIXED_TO_INT(dark);
    if (dark > 30)
       dark = 30;
-   colormap += dark * 256;
+   colormap = all_colormaps[dark];
 #endif
 
    if (WALL_ISPOSTER(wall))
@@ -311,7 +312,7 @@ draw_wall(Active_wall *active,
       if (REGION_HAS_SKY_CEILING(front)
 	  && back >= 0 && REGION_HAS_SKY_CEILING(back)) {
 #ifdef USE_COLORMAP
-	 colormap = ((const Pixel *) load_lump(colormap_ln));
+	 colormap = all_colormaps[0];
 #endif
 	 draw_sky_segment(pstart2, top, REGION_CTEX(front));
       } else
@@ -335,9 +336,6 @@ draw_object(int on,
    int fb_start, fb_end;
    Pixel *fb_byte, *last_byte;
    Texture *oimage = OBJECT_IMAGE(on);
-#ifdef USE_COLORMAP
-   int dark;
-#endif
    int fb_column;
 
    if (oimage == NULL || tex_column >= oimage->width)
@@ -373,14 +371,15 @@ draw_object(int on,
 #endif
 
 #ifdef USE_COLORMAP
-   colormap = ((const Pixel *) load_lump(colormap_ln));
-   if (!OBJECT_GLOWS(on)) {
-      dark = fixdiv(ldsectord(ld)[OBJECT_REGION(on)].dark, z);
+   if (OBJECT_GLOWS(on))
+      colormap = all_colormaps[0];
+   else {
+      int dark = fixdiv(ldsectord(ld)[OBJECT_REGION(on)].dark, z);
       dark = DARK_ADJUST(dark);
       dark = FIXED_TO_INT(dark);
       if (dark > 30)
 	 dark = 30;
-      colormap += dark * 256;
+      colormap = all_colormaps[dark];
    }
 #endif
 

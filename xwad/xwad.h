@@ -23,6 +23,7 @@
 #define XWAD_H
 
 #include "libdumbutil/fixed.h"
+#include "libdumbwad/doomstruct.h"
 #include "libdumbwad/wadstruct.h"
 #include "libdumbwad/wadio.h"
 #ifdef DUMB_CONFIG_LDWB

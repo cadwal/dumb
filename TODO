@@ -1,4 +1,5 @@
 * Highest-priority queue:
+rewrite wadtool to use wadchain.hh
 rewrite libdumbworldb in C++, but don't get too excited
 separate renderer from rest of code again
 speed up rendering by checking recursively which sectors can be seen
@@ -11,10 +12,9 @@ let fleshy walls and flats bleed when hit
 compile as C++ on little-endian machines too
 continuous sounds for moving sectors
 end-level statistics (secret%, kill%, collect%, hit%)
-finish off heretic protos
+finish off Heretic protos
 get rid of alarm(), use select() instead
 get rid of all arbitrary limits
-gettables which give other gettables (like health) when used
 Guile or Pliant scripts in wads
 implement light goggles, etc....
 implement sectortypes (partially done)
@@ -22,12 +22,11 @@ jumping instead of levitation
 mapping
 move bpp-independent code to rendcommon.c
 moving vertices, sideways opening & hinged doors
-polymorphing to a monster (like in Nethack!)
+polymorphing to a monster (like in NetHack!)
 sector shouldn't give damage while player is in air
 snapshot.ppm when BPP=1 (8 bits)
 sound shouldn't get through closed doors
 special shooting
-support PPM_PACKCOLORS
 turning inertia control
 "Uff!" when the hero runs against a wall or falls
 use function keys for special commands, select weapons with numbers
@@ -38,7 +37,7 @@ AA-lib: ASCII snapshot
 AA-lib: draw text as text
 AA-lib: flow control (now it lags horribly at 9600bps)
 AA-lib: special handling for AA_RESIZE and AA_MOUSE
-AA-lib: three-state boolean parameters
+AA-lib: three-state Boolean parameters
 AA-lib: use real ticks in autorelease
 ctlkey: mouse
 ctlkey: look at GGI's General Input Interface
@@ -86,7 +85,6 @@ sound: output to a file/pipe the user can postprocess any way (s)he wants
 vid: gamma control from keyboard
 vid: light areas should be lighter, dark ones darker (0=almost impossible to see)
 vid: non-320x200 resolutions (DUMB logo, icon placement, font size)
-vid: make --dumb-xmul 3 --dumb-ymul 1 work
 vid: mark the selected inventory item in a prettier way
 wadtool: a cleaner way to list the contents of a WAD than copying to /dev/null
 wadtool: --verbose

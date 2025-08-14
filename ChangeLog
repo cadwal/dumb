@@ -1,3 +1,175 @@
+1999-07-18  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* Released DUMB 0.13.11.
+
+1999-07-17  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* scripts/rpmspec.m4: Minor comment fix.
+
+	* NEWS: Logged DUMB 0.13.11.
+
+	* configure.in: Removed docs/dumb-pt-html/Makefile from AC_OUTPUT.
+	Bumped version number to 0.13.11.
+
+	* Almost released DUMB 0.13.10.
+
+1999-07-16  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* docs/README.ptcomp: Doc fix.
+
+	* docs/Makefile.am (EXTRA_DIST): Added todo.texinfo.
+
+	* test/fixed_bm.c, test/dwdbtest.c: Added #include <dircfg.h>.
+	* po/fi.po: Refreshed (no changes in text)
+
+	* po/fi.po: Updated.
+
+	* po/Makefile.in.in (.po.po-utf8): Copy the target to $(srcdir).
+	* po/ChangeLog: Removed, since other subdirectories don't have
+	their own ChangeLogs either.
+	* po/Makefile.in.in (DISTFILES): Removed ChangeLog.
+
+	* tool/mkpnames.c, tool/mknulmap.c, tool/mkdfnt.c,
+	tool/dark2trans.c (print_version): Updated copyrights.
+
+	* docs/todo.texinfo: New file.
+	* docs/.cvsignore: Ignore *.info, not just dumb-pt.info.  No
+	longer ignore SGML auxiliary files; SGML is no longer used.
+
+	* TODO: PPM_PACKCOLORS works now; removed.
+
+	* INSTALL (Optional parts): ldltest was renamed to ldwbtest.
+
+	* po/POTFILES.in: Regenerated.
+	* po/fi.po: Regenerated and updated.
+
+	* configure.in: (DOOM and Heretic): Removed entire section.
+	* acconfig.h (DUMB_CONFIG_DOOM_DIR, DUMB_CONFIG_HERETIC_DIR):
+	Removed.
+	* INSTALL (DOOM and Heretic options): All gone.
+	* doom/Makefile.am (CLEANFILES): Removed $(other_lumps) and
+	PLAYPAL.lump.
+	(pkgdata_DATA): [DUMB_CONFIG_DOOM] condition removed.
+	(other_lumps, playpal_src_wad): Removed variables.
+	(PLAYPAL.lump, DUMBLOGO.lump, COLORM16.lump, COLORM32.lump):
+	Removed targets.
+	(doom4dum.wad): Removed $(other_lumps) references.
+	* htic/Makefile.am (CLEANFILES): Removed $(pt_wad), $(other_lumps)
+	and PLAYPAL.lump.
+	(pkgdata_DATA): [DUMB_CONFIG_HERETIC] condition removed.
+	(pt_wad, other_lumps, playpal_src_wad): Removed variables.
+	(PLAYPAL.lump, DUMBLOGO.lump, COLORM16.lump, COLORM32.lump):
+	Removed targets.
+	(htic4dum.wad): Now generated directly with ptcomp.
+	* dumb/renderc.h (all_colormaps): New variable.
+	(reset_renderer): Free all_colormaps if colormap_ln is
+	BAD_LUMPNUM.  And always reset it to NULL.
+	(init_renderer): Load the colormaps to all_colormaps.  If the lump
+	named by the COLORMAP macro isn't there, try to load and convert
+	"COLORMAP".
+	(render): Use all_colormaps instead of colormap_ln.
+	* dumb/rendcore.h (draw_wall, draw_object), dumb/rendflat.h
+	(draw_flatx): Use all_colormaps instead of colormap_ln.
+	* libdumb/texture.h (pix8topix16, pix8topix32): Export.
+	* libdumb/texture.c (pix8topix16, pix8topix32): No longer inline.
+	* NEWS: Logged that you don't need doom.wad or heretic.wad to
+	build DUMB.
+
+	* configure.in: Added dircfg.h in AM_CONFIG_HEADER.  Define
+	DUMB_CONFIG_DUMBDATADIR and LOCALEDIR via DUMB_DEFINE_UNQUOTED,
+	not AC_DEFINE_UNQUOTED.
+	* acconfig.h (LOCALEDIR, DUMB_CONFIG_DUMBDATADIR): Moved to
+	dircfg.h.in.
+	* dircfg.h.in: New file.
+	* acinclude.m4 (DUMB_DEFINE_UNQUOTED): New macro, copied from
+	AC_DEFINE_UNQUOTED.
+	* aclocal.m4: Regenerated.
+	* .cvsignore (dircfg.h, stamp-h*): Added.
+	(stamp-h, stamp-h.in): Removed.
+
+1999-07-09  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* libdumbwad/wadchain.cc: Fixed a couple of bugs which prevented
+	from compiling it.
+	* libdumbwad/Makefile.am (EXTRA_DIST): Added wadchain-wrapper.cc.
+
+	* tool/todumb.c, tool/todumb.h:
+	New file, mostly ripped from old pngtodumb.c.
+	* tool/pngtodumb.c, tool/ppmtodumb.c: Rewritten to use todumb.c.
+	* tool/Makefile.am (pngtodumb_SOURCES, ppmtodumb_SOURCES): New
+	variables.
+
+	* libdumbwad/doomstruct.h (UMEMB): Documented.
+
+	* configure.in: Removed AC_FUNC_SETVBUF_REVERSED test.
+
+	* dumb/generic_fbrerend.c, dumb/le64_fbrerend.c (fbrerender8,
+	fbrerender16, fbrerender32): Replaced all (FOO & BAR) == BAZ
+	checks with FOO==BAZ && BAR==BAZ, which is not equivalent but
+	fixes a bug.  Moved all register keywords to the beginning of
+	definitions and added explicit ints.
+	* dumb/le32_fbrerend.c (fbrerender8, fbrerender16, fbrerender32):
+	Replaced all (FOO & BAR) == BAZ checks with FOO==BAZ && BAR==BAZ,
+	which is not equivalent but fixes a bug.
+	* dumb/dumb.c (rend2fb): Renamed to rend2vidfb.
+	(main): Renamed fb to vidfb.  Made fbrerender a real function, not
+	just a pointer.  Tell it the bpp value.  Moved fbptr declaration
+	inside loop.
+	* dumb/fbrerend.h (fbrerender): New function.
+	* dumb/fbrerend.c: New file.
+	* dumb/Makefile.am (core_sources): Added fbrerend.c.
+	* dumb/fbrerend.h, dumb/generic_fbrerend.c, dumb/le64_fbrerend.c,
+	dumb/le32_fbrerend.c (fbrerender8, fbrerender16, fbrerender32):
+	Return void.  Swapped first two parameters, renamed them and added
+	const.
+
+1999-07-06  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* libdumbwad/wadchain-wrapper.cc, libdumbwad/wadchain.cc,
+	libdumbwad/wadchain.hh: New files.
+	* libdumbwad/Makefile.am (libdumbwad_a_SOURCES): Added wadchain.cc
+	wadchain.hh.  (Not yet wadchain-wrapper.cc)
+
+	* scripts/dumb-autoins.el (dumb-free-software-comment): New
+	variable and function.  Use this in all auto-inserts.
+	(auto-insert *.c, *.h): Use /* */ comments only.
+	(auto-insert *.cc, *.hh): New.
+
+	* po/.cvsignore: Ignore *.po-utf8 files, since they are
+	auto-generated from *.po.
+
+	* libdumbutil/utf8.c: Added comment about security bug.
+
+	* configure.in: Changed version number to 0.13.10; do not generate
+	it from the date after all.
+
+1999-06-24  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
+
+	* libdumb/font.c (POSSIBLY_BAD_TOWLOWER): Disabled by default.
+
+	* configure.in: Generate version number automatically from date.
+
+	* libdumbwad/wadio.h (LUMPNAMELEN): Moved to wadstruct.h.
+	#include that file instead.
+	* libdumbwad/wadstruct.h: Moved LUMPNAMELEN here from "wadio.h".
+	Don't include that file.  Moved all lump structures to
+	"doomstruct.h".
+	* libdumbwad/doomstruct.h: New file.  Contents moved from
+	"wadstruct.h".
+	* libdumb/dsound.c: To get sound structures, #include
+	"libdumbwad/doomstruct.h" rather than "libdumbwad/wadstruct.h".
+
+	* docs/maint/contrib.html: Removed comments about email attachments.
+	* docs/maint/source.html: Normalized SGML markup.  Added a section
+	about C++.
+
+	* docs/maint/template.c: Updated year.
+
+	* docs/dumb-pt-html/.cvsignore, docs/dumb-pt-html/Makefile.am,
+	docs/dumb-pt-html/dumb-pt-html.dsssl, docs/dumb-pt.sgml,
+	docs/Makefile.am, docs/dumb-pt-index.sgml: Removed all SGML stuff.
+	* configure.in (DUMB_CONFIG_JADE): Removed.
+
 1999-06-10  Kalle Olavi Niemitalo  <tosi@stekt.oulu.fi>
 
 	* Released DUMB 0.13.9.

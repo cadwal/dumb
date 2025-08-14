@@ -25,6 +25,7 @@
    ./WADTOOL.PLAN for ideas. */
 
 #include <config.h>
+#include <dircfg.h>
 
 #include <ctype.h>
 #include <errno.h>

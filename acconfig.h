@@ -1,6 +1,7 @@
 /* acconfig.h
    Process this file with autoheader to produce config.h.in,
-   which config.status then translates to config.h.  */
+   which config.status then translates to config.h.
+   See also dircfg.h.in.  */
 
 /* Define if your locale.h file contains LC_MESSAGES.  */
 #undef HAVE_LC_MESSAGES
@@ -57,24 +58,6 @@
 
 /* Define to enable libdumbworldb */
 #undef DUMB_CONFIG_LDWB
-
-
-/* These four should be moved to dircfg.h but I don't know how to do
-   that with Autoconf.  */
-
-/* Define as the directory to load locale data from.  */
-#undef LOCALEDIR
-
-/* A standard place to look for Doom .WADs.
-   In GNUspeak, "path" means a search path; since this variable can
-   name only one directory, it's _DIR.  */
-#undef DUMB_CONFIG_DOOM_DIR
-
-/* A standard place to look for HERETIC .WADs */
-#undef DUMB_CONFIG_HERETIC_DIR
-
-/* ${datadir}/dumb; used in default wadpath */
-#undef DUMB_CONFIG_DUMBDATADIR
 
 @BOTTOM@
 

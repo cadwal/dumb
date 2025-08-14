@@ -2,17 +2,11 @@
 
 EXTRA_DIST = WAFFLE $(pt_sources) .cvsignore
 
-CLEANFILES = $(pt_wad) $(other_lumps) PLAYPAL.lump doom4dum.wad
+CLEANFILES = $(pt_wad) doom4dum.wad
 
-if DUMB_CONFIG_DOOM
 pkgdata_DATA = doom4dum.wad
-else
-pkgdata_DATA = 
-endif
 
 pt_wad = pt.wad
-other_lumps = COLORM16.lump COLORM32.lump DUMBLOGO.lump
-playpal_src_wad = $(DUMB_CONFIG_DOOM_WAD)
 
 # Keep doom.pt first in this list so $< works right.
 pt_sources = doom.pt animtex.pt camera.pt ../dumb/dumbdefs.pt font.pt	\
@@ -40,24 +34,10 @@ pt_preprocess = $(CPP) -x c-header -I$(srcdir) -I$(top_srcdir)
 # create a temporary C file containing just #include <foo.pt> and
 # preprocess that.)
 
-PLAYPAL.lump: $(playpal_src_wad) $(WADTOOL)
-	$(WADTOOL) -r $(playpal_src_wad) -x PLAYPAL
-
-# ../docs/dumblogo.ppm is searched in VPATH and $< refers to it.
-DUMBLOGO.lump: ../docs/dumblogo.ppm PLAYPAL.lump $(PPMTODUMB)
-	$(PPMTODUMB) -p -M PLAYPAL.lump <$< >$@
-
 $(pt_wad): $(pt_sources) $(PTCOMP)
 	$(pt_preprocess) $< | $(PTCOMP) -o $@
 
-COLORM16.lump: PLAYPAL.lump $(PPMTODUMB)
-	$(PPMTODUMB) -c -2 -M $< >$@
-
-COLORM32.lump: PLAYPAL.lump $(PPMTODUMB)
-	$(PPMTODUMB) -c -4 -M $< >$@
-
-doom4dum.wad: $(WADTOOL) $(pt_wad) $(other_lumps)
+doom4dum.wad: $(WADTOOL) $(pt_wad)
 	$(WADTOOL) -w $@ \
 		-f $(srcdir)/WAFFLE \
-		-c $(pt_wad) \
-		-f $(other_lumps)
+		-c $(pt_wad)

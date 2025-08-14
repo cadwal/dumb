@@ -1,8 +1,8 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * tool/mkdfnt.c: Convert X11 fonts to DUMB format.
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
- * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  */
 
 #include <config.h>
+#include <dircfg.h>
 
 #include <errno.h>
 #include <locale.h>
@@ -130,6 +131,7 @@ print_version(void)
 {
    static const struct copyright copyrights[] = {
       { "1998", "Josh Parsons" },
+      { "1998-1999", "Kalle Niemitalo" },
       COPYRIGHT_END
    };
    fputs("mkdfnt (DUMB) " VERSION "\n", stdout);

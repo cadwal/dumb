@@ -20,6 +20,9 @@ else
 png_bin_programs =
 endif
 
+pngtodumb_SOURCES = pngtodumb.c todumb.c todumb.h
+ppmtodumb_SOURCES = ppmtodumb.c todumb.c todumb.h
+
 bin_PROGRAMS = wadtool mknulmap mkpnames $(ppm_bin_programs) $(png_bin_programs)
 noinst_PROGRAMS = $(x_noinst_programs)
 

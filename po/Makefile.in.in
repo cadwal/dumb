@@ -58,7 +58,7 @@ ALL_POFILES = $(STD_POFILES) $(UTF8_POFILES)
 STD_GMOFILES = @GMOFILES@
 UTF8_GMOFILES = $(STD_GMOFILES:.gmo=.gmo-utf8)
 ALL_GMOFILES = $(STD_GMOFILES) $(UTF8_GMOFILES)
-DISTFILES = ChangeLog Makefile.in.in POTFILES.in $(PACKAGE).pot \
+DISTFILES = Makefile.in.in POTFILES.in $(PACKAGE).pot \
 stamp-cat-id $(ALL_POFILES) $(ALL_GMOFILES) $(SOURCES)
 
 POTFILES = \
@@ -93,9 +93,6 @@ INSTOBJEXT = @INSTOBJEXT@
 	file=$(srcdir)/`echo $* | sed 's,.*/,,'`.gmo-utf8 \
 	  && rm -f $$file && $(GMSGFMT) -o $$file $<
 
-# This rule creates the file in the build directory, but "make dist"
-# will copy it to the distribution.
-#
 # The strange quoting in the long sed expression makes it easier for
 # Emacs to fontify right (or not quite, but close enough).
 .po.po-utf8:
@@ -104,6 +101,7 @@ INSTOBJEXT = @INSTOBJEXT@
 	  && rm -f $@ \
 	  && sed -e "/^\"Content-Type:/,0s@charset=$$charset@charset=utf-8@" $< \
 	     | $(RECODE) --source=po "$$charset"..UTF-8 > $@
+	diff -q $@ $(srcdir)/$@ || cp $@ $(srcdir)/$@
 
 .po.cat:
 	sed -f ../intl/po2msg.sed < $< > $*.msg \

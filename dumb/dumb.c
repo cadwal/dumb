@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/dumb.c: what do you think?
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,6 +21,7 @@
  */
 
 #include <config.h>
+#include <dircfg.h>
 
 #include <locale.h>
 #include <setjmp.h>
@@ -179,7 +181,7 @@ static int master = 0, slave = 0;
 static LevData ld[1];
 
 static int width = 0, height = 0, vwidth = 0, vheight = 0, bpp = 0,
- xmul = 0, ymul = 0, xlace = 0, ylace = 0, rend2fb = 0, real_width = 0;
+ xmul = 0, ymul = 0, xlace = 0, ylace = 0, rend2vidfb = 0, real_width = 0;
 
 /* called by conf_args() if --version is given */
 void
@@ -271,7 +273,7 @@ int
 main(int argc, char **argv)
 {
    char *conf_file;
-   void *fb, *rendfb = NULL, *fbptr;
+   void *vidfb, *rendfb = NULL;
    View view;
    ViewTrans viewtrans;
    ThingDyn *td;
@@ -285,11 +287,6 @@ main(int argc, char **argv)
    int seen_too_fast_msg = 0;
    int tickspassed = 1;
    int crowd = 1, showgetts = 1;
-#ifdef __cplusplus
-   void *(*fbrerender) (...);
-#else
-   void *(*fbrerender) ();
-#endif
    int load_failed = 1;
    Texture *tex_xhair = NULL;
 
@@ -302,12 +299,6 @@ main(int argc, char **argv)
 #endif
       "/usr/share/dumb",
       "/usr/local/share/dumb",
-#ifdef DUMB_CONFIG_DOOM_DIR
-      DUMB_CONFIG_DOOM_DIR,
-#endif
-#ifdef DUMB_CONFIG_HERETIC_DIR
-      DUMB_CONFIG_HERETIC_DIR,
-#endif
       NULL
    };
    const char *const *wadpath;
@@ -455,7 +446,7 @@ main(int argc, char **argv)
    } else
       init_video(&vwidth, &vheight, &bpp, &real_width);
    if (xmul == 1 && ymul == 1) {
-      rend2fb = 1;
+      rend2vidfb = 1;
       xlace = ylace = 0;
    } else {
       rendfb = safe_malloc(real_width / xmul * height * bpp);
@@ -474,17 +465,14 @@ main(int argc, char **argv)
    case (1):
       init_renderer = init_renderer8;
       render = render8;
-      fbrerender = fbrerender8;
       break;
    case (2):
       init_renderer = init_renderer16;
       render = render16;
-      fbrerender = fbrerender16;
       break;
    case (4):
       init_renderer = init_renderer32;
       render = render32;
-      fbrerender = fbrerender32;
       break;
    default:
       logfatal('D', _("Unsupported BPP=%d"), bpp);
@@ -573,26 +561,32 @@ main(int argc, char **argv)
 	 }
 	    
 	 dsound_setview(&view);
-	 fb = video_newframe();
-	 if (rend2fb)
-	    fbptr = fb;
-	 else
-	    fbptr = rendfb;
-	 render(fbptr, ld, &view);
-	 if (showgetts)
-	    draw_gettables(ld, ld->localplayer, fbptr, width, height);
-	 if (tickspassed)
-	    update_banners(fbptr, tickspassed);
-	 if (tex_xhair)
-	    draw(fbptr, tex_xhair,
-		 (width - tex_xhair->width) / 2,
-		 (height - tex_xhair->height) / 2);
-	 if (crowd)
-	    draw_bogothings(ld, fbptr, width, height);
-	 if (!rend2fb)
-	    fbptr = fbrerender(rendfb, fb, real_width / xmul, height,
-			       xmul, ymul, xlace, ylace);
-	 video_updateframe(fb);
+
+	 {
+	    void *fbptr;
+	    vidfb = video_newframe();
+	    if (rend2vidfb)
+	       fbptr = vidfb;
+	    else
+	       fbptr = rendfb;
+	    render(fbptr, ld, &view);
+	    if (showgetts)
+	       draw_gettables(ld, ld->localplayer, fbptr, width, height);
+	    if (tickspassed)
+	       update_banners(fbptr, tickspassed);
+	    if (tex_xhair)
+	       draw(fbptr, tex_xhair,
+		    (width - tex_xhair->width) / 2,
+		    (height - tex_xhair->height) / 2);
+	    if (crowd)
+	       draw_bogothings(ld, fbptr, width, height);
+	    if (!rend2vidfb)
+	       fbrerender(bpp, vidfb, rendfb,
+			  real_width / xmul, height,
+			  xmul, ymul, xlace, ylace);
+	    video_updateframe(vidfb);
+	 }
+	 
 	 if (want_sound)
 	    poll_sound();
 	 if (fplay) {
@@ -644,7 +638,7 @@ main(int argc, char **argv)
 	 if (in.select[9]) {
 	    int x, y;
 	    unsigned int i;
-	    const unsigned char *f = (const unsigned char *) fb;
+	    const unsigned char *f = (const unsigned char *) vidfb;
 	    FILE *fout;
 	    logprintf(LOG_INFO, 'D', _("saving snapshot..."));
 	    fout = fopen("snapshot.ppm", "wb");
@@ -753,7 +747,7 @@ main(int argc, char **argv)
       fclose(fplay);
    if (frec)
       fclose(frec);
-   if (!rend2fb)
+   if (!rend2vidfb)
       safe_free(rendfb);
    if (cnf_save || cnf_auto_save) {
       logprintf(LOG_INFO, 'D', _("Saving config to %s"), conf_file);

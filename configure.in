@@ -1,14 +1,14 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(libdumb/dsound.h)
 AC_CONFIG_AUX_DIR(scripts)
-AM_INIT_AUTOMAKE(dumb, 0.13.9)
-AM_CONFIG_HEADER(config.h)
+AM_INIT_AUTOMAKE(dumb, 0.13.11)
+AM_CONFIG_HEADER(config.h dircfg.h)
 
 # $datadir is usually '${prefix}/share'.  Expand it once.  This does
 # not handle spaces in $datadir, since I'm not sure how to use
 # multilevel quotes.
 dumb_expanded_datadir=`eval "echo $datadir"`
-AC_DEFINE_UNQUOTED(DUMB_CONFIG_DUMBDATADIR, "${dumb_expanded_datadir}/dumb")
+DUMB_DEFINE_UNQUOTED(DUMB_CONFIG_DUMBDATADIR, "${dumb_expanded_datadir}/dumb")
 
 dnl --- Optional parts.
 AC_MSG_CHECKING([whether libdumbworldb is requested])
@@ -35,8 +35,6 @@ AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_LN_S
-dnl Disable Jade for now.
-AM_CONDITIONAL(DUMB_CONFIG_JADE, [false])
 
 dnl AM_GNU_GETTEXT wants this and it must be called before AC_TRY_COMPILE.
 AC_ISC_POSIX
@@ -94,7 +92,7 @@ AC_SUBST(CXX_HACK_CC)
 dnl --- Internationalization.
 ALL_LINGUAS="fi"
 AM_GNU_GETTEXT
-AC_DEFINE_UNQUOTED(LOCALEDIR, "${dumb_expanded_datadir}/locale")
+DUMB_DEFINE_UNQUOTED(LOCALEDIR, "${dumb_expanded_datadir}/locale")
 
 dnl --- X
 AC_PATH_X
@@ -213,8 +211,6 @@ dnl DUMB only uses if(memcmp(...)) and if(!(memcmp(...)) and doesn't care of
 dnl the sign of the return value, so memcmp() needn't be 8-bit clean.
 dnl AC_FUNC_MEMCMP
 AC_FUNC_MMAP
-AC_FUNC_SETVBUF_REVERSED
-DUMB_MSG_REQUIRE_NO(ac_cv_func_setvbuf_reversed, [reversed setvbuf()])
 AC_TYPE_SIGNAL
 AC_FUNC_VPRINTF
 DUMB_MSG_REQUIRE_YES(ac_cv_func_vprintf, [vprintf()])
@@ -266,122 +262,6 @@ fi
 AC_SUBST(DUMB_XSHM_LDADD)
 AC_SUBST(DUMB_DGA_LDADD)
 AC_SUBST(DUMB_XKB_LDADD)
-
-dnl --- DOOM and Heretic.
-dnl
-dnl The GNU Coding Standards say:
-dnl
-dnl     Do not use a `--with' option to specify the file name to use to
-dnl     find certain files.  That is outside the scope of what `--with'
-dnl     options are for.
-dnl
-dnl FIXME.
-dnl
-AC_MSG_CHECKING(for doom.wad)
-DUMB_CONFIG_DOOM_WAD=""
-AC_ARG_WITH(doom-wad,
-  [  --with-doom-wad=FILE    support playing DOOM levels],
-[if test -n "$withval" && test "$withval" != no; then
-  if test -r "$withval" && test ! -d "$withval"; then
-    DUMB_CONFIG_DOOM_WAD="$withval"
-  else
-    AC_MSG_ERROR([$withval doesn't exist or isn't readable])
-  fi
-fi],
-[# Look for the WAD in some places it might be in.
-#
-# The `pwd` is necessary for getting an absolute filename.  Could use
-# $PWD instead but I don't think that's as portable.
-#
-# In `cd ..; pwd`, the cd may fail.  In that case, the script will
-# look in the current directory again.  I could use `cd .. && pwd`
-# instead but then the script would look for the wad in the root
-# directory which is clearly wrong.
-for testwad in $dumb_expanded_datadir/doom/doom*.wad \
-	$dumb_expanded_datadir/dumb/doom*.wad \
-	/usr/local/games/lib/doom/doom*.wad \
-	/usr/local/games/lib/doom2/doom*.wad \
-	/usr/local/games/doom/doom*.wad \
-	/usr/local/games/doom2/doom*.wad \
-	/usr/games/lib/doom/doom*.wad \
-	/usr/games/lib/doom2/doom*.wad \
-	/usr/games/doom/doom*.wad \
-	/usr/games/doom2/doom*.wad \
-	/usr/local/share/doom/doom*.wad \
-	/usr/share/doom/doom*.wad \
-	/usr/local/share/dumb/doom*.wad \
-	/usr/share/dumb/doom*.wad \
-	`pwd`/doom*.wad \
-	$srcdir/doom*.wad \
-	`cd ..; pwd`/doom*.wad
-do
-  if test -f "$testwad"; then
-    case "$testwad" in
-      */doom4dum.wad)
-	# this isn't from Doom
-        ;;
-      *)
-	DUMB_CONFIG_DOOM_WAD="$testwad"
-	break
-	;;
-    esac
-  fi
-done])
-if test -z "$DUMB_CONFIG_DOOM_WAD"; then
-  AC_MSG_RESULT(not found)
-  AC_MSG_WARN([doom.wad not found; Doom support \`doom4dum.wad' will not be built])
-else
-  AC_MSG_RESULT($DUMB_CONFIG_DOOM_WAD)
-  AC_DEFINE_UNQUOTED(DUMB_CONFIG_DOOM_DIR,
-                     "`dirname ${DUMB_CONFIG_DOOM_WAD}`")
-fi
-AC_SUBST(DUMB_CONFIG_DOOM_WAD)
-AM_CONDITIONAL(DUMB_CONFIG_DOOM, test -n "${DUMB_CONFIG_DOOM_WAD}")
-
-AC_MSG_CHECKING(for heretic.wad)
-DUMB_CONFIG_HERETIC_WAD=""
-AC_ARG_WITH(heretic-wad,
-  [  --with-heretic-wad=FILE support playing Heretic levels],
-[if test -n "$withval" && test "$withval" != no; then
-  if test -f "$withval"; then
-    DUMB_CONFIG_HERETIC_WAD="$withval"
-  else
-    AC_MSG_ERROR([$withval doesn't exist or isn't a regular file])
-  fi
-fi],
-[# Look for the WAD in some places it might be in.
-# I don't know if there's a Unix version of Heretic but I try anyway.
-# The `pwd` thing is explained in the Doom section above.
-for testwad in $dumb_expanded_datadir/heretic/heretic*.wad \
-	$dumb_expanded_datadir/dumb/heretic*.wad \
-	/usr/local/games/lib/heretic/heretic*.wad \
-	/usr/local/games/heretic/heretic*.wad \
-	/usr/games/lib/heretic/heretic*.wad \
-	/usr/games/heretic/heretic*.wad \
-	/usr/local/share/heretic/heretic*.wad \
-	/usr/share/heretic/heretic*.wad \
-	/usr/local/share/dumb/heretic*.wad \
-	/usr/share/dumb/heretic*.wad \
-	`pwd`/heretic*.wad \
-	$srcdir/heretic*.wad \
-	`cd ..; pwd`/heretic*.wad
-do
-  if test -f "$testwad"; then
-    # No need to test for htic4dum.wad.
-    DUMB_CONFIG_HERETIC_WAD="$testwad"
-    break
-  fi
-done])
-if test -z "$DUMB_CONFIG_HERETIC_WAD"; then
-  AC_MSG_RESULT(not found)
-  AC_MSG_WARN([heretic.wad not found; Heretic support \`htic4dum.wad' will not be built])
-else
-  AC_MSG_RESULT($DUMB_CONFIG_HERETIC_WAD)
-  AC_DEFINE_UNQUOTED(DUMB_CONFIG_HERETIC_DIR,
-                     "`dirname ${DUMB_CONFIG_HERETIC_WAD}`")
-fi
-AC_SUBST(DUMB_CONFIG_HERETIC_WAD)
-AM_CONDITIONAL(DUMB_CONFIG_HERETIC, test -n "${DUMB_CONFIG_HERETIC_WAD}")
 
 dnl --- Sound.
 dnl This is pretty complicated.  The user can:
@@ -485,9 +365,8 @@ AC_OUTPUT(Makefile libmissing/Makefile libdumbutil/Makefile
   libdumbwad/Makefile libdumbworldb/Makefile libdumbrender/Makefile
   libdumb/Makefile dumb/Makefile xwad/Makefile ptcomp/Makefile
   tool/Makefile doom/Makefile htic/Makefile test/Makefile
-  docs/Makefile docs/dos/Makefile docs/dumb-pt-html/Makefile
-  docs/maint/Makefile docs/patches/Makefile intl/Makefile
-  po/Makefile.in scripts/Makefile)
+  docs/Makefile docs/dos/Makefile docs/maint/Makefile
+  docs/patches/Makefile intl/Makefile po/Makefile.in scripts/Makefile)
 
 dnl Local Variables:
 dnl comment-start: "dnl "

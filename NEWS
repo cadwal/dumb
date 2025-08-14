@@ -1,3 +1,23 @@
+* No user-visible changes in DUMB 0.13.11.
+
+* Changes in DUMB 0.13.10.
+
+This version was never uploaded.
+
+** doom.wad and heretic.wad not needed at compile time.
+
+Doom and Heretic support can now be built without the WAD files of
+those games.  The configure script no longer looks for the WADs, and
+the configuration options --with-doom-wad and --with-heretic-wad have
+been removed.
+
+To actually play the games, you still need their files at runtime.
+
+This change also required removing the DUMB logo which was shown at
+the beginning of the game, since now it can't be converted to the
+game's palette in advance.  It may return once we support runtime
+dithering.
+
 * Changes in DUMB 0.13.9.
 
 ** Included doom/font.pt and htic/font.pt.

@@ -1,5 +1,5 @@
-Installation of DUMB 0.13.8
-===========================
+Installation of DUMB 0.13.10
+============================
 
 The first part of this file describes DUMB-specific configuration
 options.  The second part, beginning with Basic Installation, contains
@@ -29,8 +29,8 @@ Optional parts
   and objects in memory.  It is not yet complete and the game
   executables don't use it, so it is disabled by default.
 
-  If you enable libdumbworldb, you also get `test/ldltest' which can be
-  used to test some of its features.
+  If you enable libdumbworldb, you also get `test/ldwbtest' which can
+  be used to test some of its features.
 
 Graphics options
 ----------------
@@ -123,32 +123,6 @@ Currently, only Unix networking (Berkeley sockets) is supported.
   Force or disable master-slave Unix networking.  This uses UDP
   datagrams and system calls gethostbyname(), htons(), socket(),
   bind(), fcntl(), close(), recvfrom(), select() and sendto().
-
-DOOM and Heretic options
-------------------------
-
-DUMB supports playing DOOM and Heretic levels if you tell `configure'
-where the WADs are.
-
-The GNU Coding Standards say that --with options shouldn't be used for
-file names.  I'll fix this in a future version of DUMB.
-
-`--with-doom-wad=FILE'
-  Use doom*.wad from FILE.  It is an error if the file doesn't exist
-  or is unreadable or a directory.
-
-  FILE must be an absolute filename.  Relative ones will cause an
-  error when compiling the patch WADs.
-
-  If this option isn't given, `configure' will look for doom*.wad in
-  some obvious places.  See `configure.in' for the list.
-
-`--without-doom-wad'
-  Don't look for doom*.wad.
-
-`--with-heretic-wad=FILE'
-`--without-heretic-wad'
-  As above but for heretic.wad.
 
 
 Basic Installation

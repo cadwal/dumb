@@ -33,11 +33,11 @@ _$*
 core
 
 # Project ignores (converted from .cvsignore files)
+/docs/*.info
 /docs/Makefile
 /docs/Makefile.in
 /docs/dumb-pt.fixed-index
 /docs/dumb-pt.index
-/docs/dumb-pt.info
 /docs/stamp-vti
 /docs/version.texi
 /docs/dos/Makefile
@@ -112,3 +112,4 @@ core
 /dumb-*-1.spec
 /stamp-h
 /stamp-h.in
+/stamp-h*.in

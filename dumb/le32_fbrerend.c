@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/le32_fbrerend.c: Rescaling the framebuffer.  Little-endian 32-bit ver.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  * Copyright (C) 1997 by Marcus Sundberg <e94_msu@e.kth.se>
  *
@@ -27,200 +28,188 @@
 #include "render.h"
 #include "fbrerend.h"
 
-void *
-fbrerender8(Pixel8 *fb,
-	    Pixel8 *rendfb,
+void
+fbrerender8(Pixel8 *destfb,
+	    const Pixel8 *srcfb,
 	    int xsize, int ysize,
 	    int xfact, int yfact,
 	    int xlace, int ylace)
 {
-   if ((xfact & yfact) == 1)
-      return fb;
-   else {
-      void *retfb = rendfb;
-      if ((xfact & yfact) == 2 && (xlace & ylace) == 0) {
-	 int i, j, width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i += 2) {
-	       int mul = i * xfact;
-	       register unsigned tmp;
-	       register unsigned char pix1 = fb[i], pix2 = fb[i + 1];
+   if (xfact == 1 && yfact == 1)
+      abort();			/* Don't do that, then!  */
+   else if (xfact == 2 && yfact == 2 && xlace == 0 && ylace == 0) {
+      int i, j, width = xsize * xfact;
+      int destinc = width * yfact;
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i += 2) {
+	    int mul = i * xfact;
 #ifdef HAVE_MMX
-	       __asm__(
-		       "movd %2, %%mm0\n\t"
-		       "punpcklbw %%mm0, %%mm0\n\t"
-		       "movq %%mm0, %0\n\t"
-		       "movq %%mm0, %1\n\t"
-		       : "=m"(rendfb[mul]), "=m"(rendfb[mul+width])
-		       : "m"(fb[i])
-		       );
-	       /* If we were using MMX, we're really doing 64bit
-		  rerendering.  But this can't go in le64_fbrerend, 
-		  because when xfact or yfact aren't 2, we'll be using
-		  32bit again.  So, we need to bump up i by 2, just
-	          if we were really doing 64bit */
-	       i += 2;
+	    __asm__(
+		    "movd %2, %%mm0\n\t"
+		    "punpcklbw %%mm0, %%mm0\n\t"
+		    "movq %%mm0, %0\n\t"
+		    "movq %%mm0, %1\n\t"
+		    : "=m"(destfb[mul]), "=m"(destfb[mul+width])
+		    : "m"(srcfb[i])
+		    );
+	    /* If we were using MMX, we're really doing 64bit
+	       rerendering.  But this can't go in le64_fbrerend, 
+	       because when xfact or yfact aren't 2, we'll be using
+	       32bit again.  So, we need to bump up i by 2, just
+	       if we were really doing 64bit */
+	    i += 2;
 #else  /* !HAVE_MMX */
-	       tmp = ((unsigned int) pix1
-		      + ((unsigned int) pix1 << 8)
-		      + ((unsigned int) pix2 << 16)
-		      + ((unsigned int) pix2 << 24));
-	       *((unsigned int *) (rendfb + mul + width))
-		   = *((unsigned int *) (rendfb + mul)) = tmp;
+	    register unsigned tmp;
+	    register unsigned char pix1 = srcfb[i], pix2 = srcfb[i + 1];
+	    tmp = ((unsigned int) pix1
+		   + ((unsigned int) pix1 << 8)
+		   + ((unsigned int) pix2 << 16)
+		   + ((unsigned int) pix2 << 24));
+	    *((unsigned int *) (destfb + mul + width))
+	       = *((unsigned int *) (destfb + mul)) = tmp;
 #endif /* !HAVE_MMX */
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
 	 }
-      } else {
-	 int i, j, k, l;
-	 int width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 int xifactor = xfact - xlace, yifactor = yfact - ylace;
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register int pixval = fb[i], m = i * xfact;
-	       for (k = 0; k < xifactor; k++)
-		  for (l = 0; l < yifactor; l++) {
-		     rendfb[m + k + width * l] = pixval;
-		  }
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
-	 }
+	 destfb += destinc;
+	 srcfb += xsize;
       }
 #ifdef HAVE_MMX
       /* tidy up the MMX/FP state */
       __asm__("emms\n\t");
 #endif /* HAVE_MMX */
-      return retfb;
+   } else {
+      int i, j, k, l;
+      int width = xsize * xfact;
+      int destinc = width * yfact;
+      int xifactor = xfact - xlace, yifactor = yfact - ylace;
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int pixval = srcfb[i], m = i * xfact;
+	    for (k = 0; k < xifactor; k++)
+	       for (l = 0; l < yifactor; l++) {
+		  destfb[m + k + width * l] = pixval;
+	       }
+	 }
+	 destfb += destinc;
+	 srcfb += xsize;
+      }
    }
 }
 
-void *
-fbrerender16(Pixel16 *fb,
-	     Pixel16 *rendfb,
+void
+fbrerender16(Pixel16 *destfb,
+	     const Pixel16 *srcfb,
 	     int xsize, int ysize,
 	     int xfact, int yfact,
 	     int xlace, int ylace)
 {
-   if ((xfact & yfact) == 1)
-      return fb;
-   else {
-      void *retfb = rendfb;
-      if ((xfact & yfact) == 2 && (xlace & ylace) == 0) {
-	 int i, j, width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       int mul = i * xfact;
-	       register unsigned short pix1 = fb[i];
+   if (xfact == 1 && yfact == 1)
+      abort();
+   else if (xfact == 2 && yfact == 2 && xlace == 0 && ylace == 0) {
+      int i, j, width = xsize * xfact;
+      int destinc = width * yfact;
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    int mul = i * xfact;
 #ifdef HAVE_MMX
-	       /* I have NOT TESTED THIS! -- josh */
-	       __asm__(
-		       "movd %2, %%mm0\n\t"
-		       "punpcklwd %%mm0, %%mm0\n\t"
-		       "movq %%mm0, %0\n\t"
-		       "movq %%mm0, %1\n\t"
-		       : "=m"(rendfb[mul]), "=m"(rendfb[mul+width])
-		       : "m"(fb[i])
-		       );
-	       i ++;
+	    /* I have NOT TESTED THIS! -- josh */
+	    __asm__(
+		    "movd %2, %%mm0\n\t"
+		    "punpcklwd %%mm0, %%mm0\n\t"
+		    "movq %%mm0, %0\n\t"
+		    "movq %%mm0, %1\n\t"
+		    : "=m"(destfb[mul]), "=m"(destfb[mul+width])
+		    : "m"(srcfb[i])
+		    );
+	    i ++;
 #else  /* !HAVE_MMX */
-	       *((unsigned int *) (rendfb + mul + width))
-		   = *((unsigned int *) (rendfb + mul))
-		   = ((unsigned int) pix1 + ((unsigned int) pix1 << 16));
+	    register unsigned short pix1 = srcfb[i];
+	    *((unsigned int *) (destfb + mul + width))
+	       = *((unsigned int *) (destfb + mul))
+	       = ((unsigned int) pix1 + ((unsigned int) pix1 << 16));
 #endif /* !HAVE_MMX */
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
 	 }
-      } else {
-	 int i, j, k, l;
-	 int width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 int xifactor = xfact - xlace, yifactor = yfact - ylace;
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register int pixval = fb[i], m = i * xfact;
-	       for (k = 0; k < xifactor; k++)
-		  for (l = 0; l < yifactor; l++) {
-		     rendfb[m + k + width * l] = pixval;
-		  }
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
-	 }
+	 destfb += destinc;
+	 srcfb += xsize;
       }
 #ifdef HAVE_MMX
       /* tidy up the MMX/FP state */
       __asm__("emms\n\t");
 #endif /* HAVE_MMX */
-      return retfb;
+   } else {
+      int i, j, k, l;
+      int width = xsize * xfact;
+      int destinc = width * yfact;
+      int xifactor = xfact - xlace, yifactor = yfact - ylace;
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int pixval = srcfb[i], m = i * xfact;
+	    for (k = 0; k < xifactor; k++)
+	       for (l = 0; l < yifactor; l++) {
+		  destfb[m + k + width * l] = pixval;
+	       }
+	 }
+	 destfb += destinc;
+	 srcfb += xsize;
+      }
    }
 }
 
-void *
-fbrerender32(Pixel32 *fb,
-	     Pixel32 *rendfb,
+void
+fbrerender32(Pixel32 *destfb,
+	     const Pixel32 *srcfb,
 	     int xsize, int ysize,
 	     int xfact, int yfact,
 	     int xlace, int ylace)
 {
-   if ((xfact & yfact) == 1)
-      return fb;
-   else {
-      void *retfb = rendfb;
-      if ((xfact & yfact) == 2 && (xlace & ylace) == 0) {
-	 int i, j, width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register int mul = i * xfact;
+   if (xfact == 1 && yfact == 1)
+      abort();
+   else if (xfact == 2 && yfact == 2 && xlace == 0 && ylace == 0) {
+      int i, j, width = xsize * xfact;
+      int destinc = width * yfact;
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int mul = i * xfact;
 #ifdef HAVE_MMX
-	       /* I have NOT TESTED THIS! -- josh */
-	       __asm__(
-		       "movd %2, %%mm0\n\t"
-		       "punpckldq %%mm0, %%mm0\n\t"
-		       "movq %%mm0, %0\n\t"
-		       "movq %%mm0, %1\n\t"
-		       : "=m"(rendfb[mul]), "=m"(rendfb[mul+width])
-		       : "m"(fb[i])
-		       );
+	    /* I have NOT TESTED THIS! -- josh */
+	    __asm__(
+		    "movd %2, %%mm0\n\t"
+		    "punpckldq %%mm0, %%mm0\n\t"
+		    "movq %%mm0, %0\n\t"
+		    "movq %%mm0, %1\n\t"
+		    : "=m"(destfb[mul]), "=m"(destfb[mul+width])
+		    : "m"(srcfb[i])
+		    );
 #else  /* !HAVE_MMX */
-	       rendfb[width + mul + 1]
-		  = rendfb[width + mul]
-		  = rendfb[mul + 1]
-		  = rendfb[mul]
-		  = fb[i];
+	       destfb[width + mul + 1]
+		  = destfb[width + mul]
+		  = destfb[mul + 1]
+		  = destfb[mul]
+		  = srcfb[i];
 #endif /* !HAVE_MMX */
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
 	 }
-      } else {
-	 int i, j, k, l;
-	 int width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 int xifactor = xfact - xlace, yifactor = yfact - ylace;
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register int pixval = fb[i], m = i * xfact;
-	       for (k = 0; k < xifactor; k++)
-		  for (l = 0; l < yifactor; l++) {
-		     rendfb[m + k + width * l] = pixval;
-		  }
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
-	 }
+	 destfb += destinc;
+	 srcfb += xsize;
       }
 #ifdef HAVE_MMX
       /* tidy up the MMX/FP state */
       __asm__("emms\n\t");
 #endif /* HAVE_MMX */
-      return retfb;
+   } else {
+      int i, j, k, l;
+      int width = xsize * xfact;
+      int destinc = width * yfact;
+      int xifactor = xfact - xlace, yifactor = yfact - ylace;
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int pixval = srcfb[i], m = i * xfact;
+	    for (k = 0; k < xifactor; k++)
+	       for (l = 0; l < yifactor; l++) {
+		  destfb[m + k + width * l] = pixval;
+	       }
+	 }
+	 destfb += destinc;
+	 srcfb += xsize;
+      }
    }
 }
 

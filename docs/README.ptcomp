@@ -1,5 +1,5 @@
-The files ptcomp.texinfo and ptcomp.sgml contain the most up-to-date
-information, but many older things are missing from those.
+The most up-to-date information is in dumb-pt.texinfo, but many older
+things are missing from it.
 
           *** WARNING: this information is out of date!!!  ***
           *** it's mostly right for protos and phases, but ***

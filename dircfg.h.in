@@ -1,0 +1,10 @@
+/* dircfg.h.in
+   config.status translates this to dircfg.h.
+   See also acconfig.h, from which this was separated because
+   most files needn't be recompiled if directories change.  */
+
+/* Define as the directory to load locale data from.  */
+#undef LOCALEDIR
+
+/* ${datadir}/dumb; used in default wadpath */
+#undef DUMB_CONFIG_DUMBDATADIR

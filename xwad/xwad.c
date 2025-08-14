@@ -21,6 +21,7 @@
  */
 
 #include <config.h>
+#include <dircfg.h>
 
 #include <stdarg.h>
 #include <stdio.h>

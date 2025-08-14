@@ -20,6 +20,7 @@
  */
 
 #include <config.h>
+#include <dircfg.h>
 
 #include <assert.h>
 #include <string.h>

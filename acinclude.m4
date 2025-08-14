@@ -273,3 +273,14 @@ AC_MSG_RESULT([$dumb_cv_type_$1])
 if test $dumb_cv_type_$1 = no; then
   AC_DEFINE($1, $2)
 fi])
+
+dnl Usage:
+dnl DUMB_DEFINE_UNQUOTED(VARIABLE [, VALUE])
+dnl
+dnl Exactly like AC_DEFINE_UNQUOTED, but won't be caught by `autoheader'.
+dnl
+define(DUMB_DEFINE_UNQUOTED,
+[cat >> confdefs.h <<EOF
+[#define] $1 ifelse($#, 2, [$2], $#, 3, [$2], 1)
+EOF
+])

@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/le64_fbrerend.c: Rescaling the framebuffer.  Little-endian 64-bit ver.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1997 by Marcus Sundberg <e94_msu@e.kth.se>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,232 +27,220 @@
 #include "render.h"
 #include "fbrerend.h"
 
-void *
-fbrerender8(Pixel8 *fb,
-	    Pixel8 *rendfb,
+void
+fbrerender8(Pixel8 *destfb,
+	    const Pixel8 *srcfb,
 	    int xsize, int ysize,
 	    int xfact, int yfact,
 	    int xlace, int ylace)
 {
-   if ((xfact & yfact) == 1)
-      return fb;
-   else {
-      void *retfb = rendfb;
-      if ((xfact & yfact) == 2 && (xlace | ylace) == 0) {
-	 int i, j, width = xsize * xfact;
-	 int rendinc = width * yfact;
+   if (xfact == 1 && yfact == 1)
+      abort();			/* Dont do that, then!  */
+   else if (xfact == 2 && yfact == 2 && xlace == 0 && ylace == 0) {
+      int i, j, width = xsize * xfact;
+      int destinc = width * yfact;
 
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i += 4) {
-	       register mul = i * xfact;
-	       unsigned long register tmp;
-	       unsigned char register pix1 = fb[i], pix2 = fb[i + 1],
-	        pix3 = fb[i + 2], pix4 = fb[i + 3];
-	       tmp = ((unsigned long) pix1
-		      + ((unsigned long) pix1 << 8)
-		      + ((unsigned long) pix2 << 16)
-		      + ((unsigned long) pix2 << 24)
-		      + ((unsigned long) pix3 << 32)
-		      + ((unsigned long) pix3 << 40)
-		      + ((unsigned long) pix4 << 48)
-		      + ((unsigned long) pix4 << 56));
-	       *((unsigned long *) (rendfb + mul + width))
-		   = *((unsigned long *) (rendfb + mul)) = tmp;
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i += 4) {
+	    register int mul = i * xfact;
+	    register unsigned long tmp;
+	    register unsigned char pix1 = srcfb[i], pix2 = srcfb[i + 1],
+				   pix3 = srcfb[i + 2], pix4 = srcfb[i + 3];
+	    tmp = ((unsigned long) pix1
+		   + ((unsigned long) pix1 << 8)
+		   + ((unsigned long) pix2 << 16)
+		   + ((unsigned long) pix2 << 24)
+		   + ((unsigned long) pix3 << 32)
+		   + ((unsigned long) pix3 << 40)
+		   + ((unsigned long) pix4 << 48)
+		   + ((unsigned long) pix4 << 56));
+	    *((unsigned long *) (destfb + mul + width))
+	       = *((unsigned long *) (destfb + mul)) = tmp;
 	 }
-      } else if ((xfact & yfact) == 4 && (xlace | ylace) == 0) {
-	 int i, j;
-	 register width = xsize * xfact;
-	 int rendinc = width * yfact;
-
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i += 2) {
-	       register mul = i * xfact;
-	       unsigned long register tmp;
-	       unsigned char register pix1 = fb[i], pix2 = fb[i + 1];
-	       tmp = ((unsigned long) pix1
-		      + ((unsigned long) pix1 << 8)
-		      + ((unsigned long) pix1 << 16)
-		      + ((unsigned long) pix1 << 24)
-		      + ((unsigned long) pix2 << 32)
-		      + ((unsigned long) pix2 << 40)
-		      + ((unsigned long) pix2 << 48)
-		      + ((unsigned long) pix2 << 56));
-	       *((unsigned long *) (rendfb + mul + width * 3))
-		   = *((unsigned long *) (rendfb + mul + width * 2))
-		   = *((unsigned long *) (rendfb + mul + width))
-		   = *((unsigned long *) (rendfb + mul)) = tmp;
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
-	 }
-      } else {
-	 register i, j, k, l, width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 int xifactor = xfact - xlace, yifactor = yfact - ylace;
-
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register pixval = fb[i], m = i * xfact;
-	       for (k = 0; k < xifactor; k++)
-		  for (l = 0; l < yifactor; l++) {
-		     rendfb[m + k + width * l] = pixval;
-		  }
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
-	 }
+	 destfb += destinc;
+	 srcfb += xsize;
       }
-      return retfb;
+   } else if (xfact == 4 && yfact == 4 && xlace == 0 && ylace == 0) {
+      int i, j;
+      register int width = xsize * xfact;
+      int destinc = width * yfact;
+
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i += 2) {
+	    register int mul = i * xfact;
+	    register unsigned long tmp;
+	    register unsigned char pix1 = srcfb[i], pix2 = srcfb[i + 1];
+	    tmp = ((unsigned long) pix1
+		   + ((unsigned long) pix1 << 8)
+		   + ((unsigned long) pix1 << 16)
+		   + ((unsigned long) pix1 << 24)
+		   + ((unsigned long) pix2 << 32)
+		   + ((unsigned long) pix2 << 40)
+		   + ((unsigned long) pix2 << 48)
+		   + ((unsigned long) pix2 << 56));
+	    *((unsigned long *) (destfb + mul + width * 3))
+	       = *((unsigned long *) (destfb + mul + width * 2))
+	       = *((unsigned long *) (destfb + mul + width))
+	       = *((unsigned long *) (destfb + mul)) = tmp;
+	 }
+	 destfb += destinc;
+	 srcfb += xsize;
+      }
+   } else {
+      register int i, j, k, l, width = xsize * xfact;
+      int destinc = width * yfact;
+      int xifactor = xfact - xlace, yifactor = yfact - ylace;
+
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int pixval = srcfb[i], m = i * xfact;
+	    for (k = 0; k < xifactor; k++)
+	       for (l = 0; l < yifactor; l++) {
+		  destfb[m + k + width * l] = pixval;
+	       }
+	 }
+	 destfb += destinc;
+	 srcfb += xsize;
+      }
    }
 }
 
 /* This is UNTESTED /Marcus */
-void *
-fbrerender16(Pixel16 *fb,
-	     Pixel16 *rendfb,
+void
+fbrerender16(Pixel16 *destfb,
+	     const Pixel16 *srcfb,
 	     int xsize, int ysize,
 	     int xfact, int yfact,
 	     int xlace, int ylace)
 {
-   if ((xfact & yfact) == 1)
-      return fb;
-   else {
-      void *retfb = rendfb;
-      if ((xfact & yfact) == 2 && (xlace | ylace) == 0) {
-	 int i, j, width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i += 2) {
-	       register mul = i * xfact;
-	       unsigned long register tmp;
-	       unsigned short register pix1 = fb[i], pix2 = fb[i + 1];
-	       tmp = ((unsigned long) pix1
-		      + ((unsigned long) pix1 << 16)
-		      + ((unsigned long) pix2 << 32)
-		      + ((unsigned long) pix2 << 48));
-	       *((unsigned long *) (rendfb + mul + width))
-		   = *((unsigned long *) (rendfb + mul)) = tmp;
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
+   if (xfact == 1 && yfact == 1)
+      abort();
+   else if (xfact == 2 && yfact == 2 && xlace == 0 && ylace == 0) {
+      int i, j, width = xsize * xfact;
+      int destinc = width * yfact;
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i += 2) {
+	    register int mul = i * xfact;
+	    register unsigned long tmp;
+	    register unsigned short pix1 = srcfb[i], pix2 = srcfb[i + 1];
+	    tmp = ((unsigned long) pix1
+		   + ((unsigned long) pix1 << 16)
+		   + ((unsigned long) pix2 << 32)
+		   + ((unsigned long) pix2 << 48));
+	    *((unsigned long *) (destfb + mul + width))
+	       = *((unsigned long *) (destfb + mul)) = tmp;
 	 }
-      } else if ((xfact & yfact) == 4 && (xlace | ylace) == 0) {
-	 int i, j;
-	 register width = xsize * xfact;
-	 int rendinc = width * yfact;
-
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register mul = i * xfact;
-	       unsigned long register tmp;
-	       unsigned short register pix1 = fb[i];
-	       tmp = ((unsigned long) pix1
-		      + ((unsigned long) pix1 << 16)
-		      + ((unsigned long) pix1 << 32)
-		      + ((unsigned long) pix1 << 48));
-	       *((unsigned long *) (rendfb + mul + width * 3))
-		   = *((unsigned long *) (rendfb + mul + width * 2))
-		   = *((unsigned long *) (rendfb + mul + width))
-		   = *((unsigned long *) (rendfb + mul)) = tmp;
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
-	 }
-      } else {
-	 int i, j, k, l;
-	 int width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 int xifactor = xfact - xlace, yifactor = yfact - ylace;
-
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register pixval = fb[i], m = i * xfact;
-	       for (k = 0; k < xifactor; k++)
-		  for (l = 0; l < yifactor; l++) {
-		     rendfb[m + k + width * l] = pixval;
-		  }
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
-	 }
+	 destfb += destinc;
+	 srcfb += xsize;
       }
-      return retfb;
+   } else if (xfact == 4 && yfact == 4 && xlace == 0 && ylace == 0) {
+      int i, j;
+      register int width = xsize * xfact;
+      int destinc = width * yfact;
+
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int mul = i * xfact;
+	    register unsigned long tmp;
+	    register unsigned short pix1 = srcfb[i];
+	    tmp = ((unsigned long) pix1
+		   + ((unsigned long) pix1 << 16)
+		   + ((unsigned long) pix1 << 32)
+		   + ((unsigned long) pix1 << 48));
+	    *((unsigned long *) (destfb + mul + width * 3))
+	       = *((unsigned long *) (destfb + mul + width * 2))
+	       = *((unsigned long *) (destfb + mul + width))
+	       = *((unsigned long *) (destfb + mul)) = tmp;
+	 }
+	 destfb += destinc;
+	 srcfb += xsize;
+      }
+   } else {
+      int i, j, k, l;
+      int width = xsize * xfact;
+      int destinc = width * yfact;
+      int xifactor = xfact - xlace, yifactor = yfact - ylace;
+
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int pixval = srcfb[i], m = i * xfact;
+	    for (k = 0; k < xifactor; k++)
+	       for (l = 0; l < yifactor; l++) {
+		  destfb[m + k + width * l] = pixval;
+	       }
+	 }
+	 destfb += destinc;
+	 srcfb += xsize;
+      }
    }
 }
 
 /* This is UNTESTED /Marcus */
-void *
-fbrerender32(Pixel32 *fb,
-	     Pixel32 *rendfb,
+void
+fbrerender32(Pixel32 *destfb,
+	     const Pixel32 *srcfb,
 	     int xsize, int ysize,
 	     int xfact, int yfact,
 	     int xlace, int ylace)
 {
-   if ((xfact & yfact) == 1)
-      return fb;
-   else {
-      void *retfb = rendfb;
-      if ((xfact & yfact) == 2 && (xlace | ylace) == 0) {
-	 int i, j, width = xsize * xfact;
-	 int rendinc = width * yfact;
+   if (xfact == 1 && yfact == 1)
+      abort();
+   else if (xfact == 2 && yfact == 2 && xlace == 0 && ylace == 0) {
+      int i, j, width = xsize * xfact;
+      int destinc = width * yfact;
 
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register mul = i * xfact;
-	       unsigned long register tmp;
-	       unsigned int register pix1 = fb[i];
-	       tmp = ((unsigned long) pix1
-		      + ((unsigned long) pix1 << 32));
-	       *((unsigned long *) (rendfb + mul + width))
-		   = *((unsigned long *) (rendfb + mul)) = tmp;
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int mul = i * xfact;
+	    register unsigned long tmp;
+	    register unsigned int pix1 = srcfb[i];
+	    tmp = ((unsigned long) pix1
+		   + ((unsigned long) pix1 << 32));
+	    *((unsigned long *) (destfb + mul + width))
+	       = *((unsigned long *) (destfb + mul)) = tmp;
 	 }
-      } else if ((xfact & yfact) == 4 && (xlace | ylace) == 0) {
-	 int i, j, width = xsize * xfact;
-	 int rendinc = width * yfact;
-
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register mul = i * xfact;
-	       unsigned long register tmp;
-	       unsigned int register pix1 = fb[i];
-	       tmp = ((unsigned long) pix1 + ((unsigned long) pix1 << 32));
-	       *((unsigned long *) (rendfb + mul + width * 3))
-		   = *((unsigned long *) (rendfb + mul + width * 2))
-		   = *((unsigned long *) (rendfb + mul + width))
-		   = *((unsigned long *) (rendfb + mul))
-		   = *((unsigned long *) (rendfb + mul + width * 3 + 2))
-		   = *((unsigned long *) (rendfb + mul + width * 2 + 2))
-		   = *((unsigned long *) (rendfb + mul + width + 2))
-		   = *((unsigned long *) (rendfb + mul + 2)) = tmp;
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
-	 }
-      } else {
-	 int i, j, k, l;
-	 int width = xsize * xfact;
-	 int rendinc = width * yfact;
-	 int xifactor = xfact - xlace, yifactor = yfact - ylace;
-
-	 for (j = 0; j < ysize; j++) {
-	    for (i = 0; i < xsize; i++) {
-	       register pixval = fb[i], m = i * xfact;
-	       for (k = 0; k < xifactor; k++)
-		  for (l = 0; l < yifactor; l++) {
-		     rendfb[m + k + width * l] = pixval;
-		  }
-	    }
-	    rendfb += rendinc;
-	    fb += xsize;
-	 }
+	 destfb += destinc;
+	 srcfb += xsize;
       }
-      return retfb;
+   } else if (xfact == 4 && yfact == 4 && xlace == 0 && ylace == 0) {
+      int i, j, width = xsize * xfact;
+      int destinc = width * yfact;
+
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int mul = i * xfact;
+	    register unsigned long tmp;
+	    register unsigned int pix1 = srcfb[i];
+	    tmp = ((unsigned long) pix1 + ((unsigned long) pix1 << 32));
+	    *((unsigned long *) (destfb + mul + width * 3))
+	       = *((unsigned long *) (destfb + mul + width * 2))
+	       = *((unsigned long *) (destfb + mul + width))
+	       = *((unsigned long *) (destfb + mul))
+	       = *((unsigned long *) (destfb + mul + width * 3 + 2))
+	       = *((unsigned long *) (destfb + mul + width * 2 + 2))
+	       = *((unsigned long *) (destfb + mul + width + 2))
+	       = *((unsigned long *) (destfb + mul + 2)) = tmp;
+	    }
+	 destfb += destinc;
+	 srcfb += xsize;
+      }
+   } else {
+      int i, j, k, l;
+      int width = xsize * xfact;
+      int destinc = width * yfact;
+      int xifactor = xfact - xlace, yifactor = yfact - ylace;
+
+      for (j = 0; j < ysize; j++) {
+	 for (i = 0; i < xsize; i++) {
+	    register int pixval = srcfb[i], m = i * xfact;
+	    for (k = 0; k < xifactor; k++)
+	       for (l = 0; l < yifactor; l++) {
+		  destfb[m + k + width * l] = pixval;
+	       }
+	 }
+	 destfb += destinc;
+	 srcfb += xsize;
+      }
    }
 }
 

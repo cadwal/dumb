@@ -25,6 +25,7 @@
 #include <stdlib.h>		/* size_t */
 
 #include "libdumbutil/fixed.h"
+#include "libdumbwad/doomstruct.h"
 #include "libdumbwad/wadstruct.h"
 #include "libdumbwad/wadio.h"
 #include "libdumb/texture.h"

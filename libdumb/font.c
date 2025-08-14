@@ -19,9 +19,15 @@
  * Boston, MA 02111, USA.
  */
 
-/* See comment before dumb_towlower().
-   This macro may be undefined by <config.h>.  */
-#define POSSIBLY_BAD_TOWLOWER 1
+/* In glibc-2.1.1 snapshots dated before 1999-04-14, towlower() does
+   the same as towupper().  If you have such a version, define
+   POSSIBLY_BAD_TOWLOWER as 1.  DUMB will then route the calls via
+   dumb_towlower(), which detects and circumvents this bug.
+
+   Because people using glibc snapshots have probably already upgraded
+   past the bug, this hack is not enabled by default and may be
+   removed in a future version of DUMB.  */
+#define POSSIBLY_BAD_TOWLOWER 0
 
 #include <config.h>
 
@@ -472,9 +478,6 @@ dotless(wchar_t wc)
 }
 
 #if POSSIBLY_BAD_TOWLOWER
-/* In glibc-2.1.1, towlower() does the same as towupper().  So we
-   route the calls via dumb_towlower(), which detects and circumvents
-   this bug.  */
 static wint_t
 dumb_towlower(wint_t wc)
 {

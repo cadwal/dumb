@@ -30,7 +30,7 @@
 
 #include "libdumbutil/log.h"
 #include "libdumbutil/safem.h"
-#include "libdumbwad/wadstruct.h"
+#include "libdumbwad/doomstruct.h"
 #include "libdumbwad/wadio.h"
 #include "sound.h"
 #include "dsound.h"
