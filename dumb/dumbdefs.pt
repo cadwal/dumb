@@ -20,6 +20,9 @@
  * USA.
  */
 
+#ifndef DUMB_DUMBDEFS_PT
+#define DUMB_DUMBDEFS_PT
+
 
 /* Internationalization */
 
@@ -28,36 +31,44 @@
 #endif
 
 
-/* Gettable special codes */
+/* Gettable special codes; NYI = Not Yet Implemented.  */
 
-/* This marks the gettable as your health.  When you get damage, it's
- * taken from your health.  If health goes to 0, you die.  */
+/* This marks the Gettable as the player's health.  When the player
+ * gets damage, it's taken from the health.  If health goes to 0, the
+ * player dies.  */
 #define GETT_SPC_HEALTH			1
 
-/* This marks the gettable as your armour.  When you have armour, half
- * of the damage you get is taken from it.  */
+/* This marks the Gettable as the player's armour.  When the player
+ * has armour, half of the damage he gets is taken from it.  */
 #define GETT_SPC_ARMOUR			2
 
-/* If you have this gettable, you are invisible.  */
+/* If the player has this Gettable, he is invisible.  */
 #define GETT_SPC_INVISIBILITY		3
 
-/* If you have this gettable, you can't be hurt at all.  */
+/* If the player has this Gettable, he can't be hurt at all.  */
 #define GETT_SPC_DAMAGEPROTECTION	4
 
-/* If you have this gettable, the icky goo on the floor doesn't hurt
- * you.  */
+/* If the player has this Gettable, the icky goo on the floor doesn't
+ * hurt him.  */
 #define GETT_SPC_SLIMEPROTECTION	6
 
-/* If you have this gettable, you see in the dark.  */
-#define GETT_SPC_SUPERSIGHT		7
+/* If the player has this Gettable, he sees in the dark.  */
+#define GETT_SPC_SUPERSIGHT		7 /* NYI */
 
-/* When you collect items, DUMB checks whether you have the backpack.
- * If so, a different maximum may be used.  */
+/* When the player collects items, DUMB checks whether he has the
+ * backpack.  If so, a different maximum may be used.  */
 #define GETT_SPC_BACKPACK		8
 
-/* When you have this gettable, the map shows you even the places you
- * haven't visited yet. */
-#define GETT_SPC_ALLMAP			9
+/* When the player has this Gettable, the map shows him even the
+ * places he hasn't visited yet.  */
+#define GETT_SPC_ALLMAP			9 /* NYI */
+
+/* When the player has this Gettable, his weapons use their
+   PoweredBogotype.  */
+#define GETT_SPC_POWERWEAPONS          10
+
+/* When the player has this gettable, he can fly.  */
+#define GETT_SPC_WINGS                 11 /* NYI */
 
 
 /* ProtoThing IDs */
@@ -65,6 +76,15 @@
 #define PROTO_ID_CAMERA 8888
 
 
+/* Font IDs */
+
+#define FONTMAP_GETTABLECOUNT 0
+#define FONTMAP_MESSAGE       1
+#define FONTMAP_MENU          2 /* NYI */
+
+
+#endif /* DUMB_DUMBDEFS_PT */
+
 /*
  * Local variables:
  * mode: c

@@ -1,0 +1,310 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * htic/test.pt: For testing of sprites which don't yet have real protos.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
+
+PhaseTable test-A-B
+  Phase INIT "A"
+  Phase -    "B" Destroy
+
+PhaseTable test-A-C
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C" Destroy
+
+PhaseTable test-A-D
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C"
+  Phase -    "D" Destroy
+
+PhaseTable test-A-E
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C"
+  Phase -    "D"
+  Phase -    "E" Destroy
+
+PhaseTable test-A-F
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C"
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F" Destroy
+
+PhaseTable test-A-G
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C"
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G" Destroy
+
+PhaseTable test-A-H
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C"
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G"
+  Phase -    "H" Destroy
+
+PhaseTable test-A-I
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C"
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G"
+  Phase -    "H"
+  Phase -    "I" Destroy
+
+PhaseTable test-A-J
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C"
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G"
+  Phase -    "H"
+  Phase -    "I"
+  Phase -    "J" Destroy
+
+PhaseTable test-A-K
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C"
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G"
+  Phase -    "H"
+  Phase -    "I"
+  Phase -    "J"
+  Phase -    "K" Destroy
+
+PhaseTable test-A-N
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C"
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G"
+  Phase -    "H"
+  Phase -    "I"
+  Phase -    "J"
+  Phase -    "K"
+  Phase -    "L"
+  Phase -    "M"
+  Phase -    "N" Destroy
+
+PhaseTable test-A-R
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C"
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G"
+  Phase -    "H"
+  Phase -    "I"
+  Phase -    "J"
+  Phase -    "K"
+  Phase -    "L"
+  Phase -    "M"
+  Phase -    "N"
+  Phase -    "O"
+  Phase -    "P"
+  Phase -    "Q"
+  Phase -    "R" Destroy
+
+PhaseTable test-A-Q
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C"
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G"
+  Phase -    "H"
+  Phase -    "I"
+  Phase -    "J"
+  Phase -    "K"
+  Phase -    "L"
+  Phase -    "M"
+  Phase -    "N"
+  Phase -    "O"
+  Phase -    "P"
+  Phase -    "Q" Destroy
+
+PhaseTable test-A-S
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C"
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G"
+  Phase -    "H"
+  Phase -    "I"
+  Phase -    "J"
+  Phase -    "K"
+  Phase -    "L"
+  Phase -    "M"
+  Phase -    "N"
+  Phase -    "O"
+  Phase -    "P"
+  Phase -    "Q"
+  Phase -    "R"
+  Phase -    "S" Destroy
+
+PhaseTable test-G
+  Phase INIT "G" Destroy
+
+PhaseTable test-I-L
+  Phase INIT "I"
+  Phase -    "J"
+  Phase -    "K"
+  Phase -    "L" Destroy
+
+PhaseTable test-M-R
+  Phase INIT "M"
+  Phase -    "N"
+  Phase -    "O"
+  Phase -    "P"
+  Phase -    "Q"
+  Phase -    "R" Destroy
+
+/* yellow/gray puff */
+Proto test-PUF3
+  Sprite "PUF3"
+  Phases test-A-D
+
+/* blue electrical-looking flash */
+Proto test-PUF4
+  Sprite "PUF4"
+  Phases test-A-F
+
+/* yellow little missile from elvenwand special attack */
+Proto test-FX01-AB
+  Sprite "FX01"
+  Phases test-A-B
+
+/* yellow cross-shaped puff from elvenwand attack */
+Proto test-PUF2
+  Sprite "PUF2"
+  Phases test-A-E
+
+/* blue shardy-looking explosion */
+Proto test-FX17-IJKL
+  Sprite "FX17"
+  Phases test-I-L
+
+/* blue hit/explosion (A-G), blue ball-shaped glitter (H-L),
+   spiky ball from dragonclaw special attack (M-N),
+   blue explosion/flash (O-S) */
+Proto test-FX18
+  Sprite "FX18"
+  Phases test-A-S
+
+/* green (A-D) and red (E-H) puffs from gauntlets */
+Proto test-PUF1
+  Sprite "PUF1"
+  Phases test-A-H
+
+/* held weapon: beak, when the player has become a chicken */
+Proto test-BEAK
+  Sprite "BEAK"
+  Phases Mundane
+
+/* bloody skull, apparently falling from someone's shoulders */
+Proto test-BSKL
+  Sprite "BSKL"
+  Phases test-A-F
+
+/* fiery death of player */
+Proto test-FDTH
+  Sprite "FDTH"
+  Phases test-A-R
+
+/* chicken: move (A-B), attack (C), pain (D), die (E-L), feather (M-Q) */
+Proto test-CHKN
+  Sprite "CHKN"
+  Phases test-A-Q
+
+Proto test-IMPX-MNOPQR
+  Sprite "IMPX"
+  Phases test-M-R
+
+Proto test-FX10-G
+  Sprite "FX10"
+  Phases test-G
+
+Proto test-SHRD
+  Sprite "SHRD"
+  Phases test-A-F
+
+/* blood splat */
+Proto test-BLOD
+  Sprite "BLOD"
+  Phases test-A-C
+
+/* small stalagmite */
+Proto test-STGS
+  Sprite "STGS"
+  Phases Mundane
+
+/* large stalagmite */
+Proto test-STGL
+  Sprite "STGL"
+  Phases Mundane
+
+/* water drops (A-D) and splash (E-K) */
+Proto test-SPSH
+  Sprite "SPSH"
+  Phases test-A-K
+
+/* lava splash (A-F) and smoke (G-K) */
+Proto test-LVAS
+  Sprite "LVAS"
+  Phases test-A-K
+
+/* slime drops (A-D) and splash (E-H) */
+Proto test-SLDG
+  Sprite "SLDG"
+  Phases test-A-H
+
+Proto test-XPL1
+  Sprite "XPL1"
+  Phases test-A-F
+
+Proto test-ACLO
+  Sprite "ACLO"
+  Phases test-A-E
+
+/* missile of morph ovum */
+Proto test-EGGM
+  Sprite "EGGM"
+  Phases test-A-E

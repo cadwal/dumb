@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/netplay.c: Network game protocol.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,7 +67,7 @@ send_one_slaveinit(const LevData *ld, int station)
    memset(&sip, 0, sizeof(sip));
    sip.sig = SLAVEINIT_SIG;
    sip.size = sizeof(SlaveInitPkt) - 2;
-   strncpy(sip.mapname, ld->name, 8);
+   strncpy(sip.mapname, ld->name, LUMPNAMELEN);
    sip.difficulty = ld->difficulty;
    sip.mplayer = ld->mplayer;
    sip.protocol_version = PROTOCOL_VERSION;
@@ -149,7 +150,7 @@ wait4master(void)
 void
 send_initrequest(char *name)
 {
-   unsigned char buf[100];
+   unsigned char buf[100];	/* FIXME: arbitrary limit? */
    size_t len = strlen(name);
    logprintf(LOG_DEBUG, 'N', _("sending init-request"));
    buf[0] = SLAVEINIT_REQ_SIG;
@@ -157,7 +158,7 @@ send_initrequest(char *name)
       len = sizeof(buf) - 3;
    }
    buf[1] = len + 1;
-   strncpy(buf + 2, name, len);
+   strncpy((char *) buf + 2, name, len);
    buf[2 + len] = 0;
    net_sendmaster_nobuf(buf, 2 + len + 1);
 }
@@ -168,10 +169,10 @@ wait_slaveinfo(LevData *ld)
    time_t last_send = 0;
    logprintf(LOG_INFO, 'N', _("waiting for slave init info from master"));
    while (!got_slave_info) {
-      char myname[100];
-      net_getmyhost(myname, sizeof(myname) - 1);
       if (time(NULL) > last_send) {
+	 char *myname = net_getmyhost();
 	 send_initrequest(myname);
+	 free(myname);
 	 last_send = time(NULL);
       }
       wait4master();
@@ -300,14 +301,14 @@ send_dsound(int sound, fixed x, fixed y, fixed radius)
 void
 send_message(int pl, const char *msg)
 {
-   unsigned char buf[256];
+   unsigned char buf[256];	/* FIXME: arbitrary limit */
    int l = strlen(msg), i;
    if (l > 250)
       l = 250;
    buf[0] = MESSAGE_SIG;
    buf[1] = l + 2;
    /*buf[2] gets player number */
-   strncpy(buf + 3, msg, 250);
+   strncpy((char *) buf + 3, msg, 250);
    buf[253] = 0;
    for (i = 0; i < nstations; i++) {
       if (pl == -1 || stations[i].player == pl) {
@@ -447,7 +448,7 @@ netplay_poll(LevData *ld)
 	    } break;
 	 case (MESSAGE_SIG):
 	    /* reinject game message */
-	    game_message(code[2], "%s", code + 3);
+	    game_utf8_message(code[2], "%s", code + 3);
 	    break;
 	 case (DSOUND_SIG):
 	    play_dspkt((const DSoundPkt *) code);
@@ -463,7 +464,7 @@ netplay_poll(LevData *ld)
 	       logprintf(LOG_INFO, 'N',
 			 _("got init request: setting up new station %d"),
 			 station);
-	       netplay_join(ld, station, code + 2);
+	       netplay_join(ld, station, (char *) code + 2);
 	    }
 	    break;
 	 case (SLAVEINIT_SIG):

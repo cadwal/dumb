@@ -1,7 +1,24 @@
-
-/**
- ** various kinds of Missile
- **/
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * htic/missiles.pt: Various kinds of Missile.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
 
 #define TargetSeek  HeatSeek
 
@@ -24,8 +41,8 @@ Proto WandZap
   Size 16 16
   Damage 2
   Explosive ZCenter
-  Phantom BulletKludge BulletAttack
-  Speed 64
+  Phantom BecomesBlood BulletAttack
+  Speed 6400/sec
 
 PhaseTable Mine
   Default Duration 50msec
@@ -70,7 +87,7 @@ Proto MineSpawner
   Mass 0
   Explosive NoHurtOwner
   Spawn2 Mine
-  Speed 64
+  Speed 6400/sec
 
 
 /* Neat trick: ArrowZaps inflict their damage in two goes */
@@ -99,7 +116,7 @@ Proto ArrowZap
   Damage 3
   Mass 0
   Explosive ZCenter
-  Speed 120
+  Speed 12000/sec
   NoHurtOwner
 
 PhaseTable ClawZap
@@ -110,6 +127,7 @@ PhaseTable ClawZap
   Phase -    "B"  Goto INIT
 
   Default Duration 50msec
+  Default NoSigs
   Phase BOOM "C"  Explode SigExplode Sound BLSHIT
   Phase -    "D"
   Phase -    "E"
@@ -122,7 +140,7 @@ Proto ClawZap
   Size 10 10
   Damage 6
   Mass 0
-  Speed 120
+  Speed 12000/sec
   Explosive ZCenter
 
 
@@ -143,7 +161,7 @@ Proto WizardZap
   Size 16 16
   Damage 6
   Mass 0
-  Speed 64
+  Speed 6400/sec
   Explosive ZCenter
 
 
@@ -164,7 +182,7 @@ Proto ImpZap
   Size 16 16
   Damage 3
   Mass 0
-  Speed 64
+  Speed 6400/sec
   Explosive ZCenter
 
 
@@ -192,7 +210,7 @@ Proto MummyZap
   Size 16 16
   Damage 6
   Mass 0
-  Speed 64
+  Speed 6400/sec
   Explosive ZCenter
 
 PhaseTable WereDragonBreath
@@ -215,7 +233,7 @@ Proto WereDragonBreath
   Size 40 40
   Damage 18
   Mass 0
-  Speed 64
+  Speed 6400/sec
   Explosive ZCenter
 
 
@@ -243,7 +261,7 @@ Proto GreenAxe
   Size 16 16
   Damage 15
   Mass 0
-  Speed 64
+  Speed 6400/sec
   Explosive ZCenter
 
 Proto RedAxe
@@ -251,8 +269,69 @@ Proto RedAxe
   Size 16 16
   Damage 25
   Mass 0
-  Speed 64
+  Speed 6400/sec
   Explosive ZCenter
+
+
+PhaseTable IronLichMissileShard
+  Default Duration 100msec
+  Phase INIT "H"
+  Phase -    "I"
+  Phase -    "J" Goto INIT
+  Default NoSigs Duration ExplodeRate
+  Phase BOOM "D" SigExplode Explode
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G" Destroy
+
+Proto IronLichMissileShard
+  Sprite "FX05"
+  Size 16 8
+  Mass 0
+  Speed 6400/sec
+  Damage 10
+  Explosive ZCenter NoHurtOwner
+
+PhaseTable IronLichMissile
+  Default Duration 100msec
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C" Goto INIT
+  Default NoSigs Duration ExplodeRate
+  Phase BOOM "D" SigExplode Explode Spawn
+  Phase -    "E"
+  Phase -    "F"
+  Phase -    "G" Destroy
+
+Proto IronLichMissile
+  Sprite "FX05"
+  Size 16 16
+  Mass 0
+  Speed 6400/sec
+  Damage 20 /* plus 8*10 from shards ;) */
+  Spawns IronLichMissileShard
+  ShootMany 8 315deg /* first and last would overlap with 360deg */
+  Explosive ZCenter NoHurtOwner
+
+PhaseTable IronLichTyphoon
+  Default Duration 100msec
+  Phase INIT "D"  HeatSeek NoSigs
+  Phase -    "E"  HeatSeek NoSigs
+  Phase -    "F"  HeatSeek NoSigs
+  Phase -    "G"  HeatSeek NoSigs
+  Phase MOVE "A"  HeatSeek Whirly Melee
+  Phase -    "B"  HeatSeek Whirly Melee
+  Phase -    "C"  HeatSeek Whirly Melee Goto MOVE
+  Phase DIE  "G"  HeatSeek NoSigs SigDie
+  Phase -    "F"  HeatSeek NoSigs
+  Phase -    "E"  HeatSeek NoSigs
+  Phase -    "D"  HeatSeek NoSigs Destroy
+
+Proto IronLichTyphoon
+  Sprite "FX07"
+  Damage 10
+  Mass 0 CanFly
+  Speed 3000/sec
 
 
 PhaseTable TeleportFog
@@ -286,4 +365,3 @@ Proto TeleSpot 14
 #undef NormalRate
 
 #undef TargetSeek
-

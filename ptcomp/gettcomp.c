@@ -29,7 +29,7 @@
 #include "libdumbutil/dumb-nls.h"
 
 #include "libdumbutil/safem.h"
-#include "libdumb/gettablestruct.h"
+#include "libdumb/gettableinwad.h"
 
 #include "token.h"
 #include "globals.h"
@@ -45,8 +45,10 @@ typedef struct {
 
 static int ngetts = 0, maxgetts = 0;
 static GettableRec *getts;
-
 
+static void add_gets(GettableRec *p, int gtid, int change, int maximum);
+
+
 void
 init_gettcomp(void)
 {
@@ -67,8 +69,8 @@ gettcomp(void)
    }
    p = getts + (ngetts++);
    memset(p, 0, sizeof(GettableRec));
-   p->g.ammotype = -1;
    p->g.bogotype = -1;
+   p->g.powered_bogotype = -1;
    p->g.usesound = -1;
    /* Gettable -!- NAME */
    p->name = safe_strdup(parm_name(_("Name expected after Gettable")));
@@ -90,26 +92,36 @@ gettcomp(void)
       else if (!strcasecmp(s, "OneMapOnly"))
 	 p->g.flags |= GK_ONEMAPONLY;
       else if (!strcasecmp(s, "KeyType"))
-	 p->g.key = parm_num();
+	 p->g.key = parm_int();
       else if (!strcasecmp(s, "Decay"))
-	 p->g.decay = parm_num();
+	 p->g.decay = parm_int();
       else if (!strcasecmp(s, "Timing"))
 	 p->g.timing = parm_time();
       else if (!strcasecmp(s, "UseSound"))
 	 p->g.usesound = parm_sound();
       else if (!strcasecmp(s, "Special"))
-	 p->g.special = parm_num();
+	 p->g.special = parm_uint();
       else if (!strcasecmp(s, "DefaultMaximum")) {
-	 p->g.defaultmax = p->g.backpackmax = parm_num();
+	 p->g.defaultmax = p->g.backpackmax = parm_uint();
 	 if (parm_keyword_opt("WithBackpack"))
-	    p->g.backpackmax = parm_num();
+	    p->g.backpackmax = parm_uint();
       } else if (!strcasecmp(s, "Initial"))
-	 p->g.initial = parm_num();
+	 p->g.initial = parm_uint();
       else if (!strcasecmp(s, "Ammo")) {
-	 p->g.ammotype = parm_gett();
-	 p->g.ammocount = parm_num();
+	 int gtid = parm_gett();
+	 int change = -parm_int();
+	 add_gets(p, gtid, change, 0);
+      } else if (!strcasecmp(s, "Gets")) {
+	 int gtid = parm_gett();
+	 int change = parm_int();
+	 int maximum = 0;
+	 if (parm_keyword_opt("Maximum"))
+	    maximum = parm_uint();
+	 add_gets(p, gtid, change, maximum);
       } else if (!strcasecmp(s, "Bogotype"))
 	 p->g.bogotype = parm_proto();
+      else if (!strcasecmp(s, "PoweredBogotype"))
+	 p->g.powered_bogotype = parm_proto();
       else if (!strcasecmp(s, "Icon"))
 	 parm_str(p->g.iconname, 10);
       else if (!strcasecmp(s, "Anim"))
@@ -118,33 +130,56 @@ gettcomp(void)
 	 p->g.iconanim = parm_ch();
 	 p->g.flags |= GK_REVANIM;
       } else if (!strcasecmp(s, "IconPos")) {
-	 p->g.xo = parm_num();
-	 p->g.yo = parm_num();
+	 p->g.xo = parm_int();
+	 p->g.yo = parm_int();
       } else if (!strcasecmp(s, "WeaponNumber"))
-	 p->g.weaponnumber = parm_num();
+	 p->g.weaponnumber = parm_uint();
       else if (!strcasecmp(s, "ReplaceWeapon"))
 	 p->g.replaceweapon = parm_gett();
       else
 	 break;
    } /* while(1) */
    unget_token();
+
+   /* If PoweredBogotype isn't given, it defaults to Bogotype.  */
+   if (p->g.powered_bogotype == -1)
+      p->g.powered_bogotype = p->g.bogotype;
+}
+
+static void
+add_gets(GettableRec *p, int gtid, int change, int maximum)
+{
+   Gets *getsp;
+   p->g.gets = (Gets *)
+      safe_realloc(p->g.gets, ++(p->g.ngets) * sizeof(Gets));
+   getsp = &p->g.gets[p->g.ngets-1];
+   getsp->gtid = gtid;
+   getsp->change = change;
+   getsp->maximum = maximum;
 }
 
 void
-wrgetts(WADWR *wadwr)
+wrgetts(WADWR *wout)
 {
-   int blksize = (sizeof(Gettable)+7) & ~7;
-   int pad_len = blksize - sizeof(Gettable);
-   static const char pad[] = "PAD PAD"; /* keep this long enough */
    int i;
-   printf(_("%5d gettables\n"), ngetts);
-   wadwr_lump(wadwr, "GETTABLE");
-   for (i = 0; i < ngetts; i++) {
-      getts[i].g.block_length = blksize;
-      wadwr_write(wadwr, &getts[i].g, sizeof(Gettable));
-      if (pad_len)
-	 wadwr_write(wadwr, pad, pad_len);
+   printf(_("%5d gettables"), ngetts);
+   fflush(stdout);
+   wadwr_lump(wout, "GETTABLE");
+   {
+      void *block;
+      size_t blocklen;
+      block = begin_gettablesinwad(&blocklen);
+      wadwr_write(wout, block, blocklen);
+      safe_free(block);
    }
+   for (i = 0; i < ngetts; i++) {
+      void *block;
+      size_t blocklen;
+      block = encode_gettableinwad(&getts[i].g, &blocklen);
+      wadwr_write(wout, block, blocklen);
+      safe_free(block);
+   }
+   putchar('\n');
 }
 
 int

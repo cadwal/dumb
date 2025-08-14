@@ -1,3 +1,162 @@
+* Changes in DUMB 0.13.9.
+
+** Included doom/font.pt and htic/font.pt.
+
+These essential files were missing from the previous version, making
+it impossible to build doom4dum.wad or htic4dum.wad.
+
+"make distcheck" didn't notice the error because it ran "configure" in
+a subdirectory where it couldn't find the original WADs and thus
+didn't try to support them.
+
+* Changes in DUMB 0.13.8.
+
+** Better Heretic support.
+
+Added items: silver shield, bag of holding, shadowsphere, ring of
+invincibility, tome of power.
+
+Added non-working items: morph ovum, wings of wrath, time bomb of the
+ancients, map scroll.
+
+Added weapons: staff, gauntlets of the necromancer.  They kind of
+work, but not perfectly.  They are also the only weapons currently
+affected by the tome of power.
+
+Quartz flasks aren't transformed to health until you use them.
+
+Corrected the amounts of ammo given by powerups.  Also tweaked
+hitpoints and damages.
+
+Fixed ClawZap sometimes getting stuck in explosion.
+
+** ptcomp changes.
+
+*** Integer parameters are checked better.
+
+Previously, `ptcomp' used atoi() which treats for example `0x4F' as
+just `0' and ignores the `x4F' part it doesn't understand.  Now
+`ptcomp' uses strtol() and strtoul() and complains if there is garbage
+after the integer.
+
+C-style octal and hexadecimal integers like 033 and 0x1B are now
+supported.  You'd better make sure there aren't leading zeros in your
+decimal integers.
+
+*** New top-level keywords `Font' and `FontMapping'.
+
+`Font' defines the characters of a font, and `FontMapping' says which
+font to use for which purpose.
+
+See the Texinfo documentation for details.
+
+*** New top-level keyword `MessageDomain'.
+
+This selects the catalog from which message translations are fetched.
+The name is saved in the new "MSGDOM" lump.
+
+*** `Proto'...`Speed' takes a speed-type parameter.  New keyword `SpeedUnits'.
+
+Previously, `Proto'...`Speed' took just an integer, but now you can
+use units like `/sec' and `/tick', just like in speeds of sectors.
+Previous versions ignored such suffixes because of sloppy syntax
+checking.
+
+To update your .pt files, look for `Speed' in `Proto' and change the
+units to `/tick' or `/hsec'.  If you don't do this, everything will
+move extremely slowly.
+
+If a `Speed' clause doesn't have a unit, the default speed unit is
+used.  You can change the default speed unit with the new `SpeedUnits'
+keyword which works analogously to `TimeUnits'.  For compatibility
+with light change speeds, the default unit is initially 1/4096 of
+1/tick.  There is currently no way to express such tiny values in
+`SpeedUnits'; this is likely to change.
+
+*** Renamed keywords.
+
+The compiler still accepts the previous forms but emits a warning.
+
+TurnWhenHitting -> TurnOwner
+BulletKludge -> BecomesBlood
+
+*** Deprecated `Flying' keyword in Proto.  Use `CanFly'.
+
+`Flying' has had the synonym `CanFly' for some time already.  The
+included .pt files used that rather than `Flying' so now `Flying' is
+deprecated and causes a warning.
+
+*** New keyword `Boss' in Proto.
+
+This feature doesn't work yet, but the idea is that when all Boss
+monsters have been killed, the 666-tagged sector gets lowered.
+
+*** New keyword `Gets' in Gettable.
+
+This lets a Gettable give the player other Gettables when used.
+It works just like in `Proto'.
+
+`Ammo' is now implemented with the same mechanism, and is equivalent
+to specifying a negative amount in `Gets'.  You can also make a
+Gettable require many kinds of ammo.
+
+** Bug fix: wasn't able to switch to previous item.
+
+** Bug fix: wasn't able to use inventory items.
+
+** New utility pngtodumb works like ppmtodumb but reads PNG format.
+
+PNG supports a real alpha channel, so trickery with dark2trans and
+R=0,G=0,B=1 is not needed with this program.  And PNG files are
+smaller than PPMs.
+
+** UTF-8 chosen as coding system for text in WAD and MO files.
+
+UTF-8 is a multibyte coding system which can represent Unicode
+characters of up to 31 bits.
+
+All messages in WAD files must now be encoded in UTF-8.  This should
+make it possible to use the same files everywhere, regardless of the
+character set used by the underlying operating system.  Remember that
+DUMB does not use operating-system fonts.
+
+Because gettext() can't recode messages on the fly, MO files
+containing translations of WAD messages must also be coded in UTF-8.
+DUMB now has two MO files: dumb.mo in the host character set, and
+dumb-utf8.mo in UTF-8.  Messages from C files are put in the former,
+and messages from .pt files in the latter.  The messages are recoded
+when the MO files are built.  If you modify the PO files, you must
+install Free recode 3.4q or a later version.  If you don't modify the
+PO files, you can use the pregenerated MO files.
+
+ptcomp should recode messages of .pt files to UTF-8 when it writes
+them to the WAD, but currently it doesn't.  Fortunately, this isn't
+much of a problem, since ASCII characters (0 to 127) represent
+themselves in UTF-8.
+
+** If mmap() fails at runtime, read() is used instead.
+
+This is necessary for the Hurd, where any file can be served by a
+translator, and not all translators support mmap().
+
+** Installation changes
+
+*** Removed options --disable-8bpp, --disable-16bpp and --disable-32bpp.
+
+All BPP values are now unconditionally enabled.
+
+*** libpng recommended.
+
+You can build DUMB without it, but you won't get `pngtodumb'.
+
+*** Source directory `aux/' renamed to `scripts/'.
+
+On MS-DOS and related systems, AUX is a reserved name.
+
+*** aadumb doesn't try to link with -lX11 if you don't have X.
+
+*** ggidumb requires LibGGI 2.0b2 (Renoir).
+
 * Changes in DUMB 0.13.7.
 
 ** Installation changes.

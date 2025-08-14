@@ -25,7 +25,8 @@
 #define ALIGN_LUMP            8 /* all lumps */
 #define ALIGN_TEXTURE1        8 /* entries in TEXTURE{1,2} lumps */
 #define ALIGN_PROTOTHING      8 /* ProtoThing_inwad blocks */
-#define ALIGN_PROTOTHING_GETS 8 /* ProtoThing_inwad_Gets blocks */
+#define ALIGN_GETTABLE        8 /* Gettable_inwad blocks */
+#define ALIGN_GETS            8 /* Gets_inwad blocks */
 
 /* rounds up to next aligned position */
 #define ALIGN(x,alignment) \

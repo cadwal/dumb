@@ -28,9 +28,7 @@
 #include <vga.h>
 #include <vgagl.h>
 
-#include <libintl.h>
-#define _(str) gettext(str)
-#define N_(str) gettext_noop(str)
+#include "libdumbutil/dumb-nls.h"
 
 #include "libdumbutil/safem.h"
 #include "libdumbutil/log.h"

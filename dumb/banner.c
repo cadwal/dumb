@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/banner.c: Banners that scroll over the view.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,11 +25,14 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <wchar.h>
 
 #include "libdumbutil/dumb-nls.h"
 
 #include "libdumbutil/safem.h"
 #include "libdumbutil/log.h"
+#include "libdumbutil/utf8.h"
+#include "libdumb/font.h"
 #include "draw.h"
 #include "banner.h"
 
@@ -127,42 +131,41 @@ add_to_banner(int banner, Texture *t, int xoffset, int yoffset)
    l->prog = 0;
 }
 
-void
-add_text_to_banner(int banner, int font, const char *text, int len)
+static void
+add_wchar_to_banner(int banner, const Font *font, wchar_t wc)
 {
-   int i;
-   for (i = 0; i < len; i++) {
-      char ch = text[i];
-      if (ch == ' ' || ch == '\n')
-	 add_to_banner(banner, NULL, 6, 0);
-      else {
-	 Texture *t = get_font_texture(font, ch);
-	 if (!t) {
-	    /* No such character.  Substitute a space.  */
-	    add_to_banner(banner, NULL, 6, 0);
-	 } else {
-	    int xo = 1, yo = 0;
-	    switch (ch) {
-	    case (','):
-	       yo = 1;
-	       break;
-	    case ('\''):
-	       yo = -t->height;
-	       break;
-	    case ('-'):
-	       yo = -t->height / 2 - 1;
-	       break;
-	    }
-	    add_to_banner(banner, t, xo, yo);
-	 }
-      }
+   int descent;
+   Texture *tex = font_wchar_tex(font, wc, &descent);
+   if (!tex) {
+      /* No such character.  Substitute a space.  */
+      add_to_banner(banner, NULL,
+		    font_separation(font) + font_space_width(font), 0);
+   } else
+      add_to_banner(banner, tex, font_separation(font), descent);
+}
+
+void
+add_utf8_text_to_banner(int banner, const Font *font, const char *text, int textlen)
+{
+   utf8_mbstate_t state;
+   memset(&state, 0, sizeof(state));
+   for (;;) {
+      wchar_t wc;
+      size_t mblen = utf8_mbrtowc(&wc, text, textlen, &state);
+      if (mblen == (size_t) -2	/* incomplete multibyte char */
+	  || mblen == (size_t) -1 /* invalid multibyte char (errno=EILSEQ) */
+	  || mblen == 0)	/* successful end */
+	 break;
+      add_wchar_to_banner(banner, font, wc);
+      text += mblen;
+      textlen -= mblen;
    }
 }
 
 void
-add_str_to_banner(int banner, int font, const char *text)
+add_utf8_str_to_banner(int banner, const Font *font, const char *str)
 {
-   add_text_to_banner(banner, font, text, strlen(text));
+   add_utf8_text_to_banner(banner, font, str, strlen(str));
 }
 
 static void

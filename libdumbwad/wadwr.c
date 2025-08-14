@@ -2,7 +2,7 @@
  *
  * libdumbwad/wadwr.c: Writing WAD files.
  * Copyright (C) 1998-1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
- * Copyright (C) 1998 by Josh Parsons <josh@schlick.anu.edu.au>
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,7 +122,7 @@ void
 wadwr_lump(WADWR *w, const char *lumpname)
 {
    if (w->type == 'd') {
-      char buf[256];
+      char buf[256];		/* FIXME: arbitrary limit */
       if (w->f != NULL) {
 	 if (fclose(w->f) != 0) {
 	    w->error_flag = 1;
@@ -150,7 +150,7 @@ wadwr_lump(WADWR *w, const char *lumpname)
       w->current = w->dir + w->hdr.nlumps;
       w->hdr.nlumps++;
       memset(w->current, 0, sizeof(WadDirEntry));
-      strncpy(w->current->name, lumpname, 8);
+      strncpy(w->current->name, lumpname, LUMPNAMELEN);
       w->current->offset = aligned_pos(w);
    }
 }

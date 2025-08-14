@@ -37,6 +37,7 @@
 /* Uncomment this for loads of debugging msgs */
 /*#define TXDEBUG */
 
+
 /* playpal stuff */
 
 static LumpNum ppln;
@@ -74,6 +75,7 @@ set_playpal(int idx, SetPalFunc func)
    }
 }
 
+
 /* pixcvt stuff */
 
 inline unsigned short
@@ -160,6 +162,7 @@ paste_pict_on_texture(Texture *t, const PictData *p, int x, int y)
       logprintf(LOG_ERROR, 'T', _("Bad BPP value in paste_pict"));
    }
 }
+
 static void
 paste_jpatch_on_texture(Texture *t, const AltPictData *p,
 			int x, int y)
@@ -181,11 +184,16 @@ paste_jpatch_on_texture(Texture *t, const AltPictData *p,
    }
 }
 
+
 /*** PNAMES stuff ***/
 
 /* *not* the same format as in the .WAD --- these are null-terminated */
+typedef struct {
+   char name[LUMPNAMELEN+1];
+} PName;
+
 static int npnames = 0;
-static char *pnames = NULL;
+static PName *pnames = NULL;
 
 static void
 reset_pnames(void)
@@ -208,16 +216,20 @@ init_pnames(void)
    ln = getlump("PNAMES");
    pn = (const char *) load_lump(ln);
    npnames = *(const LE_int32 *) (pn);
-   pn += 4;
-   pnames = (char *) safe_calloc(npnames, 9);
+   pn += sizeof(LE_int32);
+   pnames = (PName *) safe_calloc(npnames, sizeof(PName));
    for (i = 0; i < npnames; i++)
-      strncpy(pnames + 9 * i, pn + 8 * i, 8);
+      strncpy(pnames[i].name, pn + LUMPNAMELEN * i, LUMPNAMELEN);
    free_lump(ln);
-   logprintf(LOG_DEBUG, 'T', _("npnames=%d (should be %d)"),
-	     npnames, (get_lump_len(ln) - 4) / 8);
+   logprintf(LOG_DEBUG, 'T', "npnames=%d", npnames);
+   if (npnames != (get_lump_len(ln) - sizeof(LE_int32)) / LUMPNAMELEN)
+      logprintf(LOG_ERROR, 'T', _("... but should be %d"),
+		(get_lump_len(ln) - sizeof(LE_int32)) / LUMPNAMELEN);
 }
-#define lookup_pname(i) (pnames+9*i)
 
+#define lookup_pname(i) (&pnames[i])
+
+
 /*** TEXTURE1 stuff ***/
 
 static int nwalltexs = 0;
@@ -247,6 +259,7 @@ init_texture_lumps(void)
       }
    }
 }
+
 static void
 reset_texture_lumps(void)
 {
@@ -270,7 +283,7 @@ find_tdata(int i)
    return (const TextureData *) (tt->data + (tt->UMEMB(hdr).idx[i]));
 }
 
-
+
 /*** Some generic Texture helpers ***/
 
 static int
@@ -294,18 +307,18 @@ find_texture(const char *name, Texture *tt, int n)
 {
    int i;
    for (i = 0; i < n; i++)
-      if (!strncasecmp(tt[i].name, name, 8))
+      if (!strncasecmp(tt[i].name, name, LUMPNAMELEN))
 	 return tt + i;
    return NULL;
 }
 
-
+
 /*** sprites ***/
 
 static int nsprites = 0;
 static Texture *sprites = NULL;
 
-static void
+void
 guess_sprite_size(Texture *t)
 {
    const PictData *pd;
@@ -456,6 +469,7 @@ get_sprite(const char *sp, char ph, char r, char *mptr)
    return t;
 }
 
+
 /*** flats ***/
 
 static int nflats = 0;
@@ -572,6 +586,7 @@ get_flat_texture(const char *name)
    return t;
 }
 
+
 /*** patches ***/
 
 static LumpNum *patlns = NULL;
@@ -590,7 +605,7 @@ init_patches(void)
    patlumps = (const PictData **)
       safe_calloc(npnames, sizeof(const PictHeader *));
    for (i = 0; i < npnames; i++)
-      patlns[i] = lookup_lump(lookup_pname(i), "P_START", "P_END");
+      patlns[i] = lookup_lump(lookup_pname(i)->name, "P_START", "P_END");
 }
 
 static void
@@ -624,11 +639,11 @@ get_patch_data(int num)
    if (patlumps[num] == NULL) {
       if (!LUMPNUM_OK(patlns[num]))
 	 logprintf(LOG_FATAL, 'T', _("Patchnum %d (%s) doesn't exist"),
-		   num, pnames + num * 9);
+		   num, lookup_pname(num)->name);
       else {
 #ifdef TXDEBUG
 	 logprintf(LOG_DEBUG, 'T', _("loading patchnum %d (%s)"),
-		   num, pnames + num * 9);
+		   num, lookup_pname(num)->name);
 #endif
 	 patlumps[num] = (const PictData *) load_lump(patlns[num]);
       }
@@ -636,7 +651,7 @@ get_patch_data(int num)
    return patlumps[num];
 }
 
-
+
 /*** walls ***/
 
 static Texture *walltexs = NULL;
@@ -656,7 +671,7 @@ init_walltexs(void)
    for (i = 0; i < nwalltexs; i++) {
       Texture *t = walltexs + i;
       const TextureData *td = find_tdata(i);
-      strncpy(t->name, td->name, 8);
+      strncpy(t->name, td->name, LUMPNAMELEN);
       t->type = TT_WALL;
       t->opaque = 1;		/* a lie, but good enough for now */
       t->alloced_texels = 0;
@@ -666,6 +681,7 @@ init_walltexs(void)
       t->log2height = mylog2(td->dy);
    }
 }
+
 static void
 reset_walltexs(void)
 {
@@ -769,80 +785,7 @@ free_wtex(Texture *t)
    t->bpp = 0;
 }
 
-
-/*** FONTS ***/
-
-#define MAXFONTS 16
-#define MAXFONTNAME 16
-
-static Texture *fonts[MAXFONTS];
-static char fontname[MAXFONTS * MAXFONTNAME];
-static int nfontents[MAXFONTS], fontofs[MAXFONTS], nfonts = 0;
-
-int
-init_font(const char *format, int nchars, int ofs)
-{
-   int i;
-   for (i = 0; i < nfonts; i++) {
-      if (!strncmp(fontname + i * MAXFONTNAME, format, MAXFONTNAME)) {
-	 logprintf(LOG_DEBUG, 'T', _("found font %s already loaded"),
-		   format);
-	 return i;
-      }
-   }
-   if (nfonts >= MAXFONTS)
-      logfatal('T', _("Too many fonts"));
-   fonts[nfonts] = (Texture *) safe_calloc(nfontents[nfonts] = nchars,
-					   sizeof(Texture));
-   fontofs[nfonts] = ofs;
-   strncpy(fontname + nfonts * MAXFONTNAME, format, MAXFONTNAME);
-   /* OK, now set up each character to be loaded when needed */
-   logprintf(LOG_INFO, 'T', _("Loading font #%d (%s)"), nfonts, format);
-   for (i = 0; i < nchars; i++) {
-      Texture *t = &fonts[nfonts][i];
-      t->opaque = 0;
-      t->type = TT_FONT;
-      sprintf(t->name, format, i);
-      t->lumpnum = lookup_lump(t->name, NULL, NULL);
-      if (LUMPNUM_OK(t->lumpnum))
-	 guess_sprite_size(t);
-   }
-   /* done */
-   return nfonts++;
-}
-
-static void
-reset_fonts(void)
-{
-   while (nfonts > 0) {
-      nfonts--;
-      free_many_textures(fonts[nfonts], nfontents[nfonts]);
-      safe_free(fonts[nfonts]);
-   }
-}
-
-Texture *
-get_font_texture(int fontnum, unsigned char ch)
-{
-   int ch_ind = ch - fontofs[fontnum];
-   if (fontnum < 0 || fontnum >= nfonts)
-      logfatal('T', _("Request for bad fontnum (%d)"), fontnum);
-   if (islower(ch)
-       && (ch_ind >= nfontents[fontnum]
-	   || !LUMPNUM_OK(fonts[fontnum][ch_ind].lumpnum))) {
-      /* Recurse for upper-case version */
-      return get_font_texture(fontnum, toupper(ch));
-   }
-   if (ch_ind >= nfontents[fontnum]) {
-      logprintf(LOG_WARNING, 'T', 
-		_("Request for bad font char (%d:%d, `%c')"),
-		fontnum, ch_ind, ch);
-      return NULL;
-   }
-   return &fonts[fontnum][ch_ind];
-}
-
-
+
 /*** MISCELLANEOUS TEXTURES ***/
 
 /* hmm.... it's hard to know how many we'll need, but at the same time,
@@ -883,12 +826,13 @@ get_misc_texture(const char *name)
    t = misc + nmisc++;
    t->type = TT_MISC;
    t->opaque = 0;
-   strncpy(t->name, name, 8);
+   strncpy(t->name, name, LUMPNAMELEN);
    t->lumpnum = safe_lookup_lump(name, NULL, NULL, LOG_FATAL);
    guess_sprite_size(t);
    return t;
 }
 
+
 /*** OTHER STUFF ***/
 
 int
@@ -970,7 +914,6 @@ reset_textures(void)
    reset_sprites();
    reset_walltexs();
    reset_patches();
-   reset_fonts();
    reset_misc();
    reset_texture_lumps();
    reset_pnames();

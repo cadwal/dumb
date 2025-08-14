@@ -21,12 +21,13 @@
 
 #include <config.h>
 
-#ifndef HAVE_SELECT
-/* This won't work without select().  So don't compile it, and hope
- * nothing needs it.  This could be made a makefile check, but it's
- * easier this way.  */
-#else  /* HAVE_SELECT */
+#if !(HAVE_SELECT && HAVE_XINTERNALCONNECTIONNUMBERS)
+/* This won't work without those functions.  So don't compile it, and
+   hope nothing needs it.  This could be made a makefile check, but
+   it's easier this way.  */
+#else  /* HAVE_SELECT && HAVE_XINTERNALCONNECTIONNUMBERS */
 
+#include <string.h>		/* Solaris FD_ZERO needs memset() */
 #include <sys/time.h>
 #include <unistd.h>
 #include <X11/Xlib.h>
@@ -136,7 +137,7 @@ timeval_subtract (struct timeval *result,
    return x->tv_sec < y->tv_sec;
 }
 
-#endif /* HAVE_SELECT */
+#endif /* HAVE_SELECT && HAVE_XINTERNALCONNECTIONNUMBERS */
 
 // Local Variables:
 // c-basic-offset: 3

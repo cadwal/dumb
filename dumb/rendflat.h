@@ -108,10 +108,12 @@ flatx_loop(fixed x, fixed y, fixed dx, fixed dy,
 {
    switch (t->log2height) {
    case (6):
-      _flatx_loop(x, y, dx, dy, out, end, cm, t->texels, 0x3fffff, 0xfc00000);
+      _flatx_loop(x, y, dx, dy, out, end, cm, (const TPixel *) t->texels,
+		  0x3fffff, 0xfc00000);
       break;
    case (7):
-      _flatx_loop(x, y, dx, dy, out, end, cm, t->texels, 0x7fffff, 0x3f800000);
+      _flatx_loop(x, y, dx, dy, out, end, cm, (const TPixel *) t->texels,
+		  0x7fffff, 0x3f800000);
       break;
    }
 }

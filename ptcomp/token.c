@@ -20,6 +20,11 @@
  * USA.
  */
 
+/* This enables the strnlen() prototype in glibc2 <string.h>.  If
+   there's no strnlen() in libc, HAVE_STRNLEN is undefined and the
+   definition in ../libmissing/ is used.  */
+#define _GNU_SOURCE
+
 #include <config.h>
 
 #include <assert.h>
@@ -31,6 +36,7 @@
 
 #include "libdumbutil/dumb-nls.h"
 
+#include "libmissing/libmissing.h"
 #include "libdumbutil/exitcode.h"
 #include "libdumbutil/safem.h"
 #include "libdumbutil/strgrow.h"
@@ -248,25 +254,24 @@ synerr(const char *format, ...)
    va_start(ap, format);
    print_error_prefix();
    vfprintf(stderr, format, ap);
-   putc('\n', stderr);
-   print_error_prefix();
-   /* Error messages don't have trailing dots, but these are details
-      meant to clarify the message which was already printed.  */
    switch (class_of_token(tokbuf.str)) {
    case TOKENCL_EOF:
-      fprintf(stderr, _("End of file.\n"));
+      fprintf(stderr, _(" at end of file\n"));
       break;
    case TOKENCL_NEWLINE:
-      fprintf(stderr, _("Token was a newline.\n"));
+      fprintf(stderr, _(" at end of line\n"));
       break;
    case TOKENCL_STRING:
-      if (strlen(tokbuf.str) > 80) {
-	 fprintf(stderr, _("Token was a long string.\n"));
-	 break;
-      }	/* else fallthru */
-   default:
-      fprintf(stderr, _("Token was: %s\n"), tokbuf.str);
+      if (strnlen(tokbuf.str, 80) >= 80)
+	 fprintf(stderr, _(" at long string\n"));
+      else
+	 fprintf(stderr, _(" at string %s\n"), tokbuf.str);
       break;
+   case TOKENCL_NAME:
+      fprintf(stderr, _(" at `%s'\n"), tokbuf.str);
+      break;
+   default:
+      abort();
    }
    va_end(ap);
    exit(DUMB_EXIT_INVALID_DATA);

@@ -234,15 +234,11 @@ main(int argc, char **argv)
 	 /* if this PWAD has the same name as the level, back it up */
 	 /* TODO: delay this until saving for the first time */
 	 if (mapname && !wadmapcmp(wadf[i], mapname)) {
-#ifdef PATH_MAX
-	    char buf[PATH_MAX];
-#else
-	    char buf[256];
-#endif
-	    strcpy(buf, wadf[i]);
-	    strcat(buf, "~");
+	    char *buf = (char *) safe_malloc(strlen(wadf[i]) + 1 + 1);
+	    sprintf(buf, "%s~", wadf[i]);
 	    rename(wadf[i], buf);
 	    init_pwad(buf, NULL);
+	    free(buf);
 	 }
 	 /* OK, load the PWAD */
 	 else
@@ -445,7 +441,7 @@ free_instance(XWadInstance *inst)
 void
 load_instance(XWadInstance *inst, const char *mapname)
 {
-   strncpy(inst->mapname, mapname, 8);
+   strncpy(inst->mapname, mapname, 8); /* FIXME: LUMPNAMELEN? */
    inst->mapname[8] = 0;
    strcpy(inst->loadname, inst->mapname);
 #ifdef DUMB_CONFIG_LDWB
@@ -494,15 +490,14 @@ load_instance(XWadInstance *inst, const char *mapname)
 void
 update_wmtitle(XWadInstance *inst)
 {
-   char *argv[2] =
-   {"XWad", NULL};
+   char *argv[2] = { "XWad", NULL };
    static char buf[32];
    char *win_name = buf;
    XTextProperty w_name_prop, i_name_prop;
    XSizeHints size_hints;
-   XClassHint class_hint =
-   {"xwad", "XWad"};
+   XClassHint class_hint = { "xwad", "XWad" };
 
+   /* inst->mapname is char[10], so buf is big enough. */
    sprintf(buf, "XWad: %s", inst->mapname);
 
    XStringListToTextProperty(&win_name, 1, &w_name_prop);

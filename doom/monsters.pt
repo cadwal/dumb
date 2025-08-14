@@ -1,7 +1,23 @@
-
-/**
- **  The Monsters
- **/
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * doom/monsters.pt: The Monsters.
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
 
 
 #define NormalRate   130msec
@@ -239,12 +255,12 @@ Proto Imp 3001
   Hits 6
   Mass 100
   Beastie Blocking SkirtCliffs
-  Damage 2
+  Damage 5
   Splat BloodSplat
   Shoots ImpFireBall ImmuneToSuch
   Becomes DeadImp
   Become2 ExImp
-  Speed 20
+  Speed 2000/sec
 
 
 /* Zombies */
@@ -405,7 +421,7 @@ Proto Zombie 3004
   Becomes DeadZombie
   Become2 ExZombie
   Spawn2 Bullets
-  Speed 20
+  Speed 2000/sec
 
 Proto ZombieSarg 9
   Sprite "SPOS"
@@ -419,7 +435,7 @@ Proto ZombieSarg 9
   Becomes DeadZombieSarg
   Become2 ExZombieSarg
   Spawn2 Shotgun
-  Speed 18
+  Speed 1800/sec
 
 /* Chaingun guy */
 
@@ -511,11 +527,11 @@ Proto ChaingunGuy 65
   Beastie Blocking SkirtCliffs Shooter Nasty
   Splat BloodSplat
   Shoots Bullet
-  ShootMany 1 1pi/24
+  ShootMany 1 pi/24
   Becomes DeadChaingunGuy
   Become2 ExChaingunGuy
   Spawn2 Chaingun
-  Speed 15
+  Speed 1500/sec
 
 
 /* Demon and spectre */
@@ -587,11 +603,11 @@ Proto Demon 3002
   Size 50 56
   Hits 15
   Mass 120
-  Damage 1
+  Damage 10
   Beastie Blocking SkirtCliffs
   Splat BloodSplat
   Becomes DeadDemon
-  Speed 28
+  Speed 2800/sec
 
 Proto Spectre 58
   Sprite "SARG"
@@ -599,11 +615,11 @@ Proto Spectre 58
   Size 50 56
   Hits 15
   Mass 120
-  Damage 1
+  Damage 10
   Beastie Blocking SkirtCliffs PInvis
   Splat BloodSplat
   Becomes DeadSpectre
-  Speed 28
+  Speed 2800/sec
 
 
 /* Cacodemon */
@@ -666,7 +682,7 @@ Proto Cacodemon 3005
   Splat BloodSplat
   Shoots CacoFireBall ImmuneToSuch
   Becomes DeadCacodemon
-  Speed 20
+  Speed 2000/sec
 
 /* Baron and Hell-knight */
 
@@ -737,9 +753,9 @@ Proto Baron 3003
   Beastie Blocking SkirtCliffs
   Splat BloodSplat
   Shoots BaronFireBall ImmuneToSuch
-  Damage 20
+  Damage 40
   Becomes DeadBaron
-  Speed 19
+  Speed 1900/sec
 
 Proto HellKnight 69
   Sprite "BOS2"
@@ -750,9 +766,9 @@ Proto HellKnight 69
   Beastie Blocking SkirtCliffs
   Splat BloodSplat
   Shoots BaronFireBall ImmuneToSuch
-  Damage 2
+  Damage 30
   Becomes DeadHellKnight
-  Speed 18
+  Speed 1800/sec
 
 /* Revenant */
 
@@ -819,10 +835,10 @@ Proto Revenant 66
   Hits 50
   Mass 100
   Beastie Blocking SkirtCliffs
-  Damage 4
+  Damage 20
   Shoots SkelFireBall ImmuneToSuch
   Becomes DeadRevenant
-  Speed 30
+  Speed 3000/sec
 
 /* Mancubus */
 
@@ -896,7 +912,7 @@ Proto Mancubus 67
   Shoots MancFireBall ImmuneToSuch
   ShootPara 2 48
   Becomes DeadMancubus
-  Speed 10
+  Speed 1000/sec
 
 
 /* Archvile */
@@ -980,7 +996,7 @@ Proto ArchVile 64
   Beastie Blocking SkirtCliffs Shooter Resurrector
   Shoots VileFire
   Becomes DeadArchVile
-  Speed 35
+  Speed 3500/sec
 
 
 /* Lost soul */
@@ -1034,8 +1050,8 @@ Proto LostSoul 3006
   Mass 50
   Beastie Blocking CanFly Nasty
   Hits 10
-  Damage 5
-  Speed 24
+  Damage 10
+  Speed 2400/sec
 
 
 /* Pain Elemental */
@@ -1075,10 +1091,10 @@ Proto PainElemental 71
   Size 62 64
   Mass 140
   Beastie Blocking CanFly
-  Damage 3
+  Damage 15
   Shoots LostSoul
   Hits 40
-  Speed 18
+  Speed 1800/sec
 
 /* Spiderdemon */
 
@@ -1153,7 +1169,7 @@ Proto Spiderdemon 7
   Shoots Bullet
   ShootMany 3 pi/60
   Becomes DeadSpiderdemon
-  Speed 18
+  Speed 1800/sec
 
 
 /* Arachnotron */
@@ -1217,7 +1233,7 @@ PhaseTable Arachnotron
    Beastie Blocking SkirtCliffs
    Shoots AracFireBall ImmuneToSuch Nasty
    Becomes DeadArachnotron
-   Speed 25
+   Speed 2500/sec
 
 /* The dreaded Cyberdemon */
 
@@ -1283,7 +1299,7 @@ Proto Cyberdemon 16
   Beastie Blocking SkirtCliffs Nasty
   Shoots ClassicMissile
   Becomes DeadCyberdemon
-  Speed 20
+  Speed 2000/sec
 
 /* Barrel */
 

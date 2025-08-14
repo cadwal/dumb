@@ -4,10 +4,13 @@ EXTRA_DIST = .cvsignore
 
 noinst_LIBRARIES = libdumb.a
 
-libdumb_a_SOURCES = dsound.c prothing.c texture.c view.c sound_mix.c	\
-sound_mix.h dsound.h pastepic.h prothing.h texture.h sound.h view.h	\
-animtexstruct.h gettablestruct.h levinfostruct.h linetypestruct.h	\
-prothingstruct.h protoinwad.c protoinwad.h levdatanums.h
+libdumb_a_SOURCES = animtexstruct.h dsound.c dsound.h font.c font.h	\
+fontinwad.c fontinwad.h fontmap.c fontmap.h fontmapinwad.c		\
+fontmapinwad.h gettableinwad.c gettableinwad.h gettablestruct.h		\
+levdatanums.h levinfostruct.h linetypestruct.h lumpver.c lumpver.h	\
+pastepic.h prothing.c prothing.h prothingstruct.h protoinwad.c		\
+protoinwad.h sound.h sound_mix.c sound_mix.h texture.c texture.h	\
+view.c view.h
 
 # If I put $(DUMB_CONFIG_SOUND)_sound.c directly in libdumb_a_SOURCES,
 # Automake would add .deps/$(DUMB_CONFIG_SOUND)_sound.o in DEP_FILES

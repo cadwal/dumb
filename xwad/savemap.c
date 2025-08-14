@@ -168,7 +168,7 @@ void
 save_level(XWadInstance *inst)
 {
    WADWR *w;
-   char buf[16];
+   char buf[16];		/* FIXME: why 16? */
    garbage_collect(inst);
 #ifdef HAVE_FORK
    if (!fork())

@@ -1,4 +1,4 @@
-Installation of DUMB 0.13.4
+Installation of DUMB 0.13.8
 ===========================
 
 The first part of this file describes DUMB-specific configuration
@@ -93,7 +93,7 @@ sound system automatically.
 `--without-oss'
   Use or disable the Open Sound System that was created by Hannu
   Savolainen for Linux and has been ported to BSD at least.  There are
-  free and commercial versions of OSS; DUMB doesn't care which one you
+  free and propietary versions of OSS; DUMB doesn't care which one you
   have.
 
 `--with-mme'
@@ -107,6 +107,22 @@ sound system automatically.
   Use or disable the Allegro library.  It is generally used with the
   DJGPP compiler suite under MS-DOS.  Even if you disable Allegro sound
   with `--without-allegro', Allegro is still needed for graphics.
+
+Networking
+----------
+
+This is like sound; you can only choose one of these options.
+Currently, only Unix networking (Berkeley sockets) is supported.
+
+`--without-net'
+  Disable networking.  Actually, this uses a dummy network driver, but
+  you don't have to care of that.
+
+`--with-unix-net'
+`--without-unix-net'
+  Force or disable master-slave Unix networking.  This uses UDP
+  datagrams and system calls gethostbyname(), htons(), socket(),
+  bind(), fcntl(), close(), recvfrom(), select() and sendto().
 
 DOOM and Heretic options
 ------------------------
@@ -134,46 +150,6 @@ file names.  I'll fix this in a future version of DUMB.
 `--without-heretic-wad'
   As above but for heretic.wad.
 
-Framebuffer options
--------------------
-
-DUMB supports framebuffers that have 8, 16 or 32 bits per pixel.  The
-renderer is compiled for each BPP value separately, the versions are
-all linked together, and DUMB will choose the right one when run.  If
-you don't need support for some BPP value, you can leave it out to
-speed up compilation:
-
-`--disable-8bpp'
-  Disable support of framebuffers with 8 bits per pixel.
-
-`--disable-16bpp'
-  Disable support of framebuffers with 16 bits per pixel.
-
-`--disable-32bpp'
-  Disable support of framebuffers with 32 bits per pixel.
-
-If you disable all BPPs, `configure' will warn you but continue.  The
-game can't then be played.  Tools like `ptcomp' will work, though.
-
-Since these options disable features from the program without making
-compilation much faster after all, they may be removed in some later
-version of DUMB.
-
-Networking
-----------
-
-This is like sound; you can only choose one of these options.
-Currently, only Unix networking (Berkeley sockets) is supported.
-
-`--without-net'
-  Disable networking.  Actually, this uses a dummy network driver, but
-  you don't have to care of that.
-
-`--with-unix-net'
-`--without-unix-net'
-  Force or disable master-slave Unix networking.  This uses UDP
-  datagrams and system calls gethostbyname(), htons(), socket(),
-  bind(), fcntl(), close(), recvfrom(), select() and sendto().
 
 Basic Installation
 ==================

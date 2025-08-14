@@ -1,7 +1,24 @@
-
-/**
- ** Heretic monsters
- **/
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * htic/monsters.pt: Heretic monsters.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
 
 #define NormalRate   100msec
 #define OuchRate     275msec
@@ -191,8 +208,8 @@ PhaseTable Imp
 
   Phase MOVE    "A"
   Phase -       "B"       Strategy
-  Phase -       "C"	Strategy
-  Phase -       "B"	Strategy Goto MOVE
+  Phase -       "C"       Strategy
+  Phase -       "B"       Strategy Goto MOVE
 
   Phase SHOOT   "D"       Glow
   Phase -       "E"       Glow Shoot Sound IMPAT
@@ -215,7 +232,7 @@ PhaseTable Imp
   Default Duration ExplodeRate
   Default Glow
   Phase BOOM    "S"       SigExplode
-  Phase -       "T"	Sound RIPSLOP
+  Phase -       "T"       Sound RIPSLOP
   Phase -       "U"
   Phase -       "V"
   Phase -       "W"
@@ -226,27 +243,27 @@ PhaseTable Imp
 Proto Imp 66
   Sprite "IMPX"
   Size 50 35
-  Hits 6
+  Hits 8 /* 4 hits with elvenwand */
   Mass 100
   Beastie Blocking CanFly
   Damage 3
   Shoots ImpZap ImmuneToSuch
   Becomes DeadImp
   Become2 ExImp
-  Speed 20
+  Speed 2000/sec
 
 Proto ImpLeader 5
   Phases Imp
   Sprite "IMPX"
   Size 50 35
-  Hits 6
+  Hits 18 /* 9 hits with elvenwand */
   Mass 100
   Beastie Blocking CanFly
   Damage 4
   Shoots ImpZap ImmuneToSuch
   Becomes DeadImp
   Become2 ExImp
-  Speed 20
+  Speed 2000/sec
   SigShoot SHOOT
 
 
@@ -283,8 +300,8 @@ PhaseTable Sabreclaw
 
   Phase MOVE    "A"       Strategy Sound CLKACT
   Phase -       "B"       Strategy
-  Phase -       "C"	Strategy
-  Phase -       "D"	Strategy Goto MOVE
+  Phase -       "C"       Strategy
+  Phase -       "D"       Strategy Goto MOVE
 
   Phase FIGHT   "E"       SigFight
   Phase -       "F"       Melee Sound CLKATK
@@ -310,7 +327,7 @@ Proto Sabreclaw 90
   Beastie Blocking SkirtCliffs
   Damage 20
   Becomes DeadSabreclaw
-  Speed 20
+  Speed 2000/sec
 
 
 /* Mummy */
@@ -328,15 +345,15 @@ PhaseTable MummySpirit
 Proto MummySpirit
   Sprite "MUMM"
   Mass 1000 YMoveOnly
-  Speed 20/sec
+  Speed 2000/sec
   Phantom ZCenter FloatsUp
-  Spawn2 WimpyWandAmmo
+  Spawn2 CorpseWandAmmo
 
 Proto MummyLeaderSpirit
   Phases MummySpirit
   Sprite "MUMM"
   Mass 1000 YMoveOnly
-  Speed 30/sec
+  Speed 3000/sec
   Phantom ZCenter FloatsUp
   Spawn2 HeftyWandAmmo
 
@@ -377,7 +394,7 @@ PhaseTable Mummy
   Phase MOVE    "A"
   Phase -       "B"       Strategy
   Phase -       "C"
-  Phase -       "D"	Strategy Goto MOVE
+  Phase -       "D"       Strategy Goto MOVE
 
   Phase FIGHT   "E"       SigFight
   Phase -       "F"       Melee Sound MUMAT
@@ -392,7 +409,7 @@ PhaseTable Mummy
   Default Duration DieRate
   Default NoSigs
   Phase DIE     "I"       SigDie Sound MUMDTH
-  Phase -       "J"	Spawn2
+  Phase -       "J"       Spawn2
   Phase -       "K"
   Phase -       "L"
   Phase -       "M"
@@ -413,20 +430,20 @@ Proto Mummy 68
   Phases Mummy
   Sprite "MUMM"
   Size 40 64
-  Hits 10
+  Hits 16 /* 8 hits with elvenwand */
   Mass 100
   Beastie Blocking SkirtCliffs
   Damage 10
   Shoots MummyZap ImmuneToSuch
   Spawn2 MummySpirit
   Becomes DeadMummy
-  Speed 18
+  Speed 1800/sec
 
 Proto GhostMummy 69
   Phases Mummy
   Sprite "MUMM"
   Size 40 64
-  Hits 15
+  Hits 24
   Pinvis
   Mass 100
   Beastie Blocking SkirtCliffs
@@ -434,13 +451,13 @@ Proto GhostMummy 69
   Shoots MummyZap ImmuneToSuch
   Becomes DeadMummy
   SigDie ALTDIE
-  Speed 22
+  Speed 2200/sec
 
 Proto MummyLeader 45
   Phases Mummy
   Sprite "MUMM"
   Size 40 64
-  Hits 30
+  Hits 20 /* 10 hits with elvenwand */
   Mass 100
   Beastie Blocking SkirtCliffs
   Damage 15
@@ -448,13 +465,13 @@ Proto MummyLeader 45
   Spawn2 MummyLeaderSpirit
   Becomes DeadMummy
   SigShoot SHOOT
-  Speed 15
+  Speed 1500/sec
 
 Proto GhostMummyLeader 46
   Phases Mummy
   Sprite "MUMM"
   Size 40 64
-  Hits 40
+  Hits 30
   Pinvis
   Mass 100
   Beastie Blocking SkirtCliffs
@@ -463,7 +480,7 @@ Proto GhostMummyLeader 46
   SigShoot SHOOT
   SigDie ALTDIE
   Becomes DeadMummy
-  Speed 18
+  Speed 1800/sec
 
 
 /* Chaos Knights */
@@ -524,26 +541,26 @@ PhaseTable Knight
 Proto Knight 64
   Sprite "KNIG"
   Size 40 80
-  Hits 30
+  Hits 42 /* 21 hits with elvenwand */
   Mass 100
   Beastie Blocking SkirtCliffs
   Shoots GreenAxe ImmuneToSuch
   Becomes DeadKnight
   Spawn2 WimpyBowAmmo
   Damage 10
-  Speed 20
+  Speed 2000/sec
 
 Proto GhostKnight 65
   Sprite "KNIG"
   Phases Knight
   Size 40 80
-  Hits 40
+  Hits 63
   Mass 100
   Beastie Blocking SkirtCliffs PInvis
   Shoots RedAxe ImmuneToSuch
   Spawn2 WimpyBowAmmo
   Damage 15
-  Speed 23
+  Speed 2300/sec
 
 
 /* WereDragon */
@@ -646,7 +663,7 @@ Proto WereDragon 70
   Shoots WereDragonBreath
   Becomes DeadWereDragon
   Become2 ExWereDragon
-  Speed 15
+  Speed 1500/sec
 
 
 /* Maulotaur (9) */
@@ -742,7 +759,7 @@ Proto Maulotaur 9
   Beastie Blocking SkirtCliffs Nasty
   Shoots MineSpawner
   Becomes DeadMaulotaur
-  Speed 20
+  Speed 2000/sec
 
 
 /* Pod */
@@ -782,7 +799,7 @@ PhaseTable Pod
 
   Default Duration ExplodeRate NoSigs
   Phase	BOOM	"B"	SigDie
-  Phase	-	"C"       Sound PODEXP Explode
+  Phase	-	"C"	Sound PODEXP Explode
   Phase	-	"D"
   Phase	-	"E"
   Phase	-	"F"	Become
@@ -829,7 +846,7 @@ PhaseTable Disciple
 
   Phase SIGHT   "A"       SigDetect Sound WIZSIT
 
-  Phase MOVE    "A"	Strategy
+  Phase MOVE    "A"       Strategy
   Phase -       "B"       Goto MOVE Sound WIZACT
 
   Phase SHOOT   "C"       SigShoot Glow
@@ -856,10 +873,47 @@ Proto Disciple 15
   Mass 100
   Beastie Blocking
   Shoots WizardZap ImmuneToSuch
+  ShootMany 3 20deg
   Becomes DeadDisciple
   CanFly
-  Speed 15
+  Speed 1500/sec
 
+/* Iron lich (as in E1M8) */
+
+PhaseTable DeadIronLich
+  Phase DEAD  "I"   Goto DEAD
+
+Proto DeadIronLich
+  Sprite "HEAD"
+  Size 40 16
+  Mass 200
+  
+PhaseTable IronLich
+  Default Duration 200msec
+  Phase IDLE  "A"   Idle Goto IDLE
+  Phase SIGHT "A"   SigDetect
+  Phase MOVE  "A"   Strategy Goto MOVE
+  Phase SHOOT "B"   SigShoot Shoot Glow Goto MOVE
+  Default NoSigs
+  Phase DIE   "C"   SigDie
+  Phase -     "D"
+  Phase -     "E"
+  Phase -     "F"
+  Phase -     "G"
+  Phase -     "H"
+  Phase -     "I"   Become
+
+Proto IronLich 6
+  Sprite "HEAD"
+  Size 80 80
+  Hits 100
+  Mass 1000
+  Beastie Boss Blocking
+  Shoots IronLichMissile
+  Becomes DeadIronLich
+  SeeArc 90deg
+  AimArc 45deg
+  Speed 800/sec
 
 #undef NormalRate
 #undef OuchRate

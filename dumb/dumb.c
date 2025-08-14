@@ -43,6 +43,7 @@
 #include "libdumbutil/timer.h"
 #include "libdumbwad/wadio.h"
 #include "libdumb/dsound.h"
+#include "libdumb/fontmapinwad.h"
 #include "libdumb/sound.h"
 #include "libdumb/texture.h"
 #include "banner.h"
@@ -58,6 +59,7 @@
 #include "levinfo.h"
 #include "linetype.h"
 #include "message.h"
+#include "msgdom.h"
 #include "net.h"
 #include "netplay.h"
 #include "render.h"
@@ -68,9 +70,9 @@
 /*#define WATCHDOG */
 
 #ifdef __cplusplus
-#define BANNER (PACKAGE "++ " VERSION)
+#define BANNER ("DUMB++ " VERSION)
 #else
-#define BANNER (PACKAGE " " VERSION)
+#define BANNER ("DUMB " VERSION)
 #endif
 
 #ifdef WATCHDOG
@@ -188,7 +190,7 @@ print_program_version(void)
       { "1997-1998", "Josh Parsons" },
       { "1997-1998", "Marcus Sundberg" },
       { "1998", "Andrew Apted" },
-      { "1998", "Kalle Niemitalo" },
+      { "1998-1999", "Kalle Niemitalo" },
       { "1998", "Ulf Axelsson" },
       { "1987-1998", "Free Software Foundation, Inc." },
       COPYRIGHT_END
@@ -300,11 +302,11 @@ main(int argc, char **argv)
 #endif
       "/usr/share/dumb",
       "/usr/local/share/dumb",
-#ifdef DUMB_CONFIG_DOOM_PATH
-      DUMB_CONFIG_DOOM_PATH,
+#ifdef DUMB_CONFIG_DOOM_DIR
+      DUMB_CONFIG_DOOM_DIR,
 #endif
-#ifdef DUMB_CONFIG_HERETIC_PATH
-      DUMB_CONFIG_HERETIC_PATH,
+#ifdef DUMB_CONFIG_HERETIC_DIR
+      DUMB_CONFIG_HERETIC_DIR,
 #endif
       NULL
    };
@@ -318,6 +320,7 @@ main(int argc, char **argv)
 #ifdef ENABLE_NLS
    setlocale(LC_ALL, "");
    bindtextdomain(PACKAGE, LOCALEDIR);
+   bindtextdomain(PACKAGE"-utf8", LOCALEDIR);
    textdomain(PACKAGE);
 #endif /* ENABLE_NLS */
 
@@ -424,9 +427,11 @@ main(int argc, char **argv)
       init_sound(11025);
       init_dsound();
    }
+   init_msgdom();
    init_textures();
    init_linetypes();
    init_levinfo();
+   game_fontmap = load_fontmap();
 
    if (slave) {
       wait_slaveinfo(ld);
@@ -466,27 +471,21 @@ main(int argc, char **argv)
    cnf_ylace = ylace;
    cnf_bpp = bpp;
    switch (bpp) {
-#ifdef DUMB_CONFIG_8BPP
    case (1):
       init_renderer = init_renderer8;
       render = render8;
       fbrerender = fbrerender8;
       break;
-#endif
-#ifdef DUMB_CONFIG_16BPP
    case (2):
       init_renderer = init_renderer16;
       render = render16;
       fbrerender = fbrerender16;
       break;
-#endif
-#ifdef DUMB_CONFIG_32BPP
    case (4):
       init_renderer = init_renderer32;
       render = render32;
       fbrerender = fbrerender32;
       break;
-#endif
    default:
       logfatal('D', _("Unsupported BPP=%d"), bpp);
    }
@@ -715,7 +714,7 @@ main(int argc, char **argv)
 		      _("Try running DUMB in a larger window."));
 	 }
 	 if (player_alive && td->hits <= 0) {
-	    game_message(ld->localplayer, _("YOU DIED.  TOO BAD..."));
+	    game_utf8_message(ld->localplayer, U_("You died.  Too bad..."));
 	    if (ld->plwep[ld->localplayer] >= 0)
 	       ldthingd(ld)[ld->plwep[ld->localplayer]].proto = NULL;
 	 }

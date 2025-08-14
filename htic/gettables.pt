@@ -1,137 +1,290 @@
-
-/**
- **  Gettables
- **/
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * htic/gettables.pt: Gettables, apart from keys, weapons and ammo.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
 
 #define PowerUpQty  3000
 #define PowerUpTimeout  Decay 1
+#define FloatUpAndDown
+#define CountAsItem
 
-Gettable Health
+
+Gettable Life
   Initial 100
-  DefaultMaximum 200
+  DefaultMaximum 100
   Icon "PTN1A0" Anim "C" Timing 200msec
   IconPos 8 8
   Special GETT_SPC_HEALTH
 
-
-Gettable WandCrystals
-  Initial 50
+Gettable Shield
+  Initial 0
   DefaultMaximum 100
-  Icon "AMG2A0" Anim "C" Timing 230msec
-  IconPos -8 8
-
-Gettable EtherealArrows
-  DefaultMaximum 50
-  Icon "AMC2A0" RevAnim "C" Timing 150msec
-  IconPos -28 8
-
-Gettable ClawOrbs
-  DefaultMaximum 200
-  Icon "AMB1A0" Anim "B" Timing 150msec
-  IconPos -50 8
+  Icon "SHLDA0"
+  IconPos 20 8
+  Special GETT_SPC_ARMOUR
 
 
-Gettable Torch
+
+Gettable BagOfHolding
+  /* no icon */
   DefaultMaximum 1
-  Icon "TRCHA0" Anim "C" Timing 100msec
-  IconPos 160 8
-  /* WhenUsed Gets ActiveTorch PowerUpQty
-     but ptcomp doesn't support that...
-     perhaps it should be done via a bogothing?
-     Using it would invoke the pick-up feature.  */
+  Special GETT_SPC_BACKPACK
 
-Gettable ActiveTorch	/* this is not currently used */
-  /* FIXME: icon */
+Gettable MorphOvum
+  DefaultMaximum 9
+  Icon "ARTIEGGC"
+  IconPos 16 -16 XCenter
+  SpeSel
+  Ammo MorphOvum 1
+
+Gettable ActiveTorch
+  Icon "TRCHA0" Anim "C" Timing 100msec
+  IconPos 48 -48 XCenter
   DefaultMaximum PowerUpQty
   Special GETT_SPC_SUPERSIGHT
   PowerUpTimeout
 
+Gettable Torch
+  DefaultMaximum 9
+  Icon "ARTITRCH"
+  IconPos 16 -48 XCenter
+  SpeSel
+  Ammo Torch 1
+  Gets ActiveTorch PowerUpQty
 
-/* now the protothings */
+Gettable TimeBomb
+  DefaultMaximum 9
+  Icon "ARTIFBMB"
+  IconPos 16 -80 XCenter
+  SpeSel
+  Ammo TimeBomb 1
+  /* WhenUsed Drops ArmedTimeBomb */
 
-Proto WimpyWandAmmo 10
-  Sprite "AMG1"
+Gettable ActiveShadowsphere
+  Icon "INVSA0"
+  IconPos 48 -112 XCenter
+  DefaultMaximum PowerUpQty
+  Special GETT_SPC_INVISIBILITY
+  PowerUpTimeout
+
+Gettable MapScroll
+  DefaultMaximum 1
+  /* no icon */
+  Special GETT_SPC_ALLMAP
+
+Gettable Shadowsphere
+  DefaultMaximum 9
+  Icon "ARTIINVS"
+  IconPos 16 -112 XCenter
+  SpeSel
+  Ammo Shadowsphere 1
+  Gets ActiveShadowsphere PowerUpQty
+
+Gettable QuartzFlask
+  DefaultMaximum 30 /* FIXME */
+  Icon "ARTIPTN2"
+  IconPos -17 -112 XCenter
+  SpeSel
+  Ammo QuartzFlask 1
+  Gets Life 25
+
+Gettable ActiveWingsOfWrath
+  Icon "SOARA0" RevAnim "C" Timing 100msec
+  IconPos -49 -80 XCenter
+  DefaultMaximum PowerUpQty
+  Special GETT_SPC_WINGS
+  PowerUpTimeout
+
+Gettable WingsOfWrath
+  DefaultMaximum 9
+  Icon "ARTISOAR"
+  IconPos -17 -80 XCenter
+  SpeSel
+  Ammo WingsOfWrath 1
+  Gets ActiveWingsOfWrath PowerUpQty
+
+Gettable ActiveRingOfInvincibility
+  Icon "INVUA0" Anim "D" Timing 100msec
+  IconPos -49 -48 XCenter
+  DefaultMaximum PowerUpQty
+  Special GETT_SPC_DAMAGEPROTECTION
+  PowerUpTimeout
+
+Gettable RingOfInvincibility
+  DefaultMaximum 9
+  Icon "ARTIINVU"
+  IconPos -17 -48 XCenter
+  SpeSel
+  Ammo RingOfInvincibility 1
+  Gets ActiveRingOfInvincibility PowerUpQty
+
+Gettable ActiveTomeOfPower
+  Icon "PWBKA0"
+  IconPos -49 -16 XCenter
+  DefaultMaximum PowerUpQty
+  Special GETT_SPC_POWERWEAPONS
+  PowerUpTimeout
+
+Gettable TomeOfPower
+  DefaultMaximum 9
+  Icon "ARTIPWBK"
+  IconPos -17 -16 XCenter
+  SpeSel
+  Ammo TomeOfPower 1
+  Gets ActiveTomeOfPower PowerUpQty
+
+
+Proto BagOfHolding 8
+  Sprite "BAGH"
   Phases Mundane
-  Mass 1000 YMoveOnly Bouncy
-  Size 16 16
-  Gets WandCrystals 4
-  PickupSound ITEMUP
-  PickupMessage N_("wand crystal")
-
-Proto HeftyWandAmmo 12
-  Sprite "AMG2"
-  Phases Cycle3
-  Mass 1000 YMoveOnly Bouncy
-  Size 16 16
+  YMoveOnly FloatUpAndDown
+  Size 20 20
+  CountAsItem
+  Gets BagOfHolding 1
+  /* The following use the WithBackpack maximum,
+     since Gets BagOfHolding came first.  */
   Gets WandCrystals 10
+  Gets EtherealArrows 5
+  Gets ClawOrbs 10
   PickupSound ITEMUP
-  PickupMessage N_("crystal geode")
+  PickupMessage N_("bag of holding")
 
-
-Proto WimpyBowAmmo 18
-  Sprite "AMC1"
-  Phases MundaneGlow
-  Mass 1000 YMoveOnly Bouncy
-  Size 16 16
-  Gets EtherealArrows 4
-  PickupSound ITEMUP
-  PickupMessage N_("ethereal arrows")
-
-Proto HeftyBowAmmo 19
-  Sprite "AMC2"
+Proto MorphOvum 30
+  Sprite "EGGC"
   Phases Cycle3
-  Mass 1000 YMoveOnly
-  Size 16 16
-  Gets EtherealArrows 10
+  YMoveOnly FloatUpAndDown
+  Size 16 32
+  CountAsItem
+  Gets MorphOvum 1
   PickupSound ITEMUP
-  PickupMessage N_("quiver of ethereal arrows")
+  PickupMessage N_("morph ovum")
 
-
-Proto WimpyClawAmmo 54
-  Sprite "AMB1"
-  Phases Repeat3Glow
-  Mass 1000 YMoveOnly Bouncy
+Proto Torch 33
+  Sprite "TRCH"
+  Phases Cycle3Glow
+  YMoveOnly FloatUpAndDown
   Size 16 16
-  Gets ClawOrbs 20
+  CountAsItem
+  Gets Torch 1
   PickupSound ITEMUP
-  PickupMessage N_("claw orb")
 
-Proto HeftyClawAmmo 55
-  Sprite "AMB2"
-  Phases Repeat3Glow
-  Mass 1000 YMoveOnly
-  Size 16 16
-  Gets ClawOrbs 100
+PhaseTable TimeBomb
+  Default Duration 200msec
+  Phase INIT "A"
+  Phase -    "B"
+  Phase -    "C"
+  Phase -    "D"
+  Phase -    "E"
+  Phase -    "D"
+  Phase -    "C"
+  Phase -    "B" Goto INIT
+
+Proto TimeBomb 34
+  Sprite "FBMB"
+  YMoveOnly FloatUpAndDown
+  Size 32 32
+  CountAsItem
+  Gets TimeBomb 1
   PickupSound ITEMUP
-  PickupMessage N_("power orb")	/* FIXME: is this right? */
+  PickupMessage N_("time bomb of the ancients")
 
+Proto MapScroll 35
+  Sprite "SPMP"
+  Phases Mundane
+  YMoveOnly FloatUpAndDown
+  Size 30 20
+  CountAsItem
+  Gets MapScroll 1
+  PickupSound ITEMUP
+  PickupMessage N_("map scroll")
+
+Proto Shadowsphere 75
+  Sprite "INVS"
+  Phases Mundane
+  YMoveOnly FloatUpAndDown
+  Size 32 32
+  PInvis
+  CountAsItem
+  Gets Shadowsphere 1
+  PickupSound ITEMUP
+  PickupMessage N_("shadowsphere")
 
 Proto CrystalVial 81
   Sprite "PTN1"
   Phases Repeat3
-  Mass 1000 YMoveOnly Bouncy
+  YMoveOnly FloatUpAndDown
   Size 16 16
-  Gets Health 10
+  Gets Life 10
   PickupSound ITEMUP
   PickupMessage N_("crystal vial")
 
 Proto QuartzFlask 82
   Sprite "PTN2"
   Phases Repeat3
-  Mass 1000 YMoveOnly Bouncy
+  YMoveOnly FloatUpAndDown
   Size 16 16
-  Gets Health 25
+  Gets QuartzFlask 1
   PickupSound ITEMUP
   PickupMessage N_("quartz flask")
 
-
-Proto Torch 33
-  Sprite "TRCH"
-  Phases Cycle3Glow
-  Mass 1000 YMoveOnly
-  Size 16 16
-  Gets Torch 1
+Proto WingsOfWrath 83
+  Sprite "SOAR"
+  Phases Cycle3
+  YMoveOnly FloatUpAndDown
+  Size 40 20
+  CountAsItem
+  Gets WingsOfWrath 1
   PickupSound ITEMUP
+  PickupMessage N_("wings of wrath")
+
+Proto RingOfInvincibility 84
+  Sprite "INVU"
+  Phases Blink4
+  YMoveOnly FloatUpAndDown
+  Size 20 20
+  CountAsItem
+  Gets RingOfInvincibility 1
+  PickupSound ITEMUP
+  PickupMessage N_("ring of invincibility")
+
+Proto SilverShield 85
+  Sprite "SHLD"
+  Phases Mundane
+  YMoveOnly FloatUpAndDown
+  Size 24 24
+  CountAsItem
+  Gets Shield 100 Maximum 100
+  PickupSound ITEMUP
+  PickupMessage N_("silver shield")
+
+Proto TomeOfPower 86
+  Sprite "PWBK"
+  Phases Mundane
+  YMoveOnly FloatUpAndDown
+  Size 25 23
+  CountAsItem
+  Gets TomeOfPower 1
+  PickupSound ITEMUP
+  PickupMessage N_("tome of power")
 
 #undef PowerUpQty
 #undef PowerUpTimeout
+#undef FloatUpAndDown
+#undef CountAsItem

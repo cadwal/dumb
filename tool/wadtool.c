@@ -1,8 +1,8 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * tool/wadtool.c: Copy lumps between wads and other files.
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
- * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,16 +20,19 @@
  * USA.
  */
 
-/* FIXME: This needs a lot more error checking.  */
+/* FIXME: This needs a lot more error checking.  Also, the command
+   line parsing should use getopt_long.  See print_help() and
+   ./WADTOOL.PLAN for ideas. */
 
 #include <config.h>
 
+#include <ctype.h>
+#include <errno.h>
+#include <locale.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <locale.h>
 
 #include "libdumbutil/dumb-nls.h"
 
@@ -37,14 +40,17 @@
 #include "libdumbutil/copyright.h"
 #include "libdumbutil/exitcode.h"
 #include "libdumbutil/log.h"
+#include "libdumbutil/safem.h"
 #include "libdumbwad/wadio.h"
 #include "libdumbwad/wadwr.h"
 
 /* There should be a --verbose, but because there isn't, this is always 1.  */
 int verbose_flag = 1;
 
-void print_help(FILE *dest);
-void print_version(void);
+static void print_help(FILE *dest);
+static void print_version(void);
+static const char *basename(const char *);
+static void catwad(WADWR *wr, FILE *fin, const char *fin_name);
 
 typedef enum {
    None, ReadWad, WriteIWad, WritePWad, WriteDir, PatchWad, CatWad,
@@ -52,7 +58,7 @@ typedef enum {
    WriteRaw, WriteRawCurrent, SpitLump, ExtractLump	/*, ExtractLumpAs */
 } Mode;
 
-void
+static void
 print_help(FILE *dest)
 {
 #if 0
@@ -100,11 +106,12 @@ print_help(FILE *dest)
    print_bugaddr_message(dest);
 }
 
-void
+static void
 print_version(void)
 {
    static const struct copyright copyrights[] = {
       { "1998", "Josh Parsons" },
+      { "1998-1999", "Kalle Niemitalo" },
       COPYRIGHT_END
    };
    fputs("wadtool (DUMB) " VERSION "\n", stdout);
@@ -114,13 +121,27 @@ print_version(void)
 	 stdout);
 }
 
-void
-catwad(WADWR *wr, FILE *fin)
+/* Return the part of STR after the last slash,
+   or STR if there's no slash.  */
+static const char *
+basename(const char *str)
+{
+   const char *slash = strrchr(str, '/');
+   if (slash)
+      return slash + 1;
+   else
+      return str;
+}
+
+/* This function should be rewritten.  All the header parsing belongs
+   in libdumbwad.  */
+static void
+catwad(WADWR *wr, FILE *fin, const char *fin_name)
 {
    WadHeader hdr;
    WadDirEntry *dir;
    unsigned lumpnum;
-   char namebuf[12];
+   char namebuf[12];		/* FIXME: why 12? */
    rewind(fin);
    fread(&hdr, sizeof(hdr), 1, fin);
    dir = (WadDirEntry *) malloc(sizeof(WadDirEntry) * hdr.nlumps);
@@ -132,8 +153,8 @@ catwad(WADWR *wr, FILE *fin)
       strncpy(namebuf, dir[lumpnum].name, 8);
       namebuf[8] = 0;
       if (verbose_flag)
-	 printf(_("copying *(%s) -> %s(%s)\n"),
-		namebuf, wr->fname, namebuf);
+	 printf(_("copying %s(%s) -> %s(%s)\n"),
+		fin_name, namebuf, wr->fname, namebuf);
       wadwr_lump(wr, namebuf);
       if (dir[lumpnum].size > 0) {
 	 /* alright so this isn't a very efficient way of doing things! */
@@ -151,7 +172,9 @@ int
 main(int argc, char **argv)
 {
    int i;
-   LumpNum ln;
+   /* Regardless of what egcs-2.91.66 says, `i' is not used
+      uninitialized.  The first use is in a `for' loop which
+      initializes the variable.  */
    Mode mode = None;
    WADWR *wr = NULL;
 #ifdef ENABLE_NLS
@@ -201,7 +224,7 @@ main(int argc, char **argv)
 	 case ('x'):
 	    mode = ExtractLump;
 	    break;
-	    /*case('X'): mode=ExtractLumpAs; break; */
+	 /* case('X'): mode=ExtractLumpAs; break; */
 	 case ('n'):
 	    mode = RenameLump;
 	    break;
@@ -241,89 +264,122 @@ main(int argc, char **argv)
 	    wr = wadwr_open(argv[i], 'd');
 	    break;
 	 case (WriteRaw):
-	    if (wr) {
-	       char buf[16];
-	       char *s = strrchr(argv[i], '/');
+	    if (!wr)
+	       logprintf(LOG_FATAL, 'W', _("Output WAD not chosen"));
+	    else {
+	       const char *in_fname = argv[i];
+	       char lumpname[LUMPNAMELEN+1];
+	       char *s;
+	       strncpy(lumpname, basename(in_fname), LUMPNAMELEN);
+	       lumpname[LUMPNAMELEN] = '\0';
+	       s = strrchr(lumpname, '.');
 	       if (s)
-		  s++;
-	       else
-		  s = argv[i];
-	       strncpy(buf, s, 8);
-	       buf[8] = 0;
-	       s = strrchr(buf, '.');
-	       if (s)
-		  *s = 0;
-	       for (s = buf; *s; s++)
+		  *s = '\0';
+	       for (s = lumpname; *s; s++)
 		  *s = toupper(*s);
 	       if (verbose_flag)
 		  logprintf(LOG_INFO, 'W', _("copying %s -> %s(%s)"),
-			    argv[i], wr->fname, buf);
-	       wadwr_lump(wr, buf);
+			    in_fname, wr->fname, lumpname);
+	       wadwr_lump(wr, lumpname);
 	    }
 	    /* nobreak */
 	 case (WriteRawCurrent):
-	    if (wr) {
-	       char buf[1024];
+	    if (!wr)
+	       logprintf(LOG_FATAL, 'W', _("Output WAD not chosen"));
+	    else {
+	       char buf[BUFSIZ];
 	       FILE *f = fopen(argv[i], "rb");
-	       while (f && !feof(f))
-		  wadwr_write(wr, buf, fread(buf, 1, 1024, f));
-	       if (f)
-		  fclose(f);
+	       if (!f)
+		  logprintf(LOG_FATAL, 'W', "%s: %s", argv[i], strerror(errno));
+	       while (!feof(f)) {
+		  size_t got = fread(buf, 1, sizeof(buf), f);
+		  if (ferror(f))
+		     logprintf(LOG_FATAL, 'W', "%s: %s", argv[i], strerror(errno));
+		  wadwr_write(wr, buf, got);
+	       }
+	       if (fclose(f) != 0)
+		  logprintf(LOG_FATAL, 'W', "%s: %s", argv[i], strerror(errno));
 	    }
 	    break;
 	 case (SpitLump):
-	    if (wr)
-	       wadwr_lump(wr, argv[i]);
+	    if (!wr)
+	       logprintf(LOG_FATAL, 'W', _("Output WAD not chosen"));
+	    wadwr_lump(wr, argv[i]);
 	    break;
 	 case (WriteLump):
-	    ln = getlump(argv[i]);
-	    if (wr && LUMPNUM_OK(ln)) {
+	    if (!wr)
+	       logprintf(LOG_FATAL, 'W', _("Output WAD not chosen"));
+	    else {
+	       const char *lumpname = argv[i];
+	       LumpNum ln = getlump(lumpname);
+	       if (!LUMPNUM_OK(ln))
+		  logprintf(LOG_FATAL, 'W', _("Lump `%s' not found"),
+			    lumpname);
 	       if (verbose_flag)
-		  logprintf(LOG_INFO, 'W', _("copying *(%s) -> %s(%s)"),
-			    argv[i], wr->fname, argv[i]);
-	       wadwr_lump(wr, argv[i]);
+		  logprintf(LOG_INFO, 'W', _("copying %s(%s) -> %s(%s)"),
+			    get_lump_filename(ln), lumpname,
+			    wr->fname, lumpname);
+	       wadwr_lump(wr, lumpname);
 	       wadwr_write(wr, load_lump(ln), get_lump_len(ln));
 	       free_lump(ln);
 	    }
 	    break;
 	 case (ExtractLump):
-	    ln = getlump(argv[i]);
-	    if (LUMPNUM_OK(ln)) {
-	       char buf[16];
-	       FILE *f;
-	       strcpy(buf, argv[i]);
-	       strcat(buf, ".lump");
-	       f = fopen(buf, "wb");
-	       if (verbose_flag)
-		  logprintf(LOG_INFO, 'W',
-			    _("copying *(%s) -> %s"), argv[i], buf);
-	       if (f) {
-		  fwrite(load_lump(ln), get_lump_len(ln), 1, f);
-		  fclose(f);
-	       }
+	    {
+	       const char *lumpname = argv[i];
+	       char *fout_name;
+	       FILE *fout;
+	       LumpNum ln = getlump(lumpname);
+	       if (!LUMPNUM_OK(ln))
+		  logprintf(LOG_FATAL, 'W', _("Lump `%s' not found"),
+			    lumpname);
+	       fout_name = (char *) safe_malloc(strlen(lumpname) + 5 + 1);
+	       sprintf(fout_name, "%s.lump", lumpname);
+	       fout = fopen(fout_name, "wb");
+	       /* The following conditions can be combined because
+                  we're using LOG_FATAL.  Otherwise, this would leak.  */
+	       if (fout == NULL
+		   || fwrite(load_lump(ln), get_lump_len(ln), 1, fout) != 1
+		   || fclose(fout) != 0)
+		  logprintf(LOG_FATAL, 'W', "%s: %s",
+			    fout_name, strerror(errno));
 	       free_lump(ln);
 	    }
 	    break;
 	 case (RenameLump):
-	    ln = getlump(argv[i]);
-	    if (wr && LUMPNUM_OK(ln) && i + 1 < argc) {
+	    if (!wr)
+	       logprintf(LOG_FATAL, 'W', _("Output WAD not chosen"));
+	    else if (i + 1 >= argc)
+	       logprintf(LOG_FATAL, 'W', _("Not enough arguments"));
+	    else {
+	       const char *old_name = argv[i];
+	       const char *new_name = argv[++i];
+	       LumpNum ln = getlump(old_name);
+	       if (!LUMPNUM_OK(ln))
+		  logprintf(LOG_FATAL, 'W', _("Lump `%s' not found"),
+			    old_name);
 	       if (verbose_flag)
-		  logprintf(LOG_INFO, 'W',
-			    _("copying *(%s) -> %s(%s)"),
-			    argv[i], wr->fname, argv[i + 1]);
-	       wadwr_lump(wr, argv[i + 1]);
+		  logprintf(LOG_INFO, 'W', _("copying %s(%s) -> %s(%s)"),
+			    get_lump_filename(ln), old_name,
+			    wr->fname, new_name);
+	       wadwr_lump(wr, new_name);
 	       wadwr_write(wr, load_lump(ln), get_lump_len(ln));
 	       free_lump(ln);
-	       i++;
 	    }
 	    break;
 	 case (CatWad):
-	    if (wr) {
-	       FILE *fin = fopen(argv[i], "rb");
-	       if (fin) {
-		  catwad(wr, fin);
-		  fclose(fin);
-	       }
+	    if (!wr)
+	       logprintf(LOG_FATAL, 'W', _("Output WAD not chosen"));
+	    else {
+	       const char *fin_name = argv[i];
+	       FILE *fin = fopen(fin_name, "rb");
+	       if (!fin)
+		  logprintf(LOG_FATAL, 'W', "%s: %s",
+			    fin_name, strerror(errno));
+	       catwad(wr, fin, fin_name);
+	       if (fclose(fin) != 0)
+		  logprintf(LOG_FATAL, 'W', "%s: %s",
+			    fin_name, strerror(errno));
 	    }
 	    break;
 	 case (None):
@@ -339,4 +395,5 @@ main(int argc, char **argv)
 
 // Local Variables:
 // c-basic-offset: 3
+// c-file-offsets: ((case-label . 0))
 // End:

@@ -33,12 +33,16 @@ _$*
 core
 
 # Project ignores (converted from .cvsignore files)
-/aux/Makefile
-/aux/Makefile.in
 /docs/Makefile
 /docs/Makefile.in
+/docs/dumb-pt.fixed-index
+/docs/dumb-pt.index
+/docs/dumb-pt.info
+/docs/stamp-vti
+/docs/version.texi
 /docs/dos/Makefile
 /docs/dos/Makefile.in
+/docs/dumb-pt/Makefile.in
 /docs/maint/Makefile
 /docs/maint/Makefile.in
 /docs/patches/Makefile
@@ -77,6 +81,8 @@ core
 /ptcomp/Makefile
 /ptcomp/Makefile.in
 /ptcomp/ptcomp
+/scripts/Makefile
+/scripts/Makefile.in
 /test/.deps
 /test/Makefile
 /test/Makefile.in

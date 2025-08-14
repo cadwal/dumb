@@ -15,10 +15,10 @@ other_lumps = COLORM16.lump COLORM32.lump DUMBLOGO.lump
 playpal_src_wad = $(DUMB_CONFIG_HERETIC_WAD)
 
 # Keep htic.pt first in this list so $< works right.
-pt_sources = htic.pt ambient.pt animtex.pt ../doom/camera.pt		\
-furniture.pt generic.pt gettables.pt keys.pt levels.pt			\
+pt_sources = htic.pt ambient.pt ammo.pt animtex.pt ../doom/camera.pt	\
+font.pt furniture.pt generic.pt gettables.pt keys.pt levels.pt		\
 ../doom/linetypes.pt missiles.pt monsters.pt ../doom/sectortypes.pt	\
-weapons.pt
+test.pt weapons.pt
 
 # The rest is identical with ../doom/, except for the last rule.
 

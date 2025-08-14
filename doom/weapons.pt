@@ -1,3 +1,24 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * doom/weapons.pt: Weapons.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
 
 /**
  **  Weapons
@@ -7,10 +28,9 @@
    WepSel lets us select and use it as a weapon
    Shoots is the missile proto
    Ammo is the gettable to use up
-   Gun tells DUMB to shoot rather than hurl
+   Shooter tells DUMB to shoot rather than hurl
    PickupMessage <string> should make it say "You got the shotgun!"
    or whatever.
-   Timing is the number of ticks that should pass between each use
    Sound is a sound to make when used
 */
 
@@ -176,10 +196,10 @@ Proto BerserkFist
 Proto HeldChainsaw
   Sprite "SAWG"
   AimArc 45deg
-  Size 32 56
+  Size 40 56
   Bogus
   NoHurtOwner
-  Damage 2 TurnWhenHitting
+  Damage 2 TurnOwner
 
 Proto HeldPistol
   Sprite "PISG"
@@ -238,15 +258,6 @@ Proto HeldRocketLauncher
   Size 32 56
   Bogus
   Shoots Missile
-
-Proto HeldChainsaw
-  Sprite "SAWG"
-  AimArc 45deg
-  Size 32 56
-  Bogus
-  NoHurtOwner
-  Damage 4
-
 
 /* now gettable entries for weapons */
 
@@ -354,8 +365,8 @@ Proto Shotgun 2001
   StickToFloor
   PickupMessage N_("You got the shotgun!")
   PickupSound DSWPNUP
-  Gets ShotGun 1
   Gets Shell 6
+  Gets ShotGun 1
 
 Proto SuperShotgun 82
   Sprite "SGN2"
@@ -364,8 +375,8 @@ Proto SuperShotgun 82
   StickToFloor
   PickupMessage N_("You got the super shotgun!")
   PickupSound DSWPNUP
-  Gets SuperShotgun 1
   Gets Shell 6
+  Gets SuperShotgun 1
 
 Proto Chaingun 2002
   Sprite "MGUN"
@@ -374,8 +385,8 @@ Proto Chaingun 2002
   StickToFloor
   PickupMessage N_("You got the chaingun!")
   PickupSound DSWPNUP
-  Gets Chaingun 1
   Gets Bullet 20
+  Gets Chaingun 1
 
 Proto RocketLauncher 2003
   Sprite "LAUN"
@@ -384,8 +395,8 @@ Proto RocketLauncher 2003
   StickToFloor
   PickupMessage N_("You got the rocket launcher!")
   PickupSound DSWPNUP
-  Gets RocketLauncher 1
   Gets Rocket 2
+  Gets RocketLauncher 1
 
 Proto PlasmaRifle 2004
   Sprite "PLAS"
@@ -394,8 +405,8 @@ Proto PlasmaRifle 2004
   StickToFloor
   PickupMessage N_("You got the plasma rifle!")
   PickupSound DSWPNUP
-  Gets PlasmaRifle 1
   Gets Cell 40
+  Gets PlasmaRifle 1
 
 Proto BFG9000 2006
   Sprite "BFUG"
@@ -404,8 +415,8 @@ Proto BFG9000 2006
   StickToFloor
   PickupMessage N_("You got the BFG!")
   PickupSound DSWPNUP
-  Gets BFG 1
   Gets Cell 100
+  Gets BFG 1
 
 #undef StickToFloor
 #undef _OverlaySprite

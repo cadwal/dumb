@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
- * dumb/ggi_degas_video.c: GGI video & input driver.
+ * dumb/ggi_renoir_video.c: GGI video & input driver.
+ * Copyright (C) 1999  Kalle Niemitalo	<tosi@stekt.oulu.fi>
  * Copyright (C) 1998  Andrew Apted  <andrew@ggi-project.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -10,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -76,7 +77,7 @@ struct ggi_screen_info {
 } ggi_screen;
 
 
-/*****  GGI Graphics  *****/
+/*****	GGI Graphics  *****/
 
 
 void
@@ -98,8 +99,6 @@ video_preinit(void)
 void
 init_video(int *width, int *height, int *bpp, int *real_width)
 {
-   int err;
-
    if (ggi_screen.pagev != NULL) {
       safe_free(ggi_screen.pagev);
       ggi_screen.pagev = NULL;
@@ -115,17 +114,17 @@ init_video(int *width, int *height, int *bpp, int *real_width)
      case 1:
        ggi_screen.mode.graphtype = GT_8BIT;
        break;
-   
+
      case 2:
        ggi_screen.mode.graphtype = GT_16BIT;
        break;
-   
+
      case 4:
        ggi_screen.mode.graphtype = GT_32BIT;
        break;
-   
+
      default:
-        logfatal('V', _("Bad BPP (%d) in init_video"), *bpp);
+	logfatal('V', _("Bad BPP (%d) in init_video"), *bpp);
    }
 
    ggiCheckMode(ggi_screen.vis, &ggi_screen.mode);
@@ -136,8 +135,8 @@ init_video(int *width, int *height, int *bpp, int *real_width)
       case 32: *bpp = 4; break;
 
       default:
-         logfatal('V', _("Depth %d not supported."),
-	          ggi_screen.mode.graphtype & GT_DEPTH_MASK);
+	 logfatal('V', _("Depth %d not supported."),
+		  ggi_screen.mode.graphtype & GT_DEPTH_MASK);
    }
 
    if (ggiSetMode(ggi_screen.vis, &ggi_screen.mode) < 0) {
@@ -178,7 +177,7 @@ video_setpal(unsigned char index, unsigned char red,
 {
    ggi_color gcol;
 
-   gcol.r = red   << 8;
+   gcol.r = red	  << 8;
    gcol.g = green << 8;
    gcol.b = blue  << 8;
 
@@ -194,8 +193,8 @@ video_newframe(void)
 void
 video_updateframe(void *v)
 {
-   ggiPutBox(ggi_screen.vis, 0, 0, ggi_screen.mode.visible.x, 
-             ggi_screen.mode.visible.y, v);
+   ggiPutBox(ggi_screen.vis, 0, 0, ggi_screen.mode.visible.x,
+	     ggi_screen.mode.visible.y, v);
    ggiFlush(ggi_screen.vis);
 }
 
@@ -206,7 +205,7 @@ video_winstuff(const char *desc, int xdim, int ydim)
 }
 
 
-/*****  GGI Input  *****/
+/*****	GGI Input  *****/
 
 
 #define GGI_EVENTS  (emKey | emPointer | emValuator)
@@ -227,7 +226,7 @@ handle_ggi_key_event(ggi_event *ev)
 
    if ((ev->key.label == GIIK_VOID) ||
        (ev->key.label == GIIK_NIL)) return;
-   
+
    /* handle shift & alt */
 
    switch (ev->key.label) {
@@ -236,19 +235,19 @@ handle_ggi_key_event(ggi_event *ev)
      case GIIK_ShiftR:
        ggi_screen.running = state;
        break;
-     
+
      case GIIK_AltL: case GIIK_MetaL:
      case GIIK_AltR: case GIIK_MetaR:
        ggi_screen.strafing = state;
        break;
    }
-    
+
    keymap_press_keycode(ev->key.label, state);
 }
 
 static void
-handle_ggi_ptr_event(ggi_event *ev, int *forward, int *rotate, 
-                     int *sideways)
+handle_ggi_ptr_event(ggi_event *ev, int *forward, int *rotate,
+		     int *sideways)
 {
    int state;
    int speed = (ggi_screen.running) ? RUN_SPEED : UNIT_SPEED;
@@ -298,7 +297,7 @@ get_input(PlayerInput *in)
 
    int d_sideways = 0;
    int d_forward  = 0;
-   int d_rotate   = 0;
+   int d_rotate	  = 0;
 
    for (;;) {
       struct timeval tv = {0, 0};
@@ -315,8 +314,8 @@ get_input(PlayerInput *in)
    ctlkey_calc_tick();
    ctlkey_get_player_input(in);
 
-   in->forward  += d_forward;
-   in->rotate   += d_rotate;
+   in->forward	+= d_forward;
+   in->rotate	+= d_rotate;
    in->sideways += d_sideways;
 }
 
@@ -342,120 +341,150 @@ keymap_keycode_to_keyname(keymap_keycode keycode)
     * representation of the particular key pressed.
     */
 
-   switch (keycode) {
+   switch (GII_KTYP(keycode)) {
 
-      case GIIUC_Tab:		return "Tab";
-      case GIIUC_Linefeed:
-      case GIIUC_Return:	return "Return";
-      case GIIUC_Escape:	return "Escape";
-      case GIIUC_Space:		return "Space";
-      case GIIUC_Delete:	return "Delete";
+      case GII_KT_LATIN1:
 
-      case GIIK_Up:		return "Up";
-      case GIIK_Down:		return "Down";
-      case GIIK_Left:		return "Left";
-      case GIIK_Right:		return "Right";
+	 switch (keycode) {
 
-      case GIIK_Insert:		return "Insert";
-      case GIIK_Home:		return "Home";
-      case GIIK_End:		return "End";
-      case GIIK_PageUp:		return "PageUp";
-      case GIIK_PageDown:	return "PageDown";
-      case GIIK_Help:		return "Help";
-      case GIIK_Break:		return "Break";
+	    case GIIUC_Tab:		return "Tab";
+	    case GIIUC_Linefeed:	return "Linefeed";
+	    case GIIUC_Return:		return "Return";
+	    case GIIUC_Escape:		return "Escape";
+	    case GIIUC_Space:		return "Space";
+	    case GIIUC_Delete:		return "Delete";
 
-      case GIIK_Find:		return "Find";
-      case GIIK_Select:		return "Select";
-      case GIIK_Begin:		return "Begin";
-      case GIIK_Clear:		return "Clear";
-      case GIIK_Cancel:		return "Cancel";
-      case GIIK_Menu:		return "Menu";
-      case GIIK_Undo:		return "Undo";
-      case GIIK_Redo:		return "Redo";
-      case GIIK_Do:		return "Do";
-      case GIIK_Execute:	return "Execute";
-      case GIIK_Macro:		return "Macro";
-      case GIIK_SysRq:		return "SysRq";
-      case GIIK_PrintScreen:	return "PrintScreen";
-      case GIIK_ToggleScreen:
-      case GIIK_ModeSwitch:	return "Mode_switch";
+	    default:
+	       return keyname_of_char((char) tolower(GII_KVAL(keycode)));
 
-      case GIIK_F1:		return "F1";
-      case GIIK_F2:		return "F2";
-      case GIIK_F3:		return "F3";
-      case GIIK_F4:		return "F4";
-      case GIIK_F5:		return "F5";
-      case GIIK_F6:		return "F6";
-      case GIIK_F7:		return "F7";
-      case GIIK_F8:		return "F8";
-      case GIIK_F9:		return "F9";
-      case GIIK_F10:		return "F10";
-      case GIIK_F11:		return "F11";
-      case GIIK_F12:		return "F12";
-      case GIIK_F13:		return "F13";
-      case GIIK_F14:		return "F14";
-      case GIIK_F15:		return "F15";
-      case GIIK_F16:		return "F16";
-      case GIIK_F17:		return "F17";
-      case GIIK_F18:		return "F18";
-      case GIIK_F19:		return "F19";
-      case GIIK_F20:		return "F20";
+	 }
+	 break;			/* unreached */
 
-      case GIIK_P0:		return "Pad 0";
-      case GIIK_P1:		return "Pad 1";
-      case GIIK_P2:		return "Pad 2";
-      case GIIK_P3:		return "Pad 3";
-      case GIIK_P4:		return "Pad 4";
-      case GIIK_P5:		return "Pad 5";
-      case GIIK_P6:		return "Pad 6";
-      case GIIK_P7:		return "Pad 7";
-      case GIIK_P8:		return "Pad 8";
-      case GIIK_P9:		return "Pad 9";
-      case GIIK_PA:		return "Pad A";
-      case GIIK_PB:		return "Pad B";
-      case GIIK_PC:		return "Pad C";
-      case GIIK_PD:		return "Pad D";
-      case GIIK_PE:		return "Pad E";
-      case GIIK_PF:		return "Pad F";
+      case GII_KT_SPEC:
 
-      case GIIK_PPlus:		return "Pad +";
-      case GIIK_PMinus:		return "Pad -";
-      case GIIK_PStar:		return "Pad *";
-      case GIIK_PSlash:		return "Pad /";
-      case GIIK_PDot:		return "Pad .";
-      case GIIK_PComma:		return "Pad ,";
-      case GIIK_PNumber:	return "Pad #"; 
-      case GIIK_PParenLeft:	return "Pad (";
-      case GIIK_PParenRight:	return "Pad )";
-      case GIIK_PF1:		return "Pad F1";
-      case GIIK_PF2:		return "Pad F2";
-      case GIIK_PF3:		return "Pad F3";
-      case GIIK_PF4:		return "Pad F4";
-      case GIIK_PF5:		return "Pad F5";
-      case GIIK_PEnter:		return "Pad Enter";
+	 switch (keycode) {
 
-      case GIIK_ShiftL:		return "Shift_L";
-      case GIIK_ShiftR:		return "Shift_L";
-      case GIIK_CtrlL:		return "Control_L";
-      case GIIK_CtrlR:		return "Control_L";
-      case GIIK_AltL:		return "Alt_L";
-      case GIIK_AltR:		return "Alt_L";
-      case GIIK_MetaL:		return "Meta_L";
-      case GIIK_MetaR:		return "Meta_L";
-      case GIIK_CapsLock:	return "CapsLock";
-      case GIIK_NumLock:	return "NumLock";
-      case GIIK_ScrollLock:	return "ScrollLock";
-      case GIIK_Pause:		return "Pause";
-   }
-   
-   /* latin-1 ? */
+	    case GIIK_Break:		return "Break";
+	    case GIIK_ScrollForw:	return "Scroll Forward";
+	    case GIIK_ScrollBack:	return "Scroll Back";
 
-   if (GII_KTYP(keycode) == GII_KT_LATIN1)
-      return keyname_of_char((char) tolower(GII_KVAL(keycode)));
+	    /* I doubt DUMB ever gets the chance to see these keys, but here
+	       they are anyway.	 */
+	    case GIIK_Boot:		return "Boot";
+	    case GIIK_Compose:		return "Compose";
+	    case GIIK_SAK:		return "SAK";
 
-   /* unknown */
+	    case GIIK_Undo:		return "Undo";
+	    case GIIK_Redo:		return "Redo";
+	    case GIIK_Menu:		return "Menu";
+	    case GIIK_Cancel:		return "Cancel";
+	    case GIIK_PrintScreen:	return "Print Screen";
+	    case GIIK_Execute:		return "Execute";
+	    case GIIK_Find:		return "Find";
+	    case GIIK_Begin:		return "Begin";
+	    case GIIK_Clear:		return "Clear";
+	    case GIIK_Insert:		return "Insert";
+	    case GIIK_Select:		return "Select";
+	    case GIIK_Macro:		return "Macro";
+	    case GIIK_Help:		return "Help";
+	    case GIIK_Do:		return "Do";
+	    case GIIK_Pause:		return "Pause";
+	    case GIIK_SysRq:		return "SysRq";
+	    case GIIK_ModeSwitch:	return "Mode_switch";
 
-   sprintf(namebuf, "ggi_%04x", keycode);
+	    case GIIK_Up:		return "Up";
+	    case GIIK_Down:		return "Down";
+	    case GIIK_Left:		return "Left";
+	    case GIIK_Right:		return "Right";
+	    case GIIK_Prior:		return "Prior";
+	    case GIIK_Next:		return "Next";
+	    case GIIK_Home:		return "Home";
+	    case GIIK_End:		return "End";
+
+	 }
+	 break;			/* sometimes reached */
+
+      case GII_KT_FN:
+
+	 sprintf(namebuf, "F%d", (int) GII_KVAL(keycode));
+	 return namebuf;
+
+	 break;			/* obviously unreached */
+
+      case GII_KT_PAD:
+
+	 switch (keycode) {
+
+	    /* The default case handles most pad keys like "Pad 5".
+	       List only the exceptions here.  */
+
+#if 0
+	    case GIIK_PSeparator:	return "Pad Separator";
+	    case GIIK_PDecimal:		return "Pad Decimal";
+#endif
+	    case GIIK_PSpace:		return "Pad Space";
+	    case GIIK_PEnter:		return "Pad Enter";
+	    case GIIK_PTab:		return "Pad Tab";
+
+	    case GIIK_PPlusMinus:	return "Pad +-";
+	    case GIIK_PBegin:		return "Pad Begin";
+
+	    case GIIK_PF1:		return "Pad F1";
+	    case GIIK_PF2:		return "Pad F2";
+	    case GIIK_PF3:		return "Pad F3";
+	    case GIIK_PF4:		return "Pad F4";
+	    case GIIK_PF5:		return "Pad F5";
+	    case GIIK_PF6:		return "Pad F6";
+	    case GIIK_PF7:		return "Pad F7";
+	    case GIIK_PF8:		return "Pad F8";
+	    case GIIK_PF9:		return "Pad F9";
+
+	    default:
+	       /* This handles all the "Pad x" keys where x is a
+		  printable ASCII character.  */
+	       if (GII_KVAL(keycode) > 0x20
+		   && GII_KVAL(keycode) < 0x7F) {
+		  sprintf(namebuf, "Pad %c", (char) GII_KVAL(keycode));
+		  return namebuf;
+	       }
+
+	 }
+	 break;			/* sometimes reached */
+
+      case GII_KT_MOD:
+
+	 switch (keycode) {
+
+	    case GIIK_ShiftL:		return "Shift_L";
+	    case GIIK_ShiftR:		return "Shift_R";
+	    case GIIK_CtrlL:		return "Control_L";
+	    case GIIK_CtrlR:		return "Control_R";
+	    case GIIK_AltL:		return "Alt_L";
+	    case GIIK_AltR:		return "Alt_R";
+	    case GIIK_MetaL:		return "Meta_L";
+	    case GIIK_MetaR:		return "Meta_R";
+	    case GIIK_SuperL:		return "Super_L";
+	    case GIIK_SuperR:		return "Super_R";
+	    case GIIK_HyperL:		return "Hyper_L";
+	    case GIIK_HyperR:		return "Hyper_R";
+	    case GIIK_ShiftLock:	return "ShiftLock";
+	    case GIIK_CtrlLock:		return "CtrlLock";
+	    case GIIK_AltLock:		return "AltLock";
+	    case GIIK_MetaLock:		return "MetaLock";
+	    case GIIK_SuperLock:	return "SuperLock";
+	    case GIIK_HyperLock:	return "HyperLock";
+	    case GIIK_AltGrLock:	return "AltGrLock";
+	    case GIIK_CapsLock:		return "CapsLock";
+	    case GIIK_NumLock:		return "NumLock";
+	    case GIIK_ScrollLock:	return "ScrollLock";
+
+	 }
+	 break;			/* sometimes reached */
+
+   } /* switch GII_KTYP */
+
+   /* We couldn't name it above, so use the default format.  */
+   sprintf(namebuf, "ggi_%04lx", (unsigned long) keycode);
    return namebuf;
 }
 
@@ -467,4 +496,5 @@ keymap_free_keyname(const char *keyname)
 
 // Local Variables:
 // c-basic-offset: 3
+// c-file-offsets: ((case-label . +))
 // End:

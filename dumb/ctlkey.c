@@ -247,7 +247,7 @@ static const char *const ctlkey_pretty_names[CTLKEY_ARRAY_SIZE] =
 const char *
 ctlkey_pretty_name(enum ctlkey key)
 {
-   return _(ctlkey_pretty_names[key]);
+   return gettext(ctlkey_pretty_names[key]);
 }
 
 // Local Variables:

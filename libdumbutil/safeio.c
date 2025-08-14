@@ -1,6 +1,6 @@
 /* DUMB: A Doom-like 3D game engine.
  *
- * libdumbutil/safeio.c: mmap() emulation, file operations and path search.
+ * libdumbutil/safeio.c: File operations and path search.
  * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
@@ -44,59 +44,23 @@
 static int fname_has_directory(const char *fname);
 
 #ifdef HAVE_MMAP
-
-const void *
-safe_mmap(const char *name, int fd, unsigned int offset, size_t len)
+void
+safe_munmap(const char *name, const void *ptr, size_t len)
 {
-   caddr_t p = (caddr_t) mmap(NULL, len, PROT_READ, MAP_SHARED, fd, offset);
-   if (p == (caddr_t) -1) {
-      if (name)
-	 logprintf(LOG_FATAL, 'S', _("%s: mmap %lu bytes: %s"),
+   /* On sparc-sun-solaris2.5.1, first parameter of munmap is char*.
+      Other systems will implicitly cast it to void*.  */
+   if (munmap((char *) ptr, len) == -1) {
+      /* Do not print _("<unknown file>") if name is NULL, since this
+         might be an anonymous map.  */
+      if (name != NULL)
+	 logprintf(LOG_FATAL, 'S', _("%s: munmapping %lu bytes: %s"),
 		   name, (unsigned long) len, strerror(errno));
       else
-	 logprintf(LOG_FATAL, 'S', _("mmap %lu bytes: %s"),
+	 logprintf(LOG_FATAL, 'S', _("munmapping %lu bytes: %s"),
 		   (unsigned long) len, strerror(errno));
    }
-   return p;
 }
-
-void
-safe_munmap(const char *name, const void *ptr, size_t len)
-{
-   if (munmap((caddr_t) ptr, len) == -1)
-      logprintf(LOG_FATAL, 'S', _("%s: munmapping %lu bytes: %s"),
-		name ? name : "?\?\?",
-		(unsigned long) len, strerror(errno));
-}
-
-#else  /* !HAVE_MMAP */
-
-const void *
-safe_mmap(const char *name, int fd, unsigned int offset, size_t len)
-{
-   void *p = safe_malloc(len);
-   size_t l;
-   if (name == NULL)
-      name = "?\?\?";
-   if (lseek(fd, offset, SEEK_SET) == -1)
-      logprintf(LOG_ERROR, 'S', _("%s: seeking to %u: %s"),
-		name, offset, strerror(errno));
-   /* FIXME: read() might return -1 */
-   /* FIXME: interrupted system call */
-   if ((l = read(fd, p, len)) < len)
-      logprintf(LOG_ERROR, 'S', _("%s: short read (%lu<%lu): %s"),
-		name, (unsigned long) l, (unsigned long) len,
-		strerror(errno));
-   return p;
-}
-
-void
-safe_munmap(const char *name, const void *ptr, size_t len)
-{
-   safe_free((void *) ptr);
-}
-
-#endif /* !HAVE_MMAP */
+#endif /* HAVE_MMAP */
 
 void
 safe_read(const char *name, int fd, void *buf, size_t len)
@@ -140,8 +104,21 @@ safe_close(const char *name, int fd)
 {
    if (close(fd))
       logprintf(LOG_ERROR, 'S', _("%s: closing: %s"),
-		name ? name : "?\?\?",
+		name ? name : _("<unknown file>"),
 		strerror(errno));
+}
+
+off_t
+safe_lseek(const char *name, int fd, off_t offset, int whence)
+{
+   off_t result;
+   do {
+      result = lseek(fd, offset, whence);
+   } while (result == -1 && errno == EINTR);
+   if (result == -1)
+      logprintf(LOG_FATAL, 'S', _("%s: lseek failed: %s"),
+		name, strerror(errno));
+   return result;
 }
 
 static int

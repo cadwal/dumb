@@ -22,7 +22,9 @@
 
 #include <config.h>
 
+#include <errno.h>
 #include <ctype.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -38,11 +40,19 @@
 fixed default_speed = 1 << 11;
 
 static int default_time_units = 1;
+static int default_speed_units = 1;
 
+static long parse_long(const char *token, long min, long max,
+		       const char **tailptr,
+		       const char *wrongtypemsg);
+static unsigned long parse_ulong(const char *token,
+				 unsigned long min, unsigned long max,
+				 const char **tailptr,
+				 const char *wrongtypemsg);
 static size_t parse_string(char *dest, const char *src);
-static int time_units(const char *s, int n);
-static int speed_units(const char *s, int n);
-static fixed arc_units(const char *s, int n);
+static int time_units(int n, const char *unit);
+static int speed_units(int n, const char *unit);
+static fixed arc_units(int n, const char *unit);
 
 
 void
@@ -172,8 +182,11 @@ parm_ch(void)
 	    return token[0];
 	 else
 	    synerr(_("Must be exactly one character"));
-      } else
-	 synerr(_("String parameter expected.  Try --fake-strings"));
+      } else {
+	 if (strlen(token) == 1)
+	    warn(_("Option `--fake-strings' could help"));
+	 synerr(_("String parameter expected"));
+      }
       /* NOTREACHED */
    default:
       synerr(_("Character parameter expected"));
@@ -181,13 +194,91 @@ parm_ch(void)
 }
 
 int
-parm_num(void)
+parm_int(void)
+{
+   return (int) parse_long(next_token(), INT_MIN, INT_MAX, NULL,
+			   _("Integer expected"));
+}
+
+int
+parm_int_opt(int def)
 {
    const char *token = next_token();
    if (class_of_token(token) == TOKENCL_NAME)
-      return atoi(token);
-   else
-      synerr(_("Integer parameter expected"));
+      return (int) parse_long(token, INT_MIN, INT_MAX, NULL,
+			      _("Integer or newline expected"));
+   else {
+      unget_token();
+      return def;
+   }
+}
+
+unsigned int
+parm_uint(void)
+{
+   return (unsigned int) parse_ulong(next_token(), 0, UINT_MAX, NULL,
+				     _("Integer expected"));
+}
+
+unsigned long
+parm_ulong(void)
+{
+   return parse_ulong(next_token(), 0, ULONG_MAX, NULL,
+		      _("Integer expected"));
+}
+
+/* Parse and return the long int at the beginning of TOKEN.  Fail if
+   TOKEN doesn't begin with an integer or the value is out of range
+   MIN...MAX, inclusive.  If TAILPTR isn't null, save in *TAILPTR the
+   address of the character after the integer; else the caller doesn't
+   expect there to be anything after the integer, so fail if there is.  */
+static long
+parse_long(const char *token, long min, long max,
+	   const char **tailptr, const char *wrongtypemsg)
+{
+   char *tail;
+   long value;
+   if (class_of_token(token) != TOKENCL_NAME)
+      synerr(wrongtypemsg);
+   errno = 0;
+   value = strtoul(token, &tail, 0);
+   /* be careful not to clobber errno here */
+   if (tail == token)		/* couldn't parse it at all */
+      synerr(wrongtypemsg);
+   if (tailptr != NULL)
+      *tailptr = tail;
+   else if (*tail != '\0')	/* garbage after integer */
+      synerr(wrongtypemsg);
+   /* now check errno */
+   if (errno == ERANGE || value < min || value > max)
+      err(_("Integer %.*s is not in range (%ld to %ld)"),
+	  tail-token, token, min, max);
+   return value;
+}
+
+/* Like parse_long() but unsigned.  */
+static unsigned long
+parse_ulong(const char *token, unsigned long min, unsigned long max,
+	    const char **tailptr, const char *wrongtypemsg)
+{
+   char *tail;
+   unsigned long value;
+   if (class_of_token(token) != TOKENCL_NAME)
+      synerr(wrongtypemsg);
+   errno = 0;
+   value = strtoul(token, &tail, 0);
+   /* be careful not to clobber errno here */
+   if (tail == token)		/* couldn't parse it at all */
+      synerr(wrongtypemsg);
+   if (tailptr != NULL)
+      *tailptr = tail;
+   else if (*tail != '\0')	/* garbage after integer */
+      synerr(wrongtypemsg);
+   /* now check errno */
+   if (errno == ERANGE || value < min || value > max)
+      err(_("Integer %.*s is not in range (%lu to %lu)"),
+	  tail-token, token, min, max);
+   return value;
 }
 
 double
@@ -204,39 +295,53 @@ int
 parm_time(void)
 {
    const char *token = next_token();
-   if (class_of_token(token) == TOKENCL_NAME)
-      return time_units(token, atoi(token));
-   else
-      synerr(_("Time parameter expected"));
+   const char *tail;
+   int i = parse_long(token, INT_MIN, INT_MAX, &tail,
+		      _("Time parameter expected"));
+   return time_units(i, tail);
 }
 
 int
 parm_speed(void)
 {
    const char *token = next_token();
-   if (class_of_token(token) == TOKENCL_NAME)
-      return speed_units(token, atoi(token));
-   else
-      synerr(_("Speed parameter expected"));
+   const char *tail;
+   int i = parse_long(token, INT_MIN, INT_MAX, &tail,
+		      _("Speed parameter expected"));
+   return speed_units(i, tail);
 }
 
 fixed
 parm_arc(void)
 {
    const char *token = next_token();
-   if (class_of_token(token) == TOKENCL_NAME)
-      return arc_units(token, atoi(token));
-   else
-      synerr(_("Arc parameter expected"));
+   if (class_of_token(token) == TOKENCL_NAME
+       && isalpha(token[0])) {
+      /* "pi" or "pi/123" can appear without a preceding number.  */
+      return arc_units(1, token);
+   } else {
+      const char *tail;
+      int i = parse_long(token, INT_MIN, INT_MAX, &tail,
+			 _("Arc parameter expected"));
+      return arc_units(i, tail);
+   }
 }
 
 fixed
 parm_arc_opt(fixed def)
 {
    const char *token = next_token();
-   if (class_of_token(token) == TOKENCL_NAME)
-      return arc_units(token, atoi(token));
-   else {
+   if (class_of_token(token) == TOKENCL_NAME) {
+      if (isalpha(token[0])) {
+	 /* "pi" or "pi/42" can appear without a preceding number.  */
+	 return arc_units(1, token);
+      } else {
+	 const char *tail;
+	 int i = parse_long(token, INT_MIN, INT_MAX, &tail,
+			    _("Arc parameter or newline expected"));
+	 return arc_units(i, tail);
+      }
+   } else {
       unget_token();
       return def;
    }
@@ -249,6 +354,12 @@ change_time_units(void)
 }
 
 void
+change_speed_units(void)
+{
+   default_speed_units = parm_speed();
+}
+
+void
 change_default_speed(void)
 {
    default_speed = parm_speed();
@@ -256,75 +367,63 @@ change_default_speed(void)
 
 
 static int
-time_units(const char *s, int n)
+time_units(int n, const char *unit)
 {
-   while (*s && isdigit(*s))
-      s++;
-   if (!*s)
+   if (!*unit)
       return n * default_time_units;
-   if (!strcasecmp(s, "sec"))
+   if (!strcasecmp(unit, "sec"))
       return n * 1000 / MSEC_PER_TICK;
-   if (!strcasecmp(s, "msec"))
+   if (!strcasecmp(unit, "msec"))
       return n / MSEC_PER_TICK;
-   if (!strcasecmp(s, "hsec"))
+   if (!strcasecmp(unit, "hsec"))
       return n * 10 / MSEC_PER_TICK;
-   if (!strcasecmp(s, "ticks"))
+   if (!strcasecmp(unit, "ticks"))
       return n;
    synerr(_("Strange timing unit"));
    return n;
 }
 
 static int
-speed_units(const char *s, int n)
+speed_units(int n, const char *unit)
 {
-   while (*s && (isdigit(*s) || *s == '+' || *s == '-'))
-      s++;
-   if (!*s)
-      return n;
+   if (!*unit)
+      return n * default_speed_units;
    /* we must be talking pixels */
    n <<= 12;
-   if (!strcasecmp(s, "/sec"))
+   if (!strcasecmp(unit, "/sec"))
       return n * MSEC_PER_TICK / 1000;
-   if (!strcasecmp(s, "/msec"))
+   if (!strcasecmp(unit, "/msec"))
       return n * MSEC_PER_TICK;
-   if (!strcasecmp(s, "/hsec"))
+   if (!strcasecmp(unit, "/hsec"))
       return n * MSEC_PER_TICK / 10;
-   if (!strcasecmp(s, "/tick"))
+   if (!strcasecmp(unit, "/tick"))
       return n;
    synerr(_("Strange speed unit"));
    return n;
 }
 
 static fixed
-arc_units(const char *s, int n)
+arc_units(int n, const char *unit)
 {
-   const char *whole = s;
-   while (*s && isdigit(*s))
-      s++;
-   if (!*s) {
+   if (!*unit) {
       /* backwards compatibility */
       if (n == 0) {
-	 warn(_("Obsolete arc syntax `%s'; use `0deg'"), whole);
+	 warn(_("Obsolete arc syntax; use `0deg'"));
 	 return 0;
       } else {
-	 warn(_("Obsolete arc syntax `%s'; use `pi/%d'"), whole, n);
+	 warn(_("Obsolete arc syntax; use `pi/%d'"), n);
 	 return FIXED_PI / n;
       }
    }
-   if (!strcasecmp(s, "deg"))
+   if (!strcasecmp(unit, "deg"))
       return (n * FIXED_PI) / 180;
-   if (!strcasecmp(s, "pi")) {
-      if (n == 0)
-	 n = 1;
-      return FIXED_PI * n;
-   }
-   if (!strncasecmp(s, "pi/", 3)) {
-      int m;
-      if (n == 0)
-	 n = 1;
-      m = atoi(s + 3);
-      if (m)
-	 return (FIXED_PI * n) / m;
+   if (!strcasecmp(unit, "pi"))
+      return n * FIXED_PI;
+   if (!strncasecmp(unit, "pi/", 3)) {
+      /* MIN=1 takes care of "pi/0" */
+      int divisor = parse_long(unit+3, 1, INT_MAX, NULL,
+			       _("Divisor expected after `pi/'"));
+      return (n * FIXED_PI) / divisor;
    }
    synerr(_("Strange arc unit"));
    return n;

@@ -22,9 +22,7 @@
 
 #include <config.h>
 
-/* If you add/change keywords, please update the list at the bottom of
- * ../docs/README.ptcomp.  You don't have to write an explanation if
- * you don't want.  */
+/* If you add or change keywords, please update ../docs/dumb-pt.texi.  */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,9 +43,12 @@
 #include "globals.h"
 #include "parm.h"
 #include "animcomp.h"
+#include "fontcomp.h"
+#include "fontmapcomp.h"
 #include "gettcomp.h"
 #include "licomp.h"
 #include "ltcomp.h"
+#include "msgdomcomp.h"
 #include "phasecomp.h"
 #include "protocomp.h"
 #include "soundcomp.h"
@@ -73,26 +74,33 @@ ptcomp(void)
 	 break;
       else if (*s == '\n')
 	 ;
-      else if (!strcasecmp(s, "Proto"))
-	 protocomp();
-      else if (!strcasecmp(s, "PhaseTable"))
-	 phasecomp();
+      else if (!strcasecmp(s, "AnimTexture"))
+	 animcomp(0);
+      else if (!strcasecmp(s, "SwitchTexture")
+	       || !strcasecmp(s, "SwTexture"))
+	 animcomp(1);
+      else if (!strcasecmp(s, "Font"))
+	 fontcomp();
+      else if (!strcasecmp(s, "FontMapping"))
+	 fontmapcomp();
       else if (!strcasecmp(s, "Gettable"))
 	 gettcomp();
+      else if (!strcasecmp(s, "Level"))
+	 licomp();
       else if (!strcasecmp(s, "LineType"))
 	 ltcomp(0);
       else if (!strcasecmp(s, "SectorType"))
 	 ltcomp(1);
+      else if (!strcasecmp(s, "MessageDomain"))
+	 msgdomcomp();
+      else if (!strcasecmp(s, "PhaseTable"))
+	 phasecomp();
+      else if (!strcasecmp(s, "Proto"))
+	 protocomp();
       else if (!strcasecmp(s, "SoundType"))
 	 soundcomp();
-      else if (!strcasecmp(s, "AnimTexture"))
-	 animcomp(0);
-      else if (!strcasecmp(s, "SwitchTexture"))
-	 animcomp(1);
-      else if (!strcasecmp(s, "SwTexture"))
-	 animcomp(1);
-      else if (!strcasecmp(s, "Level"))
-	 licomp();
+      else if (!strcasecmp(s, "SpeedUnits"))
+	 change_speed_units();
       else if (!strcasecmp(s, "TimeUnits"))
 	 change_time_units();
       else if (!strcasecmp(s, "DefaultSpeed"))
@@ -204,9 +212,12 @@ main(int argc, char **argv)
    } /* incompatibility mode */
    log_stdout();		/* for error messages from safem */
    init_animcomp();
+   init_fontcomp();
+   init_fontmapcomp();
    init_gettcomp();
    init_licomp();
    init_ltcomp();
+   init_msgdomcomp();
    init_phasecomp();
    init_protocomp();
    init_soundcomp();
@@ -253,14 +264,16 @@ save_ptlumps_in_wad(const char *wadfname)
 static void
 save_ptlumps_in_wadwr(WADWR *w)
 {
+   wranims(w);
+   wrfonts(w);
+   wrfontmap(w);
+   wrgetts(w);
+   wrlinfos(w);
+   wrlts(w); wrsts(w);
+   wrmsgdom(w);
    wrphases(w);
    wrprotos(w);
-   wrgetts(w);
-   wrlts(w);
-   wrsts(w);
    wrsounds(w);
-   wranims(w);
-   wrlinfos(w);
 }
 
 // Local Variables:

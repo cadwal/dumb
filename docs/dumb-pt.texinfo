@@ -41,6 +41,9 @@ FIXME: \explanation\
 @macro ptclausein{container, clause}
 @deftypefn {Clause in @code{\container\}} {} \clause\
 @end macro
+@macro ptclausein2{container1, container2, clause}
+@deftypefn{Clause in @code{\container1\} or @code{\container2\}} {} \clause\
+@end macro
 @macro ptclauseinx{container, clause}
 @deftypefnx {Clause in @code{\container\}} {} \clause\
 @end macro
@@ -68,6 +71,11 @@ FIXME: \explanation\
 @macro ptclausein{container, clause}
 @format
  - Clause in @code{\container\}: \clause\
+@end format
+@end macro
+@macro ptclausein2{container1, container2, clause}
+@format
+ - Clause in @code{\container1\} or @code{\container2\}: \clause\
 @end format
 @end macro
 @macro ptclauseinx{container, clause}
@@ -170,10 +178,11 @@ for DUMB Version @value{VERSION}.
 * Syntax::                      Syntax of @pt scripts.
 * Conventions::                 How to read this manual.
 
-* TimeUnits::                   Changing default time units.
+* Top level::                   Top-level definitions.
 * Gettable::                    Defining Gettables.
 * Proto::                       Defining ProtoThings.
 * Level::                       Defining Levels.
+* Font::                        Defining Fonts.
 
 * Concept Index::               An entry for each concept.
 * Keyword Index::               An entry for each keyword.
@@ -191,6 +200,11 @@ How to read this manual
 * Sample clause::               How this manual explains clauses.
 * Arc::                         Arc parameter syntax
 * Time::                        Time parameter syntax
+
+Top-level clauses
+
+* Units::                       Changing default units
+* MessageDomain::               Message translation domain
 
 Defining Gettables
 
@@ -213,6 +227,10 @@ Defining Levels
 
 * Secret::                      Secret levels
 
+Defining Fonts
+
+* FontMapping::                 FontMapping
+
 @end detailmenu
 @end menu
 
@@ -221,9 +239,9 @@ Defining Levels
 
 @code{ptcomp} compiles @pt scripts to the binary format used by DUMB.
 It creates several lumps: one for Gettables, one for ProtoThings, one
-for Sounds, etc.  It can save all the lumps in one big WAD file, but it
-can also save each lump in a separate file.  You must use either
-@samp{--output-directory=@var{directory}} or
+for Sounds, one for each Font, etc.  It can save all the lumps in one
+big WAD file, but it can also save each lump in a separate file.  You
+must use either @samp{--output-directory=@var{directory}} or
 @samp{--output-wad=@var{wadfile}} to choose what it does.
 
 A @pt script usually contains C preprocessor directives like
@@ -235,12 +253,8 @@ before giving it to @code{ptcomp}.  Do something like this:
 /lib/cpp @var{input}.pt | ptcomp -o @var{output}.wad
 @end example
 
-Unfortunately, the C preprocessor may not understand C++-style @code{//}
-comments which the scripts tend to use.  If you are using GNU
-@code{cpp}, you can use its @samp{-lang-c++} option. @xref{Invocation, ,
-Invoking the C Preprocessor, cpp, The C Preprocessor}.  Otherwise, you
-have a problem.  It would be best not to use @code{//} comments in
-@pt scripts.
+Since not all C preprocessors understand C++-style @code{//} comments,
+you shouldn't use them in @pt scripts.
 
 Here are the options @code{ptcomp} understands:
 
@@ -253,13 +267,13 @@ is now the recommended way of using @code{ptcomp}.
 
 @item --output-directory=@var{directory}
 @itemx -d @var{directory}
-Write each lump in a separate file in @var{directory}.  The files
-@file{PHASES.lump}, @file{PROTOS.lump}, @file{GETTABLE.lump},
-@file{LINETYPE.lump}, @file{SECTTYPE.lump}, @file{SOUNDS.lump},
-@file{ANIMTEX.lump} and @file{LEVINFO.lump} are generated.  Some of them
-may be empty if the script doesn't define such objects.  You can use the
-@code{wadtool} utility to combine them into a WAD later, perhaps with
-other lumps.
+Write each lump in a separate file in @var{directory}.  All the
+filenames will end in @file{.lump}.  You can use the @code{wadtool}
+utility to combine the lumps into a WAD later, perhaps with others.
+
+This mode is retained for compatibility.  It is no longer recommended,
+since you'll have to change your compilation scripts if a future version
+of DUMB adds more lumps.
 
 @item --fake-strings
 If @code{ptcomp} sees a name token when it expects a string, it normally
@@ -354,11 +368,14 @@ the person translating them to another language.  @xref{xgettext
 Invocation, , Invoking the @code{xgettext} Program, gettext, GNU
 @code{gettext} utilities}.
 
+The message catalog used for translations is selected with the
+@code{MessageDomain} clause.  @xref{MessageDomain}.
+
 Do not use @code{N_} on sprite names or other such things the player
 will never see.
 
 
-@node Conventions, TimeUnits, Syntax, Top
+@node Conventions, Top level, Syntax, Top
 @chapter How to read this manual
 
 @FIXME some blurb
@@ -451,13 +468,24 @@ second.
 @item @var{integer}
 If the time unit isn't given, the default unit is used.  It defaults to
 ticks but can be changed with the @code{TimeUnits} clause.
-@xref{TimeUnits}.
+@xref{Units}.
 
 @end table
 
 
-@node TimeUnits, Gettable, Conventions, Top
-@chapter Changing default time units
+@node Top level, Gettable, Conventions, Top
+@chapter Top-level clauses
+
+These clauses are written in the top level, outside any definitions.
+
+@menu
+* Units::                       Changing default units
+* MessageDomain::               Message translation domain
+@end menu
+
+
+@node Units, MessageDomain, Top level, Top level
+@section Changing default units
 
 @findex TimeUnits
 @ptclause{TimeUnits @var{time}}
@@ -472,14 +500,58 @@ of the script.  If you don't change the default time unit, it is
 
 For a list of time units, see @ref{Time}.
 
+@findex SpeedUnits
+@ptclause{SpeedUnits @var{speed}}
 
-@node Gettable, Proto, TimeUnits, Top
+@code{SpeedUnits} works like @code{TimeUnits} but changes the default
+speed unit.  The initial value is 1/4096 of 1/tick.  There is currently
+no way to express such tiny values in @code{SpeedUnits}; this is likely
+to change.
+@endptclause
+
+@code{TimeUnits} and @code{SpeedUnits} are not saved in the WAD file;
+they only set values which @code{ptcomp} uses for interpreting other
+clauses.  They can be given several times, and each setting lasts until
+it is overridden.
+
+
+@node MessageDomain,  , Units, Top level
+@section Message translation domain
+
+Each WAD file contains messages in one language only.  The translations
+to other languages are kept in separate @file{.mo} files; for example,
+the Finnish translation of @file{doom4dum.wad} could be in
+@file{/usr/local/share/locale/fi/LC_MESSAGES/dumb-utf8.mo}.  The
+@samp{dumb-utf8} part is called the domain.  Translations of different
+games can be kept in separate files by choosing a separate domain for
+each game.
+
+@findex MessageDomain
+@ptclause{MessageDomain @var{domain:string}}
+@code{MessageDomain} marks @var{domain} as the domain from which DUMB
+will read the translations of all WAD messages.  The translations need
+not be available during compilation; only the name of the domain is
+saved.
+
+There can be only one @code{MessageDomain} clause in each compilation.
+@endptclause
+
+Currently, DUMB uses the same message domain for all WAD files of the
+game.  Assume @file{rocketland.wad} specifies @code{MessageDomain
+"rocketland"} and @file{nuke.wad} specifies @code{MessageDomain "nuke"}.
+Then if you start DUMB with both @file{rocketland.wad} and
+@file{nuke.wad}, translations for messages of @emph{both} WADs are
+looked for in the @samp{nuke} domain.  This could be thought of as a
+bug.
+
+
+@node Gettable, Proto, Top level, Top
 @chapter Defining Gettables
 
 Gettables are objects carried by players, such as weapons, ammunition
 and inventory items.  The player usually gets them by collecting a Thing
-from the level, but you can also make the player have some Gettables
-right from the beginning of the game.
+from the level (@pxref{Powerups}), but you can also make the player have
+some Gettables right from the beginning of the game.
 
 Temporary special powers like invisibility are also implemented as
 Gettables.  So are health and armour.
@@ -573,21 +645,35 @@ see @ref{Special}.
 @endptclausein
 
 @findex Bogotype
-@ptclausein{Gettable, Bogotype @var{proto}}
+@ptclausein{Gettable, Bogotype @var{bogo:proto}}
+@findex PoweredBogotype
+@ptclauseinx{Gettable, PoweredBogotype @var{powered_bogo:proto}}
 @FIXME document
 @endptclausein
 
 @findex Ammo
 @ptclausein{Gettable, Ammo @var{ammo:gettable} @var{count:integer}}
-When this Gettable is used as a weapon, use up @var{count} units of
-@var{ammo}.  If there is not enough ammo, the weapon cannot be used.
+When this Gettable is used as a weapon or item, use up @var{count} units
+of @var{ammo}.  If there is not enough ammo, the weapon or item cannot
+be used.
 
 By default, weapons don't need ammo.
+
+To make an item which can only be used once, set @var{count} to 1 and
+@var{ammo} to the Gettable itself.
+
+If there are several @code{Ammo} clauses in a @code{Gettable}, then the
+Gettable needs all the ammo types listed.
 
 This clause has no effect to what kind of missiles the weapon sends.
 That is defined by the @code{Spawns} clause in the weapon's bogothing.
 @FIXME add a link when Spawns has been documented
 @endptclausein
+
+To make an item which gives the player other Gettables when it is used,
+write a @code{Gets} clause in the Gettable.  @xref{Gets}.  @code{Ammo
+@var{ammo} @var{count}} is actually equivalent to @code{Gets @var{ammo}
+-@var{count}}.
 
 
 @node Special,  , Items, Gettable
@@ -612,45 +698,57 @@ This clause marks the Gettable as denoting one special feature.
 
 @item GETT_SPC_HEALTH
 @cindex health
-This marks the Gettable as your health.  When you get damage, it's taken
-from the health.  If health goes to 0, you die.
+This marks the Gettable as the player's health.  When the player gets
+damage, it's taken from the health.  If health goes to 0, the player
+dies.
 
 @item GETT_SPC_ARMOUR
 @cindex armour
-This marks the Gettable as your armour.  When you have armour, half of
-the damage you get is taken from it.
+This marks the Gettable as the player's armour.  When the player has
+armour, half of the damage he gets is taken from it.
 
 @item GETT_SPC_INVISIBILITY
 @cindex invisibility
-If you have this Gettable, you are invisible.
+If the player has this Gettable, he is invisible.
 
 @item GETT_SPC_DAMAGEPROTECTION
 @cindex damage protection
 @cindex invulnerability
 @cindex god mode
-If you have this Gettable, you can't be hurt at all.
+If the player has this Gettable, he can't be hurt at all.
 
 @item GETT_SPC_SLIMEPROTECTION
 @cindex slime protection
 @cindex radiation suit
-If you have this Gettable, the icky goo on the floor doesn't hurt you.
+If the player has this Gettable, the icky goo on the floor doesn't hurt
+him.
 
 @item GETT_SPC_SUPERSIGHT
 @cindex night vision
 @cindex goggles
 @cindex light amplification visor
-If you have this Gettable, you see in the dark.
+If the player has this Gettable, he sees in the dark.
 
 @item GETT_SPC_BACKPACK
 @cindex backpack
-When you collect items, DUMB checks whether you have the backpack.  If
-so, a different maximum may be used.  @xref{Amounts}.
+@cindex bag of holding
+When the player collects items, DUMB checks whether he has the backpack.
+If so, a different maximum may be used.  @xref{Amounts}.
 
 @item GETT_SPC_ALLMAP
 @cindex computer area map
 @cindex map
-When you have this Gettable, the map shows you even the places you
+When the player has this Gettable, the map shows him even the places he
 haven't visited yet.
+
+@item GETT_SPC_POWERWEAPONS
+@cindex tome of power
+When the player has this Gettable, his weapons use their
+PoweredBogotype.
+
+@item GETT_SPC_WINGS
+@cindex wings of wrath
+When the player has this Gettable, he can fly.
 
 @end table
 @endptclausein
@@ -699,10 +797,12 @@ powerup is collected.
 
 @findex Gets
 @findex Maximum
-@ptclausein{Proto, Gets @var{gettable} @var{howmany:integer} [Maximum @var{max:integer}]}
+@ptclausein2{Proto, Gettable, Gets @var{gettable} @var{change:integer} [Maximum @var{max:integer}]}
 
 Adding this clause in a @code{Proto} turns the Things it describes to
-powerups which the player can pick up.
+powerups which the player can pick up.  You can also write this clause
+in a @code{Gettable}, in which case it takes effect when the Gettable is
+used.
 
 If @var{max} isn't given, it defaults to one of the values given in the
 @code{DefaultMaximum} clause of @var{gettable}.  Which value is used
@@ -712,14 +812,27 @@ If the player already has @var{max} or more units of @var{gettable}, he
 doesn't pick the Thing up.  The @code{IgnoreMessage} may be printed in
 this case.  @xref{PickupMessage}
 
-Otherwise, he gets @var{howmany} units more.  Then, if he has more than
+Otherwise, he gets @var{change} units more.  Then, if he has more than
 @var{max} units, the amount is clipped to @var{max}.
+
+If @var{change} is negative, that many units of @var{gettable} are taken
+from the player.  If he doesn't have enough, he can't use the powerup
+and won't pick it up if it's a Thing.
 @endptclausein
 
-You can write multiple @code{Gets} clauses in one ProtoThing.  When the
-player collects such a powerup, he gets all the Gettables listed.  He
-will ignore the powerup only if none of the clauses would give him
-Gettables.
+You can write multiple @code{Gets} clauses in one @code{Proto} or
+@code{Gettable}.  When the player collects such a powerup, he gets all
+the Gettables listed.  He will ignore the powerup only if none of the
+clauses would give him Gettables.
+
+When creating powerups which give the player a weapon and ammo for it,
+you should make them give the ammo first and the weapon last.  If the
+player gets the weapon before he has ammo for it, the weapon won't be
+automatically selected.
+
+Similarly, a powerup giving a backpack and other items should give the
+backpack first, so that the player can carry the other items.  Or set
+the maximum of the other items explicitly.
 
 
 @node PickupSound, PickupMessage, Gets, Powerups
@@ -767,7 +880,7 @@ is shown.
 The message strings should be wrapped in the @code{N_} macro.  @xref{N_}
 
 
-@node Level, Concept Index, Proto, Top
+@node Level, Font, Proto, Top
 @chapter Defining Levels
 
 @cindex episode
@@ -869,7 +982,127 @@ of a level is lost when the player leaves it, and he would have to fight
 all the same monsters again.  But if you want to do this, you can.
 
 
-@node Concept Index, Keyword Index, Level, Top
+@node Font, Concept Index, Level, Top
+@chapter Defining Fonts
+
+@findex Font
+@ptclause{Font @var{fontname:string8}}
+@cindex glyph
+This clause begins the definition of a font which will be saved in a
+lump called @var{fontname}.  The character glyphs must be stored
+separately; the font will just map them to the Unicode character set and
+give some formatting information.
+@endptclause
+
+@findex SpaceCharWidth
+@ptclausein{Font, SpaceCharWidth @var{integer}}
+@FIXME document
+@endptclausein
+
+@findex Separation
+@ptclausein{Font, Separation @var{integer}}
+@FIXME document
+@endptclausein
+
+@findex Delimiters
+@cindex name clash
+@ptclausein{Font, Delimiters @var{after:string8} @var{before:string8}}
+If the @code{Delimiters} clause appears in a @code{Font} definition,
+that means the character glyphs are only looked for between lumps
+@var{after} and @var{before}.  This reduces the risk of name clashes.
+If you are taking the glyphs from a preexisting WAD which has only one
+delimiter, use an empty string for the missing one.
+@endptclausein
+
+@cindex Unicode
+The following clauses refer to characters with numeric codes.  Please
+use the codes in the @uref{http://www.unicode.org/, Unicode standard}.
+16-bit hex values like 0x0020 are the preferred notation, but full 32
+bits are available should the need arise.
+
+@findex CodingRange
+@ptclausein{Font, CodingRange @var{firstchar:integer} @var{lastchar:integer} @var{format:string} [@var{firstparam:integer}]}
+@cindex glyph
+Defines glyphs for the characters having codes between @var{firstchar}
+and @var{lastchar}, inclusive.  
+
+In the simplest case, all the characters in the range use the glyph
+which is in the lump named by @var{format}.  If the lump name contains a
+percent sign, write it as two percent signs: the lump @samp{HUNDRED%}
+would be written as @samp{"HUNDRED%%"}.  You don't need
+@var{firstparam}.
+
+@cindex conversion specification
+@cindex printf
+If the names of lumps have some kind of sequence (FONTA1, FONTA2,
+FONTA3, ...), you may be able to specify all of them at once by
+embedding a @code{printf}-style conversion specification in
+@var{format}, as in @samp{"FONTA%d"}.  (@xref{Integer Conversions, , ,
+libc, The GNU C Library Reference Manual}.)  In this case, you must also
+give @var{firstparam} so @code{ptcomp} knows where to begin counting.
+
+It is possible to map several characters to the same glyph.  If your
+font has glyphs only for lower-case letters, you could map the
+upper-case letters to them too.  But DUMB will do this automatically, so
+don't bother.
+@endptclausein
+
+@findex Descent
+@ptclausein{Font, Descent @var{charid:integer} @var{descent:integer}}
+Defines the height at which the glyph of @var{charid} should be drawn.
+The default is @var{descent}=0, meaning the bottom of the glyph will be
+at the baseline.  If @var{descent} is positive, the bottom of the glyph
+will hang that many pixels below the baseline.  Negative values raise
+the glyph above the baseline.
+
+@var{charid} must already have been bound to a glyph with
+@code{CodingRange}.
+@endptclausein
+
+
+@menu
+* FontMapping::                 FontMapping
+@end menu
+
+@node FontMapping,  , Font, Font
+@section FontMapping
+
+@cindex font map
+DUMB itself does not refer to fonts by name.  Instead, each place where
+a font is used has a numeric ID, and the WAD must contain a font map
+saying which font to use for each ID.  The font map is kept in the
+@samp{FONTMAP} lump.
+
+To define font mappings, use the @code{FontMapping} clause:
+
+@findex FontMapping
+@ptclause{FontMapping @var{id:integer} @var{fontname:string8}}
+Map the usage @var{id} to font @var{fontname}.
+
+If you don't specify font mappings for some ids, then those places can't
+be drawn in the usual way.  DUMB may have fallback methods for some of
+them; for example, game messages are printed to the error log.
+@endptclausein
+
+@cindex <dumb/dumbdefs.pt>
+Here are the constants you can use for @var{id}.  They are all defined
+in @file{<dumb/dumbdefs.pt>}.
+
+@table @code
+
+@item FONTMAP_GETTABLECOUNT
+Numbers showing how many units of a gettable the player is carrying.
+
+@item FONTMAP_MESSAGE
+Messages scrolling over the screen.
+
+@item FONTMAP_MENU
+Not yet implemented.
+
+@end table
+
+
+@node Concept Index, Keyword Index, Font, Top
 @unnumbered Concept Index
 
 @printindex cp

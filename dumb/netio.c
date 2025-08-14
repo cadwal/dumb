@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/netio.c: Transport-independent network station & packet operations.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -85,16 +86,17 @@ net_initstation(int station, const char *name, int flags)
    return -1;
 }
 
-void
-net_getmyhost(char *myname, size_t l)
+char *
+net_getmyhost(void)
 {
    /* get hostname from default driver */
-   *myname = 0;
    if (netdriver[0].getmyhost)
-      netdriver[0].getmyhost(myname, l);
-   else
+      return netdriver[0].getmyhost();
+   else {
       logprintf(LOG_ERROR, 'N',
 		_("network driver doesn't know how to gethostname()?"));
+      return safe_strdup("anonymous");
+   }
 }
 
 

@@ -1,8 +1,8 @@
 /* DUMB: A Doom-like 3D game engine.
  *
- * libdumbutil/safeio.h: mmap() emulation, file operations and path search.
+ * libdumbutil/safeio.h: File operations and path search.
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
- * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,20 +23,23 @@
 #ifndef SAFEIO_H
 #define SAFEIO_H
 
-#include <limits.h>
+#include <sys/types.h>		/* off_t */
 
-#ifndef PATH_MAX
-#define PATH_MAX 1024
-#endif
-
-/* these mmap fns should only be used for *readonly* mmaps */
-const void *safe_mmap(const char *name, int fd, unsigned int offset,
-		      size_t len);
+/* There used to be a safe_mmap() function which used mmap() if
+   HAVE_MMAP was defined and read() otherwise.  It raised a fatal
+   error if HAVE_MMAP was defined but mmap() failed.
+   The GNU Coding Standards say this isn't acceptable: mmap() must
+   always have a runtime fallback.  So I removed the function; code
+   must now call mmap() directly and handle errors.
+    -- 1999-06-08  Kalle Niemitalo  <tosi@stekt.oulu.fi>  */
+#if HAVE_MMAP
 void safe_munmap(const char *name, const void *ptr, size_t len);
+#endif
 
 void safe_read(const char *name, int fd, void *buf, size_t len);
 int safe_open(const char *fname, int omode, int fail_lvl);
 void safe_close(const char *name, int fd);
+off_t safe_lseek(const char *name, int fd, off_t offset, int whence);
 
 /* Like safe_open() except looks in all directories in the
  * NULL-terminated array PATH.  If REALNAME is non-null, saves the

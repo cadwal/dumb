@@ -28,7 +28,7 @@
 #define MAX_REDIR_SOUNDS 7
 
 typedef struct {
-   char lumpname[10];
+   char lumpname[10];		/* FIXME: why 10? */
    LE_int16 bend_range, chance;
    LE_int16 nredir, bend_const;
    LE_int16 redir[MAX_REDIR_SOUNDS];

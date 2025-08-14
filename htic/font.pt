@@ -1,0 +1,100 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * htic/font.pt: Fonts and FontMappings.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
+
+Font "FONTIN"
+  SpaceCharWidth 8
+  Separation 0
+  CodingRange 0x0030 0x0039 "IN%d" 0
+ 
+Font "FONTSMLI"
+  SpaceCharWidth 4
+  Separation 0
+  CodingRange 0x0030 0x0039 "SMALLIN%d" 0
+
+Font "FONTA"
+  SpaceCharWidth 9
+  Separation 0 /* ? */
+  Delimiters "FONTA_S" "FONTA_E"
+  CodingRange 0x0021 0x0025 "FONTA%02d" 1 /* QUOTATION MARK */
+  Descent 0x0022 -5		/* QUOTATION MARK */
+  /* FONTA06 looks strange */
+  CodingRange 0x0027 0x003B "FONTA%02d" 7
+  Descent 0x0027 -5		/* APOSTROPHE */
+  Descent 0x002A -1		/* ASTERISK */
+  Descent 0x002B -1		/* PLUS SIGN */
+  Descent 0x002C 1		/* COMMA */
+  Descent 0x002D -3		/* HYPHEN-MINUS */
+  Descent 0x002F -1		/* SOLIDUS */
+  Descent 0x003A -1		/* COLON */
+  /* FONTA28 looks like FONTA06 */
+  CodingRange 0x003D 0x003D "FONTA%02d" 29 /* EQUALS SIGN */
+  Descent 0x003D -2		/* EQUALS SIGN */
+  /* so does FONTA30 */
+  CodingRange 0x003F 0x003F "FONTA%02d" 31 /* QUESTION MARK */
+  CodingRange 0x00A9 0x00A9 "FONTA%02d" 32 /* COPYRIGHT SIGN */
+  CodingRange 0x0061 0x007A "FONTA%02d" 33
+  Descent 0x0066 1		/* LATIN SMALL LETTER F */
+  Descent 0x0067 1		/* LATIN SMALL LETTER G */
+  Descent 0x006A 1		/* LATIN SMALL LETTER J */
+  Descent 0x0070 1		/* LATIN SMALL LETTER P */
+  Descent 0x0071 1		/* LATIN SMALL LETTER Q */
+  Descent 0x0079 1		/* LATIN SMALL LETTER Y */
+  /* FONTA59 looks like FONTA13 (U+002D HYPHEN-MINUS) */
+
+Font "FONTB"
+  SpaceCharWidth 13
+  Separation 1 /* ? */
+  Delimiters "FONTB_S" "FONTB_E"
+  /* FONTB01 - FONTB04 are identical little dots */
+  CodingRange 0x0025 0x0025 "FONTB%02d" 5 /* PERCENT SIGN */
+  /* FONTB06 is another little dot */
+  CodingRange 0x0027 0x0027 "FONTB%02d" 7 /* APOSTROPHE */
+  Descent 0x0027 -7		/* APOSTROPHE */
+  /* FONTB08 - FONTB11 are dots too */
+  CodingRange 0x002C 0x003A "FONTB%02d" 12
+  Descent 0x002C 2		/* COMMA */
+  Descent 0x002D -4		/* HYPHEN-MINUS */
+  Descent 0x003A -1		/* COLON */
+  /* FONTB27 - FONTB30 are dots, although not all identical */
+  CodingRange 0x003F 0x003F "FONTB%02d" 31 /* QUESTION MARK */
+  /* FONTB32 is yet another dot */
+  CodingRange 0x0061 0x007A "FONTB%02d" 33
+  Descent 0x0067 3		/* LATIN SMALL LETTER G */
+  Descent 0x0068 2		/* LATIN SMALL LETTER H */
+  Descent 0x006A 3		/* LATIN SMALL LETTER J */
+  Descent 0x0070 4		/* LATIN SMALL LETTER P */
+  Descent 0x0071 3		/* LATIN SMALL LETTER Q */
+  Descent 0x0079 3		/* LATIN SMALL LETTER Y */
+
+FontMapping FONTMAP_GETTABLECOUNT "FONTSMLI"
+FontMapping FONTMAP_MESSAGE       "FONTB"
+FontMapping FONTMAP_MENU          "FONTB"
+
+/*
+ * The backslash in comment-end prevents the string from closing this
+ * comment.
+ * 
+ * Local Variables:
+ * comment-start: "/* "
+ * comment-start-skip: "/\\*\\s-*"
+ * comment-end: " *\/"
+ * End:
+ */

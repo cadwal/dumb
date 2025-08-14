@@ -9,7 +9,7 @@ common_sources = align.h bugaddr.c bugaddr.h confargs.c confargs.h	\
 confdef.h confeng.c confeng.h conffile.c conffile.h confhelp.c		\
 confhelp.h copyright.c copyright.h dumb-nls.h endiantypes.h exitcode.h	\
 fixed.c fixed.h log.c log.h safeio.c safeio.h safem.c safem.h		\
-strgrow.c strgrow.h timer.h
+strgrow.c strgrow.h timer.h utf8.c utf8.h
 
 if DUMB_CONFIG_DOS
 libdumbutil_a_SOURCES = $(common_sources) dos_timer.c

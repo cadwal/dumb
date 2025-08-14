@@ -119,7 +119,7 @@ modhelp(const ConfModule *conf)
 	    break;
 	 }
 	 if (it->help)
-	    printf(": %s", _(it->help));
+	    printf(": %s", gettext(it->help));
 	 if (it->shortname)
 	    printf(_(" (short form -%c)"), it->shortname);
 	 putchar('\n');
@@ -130,7 +130,7 @@ modhelp(const ConfModule *conf)
 static void
 swhelp(ConfItem *ci, const char *mod)
 {
-   printf(_("Help for %s:\n  `%s'\n"), mod, _(ci->help));
+   printf(_("Help for %s:\n  `%s'\n"), mod, gettext(ci->help));
    switch (ci->type) {
    case CONF_TYPE_INT:
       printf(_("  Type=%s\n"), _("Integer"));

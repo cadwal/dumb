@@ -32,8 +32,8 @@ void init_message(int screen_width, int screen_height, int crowd_flag,
 /* this doesn't really belong here, but it needs message_font */
 Texture *get_xhair_texture(void);
 
-void game_vmessage(int pl, const char *fmt, va_list argl);
-void game_message(int pl, const char *fmt, ...);
+void game_utf8_vmessage(int pl, const char *fmt, va_list argl);
+void game_utf8_message(int pl, const char *fmt, ...);
 
 #endif /* DUMB_MESSAGE_H */
 

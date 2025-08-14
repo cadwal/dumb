@@ -6,6 +6,9 @@
 # but which still want to provide support for the GNU gettext functionality.
 # Please note that the actual code is *not* freely available.
 
+# This version was hacked for DUMB in 1999
+# by Kalle Niemitalo <tosi@stekt.oulu.fi>.
+
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@
 
@@ -37,6 +40,8 @@ GMSGFMT = PATH=../src:$$PATH @GMSGFMT@
 MSGFMT = @MSGFMT@
 XGETTEXT = PATH=../src:$$PATH @XGETTEXT@
 MSGMERGE = PATH=../src:$$PATH msgmerge
+RECODE = recode
+# FIXME: find recode in configure
 
 DEFS = @DEFS@
 CFLAGS = @CFLAGS@
@@ -47,19 +52,25 @@ INCLUDES = -I.. -I$(top_srcdir)/intl
 COMPILE = $(CC) -c $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(XCFLAGS)
 
 SOURCES = cat-id-tbl.c
-POFILES = @POFILES@
-GMOFILES = @GMOFILES@
+STD_POFILES = @POFILES@
+UTF8_POFILES = $(STD_POFILES:.po=.po-utf8)
+ALL_POFILES = $(STD_POFILES) $(UTF8_POFILES)
+STD_GMOFILES = @GMOFILES@
+UTF8_GMOFILES = $(STD_GMOFILES:.gmo=.gmo-utf8)
+ALL_GMOFILES = $(STD_GMOFILES) $(UTF8_GMOFILES)
 DISTFILES = ChangeLog Makefile.in.in POTFILES.in $(PACKAGE).pot \
-stamp-cat-id $(POFILES) $(GMOFILES) $(SOURCES)
+stamp-cat-id $(ALL_POFILES) $(ALL_GMOFILES) $(SOURCES)
 
 POTFILES = \
 
-CATALOGS = @CATALOGS@
+STD_CATALOGS = @CATALOGS@
+UTF8_CATALOGS = $(STD_CATALOGS:.gmo=.gmo-utf8)
+ALL_CATALOGS = $(STD_CATALOGS) $(UTF8_CATALOGS)
 CATOBJEXT = @CATOBJEXT@
 INSTOBJEXT = @INSTOBJEXT@
 
 .SUFFIXES:
-.SUFFIXES: .c .o .po .pox .gmo .mo .msg .cat
+.SUFFIXES: .c .o .po .pox .po-utf8 .gmo .gmo-utf8 .mo .mo-utf8 .msg .cat
 
 .c.o:
 	$(COMPILE) $<
@@ -75,6 +86,25 @@ INSTOBJEXT = @INSTOBJEXT@
 	file=$(srcdir)/`echo $* | sed 's,.*/,,'`.gmo \
 	  && rm -f $$file && $(GMSGFMT) -o $$file $<
 
+.po-utf8.mo-utf8:
+	$(MSGFMT) -o $@ $<
+
+.po-utf8.gmo-utf8:
+	file=$(srcdir)/`echo $* | sed 's,.*/,,'`.gmo-utf8 \
+	  && rm -f $$file && $(GMSGFMT) -o $$file $<
+
+# This rule creates the file in the build directory, but "make dist"
+# will copy it to the distribution.
+#
+# The strange quoting in the long sed expression makes it easier for
+# Emacs to fontify right (or not quite, but close enough).
+.po.po-utf8:
+	charset="$$(sed -ne "/^\"Content-Type:/,0"'s@^.*[^-A-Za-z0-9]charset=\([-A-Za-z0-9]\+\).*$$@\1@p' $<)" \
+	  && test -n "$$charset" \
+	  && rm -f $@ \
+	  && sed -e "/^\"Content-Type:/,0s@charset=$$charset@charset=utf-8@" $< \
+	     | $(RECODE) --source=po "$$charset"..UTF-8 > $@
+
 .po.cat:
 	sed -f ../intl/po2msg.sed < $< > $*.msg \
 	  && rm -f $@ && $(GENCAT) $@ $*.msg
@@ -82,12 +112,12 @@ INSTOBJEXT = @INSTOBJEXT@
 
 all: all-@USE_NLS@
 
-all-yes: cat-id-tbl.c $(CATALOGS)
+all-yes: cat-id-tbl.c $(ALL_CATALOGS)
 all-no:
 
 $(srcdir)/$(PACKAGE).pot: $(POTFILES)
 	$(XGETTEXT) --default-domain=$(PACKAGE) --directory=$(top_srcdir) \
-	  --add-comments --keyword=_ --keyword=N_ \
+	  --add-comments --keyword=_ --keyword=U_ --keyword=N_ \
 	  --files-from=$(srcdir)/POTFILES.in \
 	&& test ! -f $(PACKAGE).po \
 	   || ( rm -f $(srcdir)/$(PACKAGE).pot \
@@ -118,7 +148,7 @@ install-data-yes: all
 	else \
 	  $(SHELL) $(top_srcdir)/mkinstalldirs $(DESTDIR)$(datadir); \
 	fi
-	@catalogs='$(CATALOGS)'; \
+	@catalogs='$(STD_CATALOGS)'; \
 	for cat in $$catalogs; do \
 	  cat=`basename $$cat`; \
 	  case "$$cat" in \
@@ -139,6 +169,14 @@ install-data-yes: all
 	    $(INSTALL_DATA) $(srcdir)/$$cat $$dir/$(PACKAGE)$(INSTOBJEXT); \
 	    echo "installing $(srcdir)/$$cat as" \
 		 "$$dir/$(PACKAGE)$(INSTOBJEXT)"; \
+	  fi; \
+	  if test -r $$cat-utf8; then \
+	    $(INSTALL_DATA) $$cat-utf8 $$dir/$(PACKAGE)-utf8$(INSTOBJEXT); \
+	    echo "installing $$cat-utf8 as $$dir/$(PACKAGE)-utf8$(INSTOBJEXT)"; \
+	  else \
+	    $(INSTALL_DATA) $(srcdir)/$$cat-utf8 $$dir/$(PACKAGE)-utf8$(INSTOBJEXT); \
+	    echo "installing $(srcdir)/$$cat-utf8 as" \
+		 "$$dir/$(PACKAGE)-utf8$(INSTOBJEXT)"; \
 	  fi; \
 	  if test -r $$cat.m; then \
 	    $(INSTALL_DATA) $$cat.m $$dir/$(PACKAGE)$(INSTOBJEXT).m; \
@@ -170,14 +208,16 @@ install-data-yes: all
 installcheck:
 
 uninstall:
-	catalogs='$(CATALOGS)'; \
+	catalogs='$(STD_CATALOGS)'; \
 	for cat in $$catalogs; do \
 	  cat=`basename $$cat`; \
 	  lang=`echo $$cat | sed 's/\$(CATOBJEXT)$$//'`; \
 	  rm -f $(DESTDIR)$(localedir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT); \
 	  rm -f $(DESTDIR)$(localedir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT).m; \
+	  rm -f $(DESTDIR)$(localedir)/$$lang/LC_MESSAGES/$(PACKAGE)-utf8$(INSTOBJEXT); \
 	  rm -f $(DESTDIR)$(gnulocaledir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT); \
 	  rm -f $(DESTDIR)$(gnulocaledir)/$$lang/LC_MESSAGES/$(PACKAGE)$(INSTOBJEXT).m; \
+	  rm -f $(DESTDIR)$(gnulocaledir)/$$lang/LC_MESSAGES/$(PACKAGE)-utf8$(INSTOBJEXT); \
 	done
 	rm -f $(DESTDIR)$(gettextsrcdir)/po-Makefile.in.in
 
@@ -199,7 +239,7 @@ distclean: clean
 maintainer-clean: distclean
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
-	rm -f $(GMOFILES)
+	rm -f $(ALL_GMOFILES)
 
 distdir = ../$(PACKAGE)-$(VERSION)/$(subdir)
 dist distdir: update-po $(DISTFILES)
@@ -213,7 +253,7 @@ update-po: Makefile
 	$(MAKE) $(PACKAGE).pot
 	PATH=`pwd`/../src:$$PATH; \
 	cd $(srcdir); \
-	catalogs='$(CATALOGS)'; \
+	catalogs='$(STD_CATALOGS)'; \
 	for cat in $$catalogs; do \
 	  cat=`basename $$cat`; \
 	  lang=`echo $$cat | sed 's/\$(CATOBJEXT)$$//'`; \

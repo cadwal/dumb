@@ -25,7 +25,7 @@
 typedef struct {
    unsigned char seqlen;
    unsigned char myseqnum;
-   char name[9];
+   char name[9];		/* FIXME: [LUMPNAMELEN+1]? */
    unsigned char flags;
    int duration, _spare;
 } AnimTexTable;

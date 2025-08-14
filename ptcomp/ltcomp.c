@@ -74,7 +74,7 @@ ltcomp(int issect)
    s = parm_name(_("Name expected after Line/SectorType"));
    strncpy(myname, s, NAMELEN - 1);
    myname[NAMELEN - 1] = 0;
-   id = parm_num();
+   id = parm_uint();
    /* allocate a sectortype */
    if (issect) {
       /* check allocation */
@@ -125,9 +125,9 @@ ltcomp(int issect)
 	 lta->sound = lta->stopsound = -1;
 	 lta->speed[0] = default_speed;
       } else if (!strcasecmp(s, "KeyType"))
-	 p->l.keytype = parm_num();
+	 p->l.keytype = parm_uint();
       else if (!strcasecmp(s, "Damage"))
-	 p->l.damage = parm_num();
+	 p->l.damage = parm_int();
       else if (!strcasecmp(s, "SpotType"))
 	 p->l.spottype = parm_proto();
       else if (!strcasecmp(s, "Repeatable"))
@@ -349,9 +349,9 @@ ltacomp(const char *s, LT_Action *lta, int *stage)
    else if (!strcasecmp(s, "Delay"))
       lta->delay = parm_time();
    else if (!strcasecmp(s, "Plus"))
-      lta->term_offset[*stage] = parm_num();
+      lta->term_offset[*stage] = parm_int();
    else if (!strcasecmp(s, "Minus"))
-      lta->term_offset[*stage] = -parm_num();
+      lta->term_offset[*stage] = -parm_int();
    else if (!strcasecmp(s, "To")) {
       *stage = 0;
       lta->term_type[*stage] = parm_termtype();

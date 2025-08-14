@@ -219,8 +219,8 @@ print_help(FILE *dest)
 	     "                        (default: %s)\n"
 	     "      --bytes-per-pixel=NUMBER\n"
 	     "                        how many bytes per pixel: 1 (default), 2 or 4\n"
-	     "  -2                    same as --pixel-bytes=2\n"
-	     "  -4                    same as --pixel-bytes=4\n"
+	     "  -2                    same as --bytes-per-pixel=2\n"
+	     "  -4                    same as --bytes-per-pixel=4\n"
 	     "  -i, --id-compatible   turn on id compatibility\n"
 	     "      --help            display this help and exit\n"
 	     "      --version         output version information and exit\n"
@@ -233,7 +233,7 @@ print_version(void)
 {
    static const struct copyright copyrights[] = {
       { "1998", "Josh Parsons" },
-      { "1998", "Kalle Niemitalo" },
+      { "1998-1999", "Kalle Niemitalo" },
       COPYRIGHT_END
    };
    fputs("ppmtodumb (DUMB) " VERSION "\n", stdout);

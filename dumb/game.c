@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/game.c: Input processing.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -81,28 +82,28 @@ process_input(LevData *ld, const PlayerInput *in, int tickspassed, int pl)
    if (in->select[1]) {
       cheated++;
       if (!(ld->plflags[pl] & PLF_CHEAT)) {
-	 game_message(-1, _("PLAYER %d WARPED"), pl + 1);
+	 game_utf8_message(-1, U_("Player %d warped"), pl + 1);
 	 game_want_newlvl(1);
       }
    }
    if (in->select[2]) {
       cheated++;
       if (!(ld->plflags[pl] & PLF_CHEAT)) {
-	 game_message(-1, _("PLAYER %d CHEATED"), pl + 1);
+	 game_utf8_message(-1, U_("Player %d cheated"), pl + 1);
 	 cheat_gettables(ld, pl);
       }
    }
    if (in->select[3]) {
       cheated++;
       if (!(ld->plflags[pl] & PLF_CHEAT)) {
-	 game_message(-1, _("PLAYER %d WIBBLED LOUDLY"), pl + 1);
+	 game_utf8_message(-1, U_("Player %d wibbled loudly"), pl + 1);
 	 do_tag666(ld);
       }
    }
    if (in->select[4]) {
       cheated++;
       if (!(ld->plflags[pl] & PLF_CHEAT)) {
-	 game_message(-1, _("PLAYER %d RETURNED"), pl + 1);
+	 game_utf8_message(-1, U_("Player %d returned"), pl + 1);
 	 thing_send_sig(ld, ld->player[pl], TS_ANIMATE);
       }
    }
@@ -111,7 +112,7 @@ process_input(LevData *ld, const PlayerInput *in, int tickspassed, int pl)
       if (!(ld->plflags[pl] & PLF_CHEAT)) {
 	 /* SPISPOPD = Smashing Pumpkins In Small Piles Of Putrid Debris
 	    or something like that.  */
-	 game_message(-1, _("PLAYER %d SMASHES PUMPKINS"), pl + 1);
+	 game_utf8_message(-1, U_("Player %d smashes pumpkins"), pl + 1);
 	 /* This toggles the flag all the time if you keep the button
 	    down... but who cares?
 
@@ -130,9 +131,9 @@ process_input(LevData *ld, const PlayerInput *in, int tickspassed, int pl)
    }
    if (in->select[7]) {
       /* font test */
-      game_message(pl, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-      game_message(pl, "0123456789");
-      game_message(pl, "abcdefghijklmnopqrstuvwxyz");
+      game_utf8_message(pl, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+      game_utf8_message(pl, "0123456789");
+      game_utf8_message(pl, "abcdefghijklmnopqrstuvwxyz");
    }
 
    /* only allow movement if player isn't dead */
@@ -168,12 +169,14 @@ process_input(LevData *ld, const PlayerInput *in, int tickspassed, int pl)
       thing_activate(ld, ld->player[pl], 3 * FIXED_ONE);
    if (in->shoot)
       use_selection(0, ld, pl);
+   if (in->use)
+      use_selection(1, ld, pl);
 
    /* selection */
    if (in->w_sel && !(ld->plflags[pl] & PLF_WSEL))
       rotate_selection(ld, pl, 0, in->w_sel > 0 ? +1 : -1);
    if (in->s_sel && !(ld->plflags[pl] & PLF_SSEL))
-      rotate_selection(ld, pl, 1, in->w_sel > 0 ? +1 : -1);
+      rotate_selection(ld, pl, 1, in->s_sel > 0 ? +1 : -1);
 
    if (in->w_sel)
       ld->plflags[pl] |= PLF_WSEL;

@@ -223,7 +223,7 @@ draw_control(const Control *ctl, CtlInstance *ci,
       else
 	 XSetForeground(dpy, ctlgc, CTLC(UnpressedText));
       setctlfont((ctl->f & CTLF_USEFONT2) ? ctlfont2 : ctlfont1);
-      draw_text(w, xc, yc, _(ctl->name), 1);
+      draw_text(w, xc, yc, gettext(ctl->name), 1);
    }
    /* light */
    draw_ctllight(ctl, ci, col, row, w, inst);

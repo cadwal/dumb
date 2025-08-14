@@ -4,10 +4,8 @@
 # keep them in the distribution.
 EXTRA_DIST = vgagl_video.c linuxfb_video.c .cvsignore
 
-render_objs = $(DUMB_RENDER_SOURCES:.c=.o)
 fbrerend_objs = $(DUMB_FBREREND_SOURCES:.c=.o)
 network_objs = $(DUMB_NETWORK_SOURCES:.c=.o)
-ggi_objs = $(DUMB_GGI_SOURCES:.c=.o)
 
 if DUMB_CONFIG_AALIB
 aalib_bin_programs = aadumb
@@ -54,25 +52,25 @@ pkginclude_HEADERS = dumbdefs.pt
 core_sources = dumb.c animtex.c animtex.h bangbang.c banner.c banner.h	\
 bogothing.c bogothing.h dyncode.c dyncode.h game.c game.h gettable.c	\
 gettable.h levdata.c levdata.h levdyn.c levdyn.h levinfo.c levinfo.h	\
-linetype.c linetype.h message.c message.h netio.c netio.h netplay.c	\
-netplay.h termtype.c thinghit.c thingm.c things.c things.h updmap.c	\
-updmap.h updthing.c useitem.c ctlkey.c ctlkey.h keymap.c keymap.h	\
-keymapconf.c keymapconf.h $(DUMB_FBREREND_SOURCES) fbrerend.h		\
-$(DUMB_RENDER_SOURCES) render.h renderc.h rendcore.h rendflat.h		\
-rendsl.h rendsl86.h rendcommon.c draw.c draw.h $(DUMB_NETWORK_SOURCES)	\
-net.h input.h video.h
+linetype.c linetype.h message.c message.h msgdom.c msgdom.h netio.c	\
+netio.h netplay.c netplay.h termtype.c thinghit.c thingm.c things.c	\
+things.h updmap.c updmap.h updthing.c useitem.c ctlkey.c ctlkey.h	\
+keymap.c keymap.h keymapconf.c keymapconf.h $(DUMB_FBREREND_SOURCES)	\
+fbrerend.h render8.c render16.c render32.c render.h renderc.h		\
+rendcore.h rendflat.h rendsl.h rendsl86.h rendcommon.c draw.c draw.h	\
+$(DUMB_NETWORK_SOURCES) net.h input.h video.h
 
 keyname_sources = keyname.c keyname.h
 
-extra_sources = render8.c render16.c render32.c generic_fbrerend.c	\
-le32_fbrerend.c le64_fbrerend.c dummy_net.c unix_net.c
+extra_sources = generic_fbrerend.c le32_fbrerend.c le64_fbrerend.c	\
+dummy_net.c unix_net.c
 
 dummy_ldadd = 
 ggi_ldadd = -lggi
 svgalib_ldadd = -lvga
 x_ldadd = $(X_PRE_LIBS) $(DUMB_DGA_LDADD) $(DUMB_XSHM_LDADD)	\
 $(DUMB_XKB_LDADD) -lX11 $(X_EXTRA_LIBS)
-aalib_ldadd = -laa -lncurses $(x_ldadd)
+aalib_ldadd = $(DUMB_AA_LDADD)
 dos_ldadd = -lalleg
 
 aadumb_SOURCES = aalib_video.c aalib_input.c $(keyname_sources)	\
@@ -83,10 +81,9 @@ dummydumb_SOURCES = dummy_video.c dummy_input.c keymapdummy.c	\
 $(core_sources)
 EXTRA_dummydumb_SOURCES = $(extra_sources)
 
-ggidumb_SOURCES = $(DUMB_GGI_SOURCES) $(keyname_sources)	\
+ggidumb_SOURCES = ggi_renoir_video.c $(keyname_sources)	\
 $(core_sources)
-EXTRA_ggidumb_SOURCES = ggi_olddegas_video.c ggi_degas_video.c	\
-$(extra_sources)
+EXTRA_ggidumb_SOURCES = $(extra_sources)
 
 ldumb_SOURCES = linux_video.c linux_input.c keymapdummy.c	\
 $(core_sources)
@@ -100,12 +97,12 @@ $(core_sources)
 EXTRA_dosdumb_SOURCES = $(extra_sources)
 
 # Objects and DUMB libraries are in the build tree, so don't use $(srcdir).
-LDADD = $(render_objs) $(fbrerend_objs) $(network_objs)		\
+LDADD = $(fbrerend_objs) $(network_objs)			\
 ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a			\
 ../libdumbutil/libdumbutil.a ../libmissing/libmissing.a		\
 $(DUMB_CONFIG_SOUND_LDADD) $(DUMB_NETWORK_LDADD) $(INTLLIBS)
 
-dependencies = $(render_objs) $(fbrerend_objs) $(network_objs)	\
+dependencies = $(fbrerend_objs) $(network_objs)			\
 ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a			\
 ../libdumbutil/libdumbutil.a ../libmissing/libmissing.a
 
@@ -115,8 +112,8 @@ aadumb_DEPENDENCIES = $(dependencies)
 dummydumb_LDADD = $(LDADD) $(dummy_ldadd)
 dummydumb_DEPENDENCIES = $(dependencies)
 
-ggidumb_LDADD = $(ggi_objs) $(LDADD) $(ggi_ldadd)
-ggidumb_DEPENDENCIES = $(ggi_objs) $(dependencies)
+ggidumb_LDADD = $(LDADD) $(ggi_ldadd)
+ggidumb_DEPENDENCIES = $(dependencies)
 
 ldumb_LDADD = $(LDADD) $(svgalib_ldadd)
 ldumb_DEPENDENCIES = $(dependencies)

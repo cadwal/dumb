@@ -1,5 +1,5 @@
 "char cl" parameters to logprintf().
-These correspond to DUMB 0.12.2, perhaps even to 0.13.6.
+These correspond to DUMB 0.12.2, perhaps even to 0.13.8.
 
 'B': Banner
 dumb/banner.c
@@ -19,6 +19,9 @@ xwad/connect.c
 'D': DUMB
 dumb/dumb.c
 dumb/game.c
+
+'F': Font
+libdumb/font.c
 
 'G': Gettable
 dumb/gettable.c
@@ -94,3 +97,6 @@ tool/wadtool.c
 
 'X': X Window System
 xproto/timer.c
+
+'_': Internationalization
+dumb/msgdom.c

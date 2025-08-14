@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
- * test/ldltest.c: Test program for libdumbworldb (previously libdumblevel).
- * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
+ * test/dwdbtest.c: Test program for libdumbworldb.
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@ print_help(void)
 	    "      --difficulty=N         1=easy ... 5=hard (default all)\n"
 	    "      --verbose              explain what is being done\n"),
 	  mapname);
-   fputs(_( "  Operations:\n"
+   fputs( _("  Operations:\n"
 	    "      --statistics           display statistics on the whole map\n"
 	    "      --sector-sides=SECTOR  list sides in SECTOR\n"
 	    "      --sector-things=SECTOR list things in SECTOR\n"
@@ -145,7 +145,7 @@ print_help(void)
 	    "      --set-long-name=NAME   set the long name of the map to NAME\n"
 	    "      --output-doom=FILE     save the map to FILE in Doom format.\n"
 	    "                             .wad won't be appended automatically.\n"), stdout);
-   fputs(_( "  Other:\n"
+   fputs( _("  Other:\n"
 	    "      --help                 display this help and exit\n"
 	    "      --version              output version information and exit\n"
 	    "\n"), stdout);
@@ -156,10 +156,10 @@ static void
 print_version(void)
 {
    static const struct copyright copyrights[] = {
-      { "1998", "Kalle Niemitalo" },
+      { "1998-1999", "Kalle Niemitalo" },
       COPYRIGHT_END
    };
-   fputs("ldltest (DUMB) " VERSION "\n", stdout);
+   fputs("dwdbtest (DUMB) " VERSION "\n", stdout);
    print_copyrights(copyrights);
    fputs(_("This program is free software; you may redistribute it under the terms of\n"
 	   "the GNU General Public License.  This program has absolutely no warranty.\n"),

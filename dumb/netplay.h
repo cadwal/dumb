@@ -55,7 +55,7 @@ extern int nstations;
 
 typedef struct {
    char sig, size;
-   char mapname[10];
+   char mapname[10];		/* FIXME: why 10? */
    char plnum, mplayer;
    char difficulty, protocol_version;
 } SlaveInitPkt;

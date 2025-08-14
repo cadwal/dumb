@@ -54,6 +54,8 @@ use_item(LevData *ld, int pl, const Gettable *gt)
 	 return 1;
       }
    }
+   if (gt->flags & GK_SPESELECT)
+      return 1;
    return 0;
 }
 

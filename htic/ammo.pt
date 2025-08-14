@@ -1,0 +1,110 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * htic/ammo.pt: Ammo.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
+
+
+Gettable WandCrystals
+  Initial 50
+  DefaultMaximum 100 WithBackpack 200
+  Icon "AMG2A0" Anim "C" Timing 230msec
+  IconPos -8 8
+
+Gettable EtherealArrows
+  Initial 0
+  DefaultMaximum 50 WithBackpack 100
+  Icon "AMC2A0" RevAnim "C" Timing 150msec
+  IconPos -28 8
+
+Gettable ClawOrbs
+  Initial 0
+  DefaultMaximum 200 WithBackpack 400
+  Icon "AMB1A0" Anim "C" Timing 150msec
+  IconPos -50 8
+
+/* now the protothings */
+
+/* dropped by Proto MummySpirit */
+Proto CorpseWandAmmo
+  Sprite "AMG1"
+  Phases Mundane
+  Mass 1000 YMoveOnly Bouncy
+  Size 16 16
+  Gets WandCrystals 3
+  PickupSound ITEMUP
+  PickupMessage N_("wand crystal")
+
+/* sprinkled on the ground */
+Proto WimpyWandAmmo 10
+  Sprite "AMG1"
+  Phases Mundane
+  Mass 1000 YMoveOnly Bouncy
+  Size 16 16
+  Gets WandCrystals 10
+  PickupSound ITEMUP
+  PickupMessage N_("wand crystal")
+
+/* hidden here and there, and dropped by Proto MummyLeaderSpirit */
+Proto HeftyWandAmmo 12
+  Sprite "AMG2"
+  Phases Cycle3
+  Mass 1000 YMoveOnly Bouncy
+  Size 16 16
+  Gets WandCrystals 50
+  PickupSound ITEMUP
+  PickupMessage N_("crystal geode")
+
+
+Proto WimpyBowAmmo 18
+  Sprite "AMC1"
+  Phases MundaneGlow
+  Mass 1000 YMoveOnly Bouncy
+  Size 16 16
+  Gets EtherealArrows 5
+  PickupSound ITEMUP
+  PickupMessage N_("ethereal arrows")
+
+Proto HeftyBowAmmo 19
+  Sprite "AMC2"
+  Phases Cycle3
+  Mass 1000 YMoveOnly
+  Size 16 16
+  Gets EtherealArrows 20
+  PickupSound ITEMUP
+  PickupMessage N_("quiver of ethereal arrows")
+
+
+Proto WimpyClawAmmo 54
+  Sprite "AMB1"
+  Phases Repeat3Glow
+  Mass 1000 YMoveOnly Bouncy
+  Size 16 16
+  Gets ClawOrbs 10
+  PickupSound ITEMUP
+  PickupMessage N_("claw orb")
+
+Proto HeftyClawAmmo 55
+  Sprite "AMB2"
+  Phases Repeat3Glow
+  Mass 1000 YMoveOnly
+  Size 16 16
+  Gets ClawOrbs 100
+  PickupSound ITEMUP
+  PickupMessage N_("energy orb")

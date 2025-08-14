@@ -1,46 +1,36 @@
 * Highest-priority queue:
-fix all configure/compile/install bugs
 rewrite libdumbworldb in C++, but don't get too excited
 separate renderer from rest of code again
 speed up rendering by checking recursively which sectors can be seen
 fix wall collision checks
 
 * Later:
-activation
+activation of walls, ceilings, things
 aim to monster nearest to screen center, not necessarily closest to player
-allow each level to specify its own LEVINFO, PROTOS and PHASES
-center DUMB logo vertically (just look at aadumb)
-check that inventory items work
+let fleshy walls and flats bleed when hit
 compile as C++ on little-endian machines too
 continuous sounds for moving sectors
 end-level statistics (secret%, kill%, collect%, hit%)
 finish off heretic protos
-FONTINFO lump for specifying character offsets and coding system
-gamma control from keyboard
 get rid of alarm(), use select() instead
 get rid of all arbitrary limits
 gettables which give other gettables (like health) when used
-Guile scripts in wads
-implement invincibility, light goggles, etc....
+Guile or Pliant scripts in wads
+implement light goggles, etc....
 implement sectortypes (partially done)
 jumping instead of levitation
-light areas should be lighter, dark ones darker (0=almost impossible to see)
-make --dumb-xmul 3 --dumb-ymul 1 work
 mapping
 move bpp-independent code to rendcommon.c
 moving vertices, sideways opening & hinged doors
 polymorphing to a monster (like in Nethack!)
-rename ldltest to dwdbtest
-runtime fallback to read() if mmap() fails (possible with Hurd)
 sector shouldn't give damage while player is in air
 snapshot.ppm when BPP=1 (8 bits)
 sound shouldn't get through closed doors
-special shooting (and GETT_SPC_ALLSPECIAL for Heretic's tome of power)
+special shooting
 support PPM_PACKCOLORS
 turning inertia control
 "Uff!" when the hero runs against a wall or falls
 use function keys for special commands, select weapons with numbers
-use PNG instead of PPM
 use regular fixed point instead of UNIT_SPEED
 weapon numbering
 AA-lib: aadumb doesn't build when using configure --without-x
@@ -57,16 +47,16 @@ conf: dynamic enumerations (like for AA-lib fonts)
 conf: halt on bogus parameters to enumerated switches
 conf: support floating-point entries (for aadumb --vid-gamma)
 conf: use argp? (from glibc-2.1)
-Doom: automate 666 effect
+Doom: automate 666 effect (with Boss keyword)
 Doom: doors should crush corpses to bloodsplats
-Doom: imps should not be able to kill each other with fireballs (ImmuneToSuch)
 Doom: make player pick up things farther away (like armor in E1M2)
 Doom: rising staircases should be slower
-Doom: spheres & suit shouldn't expire so fast
 Doom: staircase doesn't work in E1M8
 hier: REQUIRE and PROVIDE lumps (use an ASCII format) with version numbers
-hier: use heuristics if a wad doesn't contain a REQUIRE lump
+hier: allow each level to specify its own LEVINFO, PROTOS and PHASES
 hier: autoload a wad when an IWAD uses one of its textures?
+hier: use heuristics if a wad doesn't contain a REQUIRE lump
+hier: LumpNum must stay valid even if more WADs are loaded
 keymap: alternative keynames; recognize both Shift_L and Shift_R as Shift
 keymap: conditional entries like X11:KP_Up AA:8
 keymap: keymap_keyname_to_keycode()
@@ -93,6 +83,12 @@ sound: echoes in sewers
 sound: support ALSA, Enlightened Sound Daemon, rplay and NAS
 sound: multi-threaded sound driver
 sound: output to a file/pipe the user can postprocess any way (s)he wants
+vid: gamma control from keyboard
+vid: light areas should be lighter, dark ones darker (0=almost impossible to see)
+vid: non-320x200 resolutions (DUMB logo, icon placement, font size)
+vid: make --dumb-xmul 3 --dumb-ymul 1 work
+vid: mark the selected inventory item in a prettier way
+wadtool: a cleaner way to list the contents of a WAD than copying to /dev/null
 wadtool: --verbose
 X11: clean up shm on fatal signals
 X11: fix DGA

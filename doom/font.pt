@@ -1,0 +1,81 @@
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * doom/font.pt: Fonts and FontMappings.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
+
+Font "FONTAMM"
+  SpaceCharWidth 3
+  Separation 1
+  CodingRange 0x0030 0x0039 "AMMNUM%d" 0
+
+Font "FONTSTG"
+  SpaceCharWidth 4
+  Separation 0
+  CodingRange 0x0030 0x0039 "STGNUM%d" 0
+
+Font "FONTSTT"
+  SpaceCharWidth 14
+  Separation 0
+  CodingRange 0x0025 0x0025 "STTPRCNT" /* PERCENT SIGN */
+  CodingRange 0x002D 0x002D "STTMINUS" /* HYPHEN-MINUS */
+  Descent 0x002D -5		/* HYPHEN-MINUS */
+  CodingRange 0x0030 0x0039 "STTNUM%d" 0
+
+Font "FONTSTYS"
+  SpaceCharWidth 4
+  Separation 0
+  CodingRange 0x0030 0x0039 "STYSNUM%d" 0
+
+Font "FONTSTC"
+  SpaceCharWidth 6
+  Separation 0
+  CodingRange 0x0021 0x005F "STCFN%03d" 33
+  Descent 0x0022 -3		/* QUOTATION MARK */
+  Descent 0x0024 1		/* DOLLAR SIGN */
+  Descent 0x0027 -3		/* APOSTROPHE */
+  Descent 0x002B -1		/* PLUS SIGN */
+  Descent 0x003D -1		/* EQUALS SIGN */
+  Descent 0x0051 1		/* LATIN CAPITAL LETTER Q */
+  Descent 0x005E -2		/* CIRCUMFLEX ACCENT */
+  CodingRange 0x007C 0x007C "STCFN%03d" 121 /* VERTICAL LINE */
+
+Font "FONTWI"
+  SpaceCharWidth 11
+  Separation 0
+  CodingRange 0x0025 0x0025 "WIPCNT"  /* PERCENT SIGN */
+  CodingRange 0x002D 0x002D "WIMINUS" /* HYPHEN-MINUS */
+  Descent 0x002D -4		/* HYPHEN-MINUS */
+  CodingRange 0x0030 0x0039 "WINUM%d" 0
+  CodingRange 0x003A 0x003A "WICOLON" /* COLON */
+  Descent 0x003A -1		/* COLON */
+
+FontMapping FONTMAP_GETTABLECOUNT "FONTSTYS"
+FontMapping FONTMAP_MESSAGE       "FONTSTC"
+FontMapping FONTMAP_MENU          "FONTSTC"
+
+/*
+ * The backslash in comment-end prevents the string from closing this
+ * comment.
+ * 
+ * Local Variables:
+ * comment-start: "/* "
+ * comment-start-skip: "/\\*\\s-*"
+ * comment-end: " *\/"
+ * End:
+ */

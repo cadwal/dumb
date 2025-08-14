@@ -45,7 +45,7 @@ get_animtex(const char *name)
    if (!att)
       init_animtex();
    for (i = 0; i < natt; i++) {
-      if (!strncasecmp(name, att[i].name, 8)) {
+      if (!strncasecmp(name, att[i].name, LUMPNAMELEN)) {
 	 /* if my seqnum is bogus, return the next entry */
 	 if (att[i].myseqnum >= att[i].seqlen)
 	    return i + 1;

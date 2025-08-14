@@ -10,10 +10,13 @@ Public License (GPL).  You should receive a copy of the GNU License
 with the DUMB distribution; it is in the file COPYING.
 
 The DUMB sources are a derived work of "wt", by Chris Laurel et al.
-"wt" is also distributed under the GPL.  The parts of DUMB that are
+"wt" is also distributed under the GPL.  Most parts of DUMB that are
 not derived from "wt" were written by Josh Parsons.  He holds
-copyright on them, and on DUMB as a whole.  Since April 1998, DUMB is
-maintained by Kalle Niemitalo.
+copyright on them, and on DUMB as a whole.  For the names of other
+contributors, see the AUTHORS file and the comments at the top of each
+source file.
+
+Since April 1998, DUMB has been maintained by Kalle Niemitalo.
 
 Versions 0.06 to 0.12.beta1 of DUMB had a claim that you could
 distribute software libraries derived from DUMB under the GNU Library
@@ -127,14 +130,15 @@ For XWad and XProtoThing:
 - X11R6 headers and libraries
 
 If you edit the source, you may need the following packages:
-- Autoconf version 2.12
-- automake (GNU automake) 1.3
-- GNU Make version 2.75
+- Autoconf version 2.13
+- automake (GNU automake) 1.4
+- GNU Make version 3.77
 - GNU m4 1.4
 
 Supported but not required:
 - AA-lib 1.2                    <aalib.h>
-- GGI 0.1.0 (Degas)             <ggi/ggi.h>
+- LibGGI 2.0b2 (Renoir)         <ggi/ggi.h>
+- libpng                        <png.h>
 - grx20 for DOS                 <grx20.h>
 - MIT-SHM extension             <X11/extensions/XShm.h>
 - MME sound for Digital Unix    <mme/mme_api.h>
@@ -157,7 +161,8 @@ when compiled as C++.  Line 186 of aalib.h:
 This must be changed to:
 	typedef struct aa_hardware_params aa_hardware_params;
 The file docs/patches/aalib-1.2-add_.diff in the DUMB distribution is
-a patch which can be applied to the AA-lib sources.
+a patch which can be applied to the AA-lib sources.  This bug has been
+fixed in the Debian GNU/Linux package aalib1-dev_1.2-14.
 
 Debian GNU/Linux libc5-dev_5.4.33-6 has a bug that prevents profiling
 functions that take register parameters: mcount() overwrites the
@@ -165,9 +170,8 @@ registers and the parameters are lost.  The configure script detects
 this bug and disables register parameters if profiling is used.  The
 libc6_2.0.7r-3 package has no problem.
 
-Automake 1.2 had a bug that prevented it from noticing when
-AC_PROG_CXXCPP was used.  Then it didn't add a CXXCPP=@CXXCPP@ line in
-Makefile.in.  Automake 1.3 works fine.
+towlower() in glibc-2.1.1 (1999-02-07) actually converts characters to
+upper case.  The bug is in glibc-2.1.1/wctype/wcfuncs.c.
 
 GNU gettext 0.10.35 has several bugs related to Makefiles and
 configure scripts.  There is a set of patches in docs/patches.  If you
@@ -214,10 +218,10 @@ If you have AA-lib, you get:
          (See http://horac.ta.jcu.cz/aa for more info on AA-lib.)
 
 If you have GGI installed:
-- ggidumb, dumb for Linux-GGI.
+- ggidumb, DUMB for Linux-GGI.
 
 If you have SVGAlib:
-- ldumb (linux dumb).
+- ldumb (Linux DUMB).
 
 If you have X11:
 - xdumb (supports shared memory, XFree86-DGA and XKB if your system
@@ -227,9 +231,15 @@ If you have X11:
 - mkdfnt, a tool for converting X fonts to a Doom/DUMB-compatible form.
 
 If you have netpbm:
-- dark2trans, converts dark pixels to transparent,
+- dark2trans, converts dark pixels to R=0,G=0,B=1 which ppmtodump
+  interprets as transparent,
 - ppmtodumb, converts ppm graphics to sprites and textures.  Note that
   you need this program to build doom4dum.wad and htic4dum.wad.
+
+If you have libpng:
+- pngtodumb, converts PNG graphics to sprites and textures.  You need
+  this program to build the font of dumb-game.  The dark2trans program
+  isn't needed with PNG, since the format supports real transparency.
 
 If you have Doom or Doom II and the script found its IWAD:
 - doom4dum.wad, a patch wad that patches Doom and Doom II's IWADs to
@@ -241,7 +251,7 @@ If you have Heretic and the script found its IWAD:
 Whatever you have, you get:
 - fixed_bm, a benchmark measuring how fast your machine is at the
   fixed-point calculations DUMB uses,
-- ldltest, a test program for the still unfinished libdumbworldb,
+- dwdbtest, a test program for the still unfinished libdumbworldb,
 - mknulmap, a single-room map generator,
 - ptcomp, a program for compiling textual ProtoThing etc. definitions
   to lumps for inclusion in WADs,
@@ -259,7 +269,7 @@ install" to copy them to their official places.
 The installed executables contain full debug information by default.
 If you don't like that, use "make install-strip".
 
-Programs fixed_bm, ldltest and mkdfnt won't be installed.
+Programs fixed_bm, dwdbtest and mkdfnt won't be installed.
 
 If you later change your mind (oh no!), you can run "make uninstall"
 to remove them if you still have the sources left.
@@ -301,16 +311,18 @@ they are used for various cheats and special functions:
 	4: resurrect yourself,
 	5: no-clipping mode (doesn't work very cleanly though),
 	6: toggle between renderer debug modes,
+	7: font test,
 	9: save snapshot in ./snapshot.ppm.
 
-In the X11 and AA-lib versions, you can reconfigure all the keys with
+In the X11, AA-lib and GGI versions, you can reconfigure all the keys with
 options like --keymap-next-weapon Tab.  You can also put the
 corresponding definitions in the .dumbrc configuration file.
 
-With GGI and SVGAlib, you can't currently change the bindings except
-by editing the source and recompiling.  But those versions let you use
-a mouse.  If you are using SVGAlib, you may need to tell DUMB about
-your mouse type: use
+With SVGAlib, you can't currently change the bindings except by
+editing the source and recompiling.
+
+The GGI and SVGAlib versions let you use a mouse.  If you are using
+SVGAlib, you may need to tell DUMB about your mouse type: use
 
   ldumb --input-mouse-type <type>
 

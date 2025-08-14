@@ -26,6 +26,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
+#include "libdumbutil/safem.h"
 #include "xtexture.h"
 
 #define scrn DefaultScreen(dpy)
@@ -38,14 +39,14 @@
 
 #define ROTATE(Pixel_t)					\
    for (x = 0; x < t->width; x++) {			\
-      Pixel_t *tx = t->texels;				\
+      Pixel_t *tx = (Pixel_t *) t->texels;		\
       tx += (t->width - x - 1) << t->log2height;	\
       for (y = t->height - 1; y >= 0; y--, tx++)	\
 	 XPutPixel(image, x, y, (*tx == -1) ? 0 : *tx);	\
    }
 #define MIRROR(Pixel_t)					\
    for (x = 0; x < t->width; x++) {			\
-      Pixel_t *tx = t->texels;				\
+      Pixel_t *tx = (Pixel_t *) t->texels;		\
       tx += x << t->log2height;				\
       for (y = t->height - 1; y >= 0; y--, tx++)	\
 	 XPutPixel(image, x, y, (*tx == -1) ? 0 : *tx);	\
@@ -117,7 +118,8 @@ xtexture(Display *dpy, Drawable d, Texture *t, int do_mirror)
       image = XCreateImage(dpy,
 			   visual,
 			   depth,
-			   ZPixmap, 0, malloc(bypp * t->height * t->width),
+			   ZPixmap, 0, 
+			   (char *) safe_malloc(bypp * t->height * t->width),
 			   t->width, t->height,
 			   8, bypp * t->width);
       if (do_mirror)

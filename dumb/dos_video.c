@@ -26,9 +26,7 @@
 #include <allegro.h>
 #include <sys/nearptr.h>
 
-#include <libintl.h>
-#define _(str) gettext(str)
-#define N_(str) gettext_noop(str)
+#include "libdumbutil/dumb-nls.h"
 
 #include "libdumbutil/log.h"
 #include "libdumbutil/safem.h"

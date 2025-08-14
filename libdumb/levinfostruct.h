@@ -27,7 +27,7 @@
 #define LEVLONGNAME_LEN 64
 
 typedef struct {
-   char name[10];		/* FIXME: why 10?  8+1 would be sensible. */
+   char name[10]; /* FIXME: why 10?  LUMPNAMELEN+1 would be sensible. */
    char music[10];
    char sky[10];
    LE_int16 next, secret, _spare;

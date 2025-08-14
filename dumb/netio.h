@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/netio.h: Transport-independent network station & packet operations.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,7 +33,7 @@ int net_initstation(int station, const char *name, int flags);
 #define net_initslave(name) net_initstation(-1,name,RS_SLAVE)
 #define net_initmaster(name) net_initstation(-1,name,RS_MASTER)
 
-void net_getmyhost(char *myname, size_t l);
+char *net_getmyhost(void);
 
 const unsigned char *net_recpkt(size_t * pktlen, int *station);
 int net_waitpkt(struct RemoteStation_struct *rs, int msec);

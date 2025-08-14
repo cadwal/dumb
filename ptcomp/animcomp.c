@@ -85,14 +85,14 @@ animcomp(int is_sw)
       else if (!strcasecmp(s, "Flat"))
 	 is_flat = 1;
       else if (!strcasecmp(s, "Parm"))
-	 parm = parm_num();
+	 parm = parm_int();
       else if (!strcasecmp(s, "Duration")) {
 	 if (at)
 	    at->duration = parm_time();
 	 else
 	    defdur = parm_time();
       } else if (!strcasecmp(s, "To")) {
-	 int i, to = parm_num(), n = 1 + to - parm;
+	 int i, to = parm_int(), n = 1 + to - parm;
 	 if (n <= 0)
 	    err(_("To (%d) must exceed Parm (%d)"), to, parm);
 	 free(p->tbl);

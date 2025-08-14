@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/banner.h: Banners that scroll over the view.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,14 +24,15 @@
 #define BANNER_H
 
 #include "libdumb/texture.h"
+#include "libdumb/font.h"
 
 int init_banner(int baseline, int start, int stop, int speed);
 void reset_banner(int banner);
 void reset_banners(void);
 
-void add_to_banner(int banner, Texture *t, int xoffset, int yoffset);
-void add_text_to_banner(int banner, int font, const char *text, int len);
-void add_str_to_banner(int banner, int font, const char *text);
+void add_to_banner(int banner, Texture *, int xoffset, int yoffset);
+void add_utf8_text_to_banner(int banner, const Font *, const char text[], int len);
+void add_utf8_str_to_banner(int banner, const Font *, const char *str);
 
 void update_banners(void *fb, int ticks);
 

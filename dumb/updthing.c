@@ -38,6 +38,7 @@
 #include "gettable.h"
 #include "levdata.h"
 #include "linetype.h"
+#include "msgdom.h"
 #include "things.h"
 
 /* some magic values */
@@ -152,37 +153,26 @@ pyth_sq(fixed x, fixed y)
 static int
 pickup_proto(LevData *ld, int pl, ProtoThing *proto)
 {
-   const ProtoThing_Gets *gets = proto->gets;
-   int i;
-   enum gettable_pickup total_pu = GETT_PU_NO_ERROR; /* default not used */
-
-   assert(proto->ngets > 0);
-
-   for (i = 0; i < proto->ngets; i++) {
-      enum gettable_pickup pu = pickup_gettable(ld, pl,
-						gets[i].artitype,
-						gets[i].artinum,
-						gets[i].artimax);
-      /* The backpack proto gives first the backpack gettable and then
-	 various ammo gettables.  These tests are set up so that only
-	 the first gettable can set total_pu = GETT_PU_YES_FIRST. */
-      if (i == 0)
-	 total_pu = pu;
-      else if (GETT_PU_YES(pu) && !GETT_PU_YES(total_pu))
-	 total_pu = GETT_PU_YES_MORE;
-   }
-   if (total_pu == GETT_PU_NO_HASMAX) {
+   enum gettable_pickup pu = pickup_gettables(ld, pl, proto->gets,
+					      proto->ngets, 1);
+   if (pu == GETT_PU_USELESS) {
       if (proto->ignoremsg != NULL)
-	 game_message(pl, _(proto->ignoremsg));
+	 game_utf8_message(pl, dgettext(get_msgdom(), proto->ignoremsg));
+      /* FIXME: do something to prevent the player from trying to pick
+         it up again in the next tick */
    }
-   if (!GETT_PU_YES(total_pu))
-      return 0;		/* intended to catch GETT_PU_NO_ERROR too */
-   /* now we know the player picked it up */
-   if (total_pu == GETT_PU_YES_FIRST && proto->firstpickupmsg != NULL)
-      game_message(pl, _(proto->firstpickupmsg));
+   if (!GETT_PU_IS_OK(pu))
+      return 0;
+   /* now we know the player would pick it up, so do that */
+   {
+      enum gettable_pickup pu2 = pickup_gettables(ld, pl, proto->gets,
+						  proto->ngets, 0);
+      assert(pu2 == pu);
+   }
+   if (pu == GETT_PU_GOTFIRST && proto->firstpickupmsg != NULL)
+      game_utf8_message(pl, dgettext(get_msgdom(), proto->firstpickupmsg));
    else if (proto->pickupmsg != NULL)
-      game_message(pl, _(proto->pickupmsg));
-   /* sound */
+      game_utf8_message(pl, dgettext(get_msgdom(), proto->pickupmsg));
    if (proto->pickup_sound >= 0)
       play_dsound(proto->pickup_sound, 0, 0, 0);
    return 1;
@@ -277,7 +267,7 @@ sector_thing_effect(LevData *ld, int sector, int thing, int tickspassed)
       return;
    if (st->damage&&(td->proto->flags&PT_TAKESECTDMG)) {
       int tmp = MSEC_PER_TICK * tickspassed * st->damage;
-      tmp += random() & 1023;	/* not quite 1000, but faster */
+      tmp += rand() & 1023;	/* not quite 1000, but faster */
       tmp /= 1024;
       thing_take_damage(ld, thing, tmp);
    }
@@ -364,6 +354,10 @@ update_things(LevData *ld, int tickspassed)
 	 continue;
       }
 
+      /* This test wasn't in DUMB 0.13.7, why?  */
+      if (td->proto->flags & PT_YMOVE_ONLY)
+	 td->dx = td->dy = 0;
+	 
       /* gravity stuff */
 
       /* no gravity if no mass */
@@ -420,7 +414,7 @@ update_things(LevData *ld, int tickspassed)
 
       for (i = 0; i < steps; i++) {
 #ifndef NO_BLOCKMAP
-	 const LE_int16 *walltbl[10], **wallptr;
+	 const LE_int16 *walltbl[10], **wallptr; /* FIXME: why 10? */
 #endif
 	 /* look for impassible walls coming within my radius */
 	 r = td->proto->radius;

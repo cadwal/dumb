@@ -464,7 +464,7 @@ thing_shoot_single(LevData *ld, int shooter, int bullet_id,
 
    /* bloodspurt "kludge" */
    if (thing >= 0 &&
-       (find_protothing(bullet_id)->flags & PT_BULLET_KLUDGE) &&
+       (find_protothing(bullet_id)->flags & PT_BECOMES_BLOOD) &&
        ldthingd(ld)[thing].proto->bloodtype > 0)
       bullet_id = ldthingd(ld)[thing].proto->bloodtype;
 

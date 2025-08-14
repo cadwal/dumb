@@ -22,8 +22,6 @@
 #ifndef XWAD_H
 #define XWAD_H
 
-#define PI M_PI
-
 #include "libdumbutil/fixed.h"
 #include "libdumbwad/wadstruct.h"
 #include "libdumbwad/wadio.h"
@@ -67,7 +65,7 @@ typedef char EntFlags;
 
 typedef struct AppInstance {
    /* these may be null for a new level */
-   char mapname[10];
+   char mapname[10];		/* FIXME: LUMPNAMELEN+1? */
    char loadname[10];
 #ifdef DUMB_CONFIG_LDWB
    struct dumblevel level;

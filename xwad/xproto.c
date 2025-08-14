@@ -22,9 +22,9 @@
 
 #include <config.h>
 
-#ifndef HAVE_SELECT
-/* Since you don't have select(), we'll
- * have to longjmp() out of SIGALRM.  */
+#if !(HAVE_SELECT && HAVE_XINTERNALCONNECTIONNUMBERS)
+/* Since you don't have one of those functions, we'll have to
+ * longjmp() out of SIGALRM.  */
 # define USE_LONGJMP
 #endif
 
@@ -450,6 +450,8 @@ dispdhf(XEvent *ev, XPInstance *inst, void *info)
 static const char *
 chotext(int i, XPInstance *inst)
 {
+   /* sizeof(ProtoThing::sprite)==6 currently,
+      so char[64] has plenty of room.  */
    static char buf[64];
    sprintf(buf, "%5d %s", inst->protos[i].id, inst->protos[i].sprite);
    return buf;

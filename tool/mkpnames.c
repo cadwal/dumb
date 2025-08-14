@@ -398,7 +398,7 @@ main(int argc, char **argv)
 #endif /* ENABLE_NLS */
    parse_args(argc, argv);
    /* allocate some huge arrays */
-   td = malloc(8 * 65536);
+   td = malloc(8 * 65536);	/* FIXME: error checking and arbitrary limits */
    ntexs = 0;
    pnames = malloc(8 * 65536);
    pnames->num = 0;

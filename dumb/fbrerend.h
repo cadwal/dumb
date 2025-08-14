@@ -24,18 +24,12 @@
 
 #include "render.h"
 
-#ifdef DUMB_CONFIG_8BPP
 void *fbrerender8(Pixel8 *fb, Pixel8 *rendfb, int xsize, int ysize,
 		  int xfact, int yfact, int xlace, int ylace);
-#endif
-#ifdef DUMB_CONFIG_16BPP
 void *fbrerender16(Pixel16 *fb, Pixel16 *rendfb, int xsize, int ysize,
 		   int xfact, int yfact, int xlace, int ylace);
-#endif
-#ifdef DUMB_CONFIG_32BPP
 void *fbrerender32(Pixel32 *fb, Pixel32 *rendfb, int xsize, int ysize,
 		   int xfact, int yfact, int xlace, int ylace);
-#endif
 
 #endif /* FBREREND_H */
 

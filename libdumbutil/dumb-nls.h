@@ -1,7 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
- * libdumbutil/dumb-nls.h: _(str) and N_(str) with or without ENABLE_NLS.
- * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
+ * libdumbutil/dumb-nls.h: _(""), U_("") and N_("") with or without ENABLE_NLS.
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,11 @@
 #if HAVE_LIBINTL_H
 # include <libintl.h>
 # define _(str) gettext(str)
+# define U_(str) dgettext(PACKAGE"-utf8", str)
 # define N_(str) str
 #else
 # define _(str) str
+# define U_(str) str
 # define N_(str) str
 #endif
 

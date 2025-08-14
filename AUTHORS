@@ -62,6 +62,16 @@ http://stekt.oulu.fi/~tosi/
 	conf.[ch] cleanup
 	aadumb params, shift support
 	--help, --version, use of getopt_long()
+	internationalization
+	libdumbworldb
+	use of select() under X11
+	backpack
+	documentation in Texinfo and DocBook
+	variable-size blocks in GETTABLE and PROTOS lumps
+	support for multiple Gets in a Proto
+	"quoted strings" in ptcomp
+	writing a WAD from ptcomp
+	most Heretic powerup protos and gettables
 
 Ben Bullock
 <ben@hayamasa.demon.co.uk>

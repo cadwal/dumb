@@ -22,16 +22,16 @@
 
 #include <config.h>
 
-#include <stdarg.h>
+#include <assert.h>
+#include <ctype.h>		/* toupper() for hashing */
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
+#include <sys/fcntl.h>		/* O_RDONLY */
+#if HAVE_MMAP
+# include <sys/mman.h>
+#endif
 #include <unistd.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/fcntl.h>
-#include <limits.h>
 
 #include "libdumbutil/dumb-nls.h"
 
@@ -57,29 +57,19 @@
 
 #define WDEBUG(x) logprintf(LOG_DEBUG,'W',x)
 
-/* This is for MS-DOS.  */
+/* MS-DOS C libraries translate linefeeds in read() unless O_BINARY is
+   specified in open().  Unix doesn't need that.  */
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif
-
-#ifdef HAVE_MMAP
-#ifdef NO_BIG_MMAP
-#define DO_BIG_MMAP 0
-#else
-#define DO_BIG_MMAP 1
-#endif
-#else  /* !HAVE_MMAP */
-#define DO_BIG_MMAP 0
-#endif /* !HAVE_MMAP */
 
 typedef struct _WadFile {
    struct _WadFile *next;
    int fd;
    unsigned int nlumps;
    const WadDirEntry *dir;
-   const void *whole_map;
-   const void *mapalloc;
-   size_t maplen, wadlen;
+   const void *whole_map;	/* !=NULL if the entire WAD has been mmapped */
+   size_t wadlen;
    char *fname;
 } WadFile;
 
@@ -88,6 +78,9 @@ typedef struct _WadFile {
 static int nwads = 0;
 static WadFile *wads = NULL;
 
+static void free_wad(WadFile *wad);
+
+
 #ifdef USE_HASHING
 typedef struct _HashEnt {
    struct _HashEnt *next;
@@ -99,10 +92,10 @@ static HashEnt **hashtbl = NULL;
 static int
 hashfunc(const char *s)
 {
-   const char *t = s + 8;
+   const char *end = s + LUMPNAMELEN;
    const char *garble = "garble1^";
    unsigned int i = 0;
-   while (*s && s < t)
+   while (*s && s < end)
       i += *(garble++) * toupper(*s++);
    return i % HASHSIZE;
 }
@@ -138,10 +131,10 @@ add_hashent(const char *name, LumpNum ln)
 static LumpNum
 lumphash(LumpNum after, const char *name)
 {
-   char buf[10];
+   char buf[LUMPNAMELEN+1];
    HashEnt *h;
    h = hashtbl[hashfunc(name)];
-   buf[8] = 0;
+   buf[LUMPNAMELEN] = 0;
    while (h) {
       if (h->ln >= after && !strcasecmp(name, get_lump_name(h->ln, buf)))
 	 return h->ln;
@@ -186,11 +179,12 @@ init_wadhashing(void)
    logprintf(LOG_INFO, 'W',
 	     _("wad hashtable: %d entries unused, max chain %d"),
 	     unused, maxuse);
-#endif
+#endif /* HASHING_REPORT */
 }
 
 #endif /* USE_HASHING */
 
+
 int
 get_num_wads(void)
 {
@@ -207,14 +201,10 @@ reset_wad(void)
    while (wads != NULL) {
       WadFile *wad = wads;
       wads = wad->next;
-      if (wad->mapalloc)
-	 safe_munmap(wad->fname, wad->mapalloc, wad->maplen);
-      if (wad->fd >= 0)
-	 safe_close(wad->fname, wad->fd);
-      safe_free(wad->fname);
-      safe_free(wad);
+      free_wad(wad);
+      --nwads;
    }
-   nwads = 0;
+   assert(nwads == 0);
 }
 
 static void
@@ -236,8 +226,7 @@ check_sanity(const WadFile *wad)
 }
 
 static void
-load_wad(const char *fname, const char *_sig, const char *const path[],
-	 int mapall)
+load_wad(const char *fname, const char *_sig, const char *const path[])
 {
    WadHeader whbuf;
    const WadHeader *wh = &whbuf;
@@ -245,23 +234,33 @@ load_wad(const char *fname, const char *_sig, const char *const path[],
 #ifdef USE_HASHING
    reset_wadhashing();
 #endif
-   wad->next = wads;
    /* open the file */
    wad->fd = safe_open_path(fname, O_RDONLY | O_BINARY, LOG_FATAL,
 			    path, &wad->fname);
-   wad->wadlen = lseek(wad->fd, 0, SEEK_END);
-   lseek(wad->fd, 0, SEEK_SET);
+   wad->wadlen = safe_lseek(fname, wad->fd, 0, SEEK_END);
+   safe_lseek(fname, wad->fd, 0, SEEK_SET);
    if (wad->wadlen < sizeof(WadHeader))
        logfatal('W', _("%s is too short to be a valid wadfile"), wad->fname);
-   /* now get the header.  how this is done will depend on our mm strategy */
-   if (mapall) {
-      wad->maplen = wad->wadlen;
-      wad->whole_map = wad->mapalloc = safe_mmap(wad->fname, wad->fd, 0,
-						 wad->maplen);
-      wh = (const WadHeader *) wad->whole_map;
+   /* Try mmapping the entire file.  */
+#if HAVE_MMAP
+   wad->whole_map = mmap(NULL, wad->wadlen, PROT_READ, MAP_SHARED,
+			 wad->fd, 0);
+   if (wad->whole_map == (void *) -1) {
+      logprintf(LOG_WARNING, 'W', _("%s: mmap failed: %s"),
+		wad->fname, strerror(errno));
+      wad->whole_map = NULL;
+   } else {
       logprintf(LOG_INFO, 'W', _("%s mapped at %p (%lu bytes)"),
-		wad->fname, (void *) wh, (unsigned long) wad->maplen);
-   } else
+		wad->fname, (void *) wad->whole_map,
+		(unsigned long) wad->wadlen);
+   }
+#else  /* !HAVE_MMAP */
+   wad->whole_map = NULL;
+#endif /* !HAVE_MMAP */
+   /* Get the header.  It need not be freed explicitly.  */
+   if (wad->whole_map != NULL)
+      wh = (const WadHeader *) wad->whole_map;
+   else
       safe_read(wad->fname, wad->fd, &whbuf, sizeof(whbuf));
    /* deal to header */
    if (memcmp(_sig, wh->sig, 4) != 0)
@@ -281,31 +280,48 @@ load_wad(const char *fname, const char *_sig, const char *const path[],
       wad->nlumps = (wad->wadlen - wh->diroffset) / sizeof(WadDirEntry);
    }
    /* say what we've done */
-   logprintf(LOG_INFO, 'W', _("%s %s: %d lumps dir @ %d"),
-	     _sig, wad->fname, (int) wad->nlumps, (int) wh->diroffset);
+   logprintf(LOG_INFO, 'W', _("%s: %s, %d lumps, dir @ %d"),
+	     wad->fname, _sig, (int) wad->nlumps, (int) wh->diroffset);
    /* load directory */
-   if (wad->whole_map)
+   if (wad->whole_map != NULL)
       wad->dir = (const WadDirEntry *) WHOLEMAP_PTR(wad, wh->diroffset);
-   else
-      wad->dir = (const WadDirEntry *)
-	 safe_mmap(wad->fname, wad->fd, wh->diroffset,
-		   wh->nlumps * sizeof(WadDirEntry));
+   else {
+      size_t dir_len = wad->nlumps * sizeof(WadDirEntry);
+      WadDirEntry *dir = (WadDirEntry *) safe_malloc(dir_len);
+      safe_read(wad->fname, wad->fd, dir, dir_len);
+      wad->dir = dir;		/* (const *) */
+   }
+   /* Put the WAD in the head of the list.  */
+   wad->next = wads;
    wads = wad;
    nwads++;
    check_sanity(wad);
+}
+
+static void
+free_wad(WadFile *wad)
+{
+   if (wad->whole_map != NULL)
+      safe_munmap(wad->fname, wad->whole_map, wad->wadlen);
+   else
+      safe_free((WadDirEntry *) wad->dir);
+   if (wad->fd >= 0)
+      safe_close(wad->fname, wad->fd);
+   safe_free(wad->fname);
+   safe_free(wad);
 }
 
 void
 init_iwad(const char *fname, const char *const path[])
 {
    reset_wad();
-   load_wad(fname, "IWAD", path, DO_BIG_MMAP);
+   load_wad(fname, "IWAD", path);
 }
 
 void
 init_pwad(const char *fname, const char *const path[])
 {
-   load_wad(fname, "PWAD", path, DO_BIG_MMAP);
+   load_wad(fname, "PWAD", path);
 }
 
 static WadFile *
@@ -329,7 +345,7 @@ static int
 lumpnamecmp(const char *s1, const char *s2)
 {
    int i;
-   for (i = 0; i < 8; i++) {
+   for (i = 0; i < LUMPNAMELEN; i++) {
       if (s2[i] != '?' && toupper(s1[i]) != toupper(s2[i]))
 	 return 1;
       if (s2[i] == '\0')
@@ -487,22 +503,30 @@ get_lump_len(LumpNum ln)
 }
 
 char *
-get_lump_name(LumpNum ln, char *d)
+get_lump_name(LumpNum ln, char d[LUMPNAMELEN+1])
 {
-   strncpy(d, get_lump_dirent(ln)->name, 8);
-   d[8] = 0;
+   strncpy(d, get_lump_dirent(ln)->name, LUMPNAMELEN);
+   d[LUMPNAMELEN] = 0;
    return d;
+}
+
+const char *
+get_lump_filename(LumpNum ln)
+{
+   WadFile *wad = get_lump_wad(ln);
+   return wad->fname;
 }
 
 const void *
 get_lump_map(LumpNum ln)
 {
+#if HAVE_MMAP
    WadFile *wad = get_lump_wad(ln);
    const WadDirEntry *dent = get_lump_dirent(ln);
-   if (wad->whole_map)
+   if (wad->whole_map != NULL)
       return WHOLEMAP_PTR(wad, dent->offset);
-   else
-      return NULL;
+#endif /* HAVE_MMAP */
+   return NULL;
 }
 
 // Local Variables:

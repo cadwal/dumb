@@ -335,11 +335,11 @@ render(void *fbp, LevData *w, const View *v)
 {
    static int invis = 8, invinc = 1;
    ld = w;
-   fb = fbp;
+   fb = (Pixel *) fbp;
    view = v;
    fb += fb_topleft;
 #ifdef USE_COLORMAP
-   invismap = load_lump(colormap_ln);
+   invismap = (const Pixel *) load_lump(colormap_ln);
    invismap += 256 * invis;
    invis += invinc;
    if (invis == 16 || invis == 8)
@@ -761,15 +761,13 @@ render_walls(void)
    */
    if (last_wall_count != NUM_WALLS) {
       last_wall_count = NUM_WALLS;
-      if (active == NULL)
-	 active = safe_malloc(sizeof(Active_wall) * last_wall_count);
-      else
-	 active = safe_realloc(active,
-			       sizeof(Active_wall) * last_wall_count);
-
+      /* active may be NULL here, but safe_realloc handles that */
+      active = (Active_wall *)
+	 safe_realloc(active, last_wall_count * sizeof(Active_wall));
    }
    if (active_obj == NULL)
-      active_obj = safe_malloc(sizeof(Active_object) * MAX_ACTIVE_OBJECTS);
+      active_obj = (Active_object *)
+	 safe_malloc(MAX_ACTIVE_OBJECTS * sizeof(Active_object));
 
    /* Set up for fast calculation of view rays. */
    Vx = view->eye_distance;
@@ -1260,15 +1258,15 @@ calc_view_constants(int screen_width, int screen_height)
    /* Make sure that enough memory has been allocated for the tables. */
    if (screen_height != last_height) {
       if (last_height == 0) {
-	 view_constants.row_view =
+	 view_constants.row_view = (fixed *)
 	     safe_malloc(screen_height * sizeof(fixed));
-	 view_constants.row_reci =
+	 view_constants.row_reci = (fixed *)
 	     safe_malloc(screen_height * sizeof(fixed));
       } else {
-	 view_constants.row_view =
+	 view_constants.row_view = (fixed *)
 	     safe_realloc(view_constants.row_view,
 			  screen_height * sizeof(fixed));
-	 view_constants.row_reci =
+	 view_constants.row_reci = (fixed *)
 	     safe_realloc(view_constants.row_view,
 			  screen_height * sizeof(fixed));
       }
@@ -1276,13 +1274,15 @@ calc_view_constants(int screen_width, int screen_height)
    }
    if (screen_width != last_width) {
       if (last_width == 0) {
-	 view_constants.sin_tab = safe_malloc(screen_width * sizeof(fixed));
-	 view_constants.cos_tab = safe_malloc(screen_width * sizeof(fixed));
+	 view_constants.sin_tab = (fixed *)
+	    safe_malloc(screen_width * sizeof(fixed));
+	 view_constants.cos_tab = (fixed *)
+	    safe_malloc(screen_width * sizeof(fixed));
       } else {
-	 view_constants.sin_tab =
+	 view_constants.sin_tab = (fixed *)
 	     safe_realloc(view_constants.sin_tab,
 			  screen_width * sizeof(fixed));
-	 view_constants.cos_tab =
+	 view_constants.cos_tab = (fixed *)
 	     safe_realloc(view_constants.cos_tab,
 			  screen_width * sizeof(fixed));
       }

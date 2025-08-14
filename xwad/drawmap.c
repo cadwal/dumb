@@ -21,8 +21,9 @@
 
 #include <config.h>
 
-#include <string.h>
 #include <math.h>
+#include <stdlib.h>		/* abs() */
+#include <string.h>
 
 #include <X11/Xlib.h>
 
@@ -207,8 +208,8 @@ line_is_tagged(XWadInstance *inst, int i)
    return r;
 }
 
-#define ARROWA (PI/6.0)
-#define RIGHTA (PI/2.0)
+#define ARROWA (M_PI/6.0)
+#define RIGHTA (M_PI/2.0)
 
 static void
 draw_line(int x1, int y1, int x2, int y2,

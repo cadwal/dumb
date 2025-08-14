@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(libdumb/dsound.h)
-AC_CONFIG_AUX_DIR(aux)
-AM_INIT_AUTOMAKE(dumb, 0.13.7)
+AC_CONFIG_AUX_DIR(scripts)
+AM_INIT_AUTOMAKE(dumb, 0.13.9)
 AM_CONFIG_HEADER(config.h)
 
 # $datadir is usually '${prefix}/share'.  Expand it once.  This does
@@ -26,41 +26,6 @@ else
 fi
 AM_CONDITIONAL(DUMB_CONFIG_LDWB, [test "$enable_libdumbworldb" != "no"])
 
-dnl --- Framebuffer bits.
-AC_MSG_CHECKING(what kind of framebuffers to support)
-dumb_bpp_names=""
-DUMB_RENDER_SOURCES=""
-DUMB_ARG_HELP(
-  [  Framebuffer bits: Disable at most two.  [support all]])
-AC_ARG_ENABLE(8bpp,
-  [  --disable-8bpp          don't support framebuffers with 8 bits per pixel])
-AC_ARG_ENABLE(16bpp,
-  [  --disable-16bpp         don't support framebuffers with 16 bits per pixel])
-AC_ARG_ENABLE(32bpp,
-  [  --disable-32bpp         don't support framebuffers with 32 bits per pixel])
-if test "$enable_8bpp" != "no"; then
-  dumb_bpp_names="$dumb_bpp_names 8bpp"
-  DUMB_RENDER_SOURCES="$DUMB_RENDER_SOURCES render8.c"
-  AC_DEFINE(DUMB_CONFIG_8BPP)
-fi
-if test "$enable_16bpp" != "no"; then
-  dumb_bpp_names="$dumb_bpp_names 16bpp"
-  DUMB_RENDER_SOURCES="$DUMB_RENDER_SOURCES render16.c"
-  AC_DEFINE(DUMB_CONFIG_16BPP)
-fi
-if test "$enable_32bpp" != "no"; then
-  dumb_bpp_names="$dumb_bpp_names 32bpp"
-  DUMB_RENDER_SOURCES="$DUMB_RENDER_SOURCES render32.c"
-  AC_DEFINE(DUMB_CONFIG_32BPP)
-fi
-AC_SUBST(DUMB_RENDER_SOURCES)
-if test -n "$dumb_bpp_names"; then
-  AC_MSG_RESULT($dumb_bpp_names)
-else
-  AC_MSG_RESULT(nothing!)
-  AC_MSG_WARN(No support included for framebuffers of any depth)
-fi
-
 dnl --- Checks for programs.
 AC_PROG_CC
 DUMB_MSG_REQUIRE_YES(GCC, [GCC])
@@ -70,6 +35,8 @@ AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_LN_S
+dnl Disable Jade for now.
+AM_CONDITIONAL(DUMB_CONFIG_JADE, [false])
 
 dnl AM_GNU_GETTEXT wants this and it must be called before AC_TRY_COMPILE.
 AC_ISC_POSIX
@@ -78,6 +45,7 @@ dnl --- Checks for typedefs, structures, and compiler characteristics.
 AC_PROG_GCC_TRADITIONAL
 AC_C_CONST
 AC_C_INLINE
+DUMB_C_RESTRICT
 AC_C_BIGENDIAN
 DUMB_C_ATTR_REGPARM
 AC_TYPE_SIZE_T
@@ -137,8 +105,13 @@ if test -z "$no_x"; then
   # even if the file being compiled or linked doesn't use X.
   CPPFLAGS="$CPPFLAGS $X_CFLAGS"
   LDFLAGS="$LDFLAGS $X_LIBS"
-  # This variable is used in the aalib check.
+  # This variable is used below, and in the aalib check.
   x_ldadd="$X_PRE_LIBS -lX11 $X_POST_LIBS"
+  # sparc-sun-solaris2.5.1 lacks XInternalConnectionNumbers().
+  save_LIBS="$LIBS"
+  LIBS="$LIBS $x_ldadd"
+  AC_CHECK_FUNCS([XInternalConnectionNumbers])
+  LIBS="$save_LIBS"
 else
   x_ldadd=""
   AC_MSG_WARN([X not found; programs \`xdumb', \`mkdfnt', \`XWad' and \`XProtoThing' will not be built])
@@ -166,31 +139,43 @@ fi
 AM_CONDITIONAL(DUMB_CONFIG_LIBPPM, test "$dumb_have_libppm" = "yes")
 AC_SUBST(DUMB_PPM_LDADD)
 
+dnl --- PNG library.
+DUMB_CHECK_HDR_LIB_YESNO(png.h, png, png_read_image, [], dumb_have_libpng)
+if test "$dumb_have_libpng" = "no"; then
+  AC_MSG_WARN([libpng not found; program \`pngtodumb' will not be built])
+fi
+AM_CONDITIONAL(DUMB_CONFIG_LIBPNG, test "$dumb_have_libpng" = "yes")
+
 dnl --- Math library.
 AC_CHECK_LIB(m, sin, ,
   [AC_MSG_ERROR([DUMB requires the math library])])
 
-dnl --- AAlib.
-DUMB_CHECK_HDR_LIB_YESNO(aalib.h, aa, aa_renderpalette, [-lncurses $x_ldadd],
-  dumb_have_aalib)
-AM_CONDITIONAL(DUMB_CONFIG_AALIB, test "$dumb_have_aalib" = "yes")
+dnl --- AA-lib.
+DUMB_AA_LDADD=""
+dumb_have_aalib="no"
+AC_CHECK_HEADER([aalib.h],
+ [dumb_aa_save_LIBS="$LIBS"
+  LIBS=""
+  DUMB_SEARCH_LIBSETS([aa_renderpalette],
+   ["-laa" "-laa -lslang $x_ldadd" "-laa -lncurses $x_ldadd"],
+   [dumb_have_aalib="yes"
+    DUMB_AA_LDADD="$LIBS"])
+  LIBS="$dumb_aa_save_LIBS"])
+AC_SUBST([DUMB_AA_LDADD])
+AM_CONDITIONAL(DUMB_CONFIG_AALIB, [test "$dumb_have_aalib" = "yes"])
 if test "$dumb_have_aalib" = "no"; then
   AC_MSG_WARN([AA-lib not found; program \`aadumb' will not be built])
 fi
 
-dnl --- GGI library.
+dnl --- LibGGI.
 DUMB_GGI_SOURCES=""
 DUMB_CHECK_HDR_LIB([ggi/ggi.h], [ggi], [ggiParseMode], [],
-  [DUMB_CHECK_IFDEF([ggi/ggi.h], [GII_PBUTTON_PRIMARY],
-    [DUMB_GGI_SOURCES="ggi_degas_video.c"],
-    [DUMB_CHECK_IFDEF([ggi/ggi.h], [GGI_KEY_ENTER],
-      [DUMB_GGI_SOURCES="ggi_olddegas_video.c"
-      AC_MSG_WARN([Future versions of DUMB won't support your version of GGI.])
-      AC_MSG_WARN([Please upgrade to the Degas release.])],
-      [AC_MSG_WARN([Your version of GGI is not supported; upgrade to the latest Degas!])
-      AC_MSG_WARN([Program \`ggidumb' will not be built])])])],
-  [AC_MSG_WARN([GGI not found; program \`ggidumb' will not be built])])
-AC_SUBST(DUMB_GGI_SOURCES)
+  [DUMB_CHECK_IFDEF([ggi/ggi.h], [GII_KT_LATIN1],
+    [DUMB_GGI_SOURCES="ggi_renoir_video.c"],
+    [AC_MSG_WARN([LibGGI must be at least version 2.0b2 (Renoir)])
+    AC_MSG_WARN([Program \`ggidumb' will not be built])])],
+  [AC_MSG_WARN([LibGGI not found; program \`ggidumb' will not be built])])
+dnl AC_SUBST(DUMB_GGI_SOURCES)
 AM_CONDITIONAL(DUMB_CONFIG_GGI, [test -n "$DUMB_GGI_SOURCES"])
 
 dnl --- SVGAlib.
@@ -234,6 +219,10 @@ AC_TYPE_SIGNAL
 AC_FUNC_VPRINTF
 DUMB_MSG_REQUIRE_YES(ac_cv_func_vprintf, [vprintf()])
 AC_CHECK_FUNCS(strdup strstr fork setitimer)
+dnl sparc-sun-solaris2.5.1 keeps towlower() etc. in libw.so
+AC_SEARCH_LIBS(towlower, w, [],
+  [AC_MSG_ERROR([DUMB needs wide-character functions like towlower() and iswlower()])])
+AC_REPLACE_FUNCS(hstrerror snprintf strnlen)
 
 dnl --- Checks for system services.
 DUMB_SYS_SHMAT_RMID
@@ -308,7 +297,7 @@ fi],
 # look in the current directory again.  I could use `cd .. && pwd`
 # instead but then the script would look for the wad in the root
 # directory which is clearly wrong.
-for TESTWAD in $dumb_expanded_datadir/doom/doom*.wad \
+for testwad in $dumb_expanded_datadir/doom/doom*.wad \
 	$dumb_expanded_datadir/dumb/doom*.wad \
 	/usr/local/games/lib/doom/doom*.wad \
 	/usr/local/games/lib/doom2/doom*.wad \
@@ -326,13 +315,16 @@ for TESTWAD in $dumb_expanded_datadir/doom/doom*.wad \
 	$srcdir/doom*.wad \
 	`cd ..; pwd`/doom*.wad
 do
-  if test -f $TESTWAD; then
-    if echo $TESTWAD | grep 'doom4dum\.wad' >/dev/null; then
-      : # this isn't from Doom
-    else
-      DUMB_CONFIG_DOOM_WAD=$TESTWAD
-      break
-    fi
+  if test -f "$testwad"; then
+    case "$testwad" in
+      */doom4dum.wad)
+	# this isn't from Doom
+        ;;
+      *)
+	DUMB_CONFIG_DOOM_WAD="$testwad"
+	break
+	;;
+    esac
   fi
 done])
 if test -z "$DUMB_CONFIG_DOOM_WAD"; then
@@ -360,7 +352,7 @@ fi],
 [# Look for the WAD in some places it might be in.
 # I don't know if there's a Unix version of Heretic but I try anyway.
 # The `pwd` thing is explained in the Doom section above.
-for TESTWAD in $dumb_expanded_datadir/heretic/heretic*.wad \
+for testwad in $dumb_expanded_datadir/heretic/heretic*.wad \
 	$dumb_expanded_datadir/dumb/heretic*.wad \
 	/usr/local/games/lib/heretic/heretic*.wad \
 	/usr/local/games/heretic/heretic*.wad \
@@ -374,9 +366,9 @@ for TESTWAD in $dumb_expanded_datadir/heretic/heretic*.wad \
 	$srcdir/heretic*.wad \
 	`cd ..; pwd`/heretic*.wad
 do
-  if test -f $TESTWAD; then
+  if test -f "$testwad"; then
     # No need to test for htic4dum.wad.
-    DUMB_CONFIG_HERETIC_WAD=$TESTWAD
+    DUMB_CONFIG_HERETIC_WAD="$testwad"
     break
   fi
 done])
@@ -458,21 +450,21 @@ dnl Because only Unix and dummy networking are supported,
 dnl I left out the force/disable options.
 dumb_network=""
 AC_CHECK_HEADER(sys/socket.h,
-[# The system has socket.h.
-# We need these functions:
-#   socket()            -lsocket
-#   gethostbyname()     -lnsl
-# First check for them without anything special and then try extra libraries.
-dumb_network="unix"
-DUMB_NETWORK_LDADD=""
-DUMB_SCAN_LIBS(socket, socket,
-  [DUMB_NETWORK_LDADD="$DUMB_NETWORK_LDADD $library"],
-  [AC_MSG_WARN([you have socket.h but no socket()])
-   dumb_network=""])
-DUMB_SCAN_LIBS(gethostbyname, nsl,
-  [DUMB_NETWORK_LDADD="$DUMB_NETWORK_LDADD $library"],
-  [AC_MSG_WARN([you don't have gethostbyname()])
-   dumb_network=""])])
+  [dnl size_t would be logical, but sparc-sun-solaris2.5.1 really uses int.
+  DUMB_CHECK_TYPE([socklen_t], [int], [#include <sys/socket.h>])
+  dumb_network="unix"
+  # AC_SEARCH_LIBS puts the libraries in $LIBS but we want them in
+  # DUMB_NETWORK_LDADD.  This requires some extra work.
+  dumb_network_old_LIBS="$LIBS"
+  LIBS=""
+  AC_SEARCH_LIBS(socket, socket, [],
+    [AC_MSG_WARN([you have socket.h but no socket()])
+     dumb_network=""])
+  AC_SEARCH_LIBS(gethostbyname, nsl, [],
+    [AC_MSG_WARN([you don't have gethostbyname()])
+     dumb_network=""])])
+DUMB_NETWORK_LDADD="$LIBS"
+LIBS="$dumb_network_old_LIBS"
 AC_MSG_CHECKING(which network driver to use)
 if test -z "$dumb_network"; then
   dumb_network="dummy"
@@ -493,13 +485,13 @@ AC_OUTPUT(Makefile libmissing/Makefile libdumbutil/Makefile
   libdumbwad/Makefile libdumbworldb/Makefile libdumbrender/Makefile
   libdumb/Makefile dumb/Makefile xwad/Makefile ptcomp/Makefile
   tool/Makefile doom/Makefile htic/Makefile test/Makefile
-  docs/Makefile docs/dos/Makefile docs/maint/Makefile
-  docs/patches/Makefile intl/Makefile po/Makefile.in aux/Makefile)
+  docs/Makefile docs/dos/Makefile docs/dumb-pt-html/Makefile
+  docs/maint/Makefile docs/patches/Makefile intl/Makefile
+  po/Makefile.in scripts/Makefile)
 
 dnl Local Variables:
 dnl comment-start: "dnl "
 dnl comment-end: ""
 dnl comment-start-skip: "\\bdnl\\b\\s *"
-dnl compile-command: "autoconf"
 dnl info-lookup-mode: autoconf-mode
 dnl End:

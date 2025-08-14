@@ -4,8 +4,8 @@ EXTRA_DIST = .cvsignore
 
 noinst_LIBRARIES = libdumbwad.a
 
-libdumbwad_a_SOURCES = loadlump.c wadio.c wadwr.c \
- wadio.h wadstruct.h wadwr.h
+libdumbwad_a_SOURCES = loadlump.c wadio.c wadwr.c wadio.h wadstruct.h	\
+wadwr.h
 
 CC = $(CXX_HACK_CC)
 

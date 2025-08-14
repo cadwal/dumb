@@ -94,8 +94,7 @@ static void
 setwmstuff(XWadInstance *inst, int set)
 {
    char *argv[2] = {"XWad", NULL};
-   static char buf[64];
-   char *win_name = buf;
+   const char *win_name;
    XTextProperty w_name_prop, i_name_prop;
    XSizeHints size_hints;
    XClassHint class_hint = {"xwad", "XWad"};
@@ -103,28 +102,26 @@ setwmstuff(XWadInstance *inst, int set)
    int ctl_width, ctl_height;
    get_cset_size(inst->tchctls.cset, &ctl_width, &ctl_height);
 
-   /* FIXME: doing this piecewise is bad for internationalization */
    switch (inst->tch_type) {
-   case (TT_FLAT):
-      strcpy(buf, _("Flat"));
-      break;
-   case (TT_WALL):
-      strcpy(buf, _("Wall"));
-      break;
-   case (TT_SPRITE):
-      strcpy(buf, _("Sprite"));
-      break;
-   case (TT_PATCH):
-      strcpy(buf, _("Patch"));
-      break;
-   default:
-      strcpy(buf, "?\?\?");
-      break;
+      case (TT_FLAT):
+	 win_name = _("Flat Texture Browser");
+	 break;
+      case (TT_WALL):
+	 win_name = _("Wall Texture Browser");
+	 break;
+      case (TT_SPRITE):
+	 win_name = _("Sprite Texture Browser");
+	 break;
+      case (TT_PATCH):
+	 win_name = _("Patch Texture Browser");
+	 break;
+      default:
+	 abort();
    }
-   strcat(buf, _(" Texture Browser"));
 
-   XStringListToTextProperty(&win_name, 1, &w_name_prop);
-   XStringListToTextProperty(&win_name, 1, &i_name_prop);
+   /* Silly Xlib doesn't know about const.  */
+   XStringListToTextProperty((char **) &win_name, 1, &w_name_prop);
+   XStringListToTextProperty((char **) &win_name, 1, &i_name_prop);
 
    size_hints.flags = PMinSize;
    size_hints.width = size_hints.min_width = size_hints.max_width =

@@ -23,6 +23,7 @@
 #define WADSTRUCT_H
 
 #include "libdumbutil/endiantypes.h"
+#include "libdumbwad/wadio.h"	/* LUMPNAMELEN */
 
 /* wad structures don't get aligned: old GCCs might need a #pragma instead */
 /*#define PACKED __attribute__((packed)) */
@@ -49,7 +50,7 @@ typedef struct {
 typedef struct {
    LE_uint32 offset;
    LE_uint32 size;
-   char name[8];
+   char name[LUMPNAMELEN];
 } WadDirEntry;
 
 
@@ -116,7 +117,7 @@ typedef struct {
 #define MAXPATCHDS 64
 
 typedef struct {
-   char name[8];
+   char name[LUMPNAMELEN];
    LE_int32 dummy1;
    LE_int16 dx, dy;
    int dummy2;
@@ -198,9 +199,9 @@ typedef struct {
 
 typedef struct {
    LE_int16 xoffset, yoffset;
-   char utexture[8];
-   char ltexture[8];
-   char texture[8];
+   char utexture[LUMPNAMELEN];
+   char ltexture[LUMPNAMELEN];
+   char texture[LUMPNAMELEN];
    LE_int16 sector;
 } PACKED SideData;
 
@@ -216,8 +217,8 @@ typedef struct {
 
 typedef struct {
    LE_int16 floor, ceiling;
-   char ftexture[8];
-   char ctexture[8];
+   char ftexture[LUMPNAMELEN];
+   char ctexture[LUMPNAMELEN];
    LE_int16 light;
    LE_int16 type;
    LE_int16 tag;
@@ -271,19 +272,17 @@ typedef union {
    BlockMapHdr hdr;
    LE_int16 data[1];
 } BlockMap;
-
-#else
+#else  /* __cplusplus */
 typedef struct {
    LE_int16 data[1];
    BlockMapHdr &hdr() {
       return *(BlockMapHdr *) data;
-   } const BlockMapHdr &hdr() const {
-      return *(BlockMapHdr *) data;
+   }
+   const BlockMapHdr &hdr() const {
+      return *(const BlockMapHdr *) data;
    }
 } BlockMap;
-
-#endif
-
+#endif /* __cplusplus */
 
 /* blocklist(x,y) is at data+(x-minx)/BMBS+((y-miny)/BMBS)*numx
  * "each blocklist starts with a 0 and ends with a 0xffff" */

@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/net.h: Declarations for variables each network driver must provide.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,7 +39,7 @@ typedef struct {
 		    const void *pkt, size_t size);
    void (*slavecast) (const void *pkt, size_t size);
    void (*broadcast) (const void *pkt, size_t size);
-   void (*getmyhost) (char *buf, size_t len);
+   char *(*getmyhost) (void);
 } NetDriver;
 
 extern NetDriver netdriver[];

@@ -24,6 +24,17 @@
 
 #include "libdumbutil/log.h"	/* LOG_FATAL used in #define load_lump() */
 
+/* I grepped for "8" and replaced it with this where it seemed
+   appropriate.  But there are still null-terminated buffers which
+   have some other length like char[10].  Those should be changed to
+   [LUMPNAMELEN+1], but be careful not to break anything.
+
+   Also... we might some day check where this number is mandated by
+   Doom WADs, and make those use DOOM_LUMPNAMELEN or some such.  Then
+   we could increase the number elsewhere and see what happens.
+       - 1999-04-04 Kalle Niemitalo <tosi@stekt.oulu.fi> */
+#define LUMPNAMELEN 8
+
 void reset_wad(void);
 void init_iwad(const char *fname, const char *const *path);
 void init_pwad(const char *fname, const char *const *path);
@@ -52,8 +63,16 @@ LumpNum safe_lookup_lump(const char *name, const char *after, const char *before
 int get_lump_fd(LumpNum ln);
 unsigned int get_lump_ofs(LumpNum ln);
 unsigned int get_lump_len(LumpNum ln);
+char *get_lump_name(LumpNum ln, char buf[LUMPNAMELEN+1]);
+
+/* Return the filename of the WAD containing LN.  The pointer isn't
+   guaranteed to stay valid for long. */
+const char *get_lump_filename(LumpNum ln);
+
+/* If LN is mapped along with the WAD, return its address.  If this
+   returns NULL, the lump will have to be read with conventional
+   methods.  */
 const void *get_lump_map(LumpNum ln);
-char *get_lump_name(LumpNum ln, char *buf);
 
 int get_num_wads(void);
 int get_num_lumps(unsigned int wadnum);
@@ -64,7 +83,6 @@ void release_lump(LumpNum ln);
 void free_lump(LumpNum ln);
 /* free_lump is for when we don't think we'll be wanting this one again */
 void free_all_lumps(void);
-void free_dead_lumps(void);
 
 #endif
 

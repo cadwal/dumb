@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/draw.h: Drawing on the framebuffer without scaling.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,6 +24,7 @@
 #define DRAW_H
 
 #include "libdumb/texture.h"
+#include "libdumb/font.h"
 
 void init_draw(int width, int height, int bpp, int real_width);
 
@@ -31,8 +33,12 @@ void draw_outline(void *framebuf, Texture *t, int x, int y);
 
 void draw_center(void *fb, Texture *t);
 
-void drawtext(void *fb, const char *text, int len, int font, int x, int y);
-void drawstr(void *fb, const char *text, int font, int x, int y);
+void draw_utf8_text(void *fb, const Font *, const char text[], size_t len,
+		    int x, int y);
+void draw_wc_text(void *fb, const Font *, const wchar_t text[], size_t len,
+		  int x, int y);
+void draw_utf8_str(void *fb, const Font *, const char *str,
+		   int x, int y);
 
 #endif /* DRAW_H */
 

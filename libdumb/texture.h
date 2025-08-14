@@ -38,13 +38,16 @@ typedef struct {
    TextureType type;
    LumpNum lumpnum;
    char opaque, alloced_texels;
-   char name[10];
+   char name[10];		/* FIXME: why 10? */
 } Texture;
 
 void free_texels(Texture *tex);
 void load_texels(Texture *tex, int bytesperpixel);
 
 #define cond_load_texels(t,bpp) if ((t)->texels==NULL) load_texels(t,bpp)
+
+/* needed by font.c */
+void guess_sprite_size(Texture *tex);
 
 Texture *get_flat_texture(const char *name);
 Texture *get_sprite_texture(const char *name);
@@ -54,9 +57,6 @@ Texture *get_wall_texture(const char *name);
 int get_texture_num(TextureType tt, const char *name);
 Texture *get_texture_bynum(TextureType tt, int num);
 int count_textures(TextureType tt);
-
-int init_font(const char *fmt, int nchars, int firstchar);
-Texture *get_font_texture(int fontnum, unsigned char ch);
 
 Texture *get_misc_texture(const char *tname);
 

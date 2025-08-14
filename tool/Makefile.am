@@ -14,12 +14,18 @@ else
 ppm_bin_programs = 
 endif
 
-bin_PROGRAMS = wadtool mknulmap mkpnames $(ppm_bin_programs)
+if DUMB_CONFIG_LIBPNG
+png_bin_programs = pngtodumb
+else
+png_bin_programs =
+endif
+
+bin_PROGRAMS = wadtool mknulmap mkpnames $(ppm_bin_programs) $(png_bin_programs)
 noinst_PROGRAMS = $(x_noinst_programs)
 
 x_ldadd = $(X_PRE_LIBS) -lX11 $(X_EXTRA_LIBS)
-
 ppm_ldadd = @DUMB_PPM_LDADD@
+png_ldadd = -lpng
 
 # DUMB libraries are in the build tree, so don't use $(srcdir).
 LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a			\
@@ -30,6 +36,8 @@ mkdfnt_LDADD = $(LDADD) $(x_ldadd)
 ppmtodumb_LDADD = $(LDADD) $(ppm_ldadd)
 
 dark2trans_LDADD = $(LDADD) $(ppm_ldadd)
+
+pngtodumb_LDADD = $(LDADD) $(png_ldadd)
 
 CC = $(CXX_HACK_CC)
 

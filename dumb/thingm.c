@@ -272,21 +272,11 @@ do_strategy(const LevData *ld, int th)
       };
       /* if they're in our sights, fight or shoot */
       if (t < CLOSE_ENOUGH_ARC / 2 || t > FIXED_2PI - CLOSE_ENOUGH_ARC / 2) {
-	 if (reject_thing_thing(ld, th, td->target));
+	 if (reject_thing_thing(ld, th, td->target))
+	    ;
 	 else if (td->proto->signals[TS_FIGHT] >= 0 && d2 <= attd2)
 	    thing_send_sig(ld, th, TS_FIGHT);
-	 else if (!thing_can_shoot_at(ld, th, td->target));
-#if 0 /* make all monsters nasty, they need it if they're going to dodge */
-	 else if (td->proto->flags & PT_FAST_SHOOTER)
-	    thing_send_sig(ld, th, TS_SHOOT);
-	 /* if we're just standing there, attack more often */
-	 else if ((d2 <= attd2) && (!rand() & 3))
-	    thing_send_sig(ld, th, TS_SHOOT);
-	 /* sometimes just shoot anyway */
-	 else if (!(rand() & 3))
-	    thing_send_sig(ld, th, TS_SHOOT);
-#endif
-	 else
+	 else if (thing_can_shoot_at(ld, th, td->target))
 	    thing_send_sig(ld, th, TS_SHOOT);
       }
       /* if we're in their sights, dodge, unless,
@@ -297,7 +287,7 @@ do_strategy(const LevData *ld, int th)
       /*if ((ld->map_ticks-td->last_hit_wall)<1000/MSEC_PER_TICK) 
 	 logprintf(LOG_DEBUG,'O',"dodge for %d inhibited by impassible wall",
 	 th);*/
-      if (!(td->proto->flags & PT_FAST_SHOOTER) 
+      if (!(td->proto->flags & PT_NASTY) 
 	  && !((ld->map_ticks-td->last_hit_wall)<1000/MSEC_PER_TICK)
 	  && !(td->proto->signals[TS_FIGHT] >= 0 && d2 <= attd2)
 	  && (t2 < DODGE_ARC / 2 || t2 > FIXED_2PI - DODGE_ARC / 2)) 
@@ -558,7 +548,7 @@ do_melee_damage(const LevData *ld, int th, fixed knockback)
    /* actually do the damage */
    thing_take_damage(ld, td->target, td->proto->damage);
    /* perhaps turn my owner (as with DOOM chainsaw) */
-   if (td->proto->flags & PT_TURNWHENHITTING) {
+   if (td->proto->flags & PT_TURN_OWNER) {
       /* FIXME: Turn this bogothing and all others as well... */
       ldthingd(ld)[myowner].angle
 	  = fix_vec2angle(ttd->x - ldthingd(ld)[myowner].x,
@@ -610,8 +600,8 @@ do_shoot(LevData *ld, int th)
    /* figure out angle to target */
    thing_autoaim(ld, th, ldthingd(ld)[th].proto->aim_arc, &angle, &elev);
    /* do it */
-   /* FIXME: should check PT_TURNWHENHITTING here?
-    * no such weapon yet, though */
+   /* TODO: should check PT_TURN_OWNER here?
+      no such weapon yet, though */
    if (td->proto->flags & PT_SHOOTER)
       thing_shoot(ld, th, td->proto->spawn1, angle, elev,
 		  td->proto->shootarc_h, td->proto->shootarc_v,

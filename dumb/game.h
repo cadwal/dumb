@@ -27,7 +27,7 @@
 /* mostly what's declared here gets defined in dumb.c
    it will be moved to game.c when the main loop gets tidied up */
 
-void game_message(int player, const char *fmt,...)
+void game_utf8_message(int player, const char *fmt,...)
      __attribute__((format(printf, 2, 3)));
 
 void game_want_newlvl(int secret);

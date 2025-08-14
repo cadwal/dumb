@@ -26,7 +26,6 @@
 #include "render.h"
 #include "fbrerend.h"
 
-#ifdef DUMB_CONFIG_8BPP
 void *
 fbrerender8(Pixel8 *fb,
 	    Pixel8 *rendfb,
@@ -108,10 +107,7 @@ fbrerender8(Pixel8 *fb,
       return retfb;
    }
 }
-#endif
 
-
-#ifdef DUMB_CONFIG_16BPP
 /* This is UNTESTED /Marcus */
 void *
 fbrerender16(Pixel16 *fb,
@@ -185,10 +181,7 @@ fbrerender16(Pixel16 *fb,
       return retfb;
    }
 }
-#endif
 
-
-#ifdef DUMB_CONFIG_32BPP
 /* This is UNTESTED /Marcus */
 void *
 fbrerender32(Pixel32 *fb,
@@ -261,7 +254,6 @@ fbrerender32(Pixel32 *fb,
       return retfb;
    }
 }
-#endif
 
 // Local Variables:
 // c-basic-offset: 3

@@ -1,9 +1,96 @@
-
-/**
- **  Weapons
- **/
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * htic/weapons.pt: Weapons.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
 
 /* weapon bogothings */
+
+PhaseTable HeldStaff
+  Default Duration 100msec
+  Phase IDLE  "A" Goto IDLE
+  Phase HIT   "B" NoSigs SigShoot
+  Phase -     "C" NoSigs Melee /* Sound FIXME */
+  Phase -     "B" Goto IDLE
+
+PhaseTable HeldPoweredStaff
+  Default Duration 100msec
+  Phase IDLE  "D"
+  Phase -     "E"
+  Phase -     "F" Goto IDLE
+  Phase HIT   "G" NoSigs SigShoot
+  Phase -     "H" NoSigs Melee /* Sound FIXME */
+  Phase -     "G" Goto IDLE
+
+Proto HeldStaff
+  Sprite "STFF"
+  Size 32 56
+  Bogus
+  Damage 5
+  AimArc 10deg
+
+Proto HeldPoweredStaff
+  Sprite "STFF"
+  Size 32 56
+  Bogus
+  Damage 10
+  AimArc 10deg
+
+PhaseTable HeldGauntlets
+  Default Duration 100msec
+  Phase IDLE    "A" Goto IDLE
+  /* Actually we want SigShoot to move to PREPARE if coming from IDLE.
+     Any suggestions how to extend the state machine for that?  */
+  Phase PREPARE "B" NoSigs 
+  Phase -       "C" NoSigs
+  Phase MELEE   "D" NoSigs Melee SigShoot
+  Phase -       "E" NoSigs Melee
+  Phase -       "F" NoSigs Melee
+  Phase -       "E" Sigs Goto IDLE
+
+PhaseTable HeldPoweredGauntlets
+  Default Duration 100msec
+  Phase IDLE    "G"
+  Phase -       "H"
+  Phase -       "I" Goto IDLE
+  Phase PREPARE "J" NoSigs
+  Phase -       "K" NoSigs
+  Phase MELEE   "L" NoSigs Melee SigShoot
+  Phase -       "M" NoSigs Melee
+  Phase -       "N" NoSigs Melee
+  Phase -       "M" Sigs Goto IDLE
+
+Proto HeldGauntlets
+  Sprite "GAUN"
+  Size 32 56
+  Bogus
+  Damage 3
+  TurnOwner
+  AimArc 15deg
+
+Proto HeldPoweredGauntlets
+  Sprite "GAUN"
+  Size 80 80  /* note much larger */
+  Bogus
+  Damage 10
+  TurnOwner
+  AimArc 45deg
 
 PhaseTable HeldWand
   Default Duration 100msec
@@ -60,50 +147,50 @@ Proto HeldClaw
   Shoots ClawZap
   AimArc pi/12
 
-
+
 /* Weapon gettables */
+
+Gettable Staff
+  Initial 1
+  DefaultMaximum 1
+  WepSel
+  WeaponNumber 1
+  BogoType HeldStaff
+  PoweredBogoType HeldPoweredStaff
+
+Gettable Gauntlets
+  Initial 0
+  DefaultMaximum 1
+  WepSel
+  WeaponNumber 1
+  BogoType HeldGauntlets
+  PoweredBogoType HeldPoweredGauntlets
+  UseSound GNTUSE
 
 Gettable Wand
   Initial 1
   DefaultMaximum 1
   WepSel
+  WeaponNumber 2
   BogoType HeldWand
   Ammo WandCrystals 1
 
 Gettable Crossbow
   DefaultMaximum 1
   WepSel
+  WeaponNumber 3
   BogoType HeldCrossbow
   Ammo EtherealArrows 1
 
 Gettable DragonClaw
   DefaultMaximum 1
   WepSel
+  WeaponNumber 4
   BogoType HeldClaw
   Ammo ClawOrbs 1
 
-Gettable Gauntlets
-  DefaultMaximum 1
-  WepSel
-  /* Melee */
-  /* Sound GNTUSE */
-
-
-Proto Crossbow 2001
-  Sprite "WBOW"
-  Phases Mundane
-  Size 16 48
-  StickToFloor
-  Gets Crossbow 1
-  PickupSound WPNUP
-
-Proto DragonClaw 53
-  Sprite "WBLS"
-  Phases Mundane
-  Size 16 48
-  StickToFloor
-  Gets DragonClaw 1
-  PickupSound WPNUP
+
+/* Weapon protothings */
 
 Proto Gauntlets 2005
   Sprite "WGNT"
@@ -112,3 +199,24 @@ Proto Gauntlets 2005
   StickToFloor
   Gets Gauntlets 1
   PickupSound WPNUP
+  PickupMessage N_("gauntlets of the necromancer")
+
+Proto Crossbow 2001
+  Sprite "WBOW"
+  Phases Mundane
+  Size 16 48
+  StickToFloor
+  Gets Crossbow 1
+  Gets EtherealArrows 10
+  PickupSound WPNUP
+  PickupMessage N_("ethereal crossbow")
+
+Proto DragonClaw 53
+  Sprite "WBLS"
+  Phases Mundane
+  Size 16 48
+  StickToFloor
+  Gets DragonClaw 1
+  /* Gets ClawOrbs FIXME */
+  PickupSound WPNUP
+  PickupMessage N_("dragon claw")

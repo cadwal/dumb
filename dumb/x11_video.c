@@ -489,7 +489,7 @@ video_winstuff(const char *desc, int xdim, int ydim)
 {
    /* FIXME */
    char *argv[2] = {"dumb", NULL};
-   static char buf[32];
+   static char buf[32];		/* FIXME: arbitrary limit */
    char *win_name = buf;
    XTextProperty w_name_prop, i_name_prop;
    XSizeHints size_hints;
@@ -550,7 +550,7 @@ get_input(PlayerInput *in)
 	 handle_crossingevent(&event.xcrossing);
 	 break;
       default:
-	 logprintf(LOG_ERROR, 'I', _("Got some weird event type: %d"),
+	 logprintf(LOG_WARNING, 'I', _("Got some weird event type: %d"),
 		   event.type);
       }
    }

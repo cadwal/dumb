@@ -1,7 +1,23 @@
-
-/**
- **  Missiles and Miscellany
- **/
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * doom/missiles.pt: Missiles and Miscellany.
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
 
 
 #define GlowRate  200msec
@@ -32,7 +48,7 @@ Proto ImpFireBall 8004
   Explosive EnergyBall ZCenter BulletProof EnergyProof
   NoHurtOwner
   Mass 0
-  Speed 64
+  Speed 6400/sec
 
 Proto CacoFireBall 8005
   Sprite "BAL2"
@@ -42,7 +58,7 @@ Proto CacoFireBall 8005
   Explosive EnergyBall ZCenter BulletProof EnergyProof
   NoHurtOwner
   Mass 0
-  Speed 96
+  Speed 9600/sec
 
 Proto BaronFireBall 8006
   Sprite "BAL7"
@@ -52,7 +68,7 @@ Proto BaronFireBall 8006
   Explosive EnergyBall ZCenter BulletProof EnergyProof
   NoHurtOwner
   Mass 0
-  Speed 48
+  Speed 4800/sec
 
 
 /* A "classic" rocket design */
@@ -75,7 +91,7 @@ Proto ClassicMissile 8016
   Damage 25 Hits 1
   Mass 0
   Explosive ZCenter
-  Speed 100
+  Speed 5000/sec
 
 
 /* Josh's "smoky heatseeking rocket" */
@@ -114,7 +130,7 @@ Proto Missile 8001
   Mass 0
   Explosive ZCenter
   Spawn2 Smoke
-  Speed 100
+  Speed 5000/sec
 
 
 PhaseTable SkelFireBall
@@ -138,7 +154,7 @@ Proto SkelFireBall 8002
   Size 18 18
   Explosive EnergyBall ZCenter BulletProof EnergyProof
   Mass 0
-  Speed 64
+  Speed 6400/sec
 
 PhaseTable MancFireBall
   Default Duration GlowRate
@@ -162,7 +178,7 @@ Proto MancFireBall 8007
   Explosive EnergyBall ZCenter BulletProof EnergyProof
   NoHurtOwner
   Mass 0
-  Speed 80
+  Speed 8000/sec
 
 
 PhaseTable AracFireBall
@@ -189,7 +205,7 @@ Proto AracFireBall 8068
   Explosive EnergyBall ZCenter BulletProof EnergyProof
   NoHurtOwner
   Mass 0
-  Speed 100
+  Speed 10000/sec
 
 
 PhaseTable PlasmaBall
@@ -214,7 +230,7 @@ Proto PlasmaBall 8204
   Size 12 12
   Explosive EnergyBall ZCenter BulletProof EnergyProof
   Mass 0
-  Speed 100
+  Speed 10000/sec
 
 
 PhaseTable BFGBall
@@ -241,7 +257,7 @@ Proto BFGBall 8206
   Size 15 15
   Explosive EnergyBall ZCenter BulletProof EnergyProof
   Mass 0
-  Speed 40
+  Speed 4000/sec
 
 
 PhaseTable Bullet
@@ -254,8 +270,8 @@ PhaseTable Bullet
 Proto Bullet 9001
   Sprite "PUFF"
   Mass 1000 YMoveOnly
-  Phantom BulletKludge BulletAttack ZCenter
-  FloatsUp Speed 10
+  Phantom BecomesBlood BulletAttack ZCenter
+  FloatsUp Speed 500/sec
   Damage 1
 
 
@@ -319,5 +335,3 @@ Proto VileFire 8064
 
 #undef EnergyBall
 #undef EnergyProof
-
-

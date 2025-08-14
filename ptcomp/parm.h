@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * ptcomp/parm.h: Reading parameters of simple types.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +44,10 @@ const char *parm_name(const char *errmsg);
 int parm_keyword_opt(const char *keyword);
 
 char parm_ch(void);
-int parm_num(void);
+int parm_int(void);
+int parm_int_opt(int def);
+unsigned int parm_uint(void);
+unsigned long parm_ulong(void);
 double parm_dbl(void);
 int parm_time(void);
 int parm_speed(void);
@@ -53,6 +57,7 @@ fixed parm_arc_opt(fixed def);
 extern fixed default_speed;
 
 void change_time_units(void);
+void change_speed_units(void);
 void change_default_speed(void);
 
 #endif

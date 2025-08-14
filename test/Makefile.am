@@ -3,7 +3,7 @@
 EXTRA_DIST = .cvsignore
 
 if DUMB_CONFIG_LDWB
-ldwb_programs = ldltest
+ldwb_programs = dwdbtest
 else
 ldwb_programs = 
 endif
@@ -17,7 +17,7 @@ fixed_bm_LDADD = $(LDADD)
 
 # DUMB libraries are in the build tree, so don't use $(srcdir).
 # FIXME: libdumb.a and libdumbworldb.a currently refer to each other.
-ldltest_LDADD = ../libdumb/libdumb.a ../libdumbworldb/libdumbworldb.a	\
+dwdbtest_LDADD = ../libdumb/libdumb.a ../libdumbworldb/libdumbworldb.a	\
 ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a $(LDADD)
 
 # libintl.h is generated in the build tree.

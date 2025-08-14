@@ -1,8 +1,8 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * test/fixed_bm.c: Benchmark for fixed-point arithmetic.
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
- * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,7 +144,7 @@ main(int argc, char **argv)
 	 break;			/* end of options */
       switch (c) {
       case 's':			/* -s, --seed=INTEGER */
-	 srandom(parse_int(optarg));
+	 srand(parse_int(optarg));
 	 break;
       case 'h':			/*     --help */
 	 printf(_("Usage: %s [--seed=INTEGER]\n"
@@ -190,14 +190,14 @@ main(int argc, char **argv)
    i = 0;
    rtimer();
    while (loop) {
-      int n = random() + random();
+      int n = rand() + rand();
       i++;
    }
    printf(_("  Fixed: %d"), i);
    i = 0;
    rtimer();
    while (loop) {
-      float f = FIXED_TO_FLOAT(random()) + FIXED_TO_FLOAT(random());
+      float f = FIXED_TO_FLOAT(rand()) + FIXED_TO_FLOAT(rand());
       i++;
    }
    printf(_("  Float: %d"), i);
@@ -206,14 +206,14 @@ main(int argc, char **argv)
    i = 0;
    rtimer();
    while (loop) {
-      int n = fixmul(random(), random());
+      int n = fixmul(rand(), rand());
       i++;
    }
    printf(_("  Fixed: %d"), i);
    i = 0;
    rtimer();
    while (loop) {
-      float f = fltmul(random(), random());
+      float f = fltmul(rand(), rand());
       i++;
    }
    printf(_("  Float: %d"), i);
@@ -222,7 +222,7 @@ main(int argc, char **argv)
    i = 0;
    rtimer();
    while (loop) {
-      fixed a = random() & 0xffffff;
+      fixed a = rand() & 0xffffff; /* FIXME: if RAND_MAX<0xFFFFFF */
       int n = fixdiv(a, a + FIXED_ONE);
       i++;
    }
@@ -230,7 +230,7 @@ main(int argc, char **argv)
    i = 0;
    rtimer();
    while (loop) {
-      fixed a = random() & 0xffffff;
+      fixed a = rand() & 0xffffff;
       float f = fltdiv(a, a + FIXED_ONE);
       i++;
    }

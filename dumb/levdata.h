@@ -46,7 +46,7 @@ typedef DYN_ENCODE_FUNC(*DynEncodeFuncPtr);
 typedef DYN_DECODE_FUNC(*DynDecodeFuncPtr);
 
 typedef struct {
-   char lumpname[10];
+   char lumpname[10];		/* FIXME: why 10? */
    size_t lumpgrain, dyngrain, lumpalign;
    DynInitFuncPtr dyninit;
    int dynextra;
@@ -107,7 +107,7 @@ typedef struct {
 #define MAXEVENTS 64
 
 typedef struct _LevData {
-   char name[12];
+   char name[12];		/* FIXME: why 12? */
    LumpNum lumpnum[ML_NTYPES];
    int count[ML_NTYPES];
    const void *lump[ML_NTYPES];

@@ -2,6 +2,7 @@
  *
  * libdumb/protoinwad.c: Encoding and decoding ProtoThings in WAD.
  * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,24 +20,31 @@
  * Boston, MA 02111, USA.
  */
 
+/* This enables the strnlen() prototype in glibc2 <string.h>.  If
+   there's no strnlen() in libc, HAVE_STRNLEN is undefined and the
+   definition in ../libmissing/ is used.  */
+#define _GNU_SOURCE
+
 #include <config.h>
 
 #include <string.h>
 
 #include "libdumbutil/dumb-nls.h"
 
+#include "libmissing/libmissing.h"
 #include "libdumbutil/align.h"
 #include "libdumbutil/log.h"
 #include "libdumbutil/safem.h"
 #include "protoinwad.h"
+#include "gettableinwad.h"	/* encoder/decoder for Gets */
 
 static char *protoinwad_strdup(const ProtoThing_inwad *src, int ofs);
 
 
 /* The PROTOS lump consists of blocks of varying length.  Each block
    begins with a header which says how long the block is, including
-   the header.  When DUMB starts up, it scans the lump and makes a
-   list of the blocks' locations.
+   the header.  When DUMB starts up, it reads the blocks and converts
+   them to the internal format defined in prothingstruct.h.
 
    Each block can also contain other information referred to by the
    header.  The location of each such piece of information is saved as
@@ -48,12 +56,6 @@ static char *protoinwad_strdup(const ProtoThing_inwad *src, int ofs);
 
    Strings are null-terminated.  If the offset is zero, it means the
    string is undefined.  */
-
-typedef struct {
-   LE_int16 artitype;		/* type of gettable to give */
-   LE_int16 artinum;		/* how many to give */
-   LE_int16 artimax;		/* how many the player can have, 0=default */
-} ProtoThing_inwad_Gets;
 
 /* the typedef was already in protoinwad.h */
 struct ProtoThing_inwad {
@@ -79,7 +81,7 @@ struct ProtoThing_inwad {
       to pick this up.  */
    LE_int16 pickup_sound;
    LE_int16 ngets;		/* how many gettables this will give */
-   LE_int16 getsofs;	/* where the ProtoThing_inwad_Gets list begins */
+   LE_int16 getsofs;		/* where the Gets_inwad list begins */
    LE_int16 firstpickupmsgofs;	/* "Suddenly you can't see yourself." */
    LE_int16 pickupmsgofs;	/* "You found another backpack." */
    LE_int16 ignoremsgofs;	/* "You can't carry any more ammo." */
@@ -87,6 +89,7 @@ struct ProtoThing_inwad {
 
 
 /* Decode */
+
 int
 is_protoinwad(const ProtoThing_inwad *data, size_t length)
 {
@@ -143,19 +146,9 @@ decode_protoinwad(ProtoThing *dest, const ProtoThing_inwad *src)
       dest->signals[i] = src->signals[i];
    strncpy(dest->sprite, src->sprite, sizeof(dest->sprite));
    dest->ngets = src->ngets;
-   if (dest->ngets != 0) {
-      const ProtoThing_inwad_Gets *srcgets = (const ProtoThing_inwad_Gets *)
-	 (((const char *) src) + src->getsofs);
-      ProtoThing_Gets *destgets = (ProtoThing_Gets *)
-	 safe_malloc(dest->ngets * sizeof(ProtoThing_Gets));
-      for (i = 0; i < dest->ngets; i++) {
-	 destgets[i].artitype = srcgets[i].artitype;
-	 destgets[i].artinum  = srcgets[i].artinum;
-	 destgets[i].artimax  = srcgets[i].artimax;
-      }
-      dest->gets = destgets;
-   } else
-      dest->gets = NULL;
+   dest->gets  = decode_getsinwad_array((const Gets_inwad *)
+					(((const char *) src) + src->getsofs),
+					src->ngets);
    dest->firstpickupmsg = protoinwad_strdup(src, src->firstpickupmsgofs);
    dest->pickupmsg      = protoinwad_strdup(src, src->pickupmsgofs);
    dest->ignoremsg      = protoinwad_strdup(src, src->ignoremsgofs);
@@ -193,8 +186,18 @@ protoinwad_strdup(const ProtoThing_inwad *src, int ofs)
 {
    if (ofs == 0)
       return NULL;
-   else
-      return safe_strdup(((const char *) src) + ofs);
+   else {
+      const char *str = ((const char *) src) + ofs;
+      size_t maxbytes = src->block_length - ofs;
+      /* If BLOCK_LENGTH is 3 and OFS is 1, the string can span at
+         most 2 bytes so MAXBYTES is 2.  But the length of the string
+         must be less, since '\0' needs one byte.  */
+      if (strnlen(str, maxbytes) == maxbytes) {
+	 logprintf(LOG_ERROR, 'O', _("Unterminated string in PROTOS lump"));
+	 return NULL;
+      } else
+	 return safe_strdup(str);
+   }
 }
 
 
@@ -206,15 +209,18 @@ encode_protoinwad(const ProtoThing *src, size_t *lengthp)
    ProtoThing_inwad *dest;
    size_t length = sizeof(ProtoThing_inwad);
    size_t getsofs = 0;
+   size_t getsinwad_len;
+   Gets_inwad *getsinwad = encode_getsinwad_array(src->gets, src->ngets,
+						  &getsinwad_len);
    size_t firstpickupmsgofs = 0;
    size_t pickupmsgofs = 0;
    size_t ignoremsgofs = 0;
    int i;
    /* compute locations of parts and increment length as needed */
-   if (src->ngets > 0) {
+   if (getsinwad != NULL) {
       /* align the structure nicely */
-      getsofs = ALIGN(length, ALIGN_PROTOTHING_GETS);
-      length = getsofs + src->ngets * sizeof(ProtoThing_inwad_Gets);
+      getsofs = ALIGN(length, ALIGN_GETS);
+      length = getsofs + getsinwad_len;
    }
    if (src->firstpickupmsg != NULL) {
       /* strings don't need alignment */
@@ -233,7 +239,7 @@ encode_protoinwad(const ProtoThing *src, size_t *lengthp)
    /* now allocate.  clear the area so the WAD looks neater and compresses better */
    dest = (ProtoThing_inwad *) safe_calloc(length, 1);
    dest->block_length = length;
-   /* commit copying */
+   /* commence copying */
    dest->id         = src->id;
    dest->hits       = src->hits;
    dest->damage     = src->damage;
@@ -262,14 +268,9 @@ encode_protoinwad(const ProtoThing *src, size_t *lengthp)
    /* then the hard part */
    dest->ngets = src->ngets;
    dest->getsofs = getsofs;
-   if (getsofs != 0) {
-      ProtoThing_inwad_Gets *iwg = (ProtoThing_inwad_Gets *)
-	 (((char *) dest) + getsofs);
-      for (i = 0; i < src->ngets; i++) {
-	 iwg[i].artitype = src->gets[i].artitype;
-	 iwg[i].artinum  = src->gets[i].artinum;
-	 iwg[i].artimax  = src->gets[i].artimax;
-      }
+   if (getsinwad != NULL) {
+      memcpy(((char *) dest) + getsofs, getsinwad, getsinwad_len);
+      safe_free(getsinwad);
    }
    dest->firstpickupmsgofs = firstpickupmsgofs;
    if (firstpickupmsgofs != 0)

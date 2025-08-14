@@ -1,6 +1,7 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * dumb/unix_net.c: Unix network driver.
+ * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,18 +20,14 @@
  * USA.
  */
 
-/* FIXME: Use strerror(errno) in error messages.  And check which
- * places must use h_errno instead.  */
-
 #include <config.h>
 
-#include <stdarg.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 #include <unistd.h>
-#include <fcntl.h>
 
 #include <sys/time.h>
 #include <sys/types.h>
@@ -42,12 +39,19 @@
 
 #include "libdumbutil/dumb-nls.h"
 
+#include "libmissing/libmissing.h" /* hstrerror() */
 #include "libdumbutil/log.h"
 #include "libdumbutil/safem.h"
 #include "netplay.h"
 #include "net.h"
 
 #define UDP_STATISTICS
+
+/* glibc-2.1 documentation says the second parameter of recvfrom() is
+   (void *).  But on sparc-sun-solaris2.5.1, it is (char *).  So we
+   cast such pointers to (SocketDataPtr), and glibc systems will
+   implicitly cast that to (void *).  */
+typedef char *SocketDataPtr;
 
 ConfItem net_conf[] =
 {
@@ -81,7 +85,6 @@ int
 udp_init_station(RemoteStation *rs)
 {
    struct hostent *he;
-   struct sockaddr_in *sin;
    char *bare_name;		/* without ":port" */
    int port;
    char *colon;
@@ -115,10 +118,9 @@ udp_init_station(RemoteStation *rs)
    }
    he = gethostbyname(bare_name);
    if (he == NULL) {
-      /* FIXME: h_errno? */
       logprintf(LOG_ERROR, 'N',
-		_("gethostbyname() failed for '%s': errno=%d"),
-		rs->name, errno);
+		_("gethostbyname() failed for '%s': %s"),
+		rs->name, hstrerror(h_errno));
       free(bare_name);
       return -1;
    }
@@ -129,11 +131,15 @@ udp_init_station(RemoteStation *rs)
 	     (unsigned char) he->h_addr[2],
 	     (unsigned char) he->h_addr[3],
 	     port);
-   sin = (struct sockaddr_in *)
-      (rs->addr = safe_malloc(rs->addrlen = sizeof(struct sockaddr_in)));
-   sin->sin_family = AF_INET;
-   sin->sin_port = htons((unsigned short) port);
-   memcpy(&sin->sin_addr, he->h_addr, sizeof(struct in_addr));
+   {
+      struct sockaddr_in *sin = (struct sockaddr_in *)
+	 safe_malloc(rs->addrlen = sizeof(struct sockaddr_in));
+      sin->sin_family = AF_INET;
+      sin->sin_port = htons((unsigned short) port);
+      memcpy(&sin->sin_addr, he->h_addr, sizeof(struct in_addr));
+      rs->addr = sin;
+   }
+   free(bare_name);
    return 0;
 }
 
@@ -147,27 +153,27 @@ udp_reset_station(RemoteStation *rs)
 }
 
 const unsigned char *
-udp_recpkt(size_t * len, int *station)
+udp_recpkt(size_t *len, int *station)
 {
    union {
       struct sockaddr sa;
       struct sockaddr_in sin;
    } sia;
-   size_t sialen = sizeof(sia);
+   socklen_t sialen = sizeof(sia); /* socklen_t is from Unix98 */
    int r, i;
    *len = 0;
    *station = -1;
-   /* FIXME: Is the signedness right?  What does POSIX say?  */
-   r = recvfrom(sock, netbuf, NETBUF_LEN, 0, &sia.sa, &sialen);
+   r = recvfrom(sock, (SocketDataPtr) netbuf, NETBUF_LEN, 0,
+		&sia.sa, &sialen);
    if (r == -1) {
       if (errno == EWOULDBLOCK);	/* nothing to receive */
       else if (errno == ECONNREFUSED);	/* one of the stations we're talking
 					   to isn't listening.  Since there's
 					   no way to work out which, we just
 					   muddle on */
-      else			/* FIXME: h_errno? */
-	 logprintf(LOG_ERROR, 'N', _("error (%d) in recvfrom sock=%d"),
-		   errno, sock);
+      else
+	 logprintf(LOG_ERROR, 'N', _("recvfrom(sock=%d, ...): %s"),
+		   sock, strerror(errno));
       return NULL;
    }
    /* now find the originating station */
@@ -237,15 +243,15 @@ udp_waitpkt(int msec)
    int sialen = sizeof(sia), r;
    /* set blocking mode */
    if (fcntl(sock, F_SETFL, 0) == -1)
-      logfatal('N', _("error %d blocking UDP socket"), errno);
+      logfatal('N', _("blocking UDP socket: %s"), strerror(errno));
    /* now peek at the socket */
    r = recvfrom(sock, netbuf, NETBUF_LEN, MSG_PEEK, &sia.sa, &sialen);
    if (r == -1)
-      logprintf(LOG_ERROR, 'N', _("error (%d) in peek recvfrom sock=%d"),
-		errno, sock);
+      logprintf(LOG_ERROR, 'N', _("peek recvfrom(sock=%d, ...): %s"),
+		sock, strerror(errno));
    /* unset blocking mode */
    if (fcntl(sock, F_SETFL, O_NONBLOCK) == -1)
-      logfatal('N', _("error %d unblocking UDP socket"), errno);
+      logfatal('N', _("unblocking UDP socket: %s"), strerror(errno));
    return 0;
 }
 #endif /* !HAVE_SELECT */
@@ -257,10 +263,10 @@ udp_sendpkt(RemoteStation *rs, const void *pkt, size_t len)
    pktcount++;
    bytecount += len;
 #endif
-   if (sendto(sock, pkt, len, 0,
+   if (sendto(sock, (SocketDataPtr) pkt, len, 0,
 	      (const struct sockaddr *) rs->addr, rs->addrlen) == -1)
-      logprintf(LOG_ERROR, 'N', _("error (%d) in sendto sock=%d"),
-		errno, sock);
+      logprintf(LOG_ERROR, 'N', _("sendto(sock=%d, ...): %s"),
+		sock, strerror(errno));
 }
 
 void
@@ -270,15 +276,32 @@ udp_castpkt(const void *pkt, size_t len)
    bpktcount++;
    bbytecount += len;
 #endif
-   if (sendto(sock, pkt, len, 0, &(bcast_sa.sa), sizeof(bcast_sa)) == -1)
-      logprintf(LOG_ERROR, 'N', _("error (%d) in broadcast sendto sock=%d"),
-		errno, sock);
+   if (sendto(sock, (SocketDataPtr) pkt, len, 0,
+	      &(bcast_sa.sa), sizeof(bcast_sa)) == -1)
+      logprintf(LOG_ERROR, 'N', _("broadcast sendto(sock=%d, ...): %s"),
+		sock, strerror(errno));
 }
 
-void
-unix_gethostname(char *name, size_t l)
+char *
+unix_gethostname(void)
 {
-   gethostname(name, l);
+   size_t size = 100;		/* expanded if necessary */
+   for (;;) {
+      char *name = (char *) safe_malloc(size);
+      /* On sparc-sun-solaris2.5.1, gethostname() doesn't seem to be
+         declared anywhere.  */
+      if (gethostname(name, size) == 0)
+	 return name;
+      else {
+	 int gethostname_errno = errno;
+	 free(name);
+	 if (gethostname_errno == ENAMETOOLONG)
+	    size *= 2;
+	 else
+	    logprintf(LOG_FATAL, 'N', _("gethostname: %s"),
+		      strerror(gethostname_errno));
+      }
+   }
 }
 
 void
@@ -297,15 +320,15 @@ udp_init(void)
    /* make socket */
    sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
    if (sock == -1)
-      logfatal('N', _("error %d creating UDP socket"), errno);
+      logfatal('N', _("creating UDP socket: %s"), strerror(errno));
    /* name it */
    memset(&sia, 0, sizeof(sia));
    sia.sin.sin_family = AF_INET;
    sia.sin.sin_port = htons((unsigned) cnf_udp_port);
    if (bind(sock, &sia.sa, sizeof(sia.sin)))
-      logfatal('N', _("error %d binding UDP socket"), errno);
+      logfatal('N', _("binding UDP socket: %s"), strerror(errno));
    if (fcntl(sock, F_SETFL, O_NONBLOCK) == -1)
-      logfatal('N', _("error %d unblocking UDP socket"), errno);
+      logfatal('N', _("unblocking UDP socket: %s"), strerror(errno));
    /* set up for broadcast */
 #ifndef NO_IP_BROADCAST
    if (cnf_broadcast) {
@@ -317,7 +340,7 @@ udp_init(void)
       if (setsockopt(sock, SOL_SOCKET, SO_BROADCAST,
 		     (const char *) &yes, sizeof(yes)))
 	 logprintf(LOG_ERROR, 'N',
-		_("udp: broadcast access denied (try running as root)"));
+		   _("udp: broadcast access denied (try running as root)"));
       else {
 	 /* fill in broadcast address */
 	 bcast_sa.sin.sin_family = AF_INET;

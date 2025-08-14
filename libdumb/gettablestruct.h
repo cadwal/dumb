@@ -1,6 +1,6 @@
 /* DUMB: A Doom-like 3D game engine.
  *
- * libdumb/gettablestruct.h: Format of GETTABLE lump.
+ * libdumb/gettablestruct.h: In-memory format of Gettables.
  * Copyright (C) 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
  *
@@ -23,40 +23,38 @@
 #ifndef GETTABLESTRUCT_H
 #define GETTABLESTRUCT_H
 
-#include "libdumbutil/endiantypes.h"
+#include "libdumbwad/wadio.h"	/* LUMPNAMELEN */
 
-/* The GETTABLE lump consists of blocks of varying length.  Each block
-   begins with a header which says how long the block is, including
-   the header.  When DUMB starts up, it scans the lump and makes a
-   list of the blocks' locations.
-
-   Each block can also contain other information referred to by the
-   header.  The location of each such piece of information is saved as
-   a byte count from the beginning of the block.  Thus the meaning of
-   a block does not depend on its position in the lump, and lumps can
-   be concatenated.
-
-   The length of each block should be a multiple of 8.  */
+/* The Gettables have different format in memory and in the WAD file.
+   DUMB converts them when it starts up.  The in-WAD format is defined
+   in gettableinwad.c -- nothing else should need it.  The in-memory
+   structure is defined below.  */
 
 typedef struct {
-   LE_int32 block_length;
-   LE_flags32 flags;
-   LE_int32 xo, yo;		/* IconPos <x:integer> <y:integer> */
-   LE_int16 initial;		/* Initial <integer> */
-   LE_int16 defaultmax;		/* DefaultMaximum <integer> */
-   LE_int16 backpackmax;	/* WithBackpack <integer>, or ==defaultmax */
-   LE_int16 key;
-   LE_int16 ammotype;  		/* Ammo <gettable> <integer> */
-   LE_int16 ammocount;
-   LE_int16 special;		/* see ../doom/dumbdefs.pt */
-   LE_int16 bogotype;
-   LE_int16 weaponnumber;	/* which key to press; 0=none, 1...10 */
-   LE_int16 replaceweapon;	/* gettable number to replace/disable */
-   LE_int16 decay;
-   char iconname[10];
-   char iconanim, _spare;
-   LE_int16 timing;
-   LE_int16 usesound;
+   int gtid;			/* Gettable ID */
+   int change;			/* >0 gives, <0 takes */
+   int maximum;			/* 0 means use default */
+} Gets;
+
+typedef struct {
+   unsigned flags;
+   int xo, yo;			/* IconPos <x:integer> <y:integer> */
+   int initial;			/* Initial <integer> */
+   int defaultmax;		/* DefaultMaximum <integer> */
+   int backpackmax;		/* WithBackPack <integer>, or ==defaultmax */
+   int key;
+   int ngets;			/* Ammo|Gets <gettable> <integer> */
+   Gets *gets;
+   int special;			/* see ../dumb/dumbdefs.pt */
+   int bogotype;
+   int powered_bogotype;
+   int weaponnumber;		/* (NYI) which key to press; 0=none, 1...10 */
+   int replaceweapon;		/* (NYI) gettable number to replace/disable */
+   int decay;
+   char iconname[LUMPNAMELEN+1];
+   char iconanim;
+   int timing;
+   int usesound;
 } Gettable;
 
 #define GK_XCENTERICON 0x0001

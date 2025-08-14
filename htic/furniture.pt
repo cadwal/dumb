@@ -1,7 +1,23 @@
-
-/**
- **  Furniture
- **/
+/* DUMB: A Doom-like 3D game engine.
+ *
+ * htic/furniture.pt: Furniture.
+ * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111,
+ * USA.
+ */
 
 #define HangMiddle  /* for WallTorch */
 
@@ -11,38 +27,50 @@ Proto Barrel 44
   Sprite "BARL"
   Blocking
 
+Proto KeyGizmoHolder
+  Sprite "KGZ1"
+  Phases Mundane
+  Size 38 53
+  Blocking
+
 Proto BlueKeyGizmo 94
   Phases Mundane
   Size 32 48
   Sprite "KGZB"
   Blocking
-  /* Base KGZ1 */
+  /* Base KeyGizmoHolder */
 
 Proto GreenKeyGizmo 95
   Phases Mundane
   Size 32 48
   Sprite "KGZG"
   Blocking
-  /* Base KGZ1 */
+  /* Base KeyGizmoHolder */
 
 Proto YellowKeyGizmo 96
   Phases Mundane
   Size 32 48
   Sprite "KGZY"
   Blocking
-  /* Base KGZ1 */
-
-Proto Chandelier 28
-  Phases ThreePhase
-  Size 56 60
-  Hanging
-  Sprite "CHDL"
+  /* Base KeyGizmoHolder */
 
 Proto SerpentTorch 27
+  Sprite "SRTC"
   Phases ThreePhase
   Size 32 48
   Blocking
-  Sprite "SRTC"
+
+Proto Chandelier 28
+  Sprite "CHDL"
+  Phases ThreePhase
+  Size 56 60
+  Hanging
+
+Proto SmallPillar 29
+  Sprite "SMPL"
+  Phases Mundane
+  Size 30 37
+  Blocking
 
 PhaseTable Brazier
   Default Duration 75msec Glow
@@ -99,7 +127,7 @@ Proto SkullHang70 17
 Proto WallTorch 50
   Phases Blink3
   Size 10 48
-  Sprite "WTRHA"	/* was "WTRHA0" */
+  Sprite "WTRH"
   HangMiddle
 
 #ifndef NO_GLITTER
@@ -127,13 +155,13 @@ PhaseTable TeleportGlitter
 Proto RedGlitter
   Size 10 30
   Sprite "TGLT"
-  FloatsUp Speed 19/sec
+  FloatsUp Speed 1900/sec
   Phantom Mass 10 YMoveOnly
 
 Proto BlueGlitter
   Size 10 30
   Sprite "TGLT"
-  FloatsUp Speed 25/sec
+  FloatsUp Speed 2500/sec
   Phantom Mass 10 YMoveOnly
 
 Proto TeleportGlitter 74
@@ -142,7 +170,6 @@ Proto TeleportGlitter 74
   Spawns RedGlitter
   Spawn2 BlueGlitter
   Phantom Mass 1000 StickToFloor
-#endif
+#endif	/* !NO_GLITTER */
 
 #undef HangMiddle
-

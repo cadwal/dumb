@@ -313,7 +313,7 @@ thing_hit_wall(LevData *ld, int thing, int wall, int isback, WallHitType t)
    pl = thing2player(ld, thing);
    if (pl >= 0 && lt->keytype && !gettable_chk_key(ld, pl, lt->keytype)) {
       if (!wd->had_keymsg)
-	 game_message(pl, _("YOU NEED A KEY!"));
+	 game_utf8_message(pl, U_("You need a key!"));
       wd->had_keymsg = 1;
       return;
    }

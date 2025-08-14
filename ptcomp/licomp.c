@@ -38,7 +38,7 @@
 
 typedef struct {
    LevInfo l;
-   char next[10];
+   char next[10];		/* FIXME: why 10? */
    char secret[10];
 } LevInfoRec;
 

@@ -1,8 +1,8 @@
 /* DUMB: A Doom-like 3D game engine.
  *
  * libdumb/sound_mix.c: Mixing sounds to one stream.
+ * Copyright (C) 1998, 1999 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  * Copyright (C) 1998 by Josh Parsons <josh@coombs.anu.edu.au>
- * Copyright (C) 1998 by Kalle Niemitalo <tosi@stekt.oulu.fi>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,7 +170,7 @@ sndmix_calc_frag(void *buf, unsigned samples)
    }
    for (i = 0; i < SQMAX; i++) {
       if (sq[i].count != 0) {
-	 size_t bytes;
+	 size_t bytes;	/* Not used uninitialized, whatever EGCS says.  */
 	 switch (format) {
 	 case SNDMIX_FMT_S16:
 	    if (channels == 1)
