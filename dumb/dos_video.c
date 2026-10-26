@@ -23,7 +23,9 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-#include <allegro.h>
+#include <string.h>
+#include "libdumb/dosalleg.h"
+#include <dpmi.h>
 #include <sys/nearptr.h>
 
 #include "libdumbutil/dumb-nls.h"

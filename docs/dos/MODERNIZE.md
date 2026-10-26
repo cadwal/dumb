@@ -71,6 +71,59 @@ Nearly all of the Allegro API used is unchanged in 4.2 (`GFX_VESA2L`,
 
 - [x] Step 1: `autoreconf -fi` and `configure` work with autoconf 2.71 / automake 1.16.  The bundled `intl/` is gone; NLS uses the C library or an installed libintl (`DUMB_NLS` in `acinclude.m4`).  The custom `po/Makefile.in.in` (with its `-utf8` catalogs) is kept.
 - [x] Step 2: native build (xdumb, dummydumb, ptcomp, tools, WADs, manual) is clean with GCC 13, with and without NLS, also under GCC 14's stricter defaults (`-Werror=implicit-function-declaration` etc.).  All C files also compile as 32-bit x86 at -O0 and -O2.  The rewritten x86 asm (wall/trans slices, flat loop, memmove, fixdiv) was checked against the C fallbacks and a 64-bit reference in a freestanding 32-bit test harness; mutation testing confirmed the harness catches broken asm.  Extra fixes found on the way: `Chance` in SoundType is signed (failed on 64-bit hosts), `wadtool`'s `basename` clashed with libc, libpng's `jmpbuf` field is private now, `wadchain.hh` access errors in modern g++, `safe_munmap` called without mmap (DJGPP), and code calling `gettext()`/`dgettext()` directly with NLS disabled.
-- [ ] Step 3
-- [ ] Step 4
+- [~] Step 3: DUMB side done; Allegro build and the real cross-build
+  **not yet run** (see below).  `configure --host=i586-pc-msdosdjgpp`
+  now: defaults to `--disable-nls` on DJGPP, detects Allegro 4 (where
+  `allegro_init()` is a macro for `_install_allegro_version_check`),
+  skips building the WADs (ptcomp/wadtool can't run on the build
+  machine; use the WADs from a native build), only replaces
+  `hstrerror()` for the Unix network driver (it needs `<netdb.h>`), and
+  gets real `sizeof` results so the le32 rerenderer is used.  Checked by
+  configuring and building with `--host=i586-pc-msdosdjgpp` and the
+  native gcc, which exercises the cross-compiling code paths.
+- [~] Step 4: DOS sources patched; compile-checked, **not linked**.
+  The new `libdumb/dosalleg.h` makes Allegro's inline functions
+  `static` (the original objects each defined ~150 Allegro functions
+  globally, so they could never link) and renames DUMB's `fixed`,
+  `fixmul`, `fixdiv`, `fixsin`, `fixcos`, `fixtan`, which clash with
+  Allegro's.  `make_sample()` zeroes the `SAMPLE` (new `stereo` field).
+  `dos_video.c` includes `<dpmi.h>` and `<string.h>`.  All three files
+  compile with `-Wall` and no warnings against the DJGPP 2.05 libc
+  headers and Allegro 4.2 headers (host gcc `-m32` with DJGPP's
+  predefined macros); the original `dos_sound.c` fails that check.
 - [ ] Step 5
+
+## Finishing steps 3-5
+
+These need the DJGPP toolchain to run; in the session that made these
+changes, running downloaded toolchain and Allegro code was not
+permitted, so they are still to do.
+
+```sh
+# DJGPP cross-compiler, e.g. a build-djgpp release (GCC 12.2):
+#   https://github.com/andrewwutw/build-djgpp/releases
+export PATH=/path/to/djgpp/bin:$PATH
+DJ=/path/to/djgpp/i586-pc-msdosdjgpp
+
+# Allegro 4.2 (branch 4.2 of https://github.com/liballeg/allegro5)
+cd allegro-4.2
+sh fix.sh djgpp --quick
+make CROSSCOMPILE=1 DJDIR=$DJ lib
+make CROSSCOMPILE=1 DJDIR=$DJ install   # headers + liballeg.a into $DJ
+
+# DUMB
+cd dumb && autoreconf -fi
+mkdir ../build-dos && cd ../build-dos
+../dumb/configure --host=i586-pc-msdosdjgpp --disable-nls
+make
+# dumb/dosdumb.exe; take doom4dum.wad / htic4dum.wad from a native build
+```
+
+Things to watch for:
+
+- Allegro 4.2 itself may need `-fgnu89-inline` (or similar) added to
+  its CFLAGS with GCC 12.
+- If `configure` reports "Allegro not found", check `config.log`: the
+  test links `-lalleg`.
+- Run `dosdumb.exe` in DOSBox (with a CWSDPMI next to it) and check
+  the renderer at 8/16/32 bpp, page flipping, mouse and sound.

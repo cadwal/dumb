@@ -56,10 +56,9 @@ AC_C_RESTRICT
 AC_C_BIGENDIAN
 DUMB_C_ATTR_REGPARM
 AC_TYPE_SIZE_T
-dnl If we are cross-compiling, pretend the sizes are 0.
-dnl This causes DUMB to use the generic fbrerend function.
-AC_CHECK_SIZEOF(int, 0)
-AC_CHECK_SIZEOF(long, 0)
+dnl These work when cross-compiling too.
+AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(long)
 AC_MSG_CHECKING(which fbrerend to use)
 fbrerend="generic"
 if test $ac_cv_c_bigendian = no; then
@@ -97,7 +96,12 @@ AC_SUBST(CXX_HACK_CC)
 
 dnl --- Internationalization.
 dnl po/Makefile.in.in is DUMB's own; it also installs the -utf8 catalogs.
-DUMB_NLS
+dnl DJGPP's libc has a conio gettext() that conflicts with libintl.
+case "$host_os" in
+  msdosdjgpp*) dumb_nls_default=no ;;
+  *) dumb_nls_default=yes ;;
+esac
+DUMB_NLS([$dumb_nls_default])
 ALL_LINGUAS="fi"
 if test -n "${LINGUAS+set}"; then
   dumb_linguas=""
@@ -220,8 +224,12 @@ if test "$dumb_have_svgalib" = "no"; then
 fi
 
 dnl --- Allegro.
-DUMB_CHECK_HDR_LIB_YESNO(allegro.h, alleg, allegro_init, [],
- dumb_have_allegro)
+dnl In Allegro 4, allegro_init() is a macro for this function.
+dumb_have_allegro=no
+AC_CHECK_HEADER([allegro.h],
+  [AC_CHECK_LIB([alleg], [_install_allegro_version_check],
+    [dumb_have_allegro=yes],
+    [AC_CHECK_LIB([alleg], [allegro_init], [dumb_have_allegro=yes])])])
 AM_CONDITIONAL(DUMB_CONFIG_DOS, test "$dumb_have_allegro" = "yes")
 if test "$dumb_have_allegro" = "no"; then
   AC_MSG_WARN([Allegro not found; program 'dosdumb' will not be built])
@@ -246,7 +254,7 @@ AC_CHECK_FUNCS(strdup strstr fork setitimer)
 dnl sparc-sun-solaris2.5.1 keeps towlower() etc. in libw.so
 AC_SEARCH_LIBS(towlower, w, [],
   [AC_MSG_ERROR([DUMB needs wide-character functions like towlower() and iswlower()])])
-AC_REPLACE_FUNCS(hstrerror snprintf strnlen)
+AC_REPLACE_FUNCS(snprintf strnlen)
 
 dnl --- Checks for system services.
 DUMB_SYS_SHMAT_RMID
@@ -386,6 +394,17 @@ AC_MSG_RESULT($dumb_network)
 if test "$dumb_network" = unix; then
   # We'll manage even without select() but use it if it exists.
   AC_CHECK_FUNCS(select)
+  # Only unix_net.c uses hstrerror(), and the replacement needs <netdb.h>.
+  AC_REPLACE_FUNCS(hstrerror)
+fi
+
+dnl --- Data files.
+dnl Building the WADs runs ptcomp and wadtool, which can't run on the
+dnl build machine when cross-compiling.  The WADs are not
+dnl platform-specific, so take them from a native build instead.
+AM_CONDITIONAL([DUMB_BUILD_WADS], [test "$cross_compiling" != yes])
+if test "$cross_compiling" = yes; then
+  AC_MSG_WARN([cross-compiling: doom4dum.wad and htic4dum.wad will not be built])
 fi
 
 dnl --- Output.

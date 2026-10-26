@@ -10,7 +10,7 @@ fontmapinwad.h gettableinwad.c gettableinwad.h gettablestruct.h		\
 levdatanums.h levinfostruct.h linetypestruct.h lumpver.c lumpver.h	\
 pastepic.h prothing.c prothing.h prothingstruct.h protoinwad.c		\
 protoinwad.h sound.h sound_mix.c sound_mix.h texture.c texture.h	\
-view.c view.h
+view.c view.h dosalleg.h
 
 # If I put $(DUMB_CONFIG_SOUND)_sound.c directly in libdumb_a_SOURCES,
 # Automake would add .deps/$(DUMB_CONFIG_SOUND)_sound.o in DEP_FILES

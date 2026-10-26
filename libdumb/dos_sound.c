@@ -25,17 +25,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <bios.h>
-#include <allegro.h>
+#include "libdumb/dosalleg.h"
 
 #include "libdumbutil/dumb-nls.h"
 
 #include "libdumbutil/log.h"
 #include "libdumbutil/safem.h"
 
-/* Allegro already uses fixed */
-#define fixed fixed_dumb
 #include "sound.h"
-#undef fixed
 
 static int has_sound = TRUE;
 static int digi_voices;
@@ -62,8 +59,10 @@ make_sample(const unsigned char *data, int len,
 {
    SAMPLE *spl;
 
-   spl = (SAMPLE *) safe_malloc(sizeof(SAMPLE));
+   /* calloc: SAMPLE has gained fields (e.g. stereo) since Allegro 3.  */
+   spl = (SAMPLE *) safe_calloc(1, sizeof(SAMPLE));
    spl->bits = 8;
+   spl->stereo = 0;
    spl->freq = freq;
    spl->len = len;
    spl->priority = 255;

@@ -23,7 +23,7 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <allegro.h>
+#include "libdumb/dosalleg.h"
 
 #include "libdumbutil/dumb-nls.h"
 

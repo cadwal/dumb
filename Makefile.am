@@ -9,8 +9,14 @@ else
 ldwb_subdir = 
 endif
 
+if DUMB_BUILD_WADS
+wad_subdirs = doom htic
+else
+wad_subdirs =
+endif
+
 SUBDIRS = libmissing libdumbutil libdumbwad $(ldwb_subdir)		\
-libdumbrender libdumb dumb xwad ptcomp tool doom htic test po	\
+libdumbrender libdumb dumb xwad ptcomp tool $(wad_subdirs) test po	\
 docs scripts
 
 # stuff for making Red Hat style rpms

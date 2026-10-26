@@ -247,7 +247,10 @@ AC_DEFUN([DUMB_CHECK_TYPE],
   [$3])])
 
 dnl Usage:
-dnl DUMB_NLS
+dnl DUMB_NLS([DEFAULT])
+dnl
+dnl DEFAULT (yes or no, default yes) says whether NLS is used when
+dnl neither --enable-nls nor --disable-nls is given.
 dnl
 dnl Native Language Support using the C library's gettext or an
 dnl installed libintl.  Defines ENABLE_NLS and substitutes USE_NLS,
@@ -256,7 +259,7 @@ dnl
 AC_DEFUN([DUMB_NLS],
 [AC_ARG_ENABLE([nls],
   [AS_HELP_STRING([--disable-nls], [do not use Native Language Support])],
-  [USE_NLS=$enableval], [USE_NLS=yes])
+  [USE_NLS=$enableval], [USE_NLS=m4_default([$1], [yes])])
 INTLLIBS=""
 if test "$USE_NLS" = "yes"; then
   AC_CHECK_HEADER([libintl.h], [], [USE_NLS=no])
