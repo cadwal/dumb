@@ -1,6 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
-EXTRA_DIST = $(rpm_stem).spec .cvsignore
+EXTRA_DIST = $(rpm_stem).spec .cvsignore dos/README dos/config.h	\
+dos/dircfg.h dos/makefile.dj dos/cross-build.sh dos/get-cwsdpmi.sh	\
+dos/dosbox-x-build.ps1 dos/dosbox-x-build.cmd
 MAINTAINERCLEANFILES = $(rpm_spec)
 
 if DUMB_CONFIG_LDWB

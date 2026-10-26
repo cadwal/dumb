@@ -1,0 +1,53 @@
+Building dosdumb.exe (DUMB for MS-DOS)
+======================================
+
+dosdumb.exe needs DJGPP 2.05 and Allegro 4.2.  There are two ways to
+build it; both make DOSDUMB.EXE, DOOM4DUM.WAD and HTIC4DUM.WAD.
+
+To run it, put these next to each other with CWSDPMI.EXE and an IWAD
+named DOOM.WAD (Doom's, or Freedoom's freedoom1.wad), and start
+DOSDUMB.EXE in DOS, DOSBox or DOSBox-X.  DUMB logs to stdout, so
+"DOSDUMB.EXE > DUMB.LOG" avoids the screen jumping.
+
+Linux (or macOS): cross-compiling
+---------------------------------
+
+  dos/cross-build.sh [--iwad FILE] [--run]
+
+Downloads the build-djgpp cross toolchain and Allegro 4.2, builds
+them, builds DUMB with configure --host=i586-pc-msdosdjgpp, and puts
+the result in build-dos/dist (with CWSDPMI.EXE, a dosbox.conf, and
+DOOM.WAD if --iwad was given).  --run starts it in DOSBox-X or DOSBox.
+See the comment at the top of the script for options and requirements.
+
+  dos/get-cwsdpmi.sh [DIR]
+
+Only downloads CWSDPMI.EXE (from csdpmi7b.zip) into DIR.
+
+Windows: building inside DOSBox-X
+---------------------------------
+
+  dos\dosbox-x-build.cmd [-Iwad FILE] [-BuildOnly] [-Rebuild]
+
+(or: powershell -ExecutionPolicy Bypass -File dos\dosbox-x-build.ps1)
+
+Needs DOSBox-X (https://dosbox-x.com/).  Downloads DJGPP 2.05 (djdev,
+gcc, binutils, make), CWSDPMI, Allegro 4.2 and, unless -Iwad is
+given, Freedoom; sets them up with a copy of this tree on a DOS C:
+drive in build-dosbox\c; then starts DOSBox-X, which builds Allegro
+and DUMB with the native DOS tools and runs DOSDUMB.EXE.  Logs go to
+build-dosbox\c\LOGS.  Compiling under emulated DOS is slow, especially
+the first Allegro build.  Run "Get-Help dos\dosbox-x-build.ps1 -Full"
+for all options.
+
+Files
+-----
+
+  cross-build.sh       Linux/macOS cross build (uses configure)
+  get-cwsdpmi.sh       download CWSDPMI
+  dosbox-x-build.ps1   Windows: set up and run the DOSBox-X build
+  dosbox-x-build.cmd   runs the .ps1 without changing execution policy
+  makefile.dj          plain makefile for DJGPP make, without configure
+  config.h, dircfg.h   the configure results for DJGPP, for makefile.dj
+
+docs/dos/MODERNIZE.md has the background.

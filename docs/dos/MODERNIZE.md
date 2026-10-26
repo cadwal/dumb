@@ -92,7 +92,22 @@ Nearly all of the Allegro API used is unchanged in 4.2 (`GFX_VESA2L`,
   expected without a DPMI host.  CWSDPMI could not be downloaded in the
   session that did this, so the game itself has not been run yet.
 
-## Reproducing the DOS build
+## Scripts
+
+`dos/` automates all of this; see `dos/README`:
+
+- `dos/cross-build.sh`: Linux/macOS cross build (toolchain, Allegro,
+  WADs, dosdumb.exe, package in `build-dos/dist`, optional `--run`).
+  Tested end to end from an empty work directory.
+- `dos/get-cwsdpmi.sh`: downloads CWSDPMI.EXE.
+- `dos/dosbox-x-build.ps1` (+ `.cmd`): Windows; sets up DJGPP 2.05,
+  Allegro and DUMB on a DOSBox-X C: drive, builds natively in DOS with
+  `dos/makefile.dj` and runs dosdumb.  **Not tested yet**: it needs
+  Windows, and the DJGPP mirror was not reachable from where it was
+  written.  `dos/makefile.dj` itself was tested by cross-compiling
+  with it (its WADs are byte-identical to the configure build's).
+
+## Reproducing the DOS build by hand
 
 ```sh
 # DJGPP cross-compiler: build-djgpp v3.4 (GCC 12.2.0)

@@ -126,3 +126,6 @@ core
 /po/Makefile
 /po/POTFILES
 **/.deps/
+/dosobj/
+/build-dos/
+/build-dosbox/

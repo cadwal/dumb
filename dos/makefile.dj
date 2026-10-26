@@ -1,0 +1,120 @@
+# DUMB: makefile for building dosdumb.exe with DJGPP, without configure.
+#
+# Run it from the top of the DUMB source tree, inside DOS (or DOSBox-X)
+# with DJGPP 2.05 and a built Allegro 4.2:
+#
+#   make -f dos/makefile.dj ALLEGRO=c:/allegro
+#
+# ALLEGRO is the Allegro source tree after "make lib" (headers in
+# include/, liballeg.a in lib/djgpp/).  Everything is built in dosobj/:
+# dosdumb.exe, ptcomp.exe, wadtool.exe, doom4dum.wad and htic4dum.wad.
+#
+# The commands avoid shell features, so this works with plain
+# COMMAND.COM.  It can also be used for cross-compiling, e.g.
+#
+#   make -f dos/makefile.dj CC=i586-pc-msdosdjgpp-gcc \
+#        AR=i586-pc-msdosdjgpp-ar ALLEGRO=/path/to/allegro
+#
+# but the WADs then need PTCOMP and WADTOOL that run on the build
+# machine.  See also dos/cross-build.sh, which uses configure.
+
+ALLEGRO = ../allegro
+O = dosobj
+
+CC = gcc
+AR = ar
+CFLAGS = -g -O2
+# Dependency files, so changed headers cause rebuilds.
+DEPFLAGS = -MMD -MP
+CPPFLAGS = -Idos -I. -Ilibmissing -I$(ALLEGRO)/include
+LDFLAGS = -L$(ALLEGRO)/lib/djgpp
+DOS_LIBS = -lalleg -lm
+
+PTCOMP = $(O)/ptcomp.exe
+WADTOOL = $(O)/wadtool.exe
+
+vpath %.c libmissing libdumbutil libdumbwad libdumb dumb ptcomp tool
+
+libmissing_objs = getopt.o getopt1.o wctype.o
+libdumbutil_objs = bugaddr.o confargs.o confeng.o conffile.o confhelp.o	\
+copyright.o fixed.o log.o safeio.o safem.o strgrow.o utf8.o dos_timer.o
+# wadchain.cc is not used by any program, so C++ isn't needed.
+libdumbwad_objs = loadlump.o wadio.o wadwr.o
+libdumb_objs = dsound.o font.o fontinwad.o fontmap.o fontmapinwad.o	\
+gettableinwad.o lumpver.o prothing.o protoinwad.o sound_mix.o texture.o	\
+view.o dos_sound.o
+dosdumb_objs = dos_video.o dos_input.o keymapdummy.o dumb.o animtex.o	\
+bangbang.o banner.o bogothing.o dyncode.o game.o gettable.o levdata.o	\
+levdyn.o levinfo.o linetype.o message.o msgdom.o netio.o netplay.o	\
+termtype.o thinghit.o thingm.o things.o updmap.o updthing.o useitem.o	\
+ctlkey.o keymap.o keymapconf.o fbrerend.o render8.o render16.o		\
+render32.o rendcommon.o draw.o le32_fbrerend.o dummy_net.o
+ptcomp_objs = ptcomp.o token.o parm.o animcomp.o fontcomp.o fontmapcomp.o	\
+gettcomp.o licomp.o ltcomp.o msgdomcomp.o phasecomp.o protocomp.o	\
+soundcomp.o
+
+# Link order matters: each library only uses the ones after it.
+dumb_libs = $(O)/libdumb.a $(O)/libdumbwad.a $(O)/libdumbutil.a	\
+$(O)/libmissing.a
+
+doom_pt = doom/doom.pt $(wildcard doom/*.pt) dumb/dumbdefs.pt
+htic_pt = htic/htic.pt $(wildcard htic/*.pt) dumb/dumbdefs.pt
+
+.PHONY: all programs wads clean
+
+all: programs wads
+
+programs: $(O)/dosdumb.exe $(O)/ptcomp.exe $(O)/wadtool.exe
+
+wads: $(O)/doom4dum.wad $(O)/htic4dum.wad
+
+$(O):
+	-mkdir $(O)
+
+$(O)/%.o: %.c | $(O)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
+
+$(O)/libmissing.a: $(addprefix $(O)/,$(libmissing_objs))
+	$(AR) rcs $@ $^
+
+$(O)/libdumbutil.a: $(addprefix $(O)/,$(libdumbutil_objs))
+	$(AR) rcs $@ $^
+
+$(O)/libdumbwad.a: $(addprefix $(O)/,$(libdumbwad_objs))
+	$(AR) rcs $@ $^
+
+$(O)/libdumb.a: $(addprefix $(O)/,$(libdumb_objs))
+	$(AR) rcs $@ $^
+
+$(O)/dosdumb.exe: $(addprefix $(O)/,$(dosdumb_objs)) $(dumb_libs)
+	$(CC) $(LDFLAGS) -o $@ $(addprefix $(O)/,$(dosdumb_objs)) \
+	  $(dumb_libs) $(DOS_LIBS)
+
+$(O)/ptcomp.exe: $(addprefix $(O)/,$(ptcomp_objs)) $(dumb_libs)
+	$(CC) $(LDFLAGS) -o $@ $(addprefix $(O)/,$(ptcomp_objs)) $(dumb_libs)
+
+$(O)/wadtool.exe: $(O)/wadtool.o $(dumb_libs)
+	$(CC) $(LDFLAGS) -o $@ $(O)/wadtool.o $(dumb_libs)
+
+# The .pt files are preprocessed to a file and fed to ptcomp with a
+# redirection, which DJGPP handles without a shell.
+$(O)/doom.i: $(doom_pt) | $(O)
+	$(CC) -E -x c-header -Idoom -I. -o $@ doom/doom.pt
+
+$(O)/pt.wad: $(O)/doom.i $(PTCOMP)
+	$(PTCOMP) -o $@ < $(O)/doom.i
+
+$(O)/doom4dum.wad: $(O)/pt.wad $(WADTOOL) doom/WAFFLE
+	$(WADTOOL) -w $@ -f doom/WAFFLE -c $(O)/pt.wad
+
+$(O)/htic.i: $(htic_pt) | $(O)
+	$(CC) -E -x c-header -Ihtic -I. -o $@ htic/htic.pt
+
+$(O)/htic4dum.wad: $(O)/htic.i $(PTCOMP)
+	$(PTCOMP) -o $@ < $(O)/htic.i
+
+-include $(wildcard $(O)/*.d)
+
+# Needs rm (DJGPP fileutils) under DOS; or just delete dosobj.
+clean:
+	rm -f $(O)/*.o $(O)/*.d $(O)/*.a $(O)/*.exe $(O)/*.i $(O)/*.wad

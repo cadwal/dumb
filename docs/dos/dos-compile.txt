@@ -1,7 +1,7 @@
 NOTE (2026): These are the original instructions for building inside
 DOS with DJGPP v2 and Allegro 3.  For cross-compiling with a current
-DJGPP (GCC 12+) and Allegro 4.2 from Linux, see MODERNIZE.md in this
-directory.
+DJGPP (GCC 12+) and Allegro 4.2, see MODERNIZE.md in this directory
+and the scripts in ../../dos (dos/README).
 
 To compile DUMB for DOS you need an installation of DJGPP v2. In
 addition to the standard components you need allegro (v3), autoconf
