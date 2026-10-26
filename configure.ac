@@ -157,8 +157,10 @@ dnl --- Netpbm library.
 dumb_ppm_h=""
 DUMB_PPM_LDADD=""
 dumb_have_libppm=no
+dnl Current netpbm installs its headers in netpbm/.
 AC_CHECK_HEADER(ppm.h, [dumb_ppm_h="<ppm.h>"],
-  [AC_CHECK_HEADER(gr/ppm.h, [dumb_ppm_h="<gr/ppm.h>"])])
+  [AC_CHECK_HEADER(netpbm/ppm.h, [dumb_ppm_h="<netpbm/ppm.h>"],
+    [AC_CHECK_HEADER(gr/ppm.h, [dumb_ppm_h="<gr/ppm.h>"])])])
 if test -n "$dumb_ppm_h"; then
   AC_DEFINE_UNQUOTED([DUMB_CONFIG_PPM_H], [$dumb_ppm_h],
     [Define so that `#include DUMB_CONFIG_PPM_H' includes <ppm.h> or similar.])
