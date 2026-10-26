@@ -288,7 +288,7 @@ reset_renderer(void)
    if (LUMPNUM_OK(colormap_ln))
       free_lump(colormap_ln);
    else				/* it was malloced */
-      free(all_colormaps);
+      free((void *) all_colormaps);
    all_colormaps = NULL;
 #endif
 }
@@ -1326,8 +1326,8 @@ calc_view_constants(int screen_width, int screen_height)
       }
       last_width = screen_width;
    }
-   view_constants.view_sin = fixsin(-view->angle);
-   view_constants.view_cos = fixcos(-view->angle);
+   view_constants.view_sin = fix_sin(-view->angle);
+   view_constants.view_cos = fix_cos(-view->angle);
 
 #ifdef HAVE_MMX
    /* make a pre-packed quadword for use in mmx view rotation */

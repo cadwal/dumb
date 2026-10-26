@@ -78,9 +78,9 @@ fixed fix_vec2angle(fixed x, fixed y) FIX_ATTR;
 
 #define NORMALIZE_ANGLE(x) while(x>=FIXED_2PI) x-=FIXED_2PI; while(x<0) x+=FIXED_2PI
 
-fixed fixsin(fixed) FIX_ATTR;
-fixed fixcos(fixed) FIX_ATTR;
-fixed fixtan(fixed) FIX_ATTR;
+fixed fix_sin(fixed) FIX_ATTR;
+fixed fix_cos(fixed) FIX_ATTR;
+fixed fix_tan(fixed) FIX_ATTR;
 
 #define FIXSIN(x) FLOAT_TO_FIXED(sin(FIXED_TO_FLOAT(x)))
 #define FIXCOS(x) FLOAT_TO_FIXED(cos(FIXED_TO_FLOAT(x)))

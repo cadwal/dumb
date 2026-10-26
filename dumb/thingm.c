@@ -740,8 +740,8 @@ thingd_apply_polar(ThingDyn *td, fixed f, fixed a)
 {
    if (td->proto->flags & PT_INF_MASS)
       return;
-   td->dx += fixmul(fixcos(a), fixdiv(f, td->proto->realmass));
-   td->dy += fixmul(fixsin(a), fixdiv(f, td->proto->realmass));
+   td->dx += fixmul(fix_cos(a), fixdiv(f, td->proto->realmass));
+   td->dy += fixmul(fix_sin(a), fixdiv(f, td->proto->realmass));
 }
 
 void

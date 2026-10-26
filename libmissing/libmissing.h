@@ -36,6 +36,14 @@ size_t strnlen (const char *string, size_t maxlen);
 const char *hstrerror(int err_num);
 #endif
 
+#ifndef HAVE_TOWLOWER
+#include <wctype.h>		/* wint_t */
+int iswupper(wint_t wc);
+int iswlower(wint_t wc);
+wint_t towlower(wint_t wc);
+wint_t towupper(wint_t wc);
+#endif
+
 #ifndef HAVE_SNPRINTF
 int vsnprintf(char *s, size_t size, const char *format, va_list ap);
 int snprintf(char *s, size_t size, const char *format, ...);

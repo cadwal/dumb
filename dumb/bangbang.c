@@ -65,9 +65,9 @@ thing_hurl(LevData *ld, int thnum, int mtype, fixed a, fixed elev,
       md->angle = a + td->angle;
       if (!para)
 	 md->angle += ofs;
-      md->dx = fixmul(md->proto->speed, cosa = fixcos(md->angle));
-      md->dy = fixmul(md->proto->speed, sina = fixsin(md->angle));
-      md->dz = fixmul(md->proto->speed, sine = fixsin(elev));
+      md->dx = fixmul(md->proto->speed, cosa = fix_cos(md->angle));
+      md->dy = fixmul(md->proto->speed, sina = fix_sin(md->angle));
+      md->dz = fixmul(md->proto->speed, sine = fix_sin(elev));
 #if 0
       /* make sure that missile won't be crashing into us next round */
       r = md->proto->radius + td->proto->radius;
@@ -251,8 +251,8 @@ thing_activate(LevData *ld, int thingnum, fixed maxdist)
    const ThingDyn *std = ldthingd(ld) + thingnum;
    int i, wall = -1, wall_side = 0;
    fixed vx, vy;
-   vy = fixsin(std->angle);
-   vx = fixcos(std->angle);
+   vy = fix_sin(std->angle);
+   vx = fix_cos(std->angle);
    for (i = 0; i < ldnlines(ld); i++) {
       int side;
       fixed t, d, sx, sy;
@@ -313,9 +313,9 @@ thing_shoot_single(LevData *ld, int shooter, int bullet_id,
    int i, wall_side = 0;
    fixed vx, vy, vz;
    angle += std->angle;
-   vy = fixsin(angle);
-   vx = fixcos(angle);
-   vz = fixtan(elev);
+   vy = fix_sin(angle);
+   vx = fix_cos(angle);
+   vz = fix_tan(elev);
    oz = std->z + SHOOT_HEIGHT(std);
    if (std->proto == NULL)
       return -1;

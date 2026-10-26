@@ -141,7 +141,7 @@ play_dsound_local(int i, fixed x, fixed y, fixed r)
       } else {
 	 /* pan the noise off to one side or the other */
 	 fixed angle = fix_vec2angle(x - view.x, y - view.y) - view.angle;
-	 fixed sine = fixsin(angle);
+	 fixed sine = fix_sin(angle);
 	 fixed fade = fixdiv(20 * FIXED_ONE, FIXED_ONE + dist - r);
 	 if (fade > FIXED_ONE)
 	    fade = FIXED_ONE;

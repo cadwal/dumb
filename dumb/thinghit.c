@@ -115,8 +115,8 @@ spawn_fog(LevData *ld, int th, int who, int prid)
    const ThingDyn *td = ldthingd(ld) + th;
    const ThingDyn *tdwho = ldthingd(ld) + who;
    fixed x = td->x, y = td->y, z = td->z;
-   x += (9 * fixcos(td->angle)) / 8;
-   y += (9 * fixsin(td->angle)) / 8;
+   x += (9 * fix_cos(td->angle)) / 8;
+   y += (9 * fix_sin(td->angle)) / 8;
    z += (3 * tdwho->proto->height) / 4;
    new_thing(ld, prid, x, y, z);
 }

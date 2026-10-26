@@ -526,7 +526,7 @@ update_things(LevData *ld, int tickspassed)
 		   && jump_height <= climb_height) {
 		  /* The purpose of this is to make the hero look down when
 		   * climbing stairways up backwards.  */
-		  fixed factor = fixcos(fix_vec2angle(dx, dy) - td->angle);
+		  fixed factor = fix_cos(fix_vec2angle(dx, dy) - td->angle);
 		  //logprintf(LOG_DEBUG, 'O', _("climbing, factor=%d"), (int) factor);
 		  if (step_height > 6 << 12)
 		     td->delev += factor / 32;
@@ -594,7 +594,7 @@ update_things(LevData *ld, int tickspassed)
 		      && ldline(ld)[wall].side[1] < 0);
 		  else {
 		     oldmv = fix_pythagoras(td->dx, td->dy);
-		     newmv = fixmul(oldmv, fixcos(angdiff));
+		     newmv = fixmul(oldmv, fix_cos(angdiff));
 		     td->dx = td->dy = 0;
 		     /* take any "action on thumped" action for this wall */
 		     thing_hit_wall(ld, thingnum, wall, dist > 0, Thumped);

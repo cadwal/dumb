@@ -251,9 +251,12 @@ dnl the sign of the return value, so memcmp() needn't be 8-bit clean.
 dnl AC_FUNC_MEMCMP
 AC_FUNC_MMAP
 AC_CHECK_FUNCS(strdup strstr fork setitimer)
-dnl sparc-sun-solaris2.5.1 keeps towlower() etc. in libw.so
-AC_SEARCH_LIBS(towlower, w, [],
-  [AC_MSG_ERROR([DUMB needs wide-character functions like towlower() and iswlower()])])
+dnl sparc-sun-solaris2.5.1 keeps towlower() etc. in libw.so.
+dnl DJGPP 2.05 has none of them; libmissing then has simple versions.
+AC_SEARCH_LIBS(towlower, w,
+  [AC_DEFINE([HAVE_TOWLOWER], [1],
+    [Define if you have towlower() and the other <wctype.h> functions.])],
+  [AC_LIBOBJ([wctype])])
 AC_REPLACE_FUNCS(snprintf strnlen)
 
 dnl --- Checks for system services.

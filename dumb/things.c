@@ -115,10 +115,10 @@ thing_to_view(const LevData *ld, int th, View *v, const ViewTrans *vx)
    NORMALIZE_ANGLE(v->angle);
    v->x = td->x;
    if (vx->offset)
-      v->x += fixmul(vx->offset, fixcos(v->angle));
+      v->x += fixmul(vx->offset, fix_cos(v->angle));
    v->y = td->y;
    if (vx->offset)
-      v->y += fixmul(vx->offset, fixsin(v->angle));
+      v->y += fixmul(vx->offset, fix_sin(v->angle));
    v->sector = td->sector;
    /* work out horizon */
    if (sd && (td->proto == NULL || td->hits <= 0)) {
@@ -131,7 +131,7 @@ thing_to_view(const LevData *ld, int th, View *v, const ViewTrans *vx)
       v->horizon = v->height - (sd->floor + FIXED_ONE / 4);
       v->height += (2 << 12);
    } else
-      v->horizon = -fixsin(td->elev);
+      v->horizon = -fix_sin(td->elev);
 }
 
 void
@@ -151,9 +151,9 @@ camera_to_view(const LevData *ld, int cam, View *v, const ViewTrans *vx)
 
    NORMALIZE_ANGLE(v->angle);
    if (vx->offset)
-      v->x += fixmul(vx->offset, fixcos(v->angle));
+      v->x += fixmul(vx->offset, fix_cos(v->angle));
    if (vx->offset)
-      v->y += fixmul(vx->offset, fixsin(v->angle));
+      v->y += fixmul(vx->offset, fix_sin(v->angle));
 
    if (camd->elev < -FIXED_PI/3) {
       camd->elev = -FIXED_PI/3;
@@ -168,7 +168,7 @@ camera_to_view(const LevData *ld, int cam, View *v, const ViewTrans *vx)
       v->height = sd->ceiling - (2 << 12);
    }
 
-   v->horizon = -fixsin(camd->elev);
+   v->horizon = -fix_sin(camd->elev);
 }
 
 void
@@ -189,8 +189,8 @@ update_camera(const LevData *ld, int cam, int follow)
    if (camd->sector >= 0)
       cams = ldsectord(ld) + camd->sector;
 
-   dx = fixcos(td->angle);
-   dy = fixsin(td->angle);
+   dx = fix_cos(td->angle);
+   dy = fix_sin(td->angle);
 
    target_x = td->x - fixmul(dx, 5<<16);
    target_y = td->y - fixmul(dy, 5<<16);

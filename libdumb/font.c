@@ -44,6 +44,7 @@
 #include "libdumbutil/endiantypes.h"
 #include "libdumbutil/safem.h"
 #include "libdumbutil/utf8.h"
+#include "libmissing/libmissing.h" /* towlower() etc. */
 
 #include "font.h"
 

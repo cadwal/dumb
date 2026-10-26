@@ -36,13 +36,12 @@
 #include <allegro.h>
 
 /* Allegro has its own fixed type (int32_t, i.e. long in DJGPP) and
-   fixed-point functions.  Rename DUMB's in files that use both.  */
+   fixmul() and fixdiv().  DUMB's are inline, so renaming them in files
+   that use both is enough.  (DUMB's sine etc. are called fix_sin()
+   etc. because liballeg.a exports fixsin() and friends.)  */
 #define fixed fixed_dumb
 #define fixmul fixmul_dumb
 #define fixdiv fixdiv_dumb
-#define fixsin fixsin_dumb
-#define fixcos fixcos_dumb
-#define fixtan fixtan_dumb
 
 #endif /* LIBDUMB_DOSALLEG_H */
 

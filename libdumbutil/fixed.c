@@ -31,19 +31,19 @@
    to run it on a 386 or 486SX
  */
 ATTR_REGPARM fixed
-fixsin(fixed theta)
+fix_sin(fixed theta)
 {
    return FIXSIN(theta);
 }
 
 ATTR_REGPARM fixed
-fixcos(fixed theta)
+fix_cos(fixed theta)
 {
    return FIXCOS(theta);
 }
 
 ATTR_REGPARM fixed
-fixtan(fixed theta)
+fix_tan(fixed theta)
 {
    return FIXTAN(theta);
 }
