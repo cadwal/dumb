@@ -69,7 +69,7 @@ static void print_help(FILE *dest);
 static void print_version(void);
 
 #ifdef HAVE_FORK
-RETSIGTYPE
+void
 sigchld_handler(int i)
 {
    int status;

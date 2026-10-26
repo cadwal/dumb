@@ -135,17 +135,18 @@ intset_foreach(const struct intset *ints,
    const SetContent *end = &ints->data[ints->used];
    const SetContent *p;
 #ifndef NDEBUG
-   ints->readonly++;
+   /* The counter is not part of the set's value.  */
+   ((struct intset *) ints)->readonly++;
 #endif
    for (p = ints->data; p < end; p++)
       fn(*p, clientdata);
 #ifndef NDEBUG
-   ints->readonly--;
+   ((struct intset *) ints)->readonly--;
 #endif
 }
 
 void
-intset_foreach_delete(const struct intset *ints,
+intset_foreach_remove(struct intset *ints,
 		      void (*fn) (int value, void *clientdata),
 		      void *clientdata)
 {

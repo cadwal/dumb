@@ -30,25 +30,25 @@
    these could be done with tables: might be worthwhile if someone wants
    to run it on a 386 or 486SX
  */
-fixed
+ATTR_REGPARM fixed
 fixsin(fixed theta)
 {
    return FIXSIN(theta);
 }
 
-fixed
+ATTR_REGPARM fixed
 fixcos(fixed theta)
 {
    return FIXCOS(theta);
 }
 
-fixed
+ATTR_REGPARM fixed
 fixtan(fixed theta)
 {
    return FIXTAN(theta);
 }
 
-fixed
+ATTR_REGPARM fixed
 fix_pyth3d(fixed x, fixed y, fixed z)
 {
    const double dx = FIXED_TO_FLOAT(x);
@@ -57,21 +57,21 @@ fix_pyth3d(fixed x, fixed y, fixed z)
    return FLOAT_TO_FIXED(sqrt(dx * dx + dy * dy + dz * dz));
 }
 
-fixed
+ATTR_REGPARM fixed
 fix_pythagoras(fixed x, fixed y)
 {
    const double dx = FIXED_TO_FLOAT(x), dy = FIXED_TO_FLOAT(y);
    return FLOAT_TO_FIXED(sqrt(dx * dx + dy * dy));
 }
 
-fixed
+ATTR_REGPARM fixed
 fix_vec2angle(fixed x, fixed y)
 {
    const double dx = FIXED_TO_FLOAT(x), dy = FIXED_TO_FLOAT(y);
    return FLOAT_TO_FIXED(atan2(dy, dx));
 }
 
-fixed
+ATTR_REGPARM fixed
 fix_sqrt(fixed f)
 {
    const double d = FIXED_TO_FLOAT(f);

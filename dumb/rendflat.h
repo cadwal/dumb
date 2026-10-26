@@ -23,7 +23,7 @@
 
 /* this file is included by render.c */
 
-#if defined(i386)&&!defined(DEBUG)
+#if defined(__i386__)&&!defined(DEBUG)
 
 /* this loop could be unrolled for greater efficiency... */
 
@@ -33,15 +33,15 @@ _flatx_loop(fixed x, fixed y, fixed dx, fixed dy,
 	    const Pixel *cm, const TPixel *t,
 	    int xmask, int ymask)
 {
-   asm("std\n\t"
+   asm volatile("std\n\t"
        "\t1:\n\t"
        "andl %8,%0\n\t"
        "movl %1,%%eax\n\t"
        "andl %9,%%eax\n\t"
        "orl %0,%%eax\n\t"
        "shrl $16,%%eax\n\t"
-       "subl %2,%0\n\t"
-       "subl %3,%1\n\t"
+       "subl %3,%0\n\t"
+       "subl %4,%1\n\t"
 
 #if BPP==1
        "movb (%%esi,%%eax),%%al\n\t"
@@ -61,10 +61,10 @@ _flatx_loop(fixed x, fixed y, fixed dx, fixed dy,
        "cmpl %6, %%edi\n\t"
        "jns 1b\n\t"
        "cld\n\t"
-       :
-       : "c"(x), "d"(y), "g"(dx), "g"(dy), "D"(out),
+       : "+c"(x), "+d"(y), "+D"(out)
+       : "g"(dx), "g"(dy),
        "S"(t), "g"(end), "b"(cm), "g"(xmask), "g"(ymask)
-       : "eax"
+       : "eax", "cc", "memory"
        );
 }
 

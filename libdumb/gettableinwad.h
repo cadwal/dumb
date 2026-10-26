@@ -88,7 +88,7 @@ Gettable_inwad *encode_gettableinwad(const Gettable *src, size_t *lengthp);
 /* Decode NGETS Gets structures from the memory area beginning at
    GETSINWAD, allocating enough memory.  Return the address of the
    decoded array, or NULL if NGETS==0.  */
-Gets *decode_getsinwad_array(const Gets_inwad getsinwad[], size_t ngets);
+Gets *decode_getsinwad_array(const Gets_inwad *getsinwad, size_t ngets);
 
 /* Encode NGETS Gets structures from the array GETS, allocating enough
    memory.  Return the address of the in-WAD format array, and save

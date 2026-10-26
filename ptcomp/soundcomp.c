@@ -74,7 +74,7 @@ soundcomp(void)
       else if (!strcasecmp(s, "BendConst"))
 	 sr->s.bend_const = parm_int();
       else if (!strcasecmp(s, "Chance"))
-	 sr->s.chance = parm_uint();
+	 sr->s.chance = parm_int();
       else if (!strcasecmp(s, "Random") || !strcasecmp(s, "Redir")) {
 	 if (sr->s.nredir >= MAX_REDIR_SOUNDS)
 	    err(_("Too many sound redirects (max %d)"), (int) MAX_REDIR_SOUNDS);

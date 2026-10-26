@@ -33,6 +33,11 @@
 # define _(str) str
 # define U_(str) str
 # define N_(str) str
+/* Some code calls these directly.  */
+# undef gettext
+# undef dgettext
+# define gettext(str) ((const char *) (str))
+# define dgettext(domain, str) ((void) (domain), (const char *) (str))
 #endif
 
 #endif

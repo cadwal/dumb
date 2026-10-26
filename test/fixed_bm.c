@@ -40,13 +40,13 @@
 #include "libdumbutil/exitcode.h"
 #include "libdumbutil/fixed.h"
 
-static volatile loop;
+static volatile int loop;
 static const char *argv0;
 
 static int parse_int(const char *str);
 static void exit_invalid_args(void) __attribute__((noreturn));
 
-static RETSIGTYPE
+static void
 alrm(int dummy)
 {
    loop = 0;

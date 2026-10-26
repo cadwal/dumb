@@ -86,7 +86,7 @@ fixed fixtan(fixed) FIX_ATTR;
 #define FIXCOS(x) FLOAT_TO_FIXED(cos(FIXED_TO_FLOAT(x)))
 #define FIXTAN(x) FLOAT_TO_FIXED(tan(FIXED_TO_FLOAT(x)))
 
-#if defined(__GNUC__) && defined(i386)
+#if defined(__GNUC__) && defined(__i386__)
 
 /*********************** Intel fixed point functions **********************/
 
@@ -119,13 +119,15 @@ fixmul2_30(fixed r1, fixed r2)
 static inline fixed
 fixdiv(fixed dividend, fixed divisor)
 {
-   fixed result;
+   fixed result, remainder;
 
-   __asm__("sar  $16, %%edx\n\t"
-	   "idivl %3, %%eax\n\t"
-	   : "=a"(result)
-	   : "a"(dividend << 16), "d"(dividend), "mr"(divisor)
-	   : "edx");
+   /* edx:eax = dividend * 65536 */
+   __asm__("sarl  $16, %%edx\n\t"
+	   "idivl %4\n\t"
+	   : "=a"(result), "=d"(remainder)
+	   : "0"((fixed) ((unsigned) dividend << 16)), "1"(dividend),
+	     "rm"(divisor)
+	   : "cc");
 
    return result;
 }

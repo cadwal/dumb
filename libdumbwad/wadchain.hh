@@ -70,6 +70,7 @@ private:			// for class Counted_Wad_ptr
 private:			// for class Wad::Raw_Lump_ptr
    class Raw_Lump_ptr;
    friend class Raw_Lump_ptr;
+   friend class Counted_Lump_ptr;
    // egcs-2.91.66 bug: parameters must be named in the first friend
    // declaration.  This has been fixed in gcc-2.95.
    friend bool operator <(const Raw_Lump_ptr &a,
@@ -169,6 +170,11 @@ public:
 			   const Raw_Lump_ptr &b)
       {
 	 return (a.wad == b.wad && a.lump_index == b.lump_index);
+      }
+   friend bool operator !=(const Raw_Lump_ptr &a,
+			   const Raw_Lump_ptr &b)
+      {
+	 return !(a == b);
       }
 
    friend bool operator <(const Raw_Lump_ptr &a,

@@ -83,7 +83,7 @@ static const char *argv0;
 
 int main(int argc, char **argv);
 #ifdef USE_LONGJMP
-static RETSIGTYPE sigalarm_handler(int);
+static void sigalarm_handler(int);
 #endif
 static void tick(void);
 static void print_help(FILE *dest);
@@ -289,7 +289,7 @@ main(int argc, char **argv)
 
 #ifdef USE_LONGJMP
 
-static RETSIGTYPE
+static void
 sigalarm_handler(int i)
 {
    tick();

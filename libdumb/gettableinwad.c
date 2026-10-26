@@ -260,7 +260,7 @@ encode_gettableinwad(const Gettable *src, size_t *lengthp)
 /* Gets */
 
 Gets *
-decode_getsinwad_array(const Gets_inwad getsinwad[], size_t ngets)
+decode_getsinwad_array(const Gets_inwad *getsinwad, size_t ngets)
 {
    if (ngets == 0)
       return NULL;

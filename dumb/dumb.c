@@ -80,7 +80,7 @@
 #ifdef WATCHDOG
 static jmp_buf alarm_jb;
 
-static RETSIGTYPE
+static void
 alarm_handler(int i)
 {
    logprintf(LOG_ERROR, 'D',

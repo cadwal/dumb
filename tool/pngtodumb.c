@@ -65,7 +65,7 @@ read_image(FILE *f)
       fprintf(stderr, _("PNG library initialisation failed\n"));
       exit(DUMB_EXIT_OTHER);
    }
-   if (setjmp(png_ptr->jmpbuf) != 0) {
+   if (setjmp(png_jmpbuf(png_ptr)) != 0) {
       png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
       /* libpng has printed an error message */
       exit(DUMB_EXIT_OTHER);

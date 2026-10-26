@@ -21,6 +21,8 @@
 
 #include <config.h>
 
+#include <string.h>
+
 #include "libdumbutil/dumb-nls.h"
 
 #include "libdumbutil/safem.h"

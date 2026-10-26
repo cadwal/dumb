@@ -267,7 +267,7 @@ static View_constants view_constants;
 static const View *view = NULL;
 static int rw_column;
 
-#if defined(i386)&&!defined(DEBUG)
+#if defined(__i386__)&&!defined(DEBUG)
 #include "rendsl86.h"
 #else
 #include "rendsl.h"
@@ -875,38 +875,40 @@ render_walls(void)
 
 }
 
-#ifdef i386
+#ifdef __i386__
 static inline void
 memmove_fwd(void *d, const void *s, size_t l)
 {
-   asm("rep\n\t"
+   size_t n = l / 4;
+   asm volatile("rep\n\t"
        "movsl\n\t"
+ :    "+D"(d), "+S"(s), "+c"(n)
  :
- :    "D"(d), "S"(s), "c"(l / 4)
- :    "edi", "esi", "ecx"
+ :    "memory"
        );
 }
 
 static inline void
 memmove_bwd(void *d, const void *s, size_t l)
 {
-   asm("std\n\t"
+   size_t n = (l / 4) - 1;
+   asm volatile("std\n\t"
        "leal (%%esi,%%ecx,4),%%esi\n\t"
        "leal (%%edi,%%ecx,4),%%edi\n\t"
        "inc %%ecx\n\t"
        "rep\n\t"
        "movsl\n\t"
        "cld\n\t"
+ :    "+D"(d), "+S"(s), "+c"(n)
  :
- :    "D"(d), "S"(s), "c"((l / 4) - 1)
- :    "edi", "esi", "ecx"
+ :    "memory"
        );
 }
 
-#else  /* !i386 */
+#else  /* !__i386__ */
 #define memmove_fwd memmove
 #define memmove_bwd memmove
-#endif /* !i386 */
+#endif /* !__i386__ */
 
 #ifdef USE_VER_EQ
 /* are these two vertices "different but equal"? */

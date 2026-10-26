@@ -241,7 +241,7 @@ parse_long(const char *token, long min, long max,
    if (class_of_token(token) != TOKENCL_NAME)
       synerr(wrongtypemsg);
    errno = 0;
-   value = strtoul(token, &tail, 0);
+   value = strtol(token, &tail, 0);
    /* be careful not to clobber errno here */
    if (tail == token)		/* couldn't parse it at all */
       synerr(wrongtypemsg);
@@ -252,7 +252,7 @@ parse_long(const char *token, long min, long max,
    /* now check errno */
    if (errno == ERANGE || value < min || value > max)
       err(_("Integer %.*s is not in range (%ld to %ld)"),
-	  tail-token, token, min, max);
+	  (int) (tail-token), token, min, max);
    return value;
 }
 
@@ -277,7 +277,7 @@ parse_ulong(const char *token, unsigned long min, unsigned long max,
    /* now check errno */
    if (errno == ERANGE || value < min || value > max)
       err(_("Integer %.*s is not in range (%lu to %lu)"),
-	  tail-token, token, min, max);
+	  (int) (tail-token), token, min, max);
    return value;
 }
 

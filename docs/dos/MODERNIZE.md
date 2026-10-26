@@ -70,7 +70,7 @@ Nearly all of the Allegro API used is unchanged in 4.2 (`GFX_VESA2L`,
 ## Status
 
 - [x] Step 1: `autoreconf -fi` and `configure` work with autoconf 2.71 / automake 1.16.  The bundled `intl/` is gone; NLS uses the C library or an installed libintl (`DUMB_NLS` in `acinclude.m4`).  The custom `po/Makefile.in.in` (with its `-utf8` catalogs) is kept.
-- [ ] Step 2
+- [x] Step 2: native build (xdumb, dummydumb, ptcomp, tools, WADs, manual) is clean with GCC 13, with and without NLS, also under GCC 14's stricter defaults (`-Werror=implicit-function-declaration` etc.).  All C files also compile as 32-bit x86 at -O0 and -O2.  The rewritten x86 asm (wall/trans slices, flat loop, memmove, fixdiv) was checked against the C fallbacks and a 64-bit reference in a freestanding 32-bit test harness; mutation testing confirmed the harness catches broken asm.  Extra fixes found on the way: `Chance` in SoundType is signed (failed on 64-bit hosts), `wadtool`'s `basename` clashed with libc, libpng's `jmpbuf` field is private now, `wadchain.hh` access errors in modern g++, `safe_munmap` called without mmap (DJGPP), and code calling `gettext()`/`dgettext()` directly with NLS disabled.
 - [ ] Step 3
 - [ ] Step 4
 - [ ] Step 5

@@ -47,10 +47,11 @@ struct AppInstance;
 #define CTLPRED_D(name) CTLPRED_(name) CTLATTR
 #define CTLINPUT_D(name) CTLINPUT_(name) CTLATTR
 #define CTLOUTPUT_D(name) CTLOUTPUT_(name) CTLATTR
-#define CTLACTION(name) static CTLACTION_D(name); static CTLACTION_(name)
-#define CTLPRED(name) static CTLPRED_D(name); static CTLPRED_(name)
-#define CTLINPUT(name) static CTLINPUT_D(name); static CTLINPUT_(name)
-#define CTLOUTPUT(name) static CTLOUTPUT_D(name); static CTLOUTPUT_(name)
+/* GCC requires the attribute on the definition too.  */
+#define CTLACTION(name) static CTLACTION_D(name); static CTLATTR CTLACTION_(name)
+#define CTLPRED(name) static CTLPRED_D(name); static CTLATTR CTLPRED_(name)
+#define CTLINPUT(name) static CTLINPUT_D(name); static CTLATTR CTLINPUT_(name)
+#define CTLOUTPUT(name) static CTLOUTPUT_D(name); static CTLATTR CTLOUTPUT_(name)
 
 typedef CTLACTION_D((*CtlAction));
 typedef CTLPRED_D((*CtlPred));

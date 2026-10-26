@@ -301,9 +301,11 @@ load_wad(const char *fname, const char *_sig, const char *const path[])
 static void
 free_wad(WadFile *wad)
 {
+#if HAVE_MMAP
    if (wad->whole_map != NULL)
       safe_munmap(wad->fname, wad->whole_map, wad->wadlen);
    else
+#endif
       safe_free((WadDirEntry *) wad->dir);
    if (wad->fd >= 0)
       safe_close(wad->fname, wad->fd);

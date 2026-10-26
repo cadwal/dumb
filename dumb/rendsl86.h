@@ -21,41 +21,54 @@
 
 #define PIXEL_GUARD_VAL ((TPixel) ~0)
 
-static inline void
-SLICE_STRING(int rshift,
-	     int count, const TPixel *tex_base,
-	     Pixel *end,
-	     fixed tex_y, fixed tex_dy
-)
-{
-   asm("\t1:\n\t"
-       "movl %4, %%eax\n\t"
-       "shrl %5, %%eax\n\t"
-       "addl %2, %4\n\t"
-
+/* The per-pixel store, by pixel size.  */
+#undef SLICE_PUT_ASM
+#undef SLICE_LOOKUP_PUT_ASM
 #if BPP==1
-       "movb (%%ecx,%%eax), %%al\n\t"
-       "xlatb\n\t"
+#define SLICE_PUT_ASM				\
+       "movb (%%ecx,%%eax), %%al\n\t"		\
+       "xlatb\n\t"				\
+       "movb %%al, (%%esi,%%edi)\n\t"
+#define SLICE_LOOKUP_PUT_ASM			\
+       "xlatb\n\t"				\
        "movb %%al, (%%esi,%%edi)\n\t"
 #elif BPP==2
-       "movzbl (%%ecx,%%eax), %%eax\n\t"
-       "movw (%%ebx,%%eax,2), %%ax\n\t"
+#define SLICE_PUT_ASM				\
+       "movzbl (%%ecx,%%eax), %%eax\n\t"	\
+       "movw (%%ebx,%%eax,2), %%ax\n\t"		\
+       "movw %%ax, (%%esi,%%edi,2)\n\t"
+#define SLICE_LOOKUP_PUT_ASM			\
+       "movw (%%ebx,%%eax,2), %%ax\n\t"		\
        "movw %%ax, (%%esi,%%edi,2)\n\t"
 #elif BPP==4
-       "movzbl (%%ecx,%%eax), %%eax\n\t"
-       "movl (%%ebx,%%eax,4), %%eax\n\t"
+#define SLICE_PUT_ASM				\
+       "movzbl (%%ecx,%%eax), %%eax\n\t"	\
+       "movl (%%ebx,%%eax,4), %%eax\n\t"	\
+       "movl %%eax, (%%esi,%%edi,4)\n\t"
+#define SLICE_LOOKUP_PUT_ASM			\
+       "movl (%%ebx,%%eax,4), %%eax\n\t"	\
        "movl %%eax, (%%esi,%%edi,4)\n\t"
 #endif
 
-       "subl %6, %%edi\n\t"
-       "jns   1b\n\t"
-       :
-       : "D"(count), "c"(tex_base), "g"(tex_dy),
-       "S"(end), "d"(tex_y), "g"(rshift),
-       "g"(fb_width), "b"(colormap)
-       : "eax", "edi"
-       );
-}
+/* SLICE_STRING must be a macro so that RSHIFT is a constant even
+   without optimization; it is used as an immediate operand.  COUNT
+   and TEX_Y are modified by the loop, so they are copied first.  */
+#define SLICE_STRING(rshift, count, tex_base, end, tex_y, tex_dy)	\
+do {									\
+   int sl_count = (count);						\
+   fixed sl_tex_y = (tex_y);						\
+   __asm__ __volatile__("\t1:\n\t"					\
+       "movl %1, %%eax\n\t"						\
+       "shrl %5, %%eax\n\t"						\
+       "addl %3, %1\n\t"						\
+       SLICE_PUT_ASM							\
+       "subl %6, %0\n\t"						\
+       "jns   1b\n\t"							\
+       : "+D"(sl_count), "+d"(sl_tex_y)					\
+       : "c"(tex_base), "g"(tex_dy), "S"(end), "i"(rshift),		\
+       "g"(fb_width), "b"(colormap)					\
+       : "eax", "cc", "memory");					\
+} while (0)
 
 static void
 draw_wall_slice(Pixel *start, Pixel *end, const TPixel *tex_base,
@@ -102,46 +115,34 @@ draw_wall_slice(Pixel *start, Pixel *end, const TPixel *tex_base,
    }
 }
 
-static inline void
-TSLICE_STRING(int rshift,
-	      int count, const TPixel *tex_base,
-	      Pixel *end,
-	      fixed tex_y, fixed tex_dy
-)
-{
-   asm("\t1:\n\t"
-       "movl %4, %%eax\n\t"
-       "shrl %5, %%eax\n\t"
-       "addl %2, %4\n\t"
-       "movzbl (%%ecx,%%eax), %%eax\n\t"
-       "cmpb $-1,%%al\n\t"
-       "je 2f\n\t"
-
-#if BPP==1
-       "xlatb\n\t"
-       "movb %%al, (%%esi,%%edi)\n\t"
-#elif BPP==2
-       "movw (%%ebx,%%eax,2), %%ax\n\t"
-       "movw %%ax, (%%esi,%%edi,2)\n\t"
-#elif BPP==4
-       "movl (%%ebx,%%eax,4), %%eax\n\t"
-       "movl %%eax, (%%esi,%%edi,4)\n\t"
-#endif
-
-       "\t2:\n\t"
-       "subl %6, %%edi\n\t"
-       "jns   1b\n\t"
-       :
-       : "D"(count), "c"(tex_base), "g"(tex_dy),
-       "S"(end), "d"(tex_y), "g"(rshift),
+#undef TSLICE_FB_OPERANDS
 #ifdef USE_COLORMAP
-       "g"(fb_width), "b"(colormap)
+#define TSLICE_FB_OPERANDS "g"(fb_width), "b"(colormap)
 #else
-       "b"(fb_width)
+#define TSLICE_FB_OPERANDS "b"(fb_width)
 #endif
-       : "eax", "edi"
-       );
-}
+
+/* Like SLICE_STRING, but skips PIXEL_GUARD_VAL texels.  */
+#define TSLICE_STRING(rshift, count, tex_base, end, tex_y, tex_dy)	\
+do {									\
+   int sl_count = (count);						\
+   fixed sl_tex_y = (tex_y);						\
+   __asm__ __volatile__("\t1:\n\t"					\
+       "movl %1, %%eax\n\t"						\
+       "shrl %5, %%eax\n\t"						\
+       "addl %3, %1\n\t"						\
+       "movzbl (%%ecx,%%eax), %%eax\n\t"				\
+       "cmpb $-1,%%al\n\t"						\
+       "je 2f\n\t"							\
+       SLICE_LOOKUP_PUT_ASM						\
+       "\t2:\n\t"							\
+       "subl %6, %0\n\t"						\
+       "jns   1b\n\t"							\
+       : "+D"(sl_count), "+d"(sl_tex_y)					\
+       : "c"(tex_base), "g"(tex_dy), "S"(end), "i"(rshift),		\
+       TSLICE_FB_OPERANDS						\
+       : "eax", "cc", "memory");					\
+} while (0)
 
 static void
 draw_trans_slice(Pixel *start, Pixel *end, const TPixel *tex_base,

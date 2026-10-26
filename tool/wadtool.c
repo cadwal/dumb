@@ -50,7 +50,7 @@ int verbose_flag = 1;
 
 static void print_help(FILE *dest);
 static void print_version(void);
-static const char *basename(const char *);
+static const char *path_basename(const char *);
 static void catwad(WADWR *wr, FILE *fin, const char *fin_name);
 
 typedef enum {
@@ -125,7 +125,7 @@ print_version(void)
 /* Return the part of STR after the last slash,
    or STR if there's no slash.  */
 static const char *
-basename(const char *str)
+path_basename(const char *str)
 {
    const char *slash = strrchr(str, '/');
    if (slash)
@@ -271,7 +271,7 @@ main(int argc, char **argv)
 	       const char *in_fname = argv[i];
 	       char lumpname[LUMPNAMELEN+1];
 	       char *s;
-	       strncpy(lumpname, basename(in_fname), LUMPNAMELEN);
+	       strncpy(lumpname, path_basename(in_fname), LUMPNAMELEN);
 	       lumpname[LUMPNAMELEN] = '\0';
 	       s = strrchr(lumpname, '.');
 	       if (s)
