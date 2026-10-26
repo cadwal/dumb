@@ -4436,7 +4436,7 @@ msgid "L-Texture"
 msgstr "Alakuvio"
 
 #~ msgid "%s: seeking to %u: %s"
-#~ msgstr "%s: siirtyess‰ kohtaan %u: %s"
+#~ msgstr "%s: siirtyess√§ kohtaan %u: %s"
 
 # "lukeminen keskeytyi" olisi EINTR
 #~ msgid "%s: short read (%lu<%lu): %s"

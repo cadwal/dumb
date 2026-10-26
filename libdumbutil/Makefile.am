@@ -24,4 +24,4 @@ EXTRA_libdumbutil_a_SOURCES = dos_timer.c timer.c
 
 CC = $(CXX_HACK_CC)
 
-INCLUDES = -I$(top_srcdir) -I../intl
+AM_CPPFLAGS = -I$(top_srcdir)

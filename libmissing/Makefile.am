@@ -9,4 +9,3 @@ noinst_LIBRARIES = libmissing.a
 libmissing_a_SOURCES = libmissing.h getopt.c getopt.h getopt1.c
 libmissing_a_LIBADD = @LIBOBJS@
 
-INCLUDES = -I../intl

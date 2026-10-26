@@ -1,19 +1,30 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(libdumb/dsound.h)
-AC_CONFIG_AUX_DIR(scripts)
-AM_INIT_AUTOMAKE(dumb, 0.13.11)
-AM_CONFIG_HEADER(config.h dircfg.h)
+AC_PREREQ([2.69])
+AC_INIT([dumb], [0.13.11])
+AC_CONFIG_SRCDIR([libdumb/dsound.h])
+AC_CONFIG_AUX_DIR([scripts])
+AC_CANONICAL_HOST
+AM_INIT_AUTOMAKE([foreign])
+AC_CONFIG_HEADERS([config.h dircfg.h])
 
-# $datadir is usually '${prefix}/share'.  Expand it once.  This does
-# not handle spaces in $datadir, since I'm not sure how to use
-# multilevel quotes.
-dumb_expanded_datadir=`eval "echo $datadir"`
+# $datadir is usually '${datarootdir}', which is '${prefix}/share'.
+# Expand it fully.  This does not handle spaces in $datadir.
+dumb_save_prefix="$prefix"
+test "x$prefix" = xNONE && prefix="$ac_default_prefix"
+dumb_expanded_datadir="$datadir"
+while :; do
+  case "$dumb_expanded_datadir" in
+    *'$'*) eval "dumb_expanded_datadir=\"$dumb_expanded_datadir\"";;
+    *) break;;
+  esac
+done
+prefix="$dumb_save_prefix"
 DUMB_DEFINE_UNQUOTED(DUMB_CONFIG_DUMBDATADIR, "${dumb_expanded_datadir}/dumb")
 
 dnl --- Optional parts.
 AC_MSG_CHECKING([whether libdumbworldb is requested])
-AC_ARG_ENABLE(libdumbworldb,
-  [  --enable-libdumbworldb  enable the worldbase (doesn't work yet)],
+AC_ARG_ENABLE([libdumbworldb],
+  [AS_HELP_STRING([--enable-libdumbworldb], [enable the worldbase (doesn't work yet)])],
   [:],
   [enable_libdumbworldb="no"])
 dnl This is of course not cached.
@@ -21,7 +32,7 @@ if test "$enable_libdumbworldb" = "no"; then
   AC_MSG_RESULT([no])
 else
   AC_MSG_RESULT([yes])
-  AC_DEFINE(DUMB_CONFIG_LDWB)
+  AC_DEFINE([DUMB_CONFIG_LDWB], [1], [Define to enable libdumbworldb])
   AC_MSG_WARN([libdumbworldb is rather incomplete; you may have problems])
 fi
 AM_CONDITIONAL(DUMB_CONFIG_LDWB, [test "$enable_libdumbworldb" != "no"])
@@ -36,14 +47,12 @@ AC_PROG_RANLIB
 AC_PROG_INSTALL
 AC_PROG_LN_S
 
-dnl AM_GNU_GETTEXT wants this and it must be called before AC_TRY_COMPILE.
-AC_ISC_POSIX
+AC_USE_SYSTEM_EXTENSIONS
 
 dnl --- Checks for typedefs, structures, and compiler characteristics.
-AC_PROG_GCC_TRADITIONAL
 AC_C_CONST
 AC_C_INLINE
-DUMB_C_RESTRICT
+AC_C_RESTRICT
 AC_C_BIGENDIAN
 DUMB_C_ATTR_REGPARM
 AC_TYPE_SIZE_T
@@ -65,13 +74,10 @@ DUMB_FBREREND_SOURCES="${fbrerend}_fbrerend.c"
 AC_SUBST(DUMB_FBREREND_SOURCES)
 
 dnl --- C++ compilation hack.
-dnl To avoid having to change intl/Makefile.in, the C-as-C++ compiler
-dnl invocation command is saved in $CXX_HACK_CC and not directly in
-dnl $CC.  The contents of intl/ should be identical in all GNU
-dnl packages, so they can be updated automatically when a new version
-dnl of gettext is released.
-AC_ARG_ENABLE(c,
-  [  --disable-c             always compile as C++, not C],
+dnl The C-as-C++ compiler invocation command is saved in $CXX_HACK_CC
+dnl and not directly in $CC, so that configure tests still use C.
+AC_ARG_ENABLE([c],
+  [AS_HELP_STRING([--disable-c], [always compile as C++, not C])],
   [if test "$enableval" != "no"; then
     AC_MSG_WARN([--enable-c not supported])
   fi],
@@ -90,8 +96,36 @@ fi
 AC_SUBST(CXX_HACK_CC)
 
 dnl --- Internationalization.
+dnl po/Makefile.in.in is DUMB's own; it also installs the -utf8 catalogs.
+DUMB_NLS
 ALL_LINGUAS="fi"
-AM_GNU_GETTEXT
+if test -n "${LINGUAS+set}"; then
+  dumb_linguas=""
+  for lang in $ALL_LINGUAS; do
+    case " $LINGUAS " in *" $lang "*) dumb_linguas="$dumb_linguas $lang";; esac
+  done
+else
+  dumb_linguas="$ALL_LINGUAS"
+fi
+POFILES=""; GMOFILES=""; CATALOGS=""
+for lang in $ALL_LINGUAS; do
+  POFILES="$POFILES $lang.po"
+  GMOFILES="$GMOFILES $lang.gmo"
+done
+for lang in $dumb_linguas; do
+  CATALOGS="$CATALOGS $lang.gmo"
+done
+CATOBJEXT=".gmo"
+INSTOBJEXT=".mo"
+DATADIRNAME="share"
+AC_SUBST([POFILES])
+AC_SUBST([GMOFILES])
+AC_SUBST([CATALOGS])
+AC_SUBST([CATOBJEXT])
+AC_SUBST([INSTOBJEXT])
+AC_SUBST([DATADIRNAME])
+POTFILES=`sed -e '/^#/d' -e '/^[[ 	]]*$/d' -e 's,^,$(top_srcdir)/,' "$srcdir/po/POTFILES.in" | tr '\n' ' '`
+AC_SUBST([POTFILES])
 DUMB_DEFINE_UNQUOTED(LOCALEDIR, "${dumb_expanded_datadir}/locale")
 
 dnl --- X
@@ -112,7 +146,7 @@ if test -z "$no_x"; then
   LIBS="$save_LIBS"
 else
   x_ldadd=""
-  AC_MSG_WARN([X not found; programs \`xdumb', \`mkdfnt', \`XWad' and \`XProtoThing' will not be built])
+  AC_MSG_WARN([X not found; programs 'xdumb', 'mkdfnt', 'XWad' and 'XProtoThing' will not be built])
 fi
 
 dnl --- Netpbm library.
@@ -122,7 +156,8 @@ dumb_have_libppm=no
 AC_CHECK_HEADER(ppm.h, [dumb_ppm_h="<ppm.h>"],
   [AC_CHECK_HEADER(gr/ppm.h, [dumb_ppm_h="<gr/ppm.h>"])])
 if test -n "$dumb_ppm_h"; then
-  AC_DEFINE_UNQUOTED(DUMB_CONFIG_PPM_H, $dumb_ppm_h)
+  AC_DEFINE_UNQUOTED([DUMB_CONFIG_PPM_H], [$dumb_ppm_h],
+    [Define so that `#include DUMB_CONFIG_PPM_H' includes <ppm.h> or similar.])
   AC_CHECK_LIB(ppm, ppm_readppm, dumb_have_libppm=yes, dumb_have_libppm=no,
     -lpgm -lpbm)
   test "$dumb_have_libppm" = "yes" && DUMB_PPM_LDADD="-lppm -lpgm -lpbm"
@@ -132,7 +167,7 @@ if test -n "$dumb_ppm_h"; then
   fi
 fi
 if test "$dumb_have_libppm" = "no"; then
-  AC_MSG_WARN([ppm_readppm() not found; programs \`dark2trans' and \`ppmtodumb' will not be built])
+  AC_MSG_WARN([ppm_readppm() not found; programs 'dark2trans' and 'ppmtodumb' will not be built])
 fi
 AM_CONDITIONAL(DUMB_CONFIG_LIBPPM, test "$dumb_have_libppm" = "yes")
 AC_SUBST(DUMB_PPM_LDADD)
@@ -140,7 +175,7 @@ AC_SUBST(DUMB_PPM_LDADD)
 dnl --- PNG library.
 DUMB_CHECK_HDR_LIB_YESNO(png.h, png, png_read_image, [], dumb_have_libpng)
 if test "$dumb_have_libpng" = "no"; then
-  AC_MSG_WARN([libpng not found; program \`pngtodumb' will not be built])
+  AC_MSG_WARN([libpng not found; program 'pngtodumb' will not be built])
 fi
 AM_CONDITIONAL(DUMB_CONFIG_LIBPNG, test "$dumb_have_libpng" = "yes")
 
@@ -162,7 +197,7 @@ AC_CHECK_HEADER([aalib.h],
 AC_SUBST([DUMB_AA_LDADD])
 AM_CONDITIONAL(DUMB_CONFIG_AALIB, [test "$dumb_have_aalib" = "yes"])
 if test "$dumb_have_aalib" = "no"; then
-  AC_MSG_WARN([AA-lib not found; program \`aadumb' will not be built])
+  AC_MSG_WARN([AA-lib not found; program 'aadumb' will not be built])
 fi
 
 dnl --- LibGGI.
@@ -171,8 +206,8 @@ DUMB_CHECK_HDR_LIB([ggi/ggi.h], [ggi], [ggiParseMode], [],
   [DUMB_CHECK_IFDEF([ggi/ggi.h], [GII_KT_LATIN1],
     [DUMB_GGI_SOURCES="ggi_renoir_video.c"],
     [AC_MSG_WARN([LibGGI must be at least version 2.0b2 (Renoir)])
-    AC_MSG_WARN([Program \`ggidumb' will not be built])])],
-  [AC_MSG_WARN([LibGGI not found; program \`ggidumb' will not be built])])
+    AC_MSG_WARN([Program 'ggidumb' will not be built])])],
+  [AC_MSG_WARN([LibGGI not found; program 'ggidumb' will not be built])])
 dnl AC_SUBST(DUMB_GGI_SOURCES)
 AM_CONDITIONAL(DUMB_CONFIG_GGI, [test -n "$DUMB_GGI_SOURCES"])
 
@@ -181,7 +216,7 @@ DUMB_CHECK_HDR_LIB_YESNO(vga.h, vga, vga_setmode, [],
  dumb_have_svgalib)
 AM_CONDITIONAL(DUMB_CONFIG_SVGALIB, test "$dumb_have_svgalib" = "yes")
 if test "$dumb_have_svgalib" = "no"; then
-  AC_MSG_WARN([SVGAlib not found; program \`ldumb' will not be built])
+  AC_MSG_WARN([SVGAlib not found; program 'ldumb' will not be built])
 fi
 
 dnl --- Allegro.
@@ -189,16 +224,12 @@ DUMB_CHECK_HDR_LIB_YESNO(allegro.h, alleg, allegro_init, [],
  dumb_have_allegro)
 AM_CONDITIONAL(DUMB_CONFIG_DOS, test "$dumb_have_allegro" = "yes")
 if test "$dumb_have_allegro" = "no"; then
-  AC_MSG_WARN([Allegro not found; program \`dosdumb' will not be built])
+  AC_MSG_WARN([Allegro not found; program 'dosdumb' will not be built])
 fi
 
 dnl --- Checks for header files.
-AC_HEADER_STDC
-DUMB_MSG_REQUIRE_YES(ac_cv_header_stdc, [ANSI C header files])
 AC_HEADER_SYS_WAIT
 DUMB_MSG_REQUIRE_YES(ac_cv_header_sys_wait_h, [sys/wait.h])
-AC_HEADER_TIME
-DUMB_MSG_REQUIRE_YES(ac_cv_header_time, [ability to use time.h with sys/time.h])
 AC_CHECK_HEADERS(fcntl.h limits.h sys/ioctl.h sys/time.h unistd.h)
 DUMB_MSG_REQUIRE_YES(ac_cv_header_fcntl_h, [fcntl.h])
 DUMB_MSG_REQUIRE_YES(ac_cv_header_limits_h, [limits.h])
@@ -211,9 +242,6 @@ dnl DUMB only uses if(memcmp(...)) and if(!(memcmp(...)) and doesn't care of
 dnl the sign of the return value, so memcmp() needn't be 8-bit clean.
 dnl AC_FUNC_MEMCMP
 AC_FUNC_MMAP
-AC_TYPE_SIGNAL
-AC_FUNC_VPRINTF
-DUMB_MSG_REQUIRE_YES(ac_cv_func_vprintf, [vprintf()])
 AC_CHECK_FUNCS(strdup strstr fork setitimer)
 dnl sparc-sun-solaris2.5.1 keeps towlower() etc. in libw.so
 AC_SEARCH_LIBS(towlower, w, [],
@@ -223,13 +251,14 @@ AC_REPLACE_FUNCS(hstrerror snprintf strnlen)
 dnl --- Checks for system services.
 DUMB_SYS_SHMAT_RMID
 if test "$dumb_cv_sys_shmat_rmid" = yes; then
-  AC_DEFINE(DUMB_CONFIG_SYS_SHMAT_RMID)
+  AC_DEFINE([DUMB_CONFIG_SYS_SHMAT_RMID], [1],
+    [Define if shmat() can attach to segments already marked IPC_RMID.])
 fi
 
 dnl --- Video.
 dnl This is almost straight from info (automake)Conditionals ...
-AC_ARG_ENABLE(dummy-video,
-  [  --enable-dummy-video    make a version that doesn't show what happens],
+AC_ARG_ENABLE([dummy-video],
+  [AS_HELP_STRING([--enable-dummy-video], [make a version that doesn't show what happens])],
 [case "${enableval}" in
   yes) dummyvideo=true ;;
   no)  dummyvideo=false ;;
@@ -245,17 +274,17 @@ if test -z "$no_x"; then
   LIBS="$LIBS $X_PRE_LIBS"
   DUMB_CHECK_HDR_LIB(X11/extensions/XShm.h, Xext, XShmCreateImage,
    [-lX11 $X_EXTRA_LIBS],
-   [AC_DEFINE(DUMB_CONFIG_XSHM)
+   [AC_DEFINE([DUMB_CONFIG_XSHM], [1], [Define if you have the MIT Shared Memory extension.])
     DUMB_XSHM_LDADD="-lXext"], [])
   # This may cause -lXext to be given twice
   # but I don't think that's a problem.
   DUMB_CHECK_HDR_LIB(X11/extensions/xf86dga.h, Xxf86dga, XF86DGADirectVideo,
    [-lXext -lX11 $X_EXTRA_LIBS],
-   [AC_DEFINE(DUMB_CONFIG_XF86DGA)
+   [AC_DEFINE([DUMB_CONFIG_XF86DGA], [1], [Define if you have the XFree86 DGA extension.])
     DUMB_DGA_LDADD="-lXxf86dga -lXext"], [])
   DUMB_CHECK_HDR_LIB(X11/XKBlib.h, X11, XkbSetDetectableAutoRepeat,
    [$X_EXTRA_LIBS],
-   [AC_DEFINE(DUMB_CONFIG_XKB)
+   [AC_DEFINE([DUMB_CONFIG_XKB], [1], [Define if you have the X Keyboard Extension.])
     DUMB_XKB_LDADD="" # integrated in Xlib], [])
   LIBS="$dumb_old_LIBS"
 fi
@@ -282,23 +311,22 @@ dumb_sound_allegro="autodetect"
 dumb_sound_specified=""
 DUMB_CONFIG_SOUND=""
 DUMB_CONFIG_SOUND_LDADD=""
-DUMB_ARG_HELP(
-  [  Sound: Choose one system.  [autodetect]])
-AC_ARG_WITH(sound,
-  [  --without-sound         disable sound altogether],
-  if test "$withval" = "no"; then
+DUMB_ARG_HELP([[  Sound: Choose one system.  [autodetect]]])
+AC_ARG_WITH([sound],
+  [AS_HELP_STRING([--without-sound], [disable sound altogether])],
+  [if test "$withval" = "no"; then
     DUMB_CONFIG_SOUND=dummy
-    AC_MSG_CHECKING(for sound)
-    AC_MSG_RESULT(disabled)
+    AC_MSG_CHECKING([for sound])
+    AC_MSG_RESULT([disabled])
   else
     AC_MSG_WARN([--with-sound not supported; use --with-oss or --with-mme])
-  fi)
+  fi])
 DUMB_ARG_MULTICHOICE(sound, oss, oss,
-  [  --with-oss              use Open Sound System (Linux usually has this)])
+  [AS_HELP_STRING([--with-oss], [use Open Sound System (Linux usually has this)])])
 DUMB_ARG_MULTICHOICE(sound, mme, mme,
-  [  --with-mme              use MME for sound (for Alphas)])
+  [AS_HELP_STRING([--with-mme], [use MME for sound (for Alphas)])])
 DUMB_ARG_MULTICHOICE(sound, allegro, allegro,
-  [  --with-allegro          use Allegro for sound (for DOS)])
+  [AS_HELP_STRING([--with-allegro], [use Allegro for sound (for DOS)])])
 DUMB_TEST_MULTICHOICE(DUMB_CONFIG_SOUND, sound, oss, OSS,
   DUMB_CONFIG_SOUND="linux"
   DUMB_CONFIG_SOUND_LDADD="",
@@ -361,12 +389,17 @@ if test "$dumb_network" = unix; then
 fi
 
 dnl --- Output.
-AC_OUTPUT(Makefile libmissing/Makefile libdumbutil/Makefile
+AH_BOTTOM([/* With NLS, <libintl.h> comes from the C library or libintl.  */
+#ifdef ENABLE_NLS
+#define HAVE_LIBINTL_H 1
+#endif])
+AC_CONFIG_FILES([Makefile libmissing/Makefile libdumbutil/Makefile
   libdumbwad/Makefile libdumbworldb/Makefile libdumbrender/Makefile
   libdumb/Makefile dumb/Makefile xwad/Makefile ptcomp/Makefile
   tool/Makefile doom/Makefile htic/Makefile test/Makefile
   docs/Makefile docs/dos/Makefile docs/maint/Makefile
-  docs/patches/Makefile intl/Makefile po/Makefile.in scripts/Makefile)
+  docs/patches/Makefile po/Makefile:po/Makefile.in.in scripts/Makefile])
+AC_OUTPUT
 
 dnl Local Variables:
 dnl comment-start: "dnl "

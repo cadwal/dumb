@@ -20,12 +20,11 @@ fixed_bm_LDADD = $(LDADD)
 dwdbtest_LDADD = ../libdumb/libdumb.a ../libdumbworldb/libdumbworldb.a	\
 ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a $(LDADD)
 
-# libintl.h is generated in the build tree.
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/libmissing -I../intl
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/libmissing
 
 CC = $(CXX_HACK_CC)
 
 # fixed_bm should not be optimized because that's cheating.
 fixed_bm_CFLAGS = 
 fixed_bm.o: fixed_bm.c
-	$(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(fixed_bm_CFLAGS) -c $<
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fixed_bm_CFLAGS) -c $<

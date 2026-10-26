@@ -69,7 +69,7 @@ Nearly all of the Allegro API used is unchanged in 4.2 (`GFX_VESA2L`,
 
 ## Status
 
-- [ ] Step 1
+- [x] Step 1: `autoreconf -fi` and `configure` work with autoconf 2.71 / automake 1.16.  The bundled `intl/` is gone; NLS uses the C library or an installed libintl (`DUMB_NLS` in `acinclude.m4`).  The custom `po/Makefile.in.in` (with its `-utf8` catalogs) is kept.
 - [ ] Step 2
 - [ ] Step 3
 - [ ] Step 4

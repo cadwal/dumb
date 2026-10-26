@@ -9,4 +9,4 @@ wadio.c wadwr.c wadio.h wadstruct.h wadwr.h
 
 CC = $(CXX_HACK_CC)
 
-INCLUDES = -I$(top_srcdir) -I../intl
+AM_CPPFLAGS = -I$(top_srcdir)

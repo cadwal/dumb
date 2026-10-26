@@ -32,10 +32,8 @@ DESTDIR =
 
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
-MKINSTALLDIRS = @MKINSTALLDIRS@
+MKINSTALLDIRS = $(top_srcdir)/scripts/mkinstalldirs
 
-CC = @CC@
-GENCAT = @GENCAT@
 GMSGFMT = PATH=../src:$$PATH @GMSGFMT@
 MSGFMT = @MSGFMT@
 XGETTEXT = PATH=../src:$$PATH @XGETTEXT@
@@ -43,15 +41,6 @@ MSGMERGE = PATH=../src:$$PATH msgmerge
 RECODE = recode
 # FIXME: find recode in configure
 
-DEFS = @DEFS@
-CFLAGS = @CFLAGS@
-CPPFLAGS = @CPPFLAGS@
-
-INCLUDES = -I.. -I$(top_srcdir)/intl
-
-COMPILE = $(CC) -c $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(XCFLAGS)
-
-SOURCES = cat-id-tbl.c
 STD_POFILES = @POFILES@
 UTF8_POFILES = $(STD_POFILES:.po=.po-utf8)
 ALL_POFILES = $(STD_POFILES) $(UTF8_POFILES)
@@ -59,9 +48,9 @@ STD_GMOFILES = @GMOFILES@
 UTF8_GMOFILES = $(STD_GMOFILES:.gmo=.gmo-utf8)
 ALL_GMOFILES = $(STD_GMOFILES) $(UTF8_GMOFILES)
 DISTFILES = Makefile.in.in POTFILES.in $(PACKAGE).pot \
-stamp-cat-id $(ALL_POFILES) $(ALL_GMOFILES) $(SOURCES)
+$(ALL_POFILES) $(ALL_GMOFILES)
 
-POTFILES = \
+POTFILES = @POTFILES@
 
 STD_CATALOGS = @CATALOGS@
 UTF8_CATALOGS = $(STD_CATALOGS:.gmo=.gmo-utf8)
@@ -70,10 +59,7 @@ CATOBJEXT = @CATOBJEXT@
 INSTOBJEXT = @INSTOBJEXT@
 
 .SUFFIXES:
-.SUFFIXES: .c .o .po .pox .po-utf8 .gmo .gmo-utf8 .mo .mo-utf8 .msg .cat
-
-.c.o:
-	$(COMPILE) $<
+.SUFFIXES: .po .pox .po-utf8 .gmo .gmo-utf8 .mo .mo-utf8
 
 .po.pox:
 	$(MAKE) $(PACKAGE).pot
@@ -103,14 +89,10 @@ INSTOBJEXT = @INSTOBJEXT@
 	     | $(RECODE) --source=po "$$charset"..UTF-8 > $@
 	diff -q $@ $(srcdir)/$@ || cp $@ $(srcdir)/$@
 
-.po.cat:
-	sed -f ../intl/po2msg.sed < $< > $*.msg \
-	  && rm -f $@ && $(GENCAT) $@ $*.msg
-
 
 all: all-@USE_NLS@
 
-all-yes: cat-id-tbl.c $(ALL_CATALOGS)
+all-yes: $(ALL_CATALOGS)
 all-no:
 
 $(srcdir)/$(PACKAGE).pot: $(POTFILES)
@@ -120,21 +102,6 @@ $(srcdir)/$(PACKAGE).pot: $(POTFILES)
 	&& test ! -f $(PACKAGE).po \
 	   || ( rm -f $(srcdir)/$(PACKAGE).pot \
 		&& mv $(PACKAGE).po $(srcdir)/$(PACKAGE).pot )
-
-$(srcdir)/cat-id-tbl.c: stamp-cat-id; @:
-$(srcdir)/stamp-cat-id: $(PACKAGE).pot
-	rm -f cat-id-tbl.tmp
-	sed -f ../intl/po2tbl.sed $(srcdir)/$(PACKAGE).pot \
-		| sed -e "s/@PACKAGE NAME@/$(PACKAGE)/" > cat-id-tbl.tmp
-	if cmp -s cat-id-tbl.tmp $(srcdir)/cat-id-tbl.c; then \
-	  rm cat-id-tbl.tmp; \
-	else \
-	  echo cat-id-tbl.c changed; \
-	  rm -f $(srcdir)/cat-id-tbl.c; \
-	  mv cat-id-tbl.tmp $(srcdir)/cat-id-tbl.c; \
-	fi
-	cd $(srcdir) && rm -f stamp-cat-id && echo timestamp > stamp-cat-id
-
 
 install: install-exec install-data
 install-exec:
@@ -221,18 +188,15 @@ uninstall:
 
 check: all
 
-cat-id-tbl.o: ../intl/libgettext.h
-
 dvi info tags TAGS ID:
 
 mostlyclean:
-	rm -f core core.* *.pox $(PACKAGE).po *.old.po cat-id-tbl.tmp
-	rm -fr *.o
+	rm -f core core.* *.pox $(PACKAGE).po *.old.po
 
 clean: mostlyclean
 
 distclean: clean
-	rm -f Makefile Makefile.in POTFILES *.mo *.msg *.cat *.cat.m
+	rm -f Makefile *.mo
 
 maintainer-clean: distclean
 	@echo "This command is intended for maintainers to use;"
@@ -266,22 +230,11 @@ update-po: Makefile
 	  fi; \
 	done
 
-POTFILES: POTFILES.in
-	( if test 'x$(srcdir)' != 'x.'; then \
-	    posrcprefix='$(top_srcdir)/'; \
-	  else \
-	    posrcprefix="../"; \
-	  fi; \
-	  rm -f $@-t $@ \
-	    && (sed -e '/^#/d' -e '/^[ 	]*$$/d' \
-		    -e "s@.*@	$$posrcprefix& \\\\@" < $(srcdir)/$@.in \
-		| sed -e '$$s/\\$$//') > $@-t \
-	    && chmod a-w $@-t \
-	    && mv $@-t $@ )
-
-Makefile: Makefile.in.in ../config.status POTFILES
+Makefile: Makefile.in.in POTFILES.in ../config.status
 	cd .. \
-	  && CONFIG_FILES=$(subdir)/$@.in CONFIG_HEADERS= \
+	  && CONFIG_FILES=$(subdir)/$@:$(subdir)/$@.in.in CONFIG_HEADERS= \
+	       $(SHELL) ./config.status --recheck \
+	  && CONFIG_FILES=$(subdir)/$@:$(subdir)/$@.in.in CONFIG_HEADERS= \
 	       $(SHELL) ./config.status
 
 # Tell versions [3.59,3.63) of GNU make not to export all variables.

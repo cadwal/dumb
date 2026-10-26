@@ -28,4 +28,4 @@ LDADD = ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a			\
 
 CC = $(CXX_HACK_CC)
 
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/libmissing -I../intl
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/libmissing

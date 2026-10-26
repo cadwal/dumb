@@ -10,7 +10,7 @@ ldwb_subdir =
 endif
 
 SUBDIRS = libmissing libdumbutil libdumbwad $(ldwb_subdir)		\
-libdumbrender libdumb intl dumb xwad ptcomp tool doom htic test po	\
+libdumbrender libdumb dumb xwad ptcomp tool doom htic test po	\
 docs scripts
 
 # stuff for making Red Hat style rpms

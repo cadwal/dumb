@@ -11,4 +11,4 @@ doomwad.h hexenwad.h
 
 CC = $(CXX_HACK_CC)
 
-INCLUDES = -I$(top_srcdir) -I../intl
+AM_CPPFLAGS = -I$(top_srcdir)
