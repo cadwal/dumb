@@ -65,8 +65,8 @@ static Uint32 palette[256];
 void
 video_preinit(void)
 {
-   if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
-      logfatal('V', _("Can't initialize SDL video: %s"), SDL_GetError());
+   /* SDL is started in init_video(), so that --help and such work
+      without a display.  */
 }
 
 /* Pick a window size: CNF_SCALE times the game size, or the largest
@@ -93,6 +93,9 @@ init_video(int *width, int *height, int *bpp, int *real_width)
    SDL_RendererLogicalPresentation presentation;
    SDL_WindowFlags flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY;
    int shown_height, scale;
+
+   if (!SDL_InitSubSystem(SDL_INIT_VIDEO))
+      logfatal('V', _("Can't initialize SDL video: %s"), SDL_GetError());
 
    fb_width = *width;
    fb_height = *height;

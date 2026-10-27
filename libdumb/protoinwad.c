@@ -167,8 +167,10 @@ decode_protoinwad_array(ProtoThing **destp,
 	next_protoinwad(&cur_src, &cur_length))
       count++;
    if (destp != NULL) {
+      /* calloc: decode_protoinwad() doesn't set every field, and
+	 get_sprite_table() needs sprites to start out NULL.  */
       ProtoThing *dest = (ProtoThing *)
-	 safe_malloc(count * sizeof(ProtoThing));
+	 safe_calloc(count, sizeof(ProtoThing));
       int i = 0;
       for (cur_src = src, cur_length = length;
 	   is_protoinwad(cur_src, cur_length);

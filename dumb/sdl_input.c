@@ -51,6 +51,12 @@ ConfItem input_conf[] =
 static keymap_keycode down_keys[MAX_DOWN_KEYS];
 static int n_down_keys;
 
+/* Keys pressed and released between two frames would never be seen,
+   because the game reads key states once a frame.  Their release is
+   held back to the next frame instead.  */
+static keymap_keycode new_keys[MAX_DOWN_KEYS], late_releases[MAX_DOWN_KEYS];
+static int n_new_keys, n_late_releases;
+
 static int quit_requested;
 
 static void
@@ -99,12 +105,27 @@ get_input(PlayerInput *in)
    float mouse_dx = 0, mouse_dy = 0;
    SDL_MouseButtonFlags buttons;
 
+   /* Releases held back from the last frame (see late_releases).  */
+   while (n_late_releases > 0)
+      press_key(late_releases[--n_late_releases], 0);
+   n_new_keys = 0;
+
    while (SDL_PollEvent(&ev)) {
       switch (ev.type) {
       case SDL_EVENT_KEY_DOWN:
       case SDL_EVENT_KEY_UP:
 	 if (ev.key.repeat)
 	    break;
+	 if (!ev.key.down) {
+	    int i;
+	    for (i = 0; i < n_new_keys && new_keys[i] != ev.key.key; i++)
+	       ;
+	    if (i < n_new_keys && n_late_releases < MAX_DOWN_KEYS) {
+	       late_releases[n_late_releases++] = ev.key.key;
+	       break;
+	    }
+	 } else if (n_new_keys < MAX_DOWN_KEYS)
+	    new_keys[n_new_keys++] = ev.key.key;
 	 if (ev.key.down
 	     && (ev.key.key == SDLK_F11
 		 || (ev.key.key == SDLK_RETURN && (ev.key.mod & SDL_KMOD_ALT)))) {

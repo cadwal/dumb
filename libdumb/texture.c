@@ -807,6 +807,9 @@ init_misc(void)
 static void
 reset_misc(void)
 {
+   /* The table is only made when the first misc texture is needed.  */
+   if (!misc)
+      return;
    free_many_textures(misc, nmisc);
    safe_vfree(misc, sizeof(Texture) * MAXMISC);
    misc = NULL;
