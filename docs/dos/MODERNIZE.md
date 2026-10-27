@@ -1,5 +1,9 @@
 # Plan: building dosdumb with current DJGPP
 
+This work lives on the `djgpp-modernize` branch, side by side with
+`main`, which keeps the original DUMB 0.13.11 sources unchanged.  The
+DUMB game (cadwal/dumb-game) is set up the same way.
+
 Goal: build `dosdumb.exe` with a current DJGPP toolchain (GCC 12+,
 cross-compiled from Linux as `i586-pc-msdosdjgpp`) against Allegro 4.2,
 the last Allegro line with working DOS support.
@@ -99,13 +103,6 @@ Nearly all of the Allegro API used is unchanged in 4.2 (`GFX_VESA2L`,
 - `dos/cross-build.sh`: Linux/macOS cross build (toolchain, Allegro,
   WADs, the DUMB game, dosdumb.exe, package in `build-dos/dist`,
   optional `--run`).  Tested end to end from an empty work directory.
-
-The default game data is the DUMB game, cadwal/dumb-game, branch
-`djgpp-modernize`: its `.pt` files were ported to the current ptcomp
-syntax and it has a `prebuilt/game.wad`.  `xdumb -w game.wad` and
-`dummydumb -w game.wad` play its E1M1 with nothing else loaded.
-Freedoom or Doom remain available with `--iwad`/`--freedoom`
-(`-Iwad`/`-Freedoom` on Windows).
 - `dos/get-cwsdpmi.sh`: downloads CWSDPMI.EXE.
 - `dos/dosbox-x-build.ps1` (+ `.cmd`): Windows; sets up DJGPP 2.05,
   Allegro and DUMB on a DOSBox-X C: drive, builds natively in DOS with
@@ -113,6 +110,13 @@ Freedoom or Doom remain available with `--iwad`/`--freedoom`
   Windows, and the DJGPP mirror was not reachable from where it was
   written.  `dos/makefile.dj` itself was tested by cross-compiling
   with it (its WADs are byte-identical to the configure build's).
+
+The default game data is the DUMB game, cadwal/dumb-game, branch
+`djgpp-modernize`: its `.pt` files were ported to the current ptcomp
+syntax and it has a `prebuilt/game.wad`.  `xdumb -w game.wad` and
+`dummydumb -w game.wad` play its E1M1 with nothing else loaded.
+Freedoom or Doom remain available with `--iwad`/`--freedoom`
+(`-Iwad`/`-Freedoom` on Windows).
 
 ## Reproducing the DOS build by hand
 
