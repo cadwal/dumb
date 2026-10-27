@@ -288,6 +288,8 @@ load_wad(const char *fname, const char *_sig, const char *const path[])
    else {
       size_t dir_len = wad->nlumps * sizeof(WadDirEntry);
       WadDirEntry *dir = (WadDirEntry *) safe_malloc(dir_len);
+      /* The file position is just after the header now.  */
+      safe_lseek(wad->fname, wad->fd, wh->diroffset, SEEK_SET);
       safe_read(wad->fname, wad->fd, dir, dir_len);
       wad->dir = dir;		/* (const *) */
    }

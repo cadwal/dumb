@@ -25,6 +25,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 
 #include "libdumbutil/dumb-nls.h"
@@ -714,10 +715,10 @@ load_wtex(Texture *t, int bpp)
    t->bpp = bpp;
    td = find_tdata(t - walltexs);
    /* if this is a one-patch texture, try this kludge */
-   if (((long) td) % 4 != 0) {
+   if ((uintptr_t) td % 4 != 0) {
       logprintf(LOG_DEBUG, 'T',
-		_("wtex \"%s\" is unaligned with offset %ld!"),
-		td->name, ((long) td) % 4);
+		_("wtex \"%s\" is unaligned with offset %d!"),
+		td->name, (int) ((uintptr_t) td % 4));
    } else {
       if (bpp == 1
 	  && td->npatches == 1
@@ -807,6 +808,9 @@ init_misc(void)
 static void
 reset_misc(void)
 {
+   /* The table is only made when the first misc texture is needed.  */
+   if (!misc)
+      return;
    free_many_textures(misc, nmisc);
    safe_vfree(misc, sizeof(Texture) * MAXMISC);
    misc = NULL;

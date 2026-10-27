@@ -91,6 +91,14 @@ Nearly all of the Allegro API used is unchanged in 4.2 (`GFX_VESA2L`,
   `fixed`, `fixmul`, `fixdiv`.  DUMB's `fixsin`/`fixcos`/`fixtan` are
   now `fix_sin`/`fix_cos`/`fix_tan`, because liballeg.a exports the old
   names.  `make_sample()` zeroes the `SAMPLE` (new `stereo` field).
+- [x] Bugs in the original code found while porting (on `sdl-port`)
+  and fixed here too, because DOS takes the affected code paths:
+  without mmap (DJGPP has none), the WAD directory was read from the
+  wrong file position and `load_lump()` passed the lump length to
+  `lseek()` as `whence`, so `dosdumb.exe` could not have loaded any
+  WAD; protos were `malloc`'d with an uninitialised `sprites` pointer
+  (random crashes); and `reset_misc()` aborted on exit when no misc
+  texture had been loaded (the DUMB game).
 - [ ] Step 5: started.  Under DOSBox 0.74 the executable loads and the
   DJGPP stub stops with `Load error: no DPMI - Get csdpmi*b.zip`, as
   expected without a DPMI host.  CWSDPMI could not be downloaded in the
