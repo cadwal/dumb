@@ -115,6 +115,11 @@ setwmstuff(XWadInstance *inst, int set)
       case (TT_PATCH):
 	 win_name = _("Patch Texture Browser");
 	 break;
+      case (TT_BAD):
+	 /* init_tchoose() sets the window up before any texture type
+	    is chosen.  This used to abort(), so XWad never started.  */
+	 win_name = _("Texture Browser");
+	 break;
       default:
 	 abort();
    }

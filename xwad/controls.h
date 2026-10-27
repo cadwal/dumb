@@ -118,6 +118,7 @@ void rdable_cseti(CSetInstance *csi, AppInst *inst);
 void get_cset_size(const ControlSet *cset, int *width, int *height);
 #define get_cseti_size(c,w,h) get_cset_size((c)->cset,w,h)
 
+XFontStruct *load_font(Display *d, const char *name);
 void init_controls(Display *d, XFontStruct *f1, XFontStruct *f2);
 void reset_controls(void);
 

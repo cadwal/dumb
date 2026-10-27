@@ -217,10 +217,10 @@ main(int argc, char **argv)
    mapgc2 = XCreateGC(dpy, root, 0, NULL);
    msggc = XCreateGC(dpy, root, 0, NULL);
    init_controls(dpy,
-     msgfont = XLoadQueryFont(dpy, "-adobe-helvetica-medium-r-*-*-10-*"),
-	  lilfont = XLoadQueryFont(dpy, "-misc-fixed-medium-r-*-*-8-*"));
+     msgfont = load_font(dpy, "-adobe-helvetica-medium-r-*-*-10-*"),
+	  lilfont = load_font(dpy, "-misc-fixed-medium-r-*-*-8-*"));
    init_choosers(msgfont);
-   detailfont = XLoadQueryFont(dpy, "-adobe-helvetica-medium-r-*-*-8-*");
+   detailfont = load_font(dpy, "-adobe-helvetica-medium-r-*-*-8-*");
    XSetFont(dpy, mapgc, detailfont->fid);
    XSetFont(dpy, mapgc2, detailfont->fid);
    XSetFont(dpy, msggc, msgfont->fid);

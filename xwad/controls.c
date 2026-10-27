@@ -64,6 +64,22 @@ setctlfont(XFontStruct *f)
    }
 }
 
+/* Load an X core font, or "fixed" if it isn't installed: current
+   X servers often have none of the old Adobe and misc fonts, and
+   every X server must provide "fixed".  */
+XFontStruct *
+load_font(Display *d, const char *name)
+{
+   XFontStruct *f = XLoadQueryFont(d, name);
+   if (f == NULL) {
+      logprintf(LOG_WARNING, 'X', _("No font %s; using fixed"), name);
+      f = XLoadQueryFont(d, "fixed");
+      if (f == NULL)
+	 logfatal('X', _("Can't load the font %s, nor fixed"), name);
+   }
+   return f;
+}
+
 void
 init_controls(Display *d, XFontStruct *f1, XFontStruct *f2)
 {

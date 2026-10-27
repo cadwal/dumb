@@ -180,10 +180,10 @@ main(int argc, char **argv)
 	       dpyname ? dpyname : _("<default>"));
    root = DefaultRootWindow(dpy);
    screen = DefaultScreen(dpy);
-   font = XLoadQueryFont(dpy, "-adobe-helvetica-medium-r-*-*-10-*");
-   lilfont = XLoadQueryFont(dpy, "-misc-fixed-medium-r-*-*-8-*");
+   font = load_font(dpy, "-adobe-helvetica-medium-r-*-*-10-*");
+   lilfont = load_font(dpy, "-misc-fixed-medium-r-*-*-8-*");
    init_controls(dpy, font, lilfont);
-   chofont = XLoadQueryFont(dpy, "-misc-fixed-medium-r-*-*-10-*");
+   chofont = load_font(dpy, "-misc-fixed-medium-r-*-*-10-*");
    init_choosers(chofont);
 
    /* load wads */
