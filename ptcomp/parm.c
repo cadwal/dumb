@@ -64,7 +64,8 @@ parm_str(char *buf, size_t n)
       {
 	 size_t length = parse_string(NULL, token+1);
 	 if (length >= n)
-	    err(_("String is too long (max %d characters)"), n-1);
+	    err(_("String is too long (max %lu characters)"),
+	     (unsigned long) (n-1));
 	 parse_string(buf, token+1);
 	 memset(buf+length, 0, n-length); /* n-length > 0 */
       }
@@ -73,7 +74,8 @@ parm_str(char *buf, size_t n)
       if (fake_strings_flag) {
 	 size_t length = strlen(token);
 	 if (length >= n)
-	    err(_("String is too long (max %d characters)"), n-1);
+	    err(_("String is too long (max %lu characters)"),
+	     (unsigned long) (n-1));
 	 strncpy(buf, token, n);	/* will add '\0', since length<n */
       } else
 	 synerr(_("String parameter expected.  Try --fake-strings"));
@@ -148,7 +150,7 @@ parm_name(const char *errmsg)
    if (class_of_token(token) == TOKENCL_NAME)
       return token;
    else
-      synerr(errmsg);
+      synerr("%s", errmsg);
 }
 
 int
@@ -239,16 +241,16 @@ parse_long(const char *token, long min, long max,
    char *tail;
    long value;
    if (class_of_token(token) != TOKENCL_NAME)
-      synerr(wrongtypemsg);
+      synerr("%s", wrongtypemsg);
    errno = 0;
    value = strtol(token, &tail, 0);
    /* be careful not to clobber errno here */
    if (tail == token)		/* couldn't parse it at all */
-      synerr(wrongtypemsg);
+      synerr("%s", wrongtypemsg);
    if (tailptr != NULL)
       *tailptr = tail;
    else if (*tail != '\0')	/* garbage after integer */
-      synerr(wrongtypemsg);
+      synerr("%s", wrongtypemsg);
    /* now check errno */
    if (errno == ERANGE || value < min || value > max)
       err(_("Integer %.*s is not in range (%ld to %ld)"),
@@ -264,16 +266,16 @@ parse_ulong(const char *token, unsigned long min, unsigned long max,
    char *tail;
    unsigned long value;
    if (class_of_token(token) != TOKENCL_NAME)
-      synerr(wrongtypemsg);
+      synerr("%s", wrongtypemsg);
    errno = 0;
    value = strtoul(token, &tail, 0);
    /* be careful not to clobber errno here */
    if (tail == token)		/* couldn't parse it at all */
-      synerr(wrongtypemsg);
+      synerr("%s", wrongtypemsg);
    if (tailptr != NULL)
       *tailptr = tail;
    else if (*tail != '\0')	/* garbage after integer */
-      synerr(wrongtypemsg);
+      synerr("%s", wrongtypemsg);
    /* now check errno */
    if (errno == ERANGE || value < min || value > max)
       err(_("Integer %.*s is not in range (%lu to %lu)"),

@@ -157,7 +157,7 @@ pickup_proto(LevData *ld, int pl, ProtoThing *proto)
 					      proto->ngets, 1);
    if (pu == GETT_PU_USELESS) {
       if (proto->ignoremsg != NULL)
-	 game_utf8_message(pl, dgettext(get_msgdom(), proto->ignoremsg));
+	 game_utf8_message(pl, "%s", dgettext(get_msgdom(), proto->ignoremsg));
       /* FIXME: do something to prevent the player from trying to pick
          it up again in the next tick */
    }
@@ -170,9 +170,10 @@ pickup_proto(LevData *ld, int pl, ProtoThing *proto)
       assert(pu2 == pu);
    }
    if (pu == GETT_PU_GOTFIRST && proto->firstpickupmsg != NULL)
-      game_utf8_message(pl, dgettext(get_msgdom(), proto->firstpickupmsg));
+      game_utf8_message(pl, "%s",
+			dgettext(get_msgdom(), proto->firstpickupmsg));
    else if (proto->pickupmsg != NULL)
-      game_utf8_message(pl, dgettext(get_msgdom(), proto->pickupmsg));
+      game_utf8_message(pl, "%s", dgettext(get_msgdom(), proto->pickupmsg));
    if (proto->pickup_sound >= 0)
       play_dsound(proto->pickup_sound, 0, 0, 0);
    return 1;

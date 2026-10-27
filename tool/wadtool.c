@@ -144,12 +144,16 @@ catwad(WADWR *wr, FILE *fin, const char *fin_name)
    unsigned lumpnum;
    char namebuf[12];		/* FIXME: why 12? */
    rewind(fin);
-   fread(&hdr, sizeof(hdr), 1, fin);
+   if (fread(&hdr, sizeof(hdr), 1, fin) != 1)
+      logprintf(LOG_FATAL, 'W', _("%s: can't read the WAD header"),
+		fin_name);
    dir = (WadDirEntry *) malloc(sizeof(WadDirEntry) * hdr.nlumps);
    if (dir == NULL)
-      return;
+      logprintf(LOG_FATAL, 'W', _("%s: out of memory"), fin_name);
    fseek(fin, hdr.diroffset, SEEK_SET);
-   fread(dir, sizeof(WadDirEntry), hdr.nlumps, fin);
+   if (fread(dir, sizeof(WadDirEntry), hdr.nlumps, fin) != hdr.nlumps)
+      logprintf(LOG_FATAL, 'W', _("%s: can't read the WAD directory"),
+		fin_name);
    for (lumpnum = 0; lumpnum < hdr.nlumps; lumpnum++) {
       strncpy(namebuf, dir[lumpnum].name, 8);
       namebuf[8] = 0;
@@ -160,8 +164,12 @@ catwad(WADWR *wr, FILE *fin, const char *fin_name)
       if (dir[lumpnum].size > 0) {
 	 /* alright so this isn't a very efficient way of doing things! */
 	 void *buf = malloc(dir[lumpnum].size);
+	 if (buf == NULL)
+	    logprintf(LOG_FATAL, 'W', _("%s: out of memory"), fin_name);
 	 fseek(fin, dir[lumpnum].offset, SEEK_SET);
-	 fread(buf, dir[lumpnum].size, 1, fin);
+	 if (fread(buf, dir[lumpnum].size, 1, fin) != 1)
+	    logprintf(LOG_FATAL, 'W', _("%s(%s): can't read the lump"),
+		      fin_name, namebuf);
 	 wadwr_write(wr, buf, dir[lumpnum].size);
 	 free(buf);
       }

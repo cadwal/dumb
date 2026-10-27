@@ -304,7 +304,11 @@ scan(char **name, char *sep, int *x, int *y)
    /* scan for coords */
    if (eatws(source_file))
       return 0;
-   fscanf(source_file, "%d %d", x, y);
+   if (fscanf(source_file, "%d %d", x, y) != 2) {
+      buf[i] = '\0';
+      fprintf(stderr, _("%s: no coordinates after %s\n"), argv0, buf);
+      exit(DUMB_EXIT_INVALID_DATA);
+   }
    /* scan for newline */
    while (!feof(source_file) && getc(source_file) != '\n');
    *name = buf;

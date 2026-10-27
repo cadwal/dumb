@@ -23,12 +23,14 @@
 #include <config.h>
 #include <dircfg.h>
 
+#include <errno.h>
 #include <locale.h>
 #include <setjmp.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -382,10 +384,10 @@ main(int argc, char **argv)
       safe_free(log_name);
    }
 #endif
-   if (cnf_record)
-      frec = fopen(cnf_record, "wb");
-   if (cnf_play)
-      fplay = fopen(cnf_record, "rb");
+   if (cnf_record && (frec = fopen(cnf_record, "wb")) == NULL)
+      logprintf(LOG_ERROR, 'D', "%s: %s", cnf_record, strerror(errno));
+   if (cnf_play && (fplay = fopen(cnf_play, "rb")) == NULL)
+      logprintf(LOG_ERROR, 'D', "%s: %s", cnf_play, strerror(errno));
    xmul = cnf_xmul;
    ymul = cnf_ymul;
    xlace = cnf_xlace;
@@ -613,12 +615,11 @@ main(int argc, char **argv)
 	 if (want_sound)
 	    poll_sound();
 	 if (fplay) {
-	    if (feof(fplay)) {
+	    if (fread(&in, sizeof(in), 1, fplay) != 1) {
 	       logprintf(LOG_INFO, 'D', _("Demo ran out..."));
 	       fclose(fplay);
 	       fplay = NULL;
-	    } else
-	       fread(&in, sizeof(in), 1, fplay);
+	    }
 	 }
 	 if (fplay == NULL)
 	    get_input(&in);

@@ -481,8 +481,9 @@ netplay_poll(LevData *ld)
 	    /* slave_init packet */
 	    if (codelen != (sizeof(slave_info) - 2))
 	       logfatal('N',
-		    _("init pkt length mismatch: got %d, expecting %lu"),
-			codelen, (unsigned long) sizeof(slave_info) - 2);
+		    _("init pkt length mismatch: got %lu, expecting %lu"),
+			(unsigned long) codelen,
+			(unsigned long) sizeof(slave_info) - 2);
 	    memcpy(&slave_info, code, sizeof(slave_info));
 	    if (slave_info.protocol_version != PROTOCOL_VERSION)
 	       logfatal('N',

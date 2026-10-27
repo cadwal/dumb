@@ -269,7 +269,11 @@ loadpal(void)
       fprintf(stderr, "%s: %s: %s\n", argv0, playpal_fn, strerror(errno));
       exit(DUMB_EXIT_FOPEN_FAIL);
    }
-   fread(playpal, 3, 256, f);
+   if (fread(playpal, 3, 256, f) != 256) {
+      fprintf(stderr, "%s: %s: %s\n", argv0, playpal_fn,
+	      ferror(f) ? strerror(errno) : _("too short for a palette"));
+      exit(DUMB_EXIT_INVALID_DATA);
+   }
    fclose(f);
 }
 
