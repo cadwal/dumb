@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-EXTRA_DIST = $(rpm_stem).spec .cvsignore docs/PORTING.md dos/README dos/config.h	\
+EXTRA_DIST = $(rpm_stem).spec .cvsignore docs/MIGRATION.md docs/PORTING.md dos/README dos/config.h	\
 dos/dircfg.h dos/makefile.dj dos/cross-build.sh dos/get-cwsdpmi.sh	\
 dos/dosbox-x-build.ps1 dos/dosbox-x-build.cmd
 MAINTAINERCLEANFILES = $(rpm_spec)
