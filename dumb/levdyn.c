@@ -276,9 +276,11 @@ LD_DYNDECL(Thing)
       if (lump->type > mp)
 	 dyn->proto = NULL;
       else
-	 init_player(ld,
-		     lump->type - 1,
-		     dyn - ldthingd(ld));
+	 /* Only note the start: load_level() calls init_player()
+	    after all things are loaded.  init_player() creates the
+	    player's weapon thing, and now it would take the slot of
+	    a map thing not yet loaded, which then overwrote it.  */
+	 ld->player[lump->type - 1] = dyn - ldthingd(ld);
    }
    /* finish off generic initialisation */
    dyn->owner = dyn->target = -1;

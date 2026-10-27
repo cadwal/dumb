@@ -135,6 +135,11 @@ load_level(LevData *ld, const char *name, int d, int mp)
       }
       /* OK, onto next lumptype */
    }
+   /* Now that the spare thing slots are counted, set up the players
+      whose starts Thing_dyninit() found.  */
+   for (i = 0; i < MAXPLAYERS; i++)
+      if (ld->player[i] >= 0)
+	 init_player(ld, i, ld->player[i]);
    if (ld->player[0] < 0)
       logprintf(LOG_ERROR, 'M', _("Uh-oh: no player!"));
    /* Every player needs a start, or ld->player[] holds -1 and the
