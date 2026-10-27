@@ -86,6 +86,9 @@ fixes are:
 - **libpng.**  `png->jmpbuf` became `png_jmpbuf(png)`.
 - **Missing `#include`s and implicit declarations**, which are now
   errors.
+- **Warnings.**  The tree now builds with no warnings at `-Wall`,
+  which configure turns on for GCC.  See [NOTES.md](NOTES.md) for
+  what was fixed.
 - **ptcomp.**  `Chance` values were parsed with `atol` into a type
   that is 64 bits wide on 64-bit Linux, so negative values broke.  They
   are now signed and parsed with `strtol`.
@@ -238,6 +241,10 @@ Some bugs were latent: they never showed on Linux with glibc and
 11. **Messages used as format strings** (`dumb/updthing.c`,
     `ptcomp/parm.c`).  Pickup messages come from the WAD, so a `%` in
     one would have been read as a conversion.
+12. **xwad read `line[-1]`** (`xwad/xwadctls.c`).  A macro's second
+    statement after `if (LINEVALID)` was not guarded, so with no line
+    selected it indexed the line array with -1.  Found while fixing
+    `-Wmisleading-indentation` warnings in the macros next to it.
 
 ## How things were tested
 

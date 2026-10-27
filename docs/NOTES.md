@@ -80,6 +80,31 @@ work goes on.
 - `wadtool -c` was checked by copying `game.wad`: all 57 lumps are
   identical.
 
+### 7. `-Wall`
+
+- configure now puts `-Wall` first in CFLAGS and CXXFLAGS for GCC, so
+  a `-Wno-...` option given by the user still wins.  Linux (with xwad
+  and the tests), Windows and DOS all build with 0 warnings.
+- There were 36 warnings on Linux and 1 more for MinGW:
+  - `-Wstringop-truncation` (11): `strncpy()` into 8-byte lump-name
+    fields, which are meant to be unterminated when full.  The new
+    `set_lumpname()` in `libdumbwad/wadstruct.h` does the same copy
+    without the warning.
+  - Unused variables, and an `if (!rs->name)` test on an array, which
+    can never be true.
+  - `test/fixed_bm.c`: the benchmark loops threw their results away,
+    so the compiler could drop the work being timed.  They now store
+    into `volatile` sinks.
+  - xwad: `XGetGeometry()` wants `unsigned int *`, and three macros
+    had a misleading `if`.
+  - getopt.c: an `else` that only looked ambiguous; braces added.
+- A real bug, found while fixing the misleading-`if` warnings: in
+  xwad's side-ID input, the line after `if (LINEVALID)` was not
+  guarded, so with no line selected it read
+  `line[-1]`.
+- Checked afterwards: the game under Xvfb (59 fps, walking and
+  shooting), network play (3 runs out of 3), and `fixed_bm`.
+
 ## Decisions
 
 | Question | Decision |
@@ -188,4 +213,5 @@ bug became reproducible.
 - [ ] CI for the Linux, MinGW and DJGPP builds.
 - [ ] Linux packaging (a `.desktop` file, an icon, maybe Flatpak).
 - [x] Fix the compiler warnings (0 left at `-g -O2`).
-- [ ] Try `-Wall`, which is not on by default and will show more.
+- [x] `-Wall` on by default, with 0 warnings.
+- [ ] Maybe try `-Wextra` (it isn't on).
