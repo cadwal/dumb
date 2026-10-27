@@ -243,17 +243,34 @@ work goes on.
 ### 11. Only `main` and `modernize`
 
 - Checked with `git merge-base --is-ancestor` that every other branch
-  in both repositories was fully contained in `modernize`, then
-  tagged their last state and deleted them:
-  - cadwal/dumb: `original-0.13.11` (= `main`),
-    `djgpp-modernize-final`, `sdl-port-final`.  The backup branch
-    `modernize-sanitizer-wip` was deleted without a tag; it was an
-    older state of `modernize`.
-  - cadwal/dumb-game: `original-0.13.1` (= `main`),
-    `djgpp-modernize-final`.
-- The scripts in DUMB's `djgpp-modernize-final` tag clone
-  dumb-game's deleted `djgpp-modernize` branch; use dumb-game's tag
-  of the same name with `DUMB_GAME_DIR` instead.
+  in both repositories is fully contained in `modernize`, so
+  deleting them loses no commits.
+- The originals already have release tags equal to `main`: `v0.13.11`
+  (cadwal/dumb, `a7d9c7e`) and `v0.13.1` (cadwal/dumb-game,
+  `ef899d6`).
+- The stages get tags: `djgpp-modernize-final` and `sdl-port-final`
+  in cadwal/dumb, `djgpp-modernize-final` in cadwal/dumb-game.  This
+  session's GitHub access could push branches but not tags, and could
+  not delete branches, so the owner runs, in a clone of each:
+
+      # cadwal/dumb
+      git fetch origin
+      git tag -a djgpp-modernize-final origin/djgpp-modernize -m "Last state of djgpp-modernize"
+      git tag -a sdl-port-final origin/sdl-port -m "Last state of sdl-port"
+      git push origin djgpp-modernize-final sdl-port-final
+      git push origin --delete djgpp-modernize sdl-port modernize-sanitizer-wip
+
+      # cadwal/dumb-game
+      git fetch origin
+      git tag -a djgpp-modernize-final origin/djgpp-modernize -m "Last state of djgpp-modernize"
+      git push origin djgpp-modernize-final
+      git push origin --delete djgpp-modernize
+
+  `modernize-sanitizer-wip` needs no tag: it is an older state of
+  `modernize`.
+- After that, the scripts in DUMB's `djgpp-modernize-final` tag would
+  clone dumb-game's deleted `djgpp-modernize` branch; use dumb-game's
+  tag of the same name with `DUMB_GAME_DIR` instead.
 - The test scripts used for all of this are now in `test/manual/`
   (see its README), and dumb-game has `tools/patch-lumps.py` for
   updating `prebuilt/game.wad` without rebuilding its art.

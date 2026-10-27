@@ -14,7 +14,7 @@ detail:
 
 ## Branches and tags
 
-Each repository has two branches, side by side.  Nothing is merged
+Each repository keeps two branches, side by side.  Nothing is merged
 into `main`.
 
 | Branch | Repository | Contents |
@@ -24,16 +24,19 @@ into `main`.
 | `main` | cadwal/dumb-game | The original game sources, untouched |
 | `modernize` | cadwal/dumb-game | The game data ported to the current ptcomp, a prebuilt `game.wad`, starts for 4 players; used by `modernize`'s scripts |
 
-The work was done in stages on branches that have since been deleted.
-Everything on them is part of `modernize`; their last state is kept
-as tags, so each stage can still be read on its own:
+The work was done in stages on the branches `djgpp-modernize` and
+`sdl-port` (and dumb-game's `djgpp-modernize`).  Everything on them is
+part of `modernize`.  Their last state is to be kept as tags, so each
+stage can still be read on its own, and the branches deleted; this
+session could not push tags or delete branches, so the repository
+owner does that (commands in NOTES.md, section 11):
 
 | Tag | Repository | Contents |
 |---|---|---|
-| `original-0.13.11` | cadwal/dumb | Same as `main` |
+| `v0.13.11` | cadwal/dumb | The 0.13.11 release, same as `main` |
 | `djgpp-modernize-final` | cadwal/dumb | Autotools, GCC fixes, dosdumb with DJGPP and Allegro, scripts |
 | `sdl-port-final` | cadwal/dumb | The above plus the SDL3 driver, the portable timer and Windows |
-| `original-0.13.1` | cadwal/dumb-game | Same as `main` |
+| `v0.13.1` | cadwal/dumb-game | The 0.13.1 release, same as `main` |
 | `djgpp-modernize-final` | cadwal/dumb-game | The game data ported to the current ptcomp, a prebuilt `game.wad`, starts for 4 players |
 
 The scripts in the `djgpp-modernize-final` tag of cadwal/dumb clone
