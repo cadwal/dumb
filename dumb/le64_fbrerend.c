@@ -22,6 +22,7 @@
 
 #include <config.h>
 
+#include <stdint.h>
 #include <stdlib.h>
 
 #include "render.h"
@@ -43,19 +44,19 @@ fbrerender8(Pixel8 *destfb,
       for (j = 0; j < ysize; j++) {
 	 for (i = 0; i < xsize; i += 4) {
 	    register int mul = i * xfact;
-	    register unsigned long tmp;
+	    register uint64_t tmp;
 	    register unsigned char pix1 = srcfb[i], pix2 = srcfb[i + 1],
 				   pix3 = srcfb[i + 2], pix4 = srcfb[i + 3];
-	    tmp = ((unsigned long) pix1
-		   + ((unsigned long) pix1 << 8)
-		   + ((unsigned long) pix2 << 16)
-		   + ((unsigned long) pix2 << 24)
-		   + ((unsigned long) pix3 << 32)
-		   + ((unsigned long) pix3 << 40)
-		   + ((unsigned long) pix4 << 48)
-		   + ((unsigned long) pix4 << 56));
-	    *((unsigned long *) (destfb + mul + width))
-	       = *((unsigned long *) (destfb + mul)) = tmp;
+	    tmp = ((uint64_t) pix1
+		   + ((uint64_t) pix1 << 8)
+		   + ((uint64_t) pix2 << 16)
+		   + ((uint64_t) pix2 << 24)
+		   + ((uint64_t) pix3 << 32)
+		   + ((uint64_t) pix3 << 40)
+		   + ((uint64_t) pix4 << 48)
+		   + ((uint64_t) pix4 << 56));
+	    *((uint64_t *) (destfb + mul + width))
+	       = *((uint64_t *) (destfb + mul)) = tmp;
 	 }
 	 destfb += destinc;
 	 srcfb += xsize;
@@ -68,20 +69,20 @@ fbrerender8(Pixel8 *destfb,
       for (j = 0; j < ysize; j++) {
 	 for (i = 0; i < xsize; i += 2) {
 	    register int mul = i * xfact;
-	    register unsigned long tmp;
+	    register uint64_t tmp;
 	    register unsigned char pix1 = srcfb[i], pix2 = srcfb[i + 1];
-	    tmp = ((unsigned long) pix1
-		   + ((unsigned long) pix1 << 8)
-		   + ((unsigned long) pix1 << 16)
-		   + ((unsigned long) pix1 << 24)
-		   + ((unsigned long) pix2 << 32)
-		   + ((unsigned long) pix2 << 40)
-		   + ((unsigned long) pix2 << 48)
-		   + ((unsigned long) pix2 << 56));
-	    *((unsigned long *) (destfb + mul + width * 3))
-	       = *((unsigned long *) (destfb + mul + width * 2))
-	       = *((unsigned long *) (destfb + mul + width))
-	       = *((unsigned long *) (destfb + mul)) = tmp;
+	    tmp = ((uint64_t) pix1
+		   + ((uint64_t) pix1 << 8)
+		   + ((uint64_t) pix1 << 16)
+		   + ((uint64_t) pix1 << 24)
+		   + ((uint64_t) pix2 << 32)
+		   + ((uint64_t) pix2 << 40)
+		   + ((uint64_t) pix2 << 48)
+		   + ((uint64_t) pix2 << 56));
+	    *((uint64_t *) (destfb + mul + width * 3))
+	       = *((uint64_t *) (destfb + mul + width * 2))
+	       = *((uint64_t *) (destfb + mul + width))
+	       = *((uint64_t *) (destfb + mul)) = tmp;
 	 }
 	 destfb += destinc;
 	 srcfb += xsize;
@@ -121,14 +122,14 @@ fbrerender16(Pixel16 *destfb,
       for (j = 0; j < ysize; j++) {
 	 for (i = 0; i < xsize; i += 2) {
 	    register int mul = i * xfact;
-	    register unsigned long tmp;
+	    register uint64_t tmp;
 	    register unsigned short pix1 = srcfb[i], pix2 = srcfb[i + 1];
-	    tmp = ((unsigned long) pix1
-		   + ((unsigned long) pix1 << 16)
-		   + ((unsigned long) pix2 << 32)
-		   + ((unsigned long) pix2 << 48));
-	    *((unsigned long *) (destfb + mul + width))
-	       = *((unsigned long *) (destfb + mul)) = tmp;
+	    tmp = ((uint64_t) pix1
+		   + ((uint64_t) pix1 << 16)
+		   + ((uint64_t) pix2 << 32)
+		   + ((uint64_t) pix2 << 48));
+	    *((uint64_t *) (destfb + mul + width))
+	       = *((uint64_t *) (destfb + mul)) = tmp;
 	 }
 	 destfb += destinc;
 	 srcfb += xsize;
@@ -141,16 +142,16 @@ fbrerender16(Pixel16 *destfb,
       for (j = 0; j < ysize; j++) {
 	 for (i = 0; i < xsize; i++) {
 	    register int mul = i * xfact;
-	    register unsigned long tmp;
+	    register uint64_t tmp;
 	    register unsigned short pix1 = srcfb[i];
-	    tmp = ((unsigned long) pix1
-		   + ((unsigned long) pix1 << 16)
-		   + ((unsigned long) pix1 << 32)
-		   + ((unsigned long) pix1 << 48));
-	    *((unsigned long *) (destfb + mul + width * 3))
-	       = *((unsigned long *) (destfb + mul + width * 2))
-	       = *((unsigned long *) (destfb + mul + width))
-	       = *((unsigned long *) (destfb + mul)) = tmp;
+	    tmp = ((uint64_t) pix1
+		   + ((uint64_t) pix1 << 16)
+		   + ((uint64_t) pix1 << 32)
+		   + ((uint64_t) pix1 << 48));
+	    *((uint64_t *) (destfb + mul + width * 3))
+	       = *((uint64_t *) (destfb + mul + width * 2))
+	       = *((uint64_t *) (destfb + mul + width))
+	       = *((uint64_t *) (destfb + mul)) = tmp;
 	 }
 	 destfb += destinc;
 	 srcfb += xsize;
@@ -192,12 +193,12 @@ fbrerender32(Pixel32 *destfb,
       for (j = 0; j < ysize; j++) {
 	 for (i = 0; i < xsize; i++) {
 	    register int mul = i * xfact;
-	    register unsigned long tmp;
+	    register uint64_t tmp;
 	    register unsigned int pix1 = srcfb[i];
-	    tmp = ((unsigned long) pix1
-		   + ((unsigned long) pix1 << 32));
-	    *((unsigned long *) (destfb + mul + width))
-	       = *((unsigned long *) (destfb + mul)) = tmp;
+	    tmp = ((uint64_t) pix1
+		   + ((uint64_t) pix1 << 32));
+	    *((uint64_t *) (destfb + mul + width))
+	       = *((uint64_t *) (destfb + mul)) = tmp;
 	 }
 	 destfb += destinc;
 	 srcfb += xsize;
@@ -209,17 +210,17 @@ fbrerender32(Pixel32 *destfb,
       for (j = 0; j < ysize; j++) {
 	 for (i = 0; i < xsize; i++) {
 	    register int mul = i * xfact;
-	    register unsigned long tmp;
+	    register uint64_t tmp;
 	    register unsigned int pix1 = srcfb[i];
-	    tmp = ((unsigned long) pix1 + ((unsigned long) pix1 << 32));
-	    *((unsigned long *) (destfb + mul + width * 3))
-	       = *((unsigned long *) (destfb + mul + width * 2))
-	       = *((unsigned long *) (destfb + mul + width))
-	       = *((unsigned long *) (destfb + mul))
-	       = *((unsigned long *) (destfb + mul + width * 3 + 2))
-	       = *((unsigned long *) (destfb + mul + width * 2 + 2))
-	       = *((unsigned long *) (destfb + mul + width + 2))
-	       = *((unsigned long *) (destfb + mul + 2)) = tmp;
+	    tmp = ((uint64_t) pix1 + ((uint64_t) pix1 << 32));
+	    *((uint64_t *) (destfb + mul + width * 3))
+	       = *((uint64_t *) (destfb + mul + width * 2))
+	       = *((uint64_t *) (destfb + mul + width))
+	       = *((uint64_t *) (destfb + mul))
+	       = *((uint64_t *) (destfb + mul + width * 3 + 2))
+	       = *((uint64_t *) (destfb + mul + width * 2 + 2))
+	       = *((uint64_t *) (destfb + mul + width + 2))
+	       = *((uint64_t *) (destfb + mul + 2)) = tmp;
 	    }
 	 destfb += destinc;
 	 srcfb += xsize;

@@ -23,8 +23,9 @@ view.c view.h dosalleg.h
 libdumb_a_DEPENDENCIES = $(DUMB_CONFIG_SOUND)_sound.o
 libdumb_a_LIBADD = $(DUMB_CONFIG_SOUND)_sound.o
 
-EXTRA_libdumb_a_SOURCES = dummy_sound.c dos_sound.c linux_sound.c mme_sound.c
+EXTRA_libdumb_a_SOURCES = dummy_sound.c dos_sound.c linux_sound.c mme_sound.c	\
+sdl_sound.c
 
 CC = $(CXX_HACK_CC)
 
-AM_CPPFLAGS = -I$(top_srcdir)
+AM_CPPFLAGS = -I$(top_srcdir) $(SDL_CFLAGS)

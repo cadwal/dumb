@@ -21,42 +21,64 @@
 
 #include <config.h>
 
-#include <string.h>
-#include <signal.h>
-#include <sys/time.h>
+#ifdef _WIN32
+# include <windows.h>
+#else
+# include <time.h>
+#endif
 
 #include "timer.h"
 
-/* alarm will occur after this many micro-seconds */
-#define INIT_USEC 999999
-#define INIT_SEC 0
+/* read_timer() never returns more than this, like the old setitimer()
+   version, which stopped counting after a second.  It keeps the game
+   from jumping ahead after a long pause.  */
+#define MAX_TICKS 99
+
+/* Microseconds from an arbitrary fixed point; never goes backwards.  */
+static long long
+now_usec(void)
+{
+#ifdef _WIN32
+   static LARGE_INTEGER freq;
+   LARGE_INTEGER count;
+   if (freq.QuadPart == 0)
+      QueryPerformanceFrequency(&freq);
+   QueryPerformanceCounter(&count);
+   return count.QuadPart / freq.QuadPart * 1000000
+      + count.QuadPart % freq.QuadPart * 1000000 / freq.QuadPart;
+#else
+   struct timespec ts;
+   clock_gettime(CLOCK_MONOTONIC, &ts);
+   return (long long) ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
+#endif
+}
+
+static long long start_usec;
 
 void
 init_timer(void)
 {
-   reset_timer();
-   signal(SIGALRM, SIG_IGN);
+   start_usec = now_usec();
 }
 
 void
 reset_timer(void)
 {
-   struct itimerval it;
-   it.it_value.tv_usec = INIT_USEC;
-   it.it_value.tv_sec = INIT_SEC;
-   it.it_interval.tv_usec = 0;
-   it.it_interval.tv_sec = 0;
-   setitimer(ITIMER_REAL, &it, NULL);
+   /* Keep the part of a tick that has already passed, so that time
+      doesn't drift when the caller resets after every frame.  */
+   long long now = now_usec();
+   long long elapsed = now - start_usec;
+   if (elapsed / USEC_PER_TICK > MAX_TICKS)
+      start_usec = now;
+   else
+      start_usec = now - elapsed % USEC_PER_TICK;
 }
 
 int
 read_timer(void)
 {
-   struct itimerval it;
-   getitimer(ITIMER_REAL, &it);
-   if (it.it_value.tv_sec > 0)
-      return 0;
-   return (INIT_USEC - it.it_value.tv_usec) / USEC_PER_TICK;
+   long long ticks = (now_usec() - start_usec) / USEC_PER_TICK;
+   return ticks > MAX_TICKS ? MAX_TICKS : (int) ticks;
 }
 
 // Local Variables:

@@ -59,10 +59,13 @@ AC_TYPE_SIZE_T
 dnl These work when cross-compiling too.
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long)
+AC_CHECK_SIZEOF([void *])
 AC_MSG_CHECKING(which fbrerend to use)
 fbrerend="generic"
 if test $ac_cv_c_bigendian = no; then
-  if test $ac_cv_sizeof_long -ge 8; then
+  dnl le64 uses uint64_t; pick it for 64-bit CPUs, also where long is
+  dnl 32 bits (64-bit Windows).
+  if test $ac_cv_sizeof_void_p -ge 8; then
     fbrerend="le64"
   elif test $ac_cv_sizeof_int -ge 4; then
     fbrerend="le32"
@@ -237,6 +240,24 @@ if test "$dumb_have_allegro" = "no"; then
   AC_MSG_WARN([Allegro not found; program 'dosdumb' will not be built])
 fi
 
+dnl --- SDL3: video, input and sound for Wayland, X11 and Windows.
+dnl Off by default on DJGPP, where pkg-config would otherwise find the
+dnl build machine's SDL.
+AC_ARG_WITH([sdl],
+  [AS_HELP_STRING([--without-sdl], [don't use SDL3 (for sdldumb and sound)])],
+  [], [case "$host_os" in msdosdjgpp*) with_sdl=no ;; *) with_sdl=check ;; esac])
+dumb_have_sdl=no
+if test "$with_sdl" != no; then
+  PKG_CHECK_MODULES([SDL], [sdl3], [dumb_have_sdl=yes],
+    [if test "$with_sdl" = yes; then
+       AC_MSG_ERROR([--with-sdl was given, but SDL3 was not found])
+     fi])
+fi
+AM_CONDITIONAL(DUMB_CONFIG_SDL, test "$dumb_have_sdl" = "yes")
+if test "$dumb_have_sdl" = "no"; then
+  AC_MSG_WARN([SDL3 not found; program 'sdldumb' will not be built])
+fi
+
 dnl --- Checks for header files.
 AC_HEADER_SYS_WAIT
 DUMB_MSG_REQUIRE_YES(ac_cv_header_sys_wait_h, [sys/wait.h])
@@ -318,6 +339,7 @@ dnl we can't rely on that for priority.  I arbitrarily decide that
 dnl --without-sound overrides individual sound systems.  The opposite
 dnl way would be useless; --with-oss disables all other sound systems
 dnl even without --without-sound.
+dumb_sound_sdl="autodetect"
 dumb_sound_oss="autodetect"
 dumb_sound_mme="autodetect"
 dumb_sound_allegro="autodetect"
@@ -334,12 +356,23 @@ AC_ARG_WITH([sound],
   else
     AC_MSG_WARN([--with-sound not supported; use --with-oss or --with-mme])
   fi])
+DUMB_ARG_MULTICHOICE(sound, sdl, sdl-sound,
+  [AS_HELP_STRING([--with-sdl-sound], [use SDL3 for sound (needs SDL3)])])
 DUMB_ARG_MULTICHOICE(sound, oss, oss,
   [AS_HELP_STRING([--with-oss], [use Open Sound System (Linux usually has this)])])
 DUMB_ARG_MULTICHOICE(sound, mme, mme,
   [AS_HELP_STRING([--with-mme], [use MME for sound (for Alphas)])])
 DUMB_ARG_MULTICHOICE(sound, allegro, allegro,
   [AS_HELP_STRING([--with-allegro], [use Allegro for sound (for DOS)])])
+DUMB_TEST_MULTICHOICE(DUMB_CONFIG_SOUND, sound, sdl, SDL3 sound,
+  [test "$dumb_have_sdl" = yes ||
+     AC_MSG_ERROR([--with-sdl-sound needs SDL3])
+   DUMB_CONFIG_SOUND="sdl"
+   DUMB_CONFIG_SOUND_LDADD='$(SDL_LIBS)'],
+  [if test "$dumb_have_sdl" = yes; then
+     DUMB_CONFIG_SOUND="sdl"
+     DUMB_CONFIG_SOUND_LDADD='$(SDL_LIBS)'
+   fi])
 DUMB_TEST_MULTICHOICE(DUMB_CONFIG_SOUND, sound, oss, OSS,
   DUMB_CONFIG_SOUND="linux"
   DUMB_CONFIG_SOUND_LDADD="",

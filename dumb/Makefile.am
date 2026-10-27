@@ -37,6 +37,12 @@ else
 x_bin_programs = 
 endif
 
+if DUMB_CONFIG_SDL
+sdl_bin_programs = sdldumb
+else
+sdl_bin_programs =
+endif
+
 if DUMB_CONFIG_DOS
 dos_bin_programs = dosdumb
 else
@@ -45,7 +51,7 @@ endif
 
 bin_PROGRAMS = $(aalib_bin_programs) $(dummy_bin_programs)	\
 $(ggi_bin_programs) $(svgalib_bin_programs) $(x_bin_programs)	\
-$(dos_bin_programs)
+$(dos_bin_programs) $(sdl_bin_programs)
 
 pkginclude_HEADERS = dumbdefs.pt
 
@@ -96,6 +102,11 @@ dosdumb_SOURCES = dos_video.c dos_input.c keymapdummy.c	\
 $(core_sources)
 EXTRA_dosdumb_SOURCES = $(extra_sources)
 
+sdldumb_SOURCES = sdl_video.c sdl_input.c sdl_video.h $(keyname_sources)	\
+$(core_sources)
+EXTRA_sdldumb_SOURCES = $(extra_sources)
+sdldumb_CPPFLAGS = $(AM_CPPFLAGS) $(SDL_CFLAGS)
+
 # Objects and DUMB libraries are in the build tree, so don't use $(srcdir).
 LDADD = $(fbrerend_objs) $(network_objs)			\
 ../libdumb/libdumb.a ../libdumbwad/libdumbwad.a			\
@@ -123,6 +134,9 @@ xdumb_DEPENDENCIES = $(dependencies)
 
 dosdumb_LDADD = $(LDADD) $(dos_ldadd)
 dosdumb_DEPENDENCIES = $(dependencies)
+
+sdldumb_LDADD = $(LDADD) $(SDL_LIBS)
+sdldumb_DEPENDENCIES = $(dependencies)
 
 
 CC = $(CXX_HACK_CC)

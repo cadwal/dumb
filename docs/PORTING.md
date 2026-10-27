@@ -49,17 +49,13 @@ One new backend on **SDL** (video, input, audio, timer), built as a
 new program `sdldumb`.  SDL gives native Wayland, X11 and Windows
 from the same code, plus fullscreen, scaling, HiDPI and gamepads.
 
-### Decision: SDL3 or SDL2
+### Decision: SDL3
 
-- **SDL3 (recommended):** current API; prefers Wayland by default;
-  packaged in current Fedora, Debian 13, Arch and MSYS2.  Not in
-  Ubuntu 24.04, where it has to be built from source (or vendored).
-- **SDL2:** packaged everywhere, including Ubuntu 24.04, but on
-  Wayland it usually runs through XWayland unless
-  `SDL_VIDEODRIVER=wayland` is set.
-
-The code is small enough that supporting both behind a few macros is
-possible, but the plan assumes SDL3 only unless decided otherwise.
+Decided: **SDL3** only.  It is the current API, prefers Wayland by
+default, and is packaged in current Fedora, Debian 13, Arch and MSYS2.
+Ubuntu 24.04 doesn't package it, so there it has to be built from
+source.  (SDL2 was the alternative: packaged everywhere, but on
+Wayland it usually runs through XWayland.)
 
 ## Steps
 
@@ -113,12 +109,40 @@ runs through XWayland), and removing the old drivers.
 
 ## Status
 
-- [ ] Decide SDL3 vs SDL2
-- [ ] Step 1: build system
-- [ ] Step 2: timer
-- [ ] Step 3: video
-- [ ] Step 4: input
-- [ ] Step 5: sound
+- [x] Decided: SDL3.
+- [x] Step 1: build system.  `configure` finds SDL3 with pkg-config
+  (`--without-sdl` turns it off; it is off by default for DJGPP, where
+  pkg-config would find the build machine's SDL) and builds `sdldumb`.
+  SDL3 is also the preferred sound driver for all programs
+  (`--with-sdl-sound`).  The rerenderer is chosen by pointer size,
+  and `le64_fbrerend.c` uses `uint64_t`, so 64-bit Windows gets it too.
+- [x] Step 2: timer.  `libdumbutil/timer.c` uses
+  `clock_gettime(CLOCK_MONOTONIC)`, or `QueryPerformanceCounter` on
+  Windows, instead of `setitimer`.  It keeps the 10 ms tick and the old
+  cap of 99 ticks, and no longer loses the part of a tick left over at
+  each reset (tested: 50 x 7 ms gives 35 ticks).
+- [~] Steps 3-5: `dumb/sdl_video.c`, `dumb/sdl_input.c`,
+  `libdumb/sdl_sound.c` are written and compile without warnings
+  (`-Wall -Wextra`) against the SDL 3.4.8 headers, for Linux and for
+  64-bit Windows (MinGW-w64).  **Not run yet**: building the SDL3
+  library itself was not permitted in the session that wrote them.
+  - Video: resizable window, starting at the largest whole multiple
+    that fits; 320x200 shown at 4:3; `fullscreen`, `scale`,
+    `no-aspect`, `integer-scale`, `no-vsync` options; F11 or
+    Alt+Enter toggles fullscreen; 8-bit frames go through the palette,
+    16/32-bit straight into the texture.
+  - Input: SDL keycodes, with key names compatible with the X11
+    driver's, so existing key bindings work; keys are released when the
+    window loses focus; mouse in relative mode (x turns, y looks, or
+    walks with `mouse-move`; left button shoots, right activates,
+    middle walks); `no-mouse` and `mouse-sens` options.
+  - Sound: an SDL audio stream topped up from `sound_mix.c` in
+    `poll_sound()` (no audio thread touches DUMB data); `mono` and
+    `latency` options.
 - [ ] Step 6: Windows
 - [ ] Step 7: packaging
 - [ ] Step 8: testing
+
+The existing programs still build and run on this branch: `xdumb`
+plays the DUMB game as before, with the new timer, and the DOS cross
+build is unaffected.
