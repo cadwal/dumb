@@ -142,11 +142,16 @@ static void
 chksize(AppInst *inst)
 {
    int frame_width, frame_height, ctl_width, ctl_height;
-   int frame_x, frame_y, frame_depth, frame_border;
+   int frame_x, frame_y;
+   /* XGetGeometry() returns these as unsigned; the arithmetic below
+      needs them signed.  */
+   unsigned int u_width, u_height, u_border, u_depth;
    Window frame_root;
    XGetGeometry(dpy, inst->tch_frame, &frame_root,
-		&frame_x, &frame_y, &frame_width, &frame_height,
-		&frame_border, &frame_depth);
+		&frame_x, &frame_y, &u_width, &u_height,
+		&u_border, &u_depth);
+   frame_width = (int) u_width;
+   frame_height = (int) u_height;
    get_cset_size(inst->tchctls.cset, &ctl_width, &ctl_height);
 
    /* place choose widget */

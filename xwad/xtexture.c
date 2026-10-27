@@ -93,7 +93,8 @@ void
 xtexture(Display *dpy, Drawable d, Texture *t, int do_mirror)
 {
    int width, height;
-   int frame_x, frame_y, depth, border;
+   int frame_x, frame_y, depth;
+   unsigned int u_width, u_height, u_border, u_depth;
    Window frame_root;
    int bypp;
    int x, y;
@@ -102,8 +103,12 @@ xtexture(Display *dpy, Drawable d, Texture *t, int do_mirror)
    if (t == NULL)
       return;
    XGetGeometry(dpy, d, &frame_root,
-		&frame_x, &frame_y, &width, &height,
-		&border, &depth);
+		&frame_x, &frame_y, &u_width, &u_height,
+		&u_border, &u_depth);
+   /* XGetGeometry() returns these as unsigned; compare them signed.  */
+   width = (int) u_width;
+   height = (int) u_height;
+   depth = (int) u_depth;
    if (width > t->width)
       xo = (width - t->width) / 2;
    if (height > t->height)

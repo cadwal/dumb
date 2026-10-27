@@ -120,6 +120,11 @@ fltdiv(fixed a, fixed b)
 
 #endif
 
+/* The benchmark loops store their results here, so that the compiler
+   can't drop the computations as unused.  */
+static volatile int int_sink;
+static volatile float float_sink;
+
 int
 main(int argc, char **argv)
 {
@@ -191,14 +196,14 @@ main(int argc, char **argv)
    i = 0;
    rtimer();
    while (loop) {
-      int n = rand() + rand();
+      int_sink = rand() + rand();
       i++;
    }
    printf(_("  Fixed: %d"), i);
    i = 0;
    rtimer();
    while (loop) {
-      float f = FIXED_TO_FLOAT(rand()) + FIXED_TO_FLOAT(rand());
+      float_sink = FIXED_TO_FLOAT(rand()) + FIXED_TO_FLOAT(rand());
       i++;
    }
    printf(_("  Float: %d"), i);
@@ -207,14 +212,14 @@ main(int argc, char **argv)
    i = 0;
    rtimer();
    while (loop) {
-      int n = fixmul(rand(), rand());
+      int_sink = fixmul(rand(), rand());
       i++;
    }
    printf(_("  Fixed: %d"), i);
    i = 0;
    rtimer();
    while (loop) {
-      float f = fltmul(rand(), rand());
+      float_sink = fltmul(rand(), rand());
       i++;
    }
    printf(_("  Float: %d"), i);
@@ -224,7 +229,7 @@ main(int argc, char **argv)
    rtimer();
    while (loop) {
       fixed a = rand() & 0xffffff; /* FIXME: if RAND_MAX<0xFFFFFF */
-      int n = fixdiv(a, a + FIXED_ONE);
+      int_sink = fixdiv(a, a + FIXED_ONE);
       i++;
    }
    printf(_("  Fixed: %d"), i);
@@ -232,7 +237,7 @@ main(int argc, char **argv)
    rtimer();
    while (loop) {
       fixed a = rand() & 0xffffff;
-      float f = fltdiv(a, a + FIXED_ONE);
+      float_sink = fltdiv(a, a + FIXED_ONE);
       i++;
    }
    printf(_("  Float: %d"), i);

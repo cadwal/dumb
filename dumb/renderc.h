@@ -653,9 +653,8 @@ add_objects(void)
    const fixed view_cos = view_constants.view_cos;
 
    for (i = 0; i < NUM_OBJECTS; i++) {
-      fixed z;
       fixed tx, ty;
-      fixed height, width;
+      fixed width;
       ThingDyn *o = ldthingd(ld) + i;
 
       /* if this thing doesn't exist anymore, skip */
@@ -676,12 +675,9 @@ add_objects(void)
 	 continue;
 
       /* Convert object coordinates to fixed point and transform. */
-      z = o->z;
-#if 0	/* the old way: uses object's real width and height */
-      height = OBJECT_HEIGHT(i);
+#if 0	/* the old way: uses object's real width */
       width = OBJECT_WIDTH(i);
-#else	/* the new way: use width and height of sprite */
-      height = PIXEL_TO_MAP(o->image->height);
+#else	/* the new way: use the width of the sprite */
       width = PIXEL_TO_MAP(o->image->width);
 #endif
       /* Rotate into viewer's coordinate system. */

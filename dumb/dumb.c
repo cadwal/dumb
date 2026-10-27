@@ -280,7 +280,6 @@ main(int argc, char **argv)
    ViewTrans viewtrans;
    ThingDyn *td;
    ThingDyn *camd;
-   const SectorDyn *sd;
    int tt, frames = 0;
    int i;
    int follow, camera = -1;
@@ -528,7 +527,6 @@ main(int argc, char **argv)
    if (camd->sector == -1)
       logprintf(LOG_ERROR, 'D', _("Can't find sector for player"));
    view.sector = camd->sector;
-   sd = ldsectord(ld) + camd->sector;
    init_renderer(width, height, real_width / xmul, height);
    init_draw(width, height, bpp, real_width / xmul);
 

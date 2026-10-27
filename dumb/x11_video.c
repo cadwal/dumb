@@ -136,7 +136,6 @@ static Colormap cmap = None;
 static char *fb = NULL, *fballoc = NULL;
 static int width, height, pagelen, memlen, npages, real_width;
 static XImage *image = NULL;
-static int (*untrapped_errh)(Display *, XErrorEvent *);
 
 /* this is used for DGA double buffering */
 #ifdef DUMB_CONFIG_XF86DGA
@@ -160,6 +159,7 @@ END_EXTERN_C
 
 #ifdef DUMB_CONFIG_XSHM
 static int xerr;
+static int (*untrapped_errh)(Display *, XErrorEvent *);
 
 /* Calling conventions *might* differ between C and C++ on some machine.
  * This function will be called by C code, so use the C conventions.  */

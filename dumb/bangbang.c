@@ -255,7 +255,7 @@ thing_activate(LevData *ld, int thingnum, fixed maxdist)
    vx = fix_cos(std->angle);
    for (i = 0; i < ldnlines(ld); i++) {
       int side;
-      fixed t, d, sx, sy;
+      fixed t, sx, sy;
       double dsq;
 
       if (ldline(ld)[i].type == 0)
@@ -278,7 +278,6 @@ thing_activate(LevData *ld, int thingnum, fixed maxdist)
       dsq = pyth_sq(sx - std->x, sy - std->y);
       if (mindist_sq <= dsq)
 	 continue;
-      d = FLOAT_TO_FIXED(sqrt(dsq));
 
       /* 2S walls get special treatment */
       if (WALL_2S(i)) {

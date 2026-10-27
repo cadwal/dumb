@@ -101,7 +101,7 @@ load_font(const char *fontlumpname)
 	nchars--, fciw++) {
       /* fciw->lumpname is not null-terminated, so copy it to a local array */
       char glyphlumpname[sizeof(fciw->lumpname) + 1];
-      strncpy(glyphlumpname, fciw->lumpname, sizeof(fciw->lumpname));
+      memcpy(glyphlumpname, fciw->lumpname, sizeof(fciw->lumpname));
       glyphlumpname[sizeof(fciw->lumpname)] = '\0';
       set_font_wchar_texref(font, fciw->charid,
 			    glyphlumpname, fciw->descent);
@@ -130,9 +130,9 @@ save_font(WADWR *wadwr, const Font *font, const char *lumpname)
       fiw.space_width = font_space_width(font);
       get_font_delimlumps(font, &after, &before);
       if (after != NULL)
-	 strncpy(fiw.after, after, sizeof(fiw.after));
+	 set_lumpname(fiw.after, after);
       if (before != NULL)
-	 strncpy(fiw.before, before, sizeof(fiw.before));
+	 set_lumpname(fiw.before, before);
       wadwr_write(wadwr, &fiw, sizeof(fiw));
    }
    /* body */
@@ -157,7 +157,7 @@ save_font_wchar(void *cookie, wchar_t wc)
    memset(&fciw, 0, sizeof(fciw)); /* for fciw.spare */
    fciw.charid = wc;
    fciw.descent = descent;
-   strncpy(fciw.lumpname, glyphlumpname, sizeof(fciw.lumpname));
+   set_lumpname(fciw.lumpname, glyphlumpname);
    wadwr_write(context->wadwr, &fciw, sizeof(fciw));
 }
 

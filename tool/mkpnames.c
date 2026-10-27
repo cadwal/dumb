@@ -235,7 +235,7 @@ add_texture(const char *s, int x, int y)
       td[ntexs - 1] = realloc(td[ntexs - 1], TDSIZE(td[ntexs - 1])); /* FIXME: errors */
    /* make a new texture */
    td[ntexs] = (TextureData *) calloc(1, sizeof(TextureData));
-   strncpy(td[ntexs]->name, s, 8);
+   set_lumpname(td[ntexs]->name, s);
    td[ntexs]->dx = x;
    td[ntexs]->dy = y;
    ntexs++;

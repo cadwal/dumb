@@ -42,6 +42,14 @@ AC_PROG_CC
 DUMB_MSG_REQUIRE_YES(GCC, [GCC])
 dnl GCC always supports -c -o
 AC_PROG_CXX
+dnl The tree builds without warnings at -Wall; keep it so.  -Wall
+dnl goes first, so -Wno-... options in the user's CFLAGS still win.
+if test "$GCC" = yes; then
+  CFLAGS="-Wall $CFLAGS"
+fi
+if test "$GXX" = yes; then
+  CXXFLAGS="-Wall $CXXFLAGS"
+fi
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AC_PROG_INSTALL

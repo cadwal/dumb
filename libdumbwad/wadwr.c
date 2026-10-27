@@ -150,7 +150,7 @@ wadwr_lump(WADWR *w, const char *lumpname)
       w->current = w->dir + w->hdr.nlumps;
       w->hdr.nlumps++;
       memset(w->current, 0, sizeof(WadDirEntry));
-      strncpy(w->current->name, lumpname, LUMPNAMELEN);
+      set_lumpname(w->current->name, lumpname);
       w->current->offset = aligned_pos(w);
    }
 }

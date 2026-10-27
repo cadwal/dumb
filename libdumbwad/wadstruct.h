@@ -35,6 +35,20 @@
        - 1999-04-04 Kalle Niemitalo <tosi@stekt.oulu.fi> */
 #define LUMPNAMELEN 8
 
+/* Copy a lump name into a LUMPNAMELEN-byte field, padding it with
+   '\0'.  A name of LUMPNAMELEN characters fills the field and has no
+   '\0'.  This is what strncpy(dest, src, LUMPNAMELEN) does, but GCC
+   warns about strncpy() that may leave a string unterminated.  */
+static inline void
+set_lumpname(char *dest, const char *src)
+{
+   int i;
+   for (i = 0; i < LUMPNAMELEN && src[i] != '\0'; i++)
+      dest[i] = src[i];
+   for (; i < LUMPNAMELEN; i++)
+      dest[i] = '\0';
+}
+
 /* WAD structures */
 
 typedef struct {

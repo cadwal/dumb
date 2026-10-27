@@ -113,7 +113,7 @@ animcomp(int is_sw)
 	    synerr(_("Tag must come before any Texture"));
 	 p->ntbl++;
 	 memset(p->tbl, 0, sizeof(AnimTexTable));
-	 strncpy(p->tbl->name, p->name, 8);
+	 set_lumpname(p->tbl->name, p->name);
 	 p->tbl->myseqnum = 0xff;
       } else if (!strcasecmp(s, "Texture")) {
 	 at = p->tbl + p->ntbl;

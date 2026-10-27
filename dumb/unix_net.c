@@ -88,7 +88,7 @@ udp_init_station(RemoteStation *rs)
    char *bare_name;		/* without ":port" */
    int port;
    char *colon;
-   if (!rs->name)
+   if (!rs->name[0])
       return -1;
    colon = strchr(rs->name, ':');
    if (colon) {

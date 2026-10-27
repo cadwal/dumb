@@ -596,10 +596,9 @@ make_sector_from_sel_lines(XWadInstance *inst)
 int
 make_corridor_between(XWadInstance *inst, int l1, int l2)
 {
-   int s1, s2;
+   int s1;
    int csect, l3, l4;
    s1 = S(l1, 0).sector;
-   s2 = S(l2, 0).sector;
    if (S(l1, 0).sector < 0
        || S(l2, 0).sector < 0
        || L(l1).side[1] >= 0

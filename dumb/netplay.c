@@ -67,7 +67,7 @@ send_one_slaveinit(const LevData *ld, int station)
    memset(&sip, 0, sizeof(sip));
    sip.sig = SLAVEINIT_SIG;
    sip.size = sizeof(SlaveInitPkt) - 2;
-   strncpy(sip.mapname, ld->name, LUMPNAMELEN);
+   set_lumpname(sip.mapname, ld->name);
    sip.difficulty = ld->difficulty;
    sip.mplayer = ld->mplayer;
    sip.protocol_version = PROTOCOL_VERSION;

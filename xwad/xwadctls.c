@@ -182,7 +182,7 @@ CTLACTION(mkcorridor)
 }
 
 #define MS(n) CTLACTION(mkstairs##n) {\
-  if(inst->curselect>=0) make_stairs(inst,inst->curselect,n);RDRAW;}
+  if(inst->curselect>=0) {make_stairs(inst,inst->curselect,n);} RDRAW;}
 MS(8)
 MS(16)
 #undef MS
@@ -247,7 +247,7 @@ FUNX(y);
 #define VALID (inst->curselect>=0&&inst->curselect<inst->nsects)
 #define CUR (inst->sect[inst->curselect])
 #define SEL(op) {int i; FORSEL(sect) inst->sect[i].op;}
-#define SELSTRCPY(t,s) {int i; FORSEL(sect) strncpy(inst->sect[i].t,s,8);}
+#define SELSTRCPY(t,s) {int i; FORSEL(sect) set_lumpname(inst->sect[i].t,s);}
 
 #define FUNX(x) \
 CTLINPUT(sect_inp_##x) \
@@ -259,7 +259,7 @@ CTLOUTPUT(sect_out_##x) \
 CTLACTION(sect_act_##x) {if(VALID) \
 tchoose_flat(inst,CUR.x);} \
 CTLINPUT(sect_inp_##x) \
-{if(VALID) strncpy(CUR.x,buf,8); SELSTRCPY(x,buf); } \
+{if(VALID) {set_lumpname(CUR.x,buf);} SELSTRCPY(x,buf); } \
 CTLOUTPUT(sect_out_##x) \
 {memset(buf,0,CTLBUFLEN); if(VALID) strncpy(buf,CUR.x,8);}
 
@@ -419,17 +419,17 @@ CTLPRED(line_isTWOSIDED)
 #define SELSIDE(sn) inst->side[SELSIDEID(sn)]
 #define FORSELSIDE(sn) FORSEL(line) if(SELSIDEID(sn)>=0)
 #define SEL(sn,op) {int i; FORSELSIDE(sn) SELSIDE(sn).op;}
-#define SELSTRCPY(sn,t,s) {int i; FORSELSIDE(sn) strncpy(SELSIDE(sn).t,s,8);}
+#define SELSTRCPY(sn,t,s) {int i; FORSELSIDE(sn) set_lumpname(SELSIDE(sn).t,s);}
 
 #define SIDE_IO_ID(sn) \
-CTLINPUT(side##sn##_inp_id) {if(LINEVALID) SIDEID(sn)=atoi(buf);\
-if(SIDEID(sn)>=inst->nsides) inst->nsides=SIDEID(sn)+1;} \
+CTLINPUT(side##sn##_inp_id) {if(LINEVALID) {SIDEID(sn)=atoi(buf);\
+if(SIDEID(sn)>=inst->nsides) inst->nsides=SIDEID(sn)+1;}} \
 CTLOUTPUT(side##sn##_out_id) {if(LINEVALID) \
 sprintf(buf,"%d",(int)(SIDEID(sn))); else *buf=0; }
 
 #define SIDE_IO_SECT(sn) \
 CTLINPUT(side##sn##_inp_sect) {if(SIDEVALID(sn)) \
-SIDE(sn).sector=atoi(buf); SEL(sn,sector=atoi(buf));} \
+{SIDE(sn).sector=atoi(buf);} SEL(sn,sector=atoi(buf));} \
 CTLOUTPUT(side##sn##_out_sect) {if(SIDEVALID(sn)) \
 sprintf(buf,"%d",(int)(SIDE(sn).sector)); else *buf=0; }
 
@@ -455,7 +455,7 @@ sprintf(buf,"%d/%d",(int)(SIDE(sn).xoffset),(int)(SIDE(sn).yoffset)); else *buf=
 CTLACTION(side##sn##_act_##t) {if(SIDEVALID(sn)) \
 tchoose_wall(inst,SIDE(sn).t);} \
 CTLINPUT(side##sn##_inp_##t) {if(SIDEVALID(sn)) \
-strncpy(SIDE(sn).t,buf,8); SELSTRCPY(sn,t,buf);} \
+{set_lumpname(SIDE(sn).t,buf);} SELSTRCPY(sn,t,buf);} \
 CTLOUTPUT(side##sn##_out_##t) {memset(buf,0,CTLBUFLEN); \
 if(SIDEVALID(sn)) strncpy(buf,SIDE(sn).t,8);}
 
