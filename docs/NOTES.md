@@ -232,7 +232,11 @@ work goes on.
   single player).
 - Tested under the sanitizers: single player in both games, and 2
   and 4 players on one machine in the DUMB game and on Freedoom's
-  MAP01.  No reports.  The players have no sprite, so they can't see
+  MAP01.  No reports.
+- dumb-game now also has a `modernize` branch, named like DUMB's,
+  with all of this.  DUMB's `modernize` scripts (`cross-build.sh`,
+  `make-kit.sh`, `dosbox-x-build.ps1`) use it; `djgpp-modernize`
+  stays as it was, for DUMB's `djgpp-modernize` branch.  The players have no sprite, so they can't see
   each other in the DUMB game.
 
 ## Decisions
@@ -241,7 +245,7 @@ work goes on.
 |---|---|
 | Backend for Linux and Windows | SDL3, version 3.4.8 |
 | Default game data | The DUMB game; Freedoom optional |
-| Where the game port lives | A `djgpp-modernize` branch in cadwal/dumb-game |
+| Where the game port lives | A `djgpp-modernize` branch in cadwal/dumb-game, and `modernize` (all of it, named like DUMB's), which DUMB's `modernize` scripts use |
 | Windows users without build tools | Prebuilt `game.wad` in dumb-game |
 | Branches | Side by side with `main`; no PRs.  `modernize` has everything |
 | Windows network driver | A separate `win_net.c` rather than `#ifdef`s in `unix_net.c` |

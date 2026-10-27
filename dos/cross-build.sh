@@ -19,7 +19,7 @@
 #   ALLEGRO_DIR  an existing Allegro 4.2 source tree; otherwise branch
 #                4.2 is cloned into the work directory
 #   DUMB_GAME_DIR  an existing checkout of the DUMB game (cadwal/dumb-game);
-#                otherwise its djgpp-modernize branch is cloned
+#                otherwise its modernize branch is cloned
 #
 # Needs: sh, make, a native C compiler, autoconf, automake, git, curl
 # or wget, tar with bzip2.  The prebuilt DJGPP binutils need the flex
@@ -47,7 +47,7 @@ DJGPP_RELEASE=https://github.com/andrewwutw/build-djgpp/releases/download/v3.4
 ALLEGRO_GIT=https://github.com/liballeg/allegro5.git
 ALLEGRO_BRANCH=4.2
 DUMB_GAME_GIT=https://github.com/cadwal/dumb-game.git
-DUMB_GAME_BRANCH=djgpp-modernize
+DUMB_GAME_BRANCH=modernize
 FREEDOOM_ZIP=https://github.com/freedoom/freedoom/releases/download/v0.13.0/freedoom-0.13.0.zip
 HOST=i586-pc-msdosdjgpp
 

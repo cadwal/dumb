@@ -122,7 +122,9 @@ Nearly all of the Allegro API used is unchanged in 4.2 (`GFX_VESA2L`,
 The default game data is the DUMB game, cadwal/dumb-game, branch
 `djgpp-modernize`: its `.pt` files were ported to the current ptcomp
 syntax and it has a `prebuilt/game.wad`.  `xdumb -w game.wad` and
-`dummydumb -w game.wad` play its E1M1 with nothing else loaded.
+`dummydumb -w game.wad` play its E1M1 with nothing else loaded.  On
+DUMB's `modernize` branch, the scripts use dumb-game's `modernize`
+branch instead, which also has starts for 4 players.
 Freedoom or Doom remain available with `--iwad`/`--freedoom`
 (`-Iwad`/`-Freedoom` on Windows).
 

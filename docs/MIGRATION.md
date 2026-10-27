@@ -24,6 +24,7 @@ All of these branches live side by side.  Nothing is merged into
 | `sdl-port` | cadwal/dumb | `djgpp-modernize` plus the SDL3 driver, the portable timer and Windows |
 | `modernize` | cadwal/dumb | Everything: `sdl-port` merged with the latest `djgpp-modernize` |
 | `djgpp-modernize` | cadwal/dumb-game | The game data ported to the current ptcomp, plus a prebuilt `game.wad` |
+| `modernize` | cadwal/dumb-game | Everything: `djgpp-modernize` plus starts for 4 players; used by `modernize`'s scripts |
 
 `modernize` is the branch to use.  The other two branches are kept so
 that each step can be read on its own.

@@ -14,7 +14,7 @@
 #                prefix with bin/SDL3.dll and lib/pkgconfig/sdl3.pc);
 #                otherwise SDL release 3.4.8 is cloned and built
 #   DUMB_GAME_DIR  an existing checkout of the DUMB game (cadwal/dumb-game);
-#                otherwise its djgpp-modernize branch is cloned
+#                otherwise its modernize branch is cloned
 #
 # Needs: sh, make, a native C compiler, autoconf, automake,
 # pkg-config, git, the MinGW-w64 toolchain (x86_64-w64-mingw32-gcc;
@@ -37,7 +37,7 @@ set -eu
 SDL_GIT=https://github.com/libsdl-org/SDL.git
 SDL_TAG=release-3.4.8
 DUMB_GAME_GIT=https://github.com/cadwal/dumb-game.git
-DUMB_GAME_BRANCH=djgpp-modernize
+DUMB_GAME_BRANCH=modernize
 HOST=x86_64-w64-mingw32
 
 here=$(cd "$(dirname "$0")" && pwd)

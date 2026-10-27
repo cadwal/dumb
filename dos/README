@@ -4,7 +4,7 @@ Building dosdumb.exe (DUMB for MS-DOS)
 dosdumb.exe needs DJGPP 2.05 and Allegro 4.2.  There are two ways to
 build it; both make DOSDUMB.EXE, DOOM4DUM.WAD and HTIC4DUM.WAD, and
 add GAME.WAD, the DUMB game (https://github.com/cadwal/dumb-game,
-branch djgpp-modernize).
+branch modernize).
 
 To run it, put these next to each other with CWSDPMI.EXE and start
 it in DOS, DOSBox or DOSBox-X:

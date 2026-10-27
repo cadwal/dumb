@@ -86,7 +86,7 @@ if ($PSVersionTable.PSVersion.Major -lt 6) {
 }
 
 $AllegroZipUrl = 'https://github.com/liballeg/allegro5/archive/refs/heads/4.2.zip'
-$GameWadUrl = 'https://raw.githubusercontent.com/cadwal/dumb-game/djgpp-modernize/prebuilt/game.wad'
+$GameWadUrl = 'https://raw.githubusercontent.com/cadwal/dumb-game/modernize/prebuilt/game.wad'
 $FreedoomUrl = 'https://github.com/freedoom/freedoom/releases/download/v0.13.0/freedoom-0.13.0.zip'
 $CwsdpmiUrls = @(
     "$DjgppMirror/v2misc/csdpmi7b.zip",
