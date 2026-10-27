@@ -2,22 +2,31 @@ Building dosdumb.exe (DUMB for MS-DOS)
 ======================================
 
 dosdumb.exe needs DJGPP 2.05 and Allegro 4.2.  There are two ways to
-build it; both make DOSDUMB.EXE, DOOM4DUM.WAD and HTIC4DUM.WAD.
+build it; both make DOSDUMB.EXE, DOOM4DUM.WAD and HTIC4DUM.WAD, and
+add GAME.WAD, the DUMB game (https://github.com/cadwal/dumb-game,
+branch djgpp-modernize).
 
-To run it, put these next to each other with CWSDPMI.EXE and an IWAD
-named DOOM.WAD (Doom's, or Freedoom's freedoom1.wad), and start
-DOSDUMB.EXE in DOS, DOSBox or DOSBox-X.  DUMB logs to stdout, so
-"DOSDUMB.EXE > DUMB.LOG" avoids the screen jumping.
+To run it, put these next to each other with CWSDPMI.EXE and start
+it in DOS, DOSBox or DOSBox-X:
+
+  DOSDUMB.EXE -w GAME.WAD     the DUMB game; needs nothing else
+  DOSDUMB.EXE                 Doom data: needs DOOM.WAD (Doom's, or
+                              Freedoom's freedoom1.wad) and DOOM4DUM.WAD
+
+DUMB logs to stdout, so adding "> DUMB.LOG" avoids the screen jumping.
 
 Linux (or macOS): cross-compiling
 ---------------------------------
 
-  dos/cross-build.sh [--iwad FILE] [--run]
+  dos/cross-build.sh [--iwad FILE | --freedoom] [--run]
 
 Downloads the build-djgpp cross toolchain and Allegro 4.2, builds
-them, builds DUMB with configure --host=i586-pc-msdosdjgpp, and puts
-the result in build-dos/dist (with CWSDPMI.EXE, a dosbox.conf, and
-DOOM.WAD if --iwad was given).  --run starts it in DOSBox-X or DOSBox.
+them, builds DUMB with configure --host=i586-pc-msdosdjgpp, clones
+and builds the DUMB game (with netpbm; otherwise its prebuilt
+game.wad is used), and puts the result in build-dos/dist with
+CWSDPMI.EXE and a dosbox.conf.  The package plays the DUMB game;
+with --iwad FILE or --freedoom it plays that Doom data instead.
+--run starts it in DOSBox-X or DOSBox.
 See the comment at the top of the script for options and requirements.
 
   dos/get-cwsdpmi.sh [DIR]
@@ -27,15 +36,18 @@ Only downloads CWSDPMI.EXE (from csdpmi7b.zip) into DIR.
 Windows: building inside DOSBox-X
 ---------------------------------
 
-  dos\dosbox-x-build.cmd [-Iwad FILE] [-BuildOnly] [-Rebuild]
+  dos\dosbox-x-build.cmd [-Iwad FILE | -Freedoom] [-GameWad FILE]
+                         [-BuildOnly] [-Rebuild]
 
 (or: powershell -ExecutionPolicy Bypass -File dos\dosbox-x-build.ps1)
 
 Needs DOSBox-X (https://dosbox-x.com/).  Downloads DJGPP 2.05 (djdev,
-gcc, binutils, make), CWSDPMI, Allegro 4.2 and, unless -Iwad is
-given, Freedoom; sets them up with a copy of this tree on a DOS C:
-drive in build-dosbox\c; then starts DOSBox-X, which builds Allegro
-and DUMB with the native DOS tools and runs DOSDUMB.EXE.  Logs go to
+gcc, binutils, make), CWSDPMI, Allegro 4.2 and the DUMB game's
+prebuilt game.wad (game.wad can't be built in DOS: it needs netpbm);
+sets them up with a copy of this tree on a DOS C: drive in
+build-dosbox\c; then starts DOSBox-X, which builds Allegro and DUMB
+with the native DOS tools and runs DOSDUMB.EXE -w GAME.WAD.  With
+-Iwad FILE or -Freedoom it plays that Doom data instead.  Logs go to
 build-dosbox\c\LOGS.  Compiling under emulated DOS is slow, especially
 the first Allegro build.  Run "Get-Help dos\dosbox-x-build.ps1 -Full"
 for all options.

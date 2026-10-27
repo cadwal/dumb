@@ -97,8 +97,15 @@ Nearly all of the Allegro API used is unchanged in 4.2 (`GFX_VESA2L`,
 `dos/` automates all of this; see `dos/README`:
 
 - `dos/cross-build.sh`: Linux/macOS cross build (toolchain, Allegro,
-  WADs, dosdumb.exe, package in `build-dos/dist`, optional `--run`).
-  Tested end to end from an empty work directory.
+  WADs, the DUMB game, dosdumb.exe, package in `build-dos/dist`,
+  optional `--run`).  Tested end to end from an empty work directory.
+
+The default game data is the DUMB game, cadwal/dumb-game, branch
+`djgpp-modernize`: its `.pt` files were ported to the current ptcomp
+syntax and it has a `prebuilt/game.wad`.  `xdumb -w game.wad` and
+`dummydumb -w game.wad` play its E1M1 with nothing else loaded.
+Freedoom or Doom remain available with `--iwad`/`--freedoom`
+(`-Iwad`/`-Freedoom` on Windows).
 - `dos/get-cwsdpmi.sh`: downloads CWSDPMI.EXE.
 - `dos/dosbox-x-build.ps1` (+ `.cmd`): Windows; sets up DJGPP 2.05,
   Allegro and DUMB on a DOSBox-X C: drive, builds natively in DOS with

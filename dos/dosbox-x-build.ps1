@@ -10,12 +10,16 @@
                    mirror, plus CWSDPMI
       C:\ALLEGRO   Allegro 4.2 (branch 4.2 from GitHub)
       C:\DUMB      a copy of this DUMB source tree
-      C:\RUN       DOSDUMB.EXE, DOOM4DUM.WAD, HTIC4DUM.WAD, CWSDPMI.EXE
-                   and DOOM.WAD
+      C:\RUN       DOSDUMB.EXE, CWSDPMI.EXE, GAME.WAD (the DUMB game),
+                   DOOM4DUM.WAD, HTIC4DUM.WAD and, with -Iwad or
+                   -Freedoom, DOOM.WAD
       C:\LOGS      build and run logs
 
     Inside DOSBox-X, C:\BUILD.BAT builds Allegro ("make lib") and DUMB
     ("make -f dos/makefile.dj"), and C:\RUN.BAT starts DOSDUMB.EXE.
+    By default it plays the DUMB game (cadwal/dumb-game): its
+    prebuilt/game.wad is downloaded, because building it needs netpbm,
+    which DOS doesn't have.
     Downloads and the Allegro build are kept, so later runs are quicker.
     Building with GCC under emulated DOS is slow: the first build of
     Allegro can take a long time.
@@ -30,8 +34,15 @@
     Path to dosbox-x.exe.  Default: found in PATH or the usual places.
 
 .PARAMETER Iwad
-    IWAD to play (copied as C:\RUN\DOOM.WAD).  Default: Freedoom's
-    freedoom1.wad, downloaded from GitHub.
+    Play this Doom IWAD instead of the DUMB game (copied as
+    C:\RUN\DOOM.WAD and used with DOOM4DUM.WAD).
+
+.PARAMETER Freedoom
+    Like -Iwad, with Freedoom's freedoom1.wad, downloaded from GitHub.
+
+.PARAMETER GameWad
+    Use this game.wad (e.g. built with dos/cross-build.sh or by the DUMB
+    game's own make) instead of downloading the prebuilt one.
 
 .PARAMETER BuildOnly
     Build, but don't start DOSDUMB.EXE.
@@ -50,12 +61,17 @@
 
 .EXAMPLE
     dos\dosbox-x-build.cmd -Iwad C:\Games\DOOM\DOOM.WAD
+
+.EXAMPLE
+    dos\dosbox-x-build.cmd -Freedoom
 #>
 [CmdletBinding()]
 param(
     [string]$WorkDir,
     [string]$DosBoxX,
     [string]$Iwad,
+    [switch]$Freedoom,
+    [string]$GameWad,
     [switch]$BuildOnly,
     [switch]$NoDosBox,
     [switch]$Rebuild,
@@ -70,6 +86,7 @@ if ($PSVersionTable.PSVersion.Major -lt 6) {
 }
 
 $AllegroZipUrl = 'https://github.com/liballeg/allegro5/archive/refs/heads/4.2.zip'
+$GameWadUrl = 'https://raw.githubusercontent.com/cadwal/dumb-game/djgpp-modernize/prebuilt/game.wad'
 $FreedoomUrl = 'https://github.com/freedoom/freedoom/releases/download/v0.13.0/freedoom-0.13.0.zip'
 $CwsdpmiUrls = @(
     "$DjgppMirror/v2misc/csdpmi7b.zip",
@@ -229,19 +246,33 @@ $exclude = @('.git', 'autom4te.cache', 'build-dos', 'build-dosbox', 'dosobj', $W
 & robocopy $SrcDir $DumbDir /E /XD @exclude /NFL /NDL /NJH /NJS /NP | Out-Null
 if ($LASTEXITCODE -ge 8) { throw "robocopy failed ($LASTEXITCODE)" }
 
-# ---- IWAD -------------------------------------------------------------------
+# ---- game data --------------------------------------------------------------
+
+# The DUMB game is always installed; DOOM.WAD only for -Iwad/-Freedoom.
+$gameWadDest = Join-Path $RunDir 'GAME.WAD'
+if ($GameWad) {
+    if (-not (Test-Path $GameWad)) { throw "No such file: $GameWad" }
+    Copy-Item -Force $GameWad $gameWadDest
+} else {
+    Copy-Item -Force (Get-Download @($GameWadUrl) 'game.wad') $gameWadDest
+}
 
 $doomWad = Join-Path $RunDir 'DOOM.WAD'
 if ($Iwad) {
+    if (-not (Test-Path $Iwad)) { throw "No such file: $Iwad" }
     Copy-Item -Force $Iwad $doomWad
-} elseif (-not (Test-Path $doomWad)) {
+} elseif ($Freedoom) {
     $zip = Get-Download @($FreedoomUrl) 'freedoom-0.13.0.zip'
     $tmp = Join-Path $Dl 'freedoom'
     Expand-Zip $zip $tmp
     $wad = Get-ChildItem -Path $tmp -Recurse -File -Filter 'freedoom1.wad' | Select-Object -First 1
     if (-not $wad) { throw "The Freedoom zip has no freedoom1.wad" }
-    Copy-Item $wad.FullName $doomWad
+    Copy-Item -Force $wad.FullName $doomWad
+} elseif (Test-Path $doomWad) {
+    Remove-Item -Force $doomWad
 }
+# Without -w, DUMB loads DOOM.WAD and DOOM4DUM.WAD.
+if (Test-Path $doomWad) { $dumbArgs = '' } else { $dumbArgs = '-w GAME.WAD ' }
 
 # ---- DOS batch files and DOSBox-X configuration -----------------------------
 
@@ -282,14 +313,14 @@ echo *** Build failed; see the logs in C:\LOGS ***
 cd \
 '@
 
-Write-DosFile (Join-Path $C 'RUN.BAT') @'
+Write-DosFile (Join-Path $C 'RUN.BAT') @"
 @echo off
-rem Written by dos\dosbox-x-build.ps1: runs DOSDUMB.EXE with DOOM.WAD.
+rem Written by dos\dosbox-x-build.ps1: runs DOSDUMB.EXE.
 cd \RUN
 echo DUMB writes its log to C:\LOGS\DOSDUMB.LOG
-DOSDUMB.EXE %1 %2 %3 %4 %5 %6 %7 %8 %9 > C:\LOGS\DOSDUMB.LOG
+DOSDUMB.EXE $dumbArgs%1 %2 %3 %4 %5 %6 %7 %8 %9 > C:\LOGS\DOSDUMB.LOG
 cd \
-'@
+"@
 
 if ($BuildOnly) {
     $runLines = "echo Built C:\RUN\DOSDUMB.EXE; start it with C:\RUN.BAT.`ngoto end"

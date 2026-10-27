@@ -1,12 +1,14 @@
 #!/bin/sh
 # DUMB: cross-compile dosdumb.exe on Linux (or macOS) with DJGPP and
-# Allegro 4.2, and package it with its WADs and CWSDPMI.
+# Allegro 4.2, and package it with the DUMB game, its WADs and CWSDPMI.
 #
 # Usage: dos/cross-build.sh [options]
 #
 #   -w DIR       work directory (default: build-dos in the source tree)
 #   -j N         parallel make jobs (default: number of CPUs)
-#   --iwad FILE  also copy FILE into the package as DOOM.WAD
+#   --iwad FILE  play Doom data instead of the DUMB game: copy FILE
+#                into the package as DOOM.WAD (with DOOM4DUM.WAD)
+#   --freedoom   like --iwad, with Freedoom's freedoom1.wad (downloaded)
 #   --run        start the package in DOSBox-X (or DOSBox) afterwards
 #   -h, --help   show this help
 #
@@ -16,18 +18,25 @@
 #                v3.4 (GCC 12.2.0) is downloaded into the work directory
 #   ALLEGRO_DIR  an existing Allegro 4.2 source tree; otherwise branch
 #                4.2 is cloned into the work directory
+#   DUMB_GAME_DIR  an existing checkout of the DUMB game (cadwal/dumb-game);
+#                otherwise its djgpp-modernize branch is cloned
 #
 # Needs: sh, make, a native C compiler, autoconf, automake, git, curl
 # or wget, tar with bzip2.  The prebuilt DJGPP binutils need the flex
 # runtime library (libfl.so.2; package libfl2 on Debian and Ubuntu).
+# Building game.wad also needs netpbm (its programs, and libnetpbm for
+# ppmtodumb) and a C++ preprocessor; without them the game's
+# prebuilt/game.wad is used.
 #
 # Steps, each skipped when its result already exists:
 #   1. DJGPP toolchain        -> WORK/djgpp
 #   2. Allegro 4.2 for DJGPP  -> WORK/allegro (lib/djgpp/liballeg.a)
 #   3. native ptcomp/wadtool and the WADs -> WORK/native
-#   4. dosdumb.exe            -> WORK/dos
-#   5. package                -> WORK/dist: DOSDUMB.EXE, DOOM4DUM.WAD,
-#                                HTIC4DUM.WAD, CWSDPMI.EXE, [DOOM.WAD]
+#   4. the DUMB game          -> WORK/game/game.wad
+#   5. dosdumb.exe            -> WORK/dos
+#   6. package                -> WORK/dist: DOSDUMB.EXE, GAME.WAD,
+#                                DOOM4DUM.WAD, HTIC4DUM.WAD, CWSDPMI.EXE,
+#                                [DOOM.WAD], dosbox.conf
 # See docs/dos/MODERNIZE.md for the details.
 
 set -eu
@@ -35,6 +44,9 @@ set -eu
 DJGPP_RELEASE=https://github.com/andrewwutw/build-djgpp/releases/download/v3.4
 ALLEGRO_GIT=https://github.com/liballeg/allegro5.git
 ALLEGRO_BRANCH=4.2
+DUMB_GAME_GIT=https://github.com/cadwal/dumb-game.git
+DUMB_GAME_BRANCH=djgpp-modernize
+FREEDOOM_ZIP=https://github.com/freedoom/freedoom/releases/download/v0.13.0/freedoom-0.13.0.zip
 HOST=i586-pc-msdosdjgpp
 
 here=$(cd "$(dirname "$0")" && pwd)
@@ -43,6 +55,7 @@ srcdir=$(cd "$here/.." && pwd)
 work=$srcdir/build-dos
 jobs=
 iwad=
+freedoom=
 run=
 
 say() {
@@ -64,6 +77,7 @@ while [ $# -gt 0 ]; do
       -w) [ $# -ge 2 ] || usage 1; work=$2; shift 2 ;;
       -j) [ $# -ge 2 ] || usage 1; jobs=$2; shift 2 ;;
       --iwad) [ $# -ge 2 ] || usage 1; iwad=$2; shift 2 ;;
+      --freedoom) freedoom=1; shift ;;
       --run) run=1; shift ;;
       -h|--help) usage 0 ;;
       *) echo "cross-build: unknown option $1" >&2; usage 1 ;;
@@ -160,6 +174,7 @@ if [ ! -f "$alleg/lib/djgpp/liballeg.a" ]; then
    done
    (
       cd "$alleg"
+      # shellcheck disable=SC2030 # PATH is meant to be local here
       PATH=$shim:$dj/$HOST/bin:$PATH
       export PATH
       m="make CROSSCOMPILE=1 DJDIR=$dj/$HOST"
@@ -194,7 +209,52 @@ if [ ! -f "$native/doom/doom4dum.wad" ] || [ ! -f "$native/htic/htic4dum.wad" ];
    ) > "$work/native.log" 2>&1 || die "native build failed; see $work/native.log"
 fi
 
-# ---- 4. dosdumb.exe ----------------------------------------------------
+# ---- 4. the DUMB game ---------------------------------------------------
+
+if [ -n "${DUMB_GAME_DIR:-}" ]; then
+   gamesrc=$(cd "$DUMB_GAME_DIR" && pwd)
+else
+   gamesrc=$work/dumb-game
+   if [ ! -f "$gamesrc/pt/game.pt" ]; then
+      need git
+      say "cloning the DUMB game ($DUMB_GAME_BRANCH)"
+      rm -rf "$gamesrc"
+      git clone -q --depth 1 --branch "$DUMB_GAME_BRANCH" "$DUMB_GAME_GIT" "$gamesrc"
+   fi
+fi
+
+game=$work/game
+gamewad=$game/game.wad
+if [ ! -f "$gamewad" ]; then
+   can_build=1
+   for c in pnmcat pnmdepth pnmflip ppmforge ppmchange ppmmake ppmquant ppmtomap c++; do
+      command -v "$c" >/dev/null 2>&1 || can_build=
+   done
+   [ -x "$native/tool/ppmtodumb" ] || can_build=
+   if [ -n "$can_build" ]; then
+      say "building the DUMB game (log: $work/game.log)"
+      mkdir -p "$game"
+      (
+	 # shellcheck disable=SC2031
+	 PATH=$native/ptcomp:$native/tool:$PATH
+	 export PATH
+	 if [ ! -x "$gamesrc/configure" ]; then
+	    (cd "$gamesrc" && autoreconf -fi)
+	 fi
+	 cd "$game"
+	 [ -f config.status ] || "$gamesrc/configure"
+	 make
+      ) > "$work/game.log" 2>&1 || die "DUMB game build failed; see $work/game.log"
+   elif [ -f "$gamesrc/prebuilt/game.wad" ]; then
+      say "no netpbm or ppmtodumb; using the game's prebuilt/game.wad"
+      mkdir -p "$game"
+      cp "$gamesrc/prebuilt/game.wad" "$gamewad"
+   else
+      die "can't build game.wad (needs netpbm) and $gamesrc has no prebuilt/game.wad"
+   fi
+fi
+
+# ---- 5. dosdumb.exe ----------------------------------------------------
 
 dos=$work/dos
 say "building dosdumb.exe (log: $work/dos.log)"
@@ -208,15 +268,45 @@ mkdir -p "$dos"
 ) > "$work/dos.log" 2>&1 || die "DOS build failed; see $work/dos.log"
 [ -f "$dos/dumb/dosdumb.exe" ] || die "dosdumb.exe was not built; see $work/dos.log"
 
-# ---- 5. package ----------------------------------------------------------
+# ---- 6. package ----------------------------------------------------------
+
+unzip_one() {
+   # unzip_one ZIP MEMBER DEST
+   if command -v unzip >/dev/null 2>&1; then
+      unzip -p "$1" "$2" > "$3"
+   elif command -v python3 >/dev/null 2>&1; then
+      python3 -I -c 'import sys, zipfile
+sys.stdout.buffer.write(zipfile.ZipFile(sys.argv[1]).read(sys.argv[2]))' "$1" "$2" > "$3"
+   else
+      die "need unzip or python3 to unpack $1"
+   fi
+}
+
+if [ -n "$freedoom" ] && [ -z "$iwad" ]; then
+   fzip=$work/dl/$(basename "$FREEDOOM_ZIP")
+   if [ ! -f "$fzip" ]; then
+      say "downloading Freedoom"
+      fetch "$FREEDOOM_ZIP" "$fzip.part"
+      mv "$fzip.part" "$fzip"
+   fi
+   iwad=$work/dl/freedoom1.wad
+   unzip_one "$fzip" freedoom-0.13.0/freedoom1.wad "$iwad.part"
+   mv "$iwad.part" "$iwad"
+fi
 
 dist=$work/dist
 mkdir -p "$dist"
 cp "$dos/dumb/dosdumb.exe" "$dist/DOSDUMB.EXE"
+cp "$gamewad" "$dist/GAME.WAD"
 cp "$native/doom/doom4dum.wad" "$dist/DOOM4DUM.WAD"
 cp "$native/htic/htic4dum.wad" "$dist/HTIC4DUM.WAD"
 if [ -n "$iwad" ]; then
    cp "$iwad" "$dist/DOOM.WAD"
+   # Without -w, DUMB loads doom.wad and doom4dum.wad.
+   dumbargs=
+else
+   rm -f "$dist/DOOM.WAD"
+   dumbargs="-w game.wad"
 fi
 if [ ! -f "$dist/CWSDPMI.EXE" ]; then
    sh "$here/get-cwsdpmi.sh" "$dist" ||
@@ -236,13 +326,16 @@ cycles=max
 mount c "$dist"
 c:
 echo DUMB writes its log to DUMB.LOG
-dosdumb.exe > DUMB.LOG
+dosdumb.exe $dumbargs > DUMB.LOG
 EOF
 
 say "done: $dist"
 ls -l "$dist"
-[ -f "$dist/DOOM.WAD" ] ||
-   say "note: put an IWAD in $dist as DOOM.WAD (e.g. Freedoom's freedoom1.wad)"
+if [ -n "$dumbargs" ]; then
+   say "plays the DUMB game: dosdumb.exe $dumbargs"
+else
+   say "plays DOOM.WAD: dosdumb.exe"
+fi
 
 # ---- run -------------------------------------------------------------
 
@@ -255,7 +348,6 @@ if [ -n "$run" ]; then
       die "--run needs dosbox-x or dosbox"
    fi
    [ -f "$dist/CWSDPMI.EXE" ] || die "--run needs $dist/CWSDPMI.EXE"
-   [ -f "$dist/DOOM.WAD" ] || die "--run needs an IWAD; use --iwad"
    say "starting $dosbox"
    exec "$dosbox" -conf "$dist/dosbox.conf"
 fi
