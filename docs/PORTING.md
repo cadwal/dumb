@@ -121,27 +121,48 @@ runs through XWayland), and removing the old drivers.
   Windows, instead of `setitimer`.  It keeps the 10 ms tick and the old
   cap of 99 ticks, and no longer loses the part of a tick left over at
   each reset (tested: 50 x 7 ms gives 35 ticks).
-- [~] Steps 3-5: `dumb/sdl_video.c`, `dumb/sdl_input.c`,
-  `libdumb/sdl_sound.c` are written and compile without warnings
-  (`-Wall -Wextra`) against the SDL 3.4.8 headers, for Linux and for
-  64-bit Windows (MinGW-w64).  **Not run yet**: building the SDL3
-  library itself was not permitted in the session that wrote them.
+- [x] Steps 3-5: `dumb/sdl_video.c`, `dumb/sdl_input.c`,
+  `libdumb/sdl_sound.c`, tested with SDL 3.4.8 (built from source):
+  - Linux X11 (Xvfb) and native Wayland (headless Weston): same frames
+    as `xdumb`; 8, 16 and 32 bpp; ~60 fps with vsync.
   - Video: resizable window, starting at the largest whole multiple
-    that fits; 320x200 shown at 4:3; `fullscreen`, `scale`,
-    `no-aspect`, `integer-scale`, `no-vsync` options; F11 or
-    Alt+Enter toggles fullscreen; 8-bit frames go through the palette,
-    16/32-bit straight into the texture.
-  - Input: SDL keycodes, with key names compatible with the X11
-    driver's, so existing key bindings work; keys are released when the
-    window loses focus; mouse in relative mode (x turns, y looks, or
-    walks with `mouse-move`; left button shoots, right activates,
-    middle walks); `no-mouse` and `mouse-sens` options.
+    that fits; 320x200 shown at 4:3; `--vid-fullscreen`,
+    `--vid-scale`, `--vid-no-aspect`, `--vid-integer-scale`,
+    `--vid-no-vsync`; F11 or Alt+Enter toggles fullscreen.  SDL is
+    started in `init_video()`, so `--help` works without a display.
+  - Input: SDL keycodes with key names compatible with the X11
+    driver's, so existing key bindings work; keys are released when
+    the window loses focus; a key pressed and released within one frame
+    still counts; mouse in relative mode (x turns, y looks, or walks
+    with `--input-mouse-move`; left button shoots, right activates,
+    middle walks); `--input-no-mouse`, `--input-mouse-sens`.
+    Keyboard (turn, walk, Escape) and mouse turning tested with xdotool.
   - Sound: an SDL audio stream topped up from `sound_mix.c` in
-    `poll_sound()` (no audio thread touches DUMB data); `mono` and
-    `latency` options.
-- [ ] Step 6: Windows
-- [ ] Step 7: packaging
-- [ ] Step 8: testing
+    `poll_sound()`; `--sound-mono`, `--sound-latency`.  Only tested
+    with SDL's dummy audio driver (no sound device here).
+- [x] Step 6 (mostly): `sdldumb.exe` cross-built with MinGW-w64 and an
+  SDL3 built the same way; it needs only `SDL3.dll` besides Windows'
+  own DLLs, and runs under Wine with SDL's Windows video driver and the
+  Direct3D renderer, drawing the same frames as on Linux.
+  - configure no longer requires `sys/wait.h`; `test/fixed_bm` is
+    only built where `setitimer()` exists.
+  - Config file: `dumb.cfg`, in the current directory or
+    `%APPDATA%\DUMB\`.  `\` and drive letters count as paths.
+  - Still to do: the program is a GUI program, so its log only goes
+    to a file with `-l FILE` (fatal errors are invisible otherwise; a
+    message box would help); networking is the dummy driver (Winsock
+    not done); a real Windows 11 check.
+- Bugs found in the original code while running it, fixed here and on
+  `djgpp-modernize` (DOS takes the same no-mmap paths):
+  - WAD reading without mmap: the directory was read from the wrong
+    file position, and `load_lump()` passed the lump length to
+    `lseek()` as `whence`.
+  - Protos were `malloc`'d and their `sprites` pointer never set, so
+    sprites crashed at random (reproducible with `MALLOC_PERTURB_`).
+  - `reset_misc()` aborted on exit if no misc texture was ever loaded.
+- [ ] Step 7: packaging (Windows zip script; Linux `make install`
+  works as before).
+- [~] Step 8: testing as above; no CI yet.
 
 The existing programs still build and run on this branch: `xdumb`
 plays the DUMB game as before, with the new timer, and the DOS cross
