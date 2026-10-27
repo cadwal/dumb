@@ -105,6 +105,40 @@ work goes on.
 - Checked afterwards: the game under Xvfb (59 fps, walking and
   shooting), network play (3 runs out of 3), and `fixed_bm`.
 
+### 8. `-Wextra`
+
+- configure now adds `-Wall -Wextra` for GCC.  Builds with 0 warnings:
+  Linux (default, and `--without-sdl` with OSS sound), Windows, DOS,
+  and the native tools built by the DOS and Windows scripts.
+- About 90 warnings across the targets:
+  - Unused parameters (most of them): callbacks whose signature is
+    fixed.  `ATTR_UNUSED` (`__attribute__((unused))`, from config.h
+    and `dos/config.h`) marks them.  It means "may be unused", so it
+    also suits parameters used only under `#ifdef`.
+  - Signed/unsigned comparisons: casts where the value is known to be
+    in range (`dyncode.c`, `texture.c`, `dark2trans.c`, xwad frame
+    sizes, an SDL keycode that is `long` on Linux but 32 bits on
+    Windows).
+  - `INT_TO_FIXED()` shifted negative values left, which is
+    undefined; it now multiplies (same code from GCC).  The same goes
+    for `-1 << 10` in `thinghit.c`.
+  - `wadtool`'s deliberate fall-through is now marked with the comment
+    GCC understands.  `dos_video.c` initialises the RGB `filler`.
+  - OSS sound: `write()` is checked, so a dead device logs an error
+    instead of spinning.
+- Bugs in xwad (the map editor):
+  - `map_width` and `map_height` were unsigned, so `MAPX()` and
+    `MAPY()`, which turn mouse positions into map coordinates, did
+    unsigned arithmetic.  When zoomed out (a right shift), clicks in
+    the left or top half of the map gave numbers around 2^31 instead
+    of small negatives, and the grid there was wrong (`abs()` of an
+    unsigned value).  They are `int` now.  Checked by computing the
+    old and new values; xwad itself was not run.
+  - The chooser skipped an item partly scrolled off the top, and did
+    not clamp scrolling in lists shorter than the window.
+- Checked afterwards: the game, network play (3 out of 3), demo
+  playback, and the rebuilt Windows kit under Wine.
+
 ## Decisions
 
 | Question | Decision |
@@ -214,4 +248,6 @@ bug became reproducible.
 - [ ] Linux packaging (a `.desktop` file, an icon, maybe Flatpak).
 - [x] Fix the compiler warnings (0 left at `-g -O2`).
 - [x] `-Wall` on by default, with 0 warnings.
-- [ ] Maybe try `-Wextra` (it isn't on).
+- [x] `-Wextra` on by default, with 0 warnings.
+- [ ] Run xwad and check the map editor by hand after the signedness
+      fixes.

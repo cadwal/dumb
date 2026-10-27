@@ -86,8 +86,8 @@ fixes are:
 - **libpng.**  `png->jmpbuf` became `png_jmpbuf(png)`.
 - **Missing `#include`s and implicit declarations**, which are now
   errors.
-- **Warnings.**  The tree now builds with no warnings at `-Wall`,
-  which configure turns on for GCC.  See [NOTES.md](NOTES.md) for
+- **Warnings.**  The tree now builds with no warnings at `-Wall
+  -Wextra`, which configure turns on for GCC.  See [NOTES.md](NOTES.md) for
   what was fixed.
 - **ptcomp.**  `Chance` values were parsed with `atol` into a type
   that is 64 bits wide on 64-bit Linux, so negative values broke.  They
@@ -245,6 +245,11 @@ Some bugs were latent: they never showed on Linux with glibc and
     statement after `if (LINEVALID)` was not guarded, so with no line
     selected it indexed the line array with -1.  Found while fixing
     `-Wmisleading-indentation` warnings in the macros next to it.
+13. **xwad mapped mouse clicks with unsigned arithmetic**
+    (`xwad/xwad.h`, `xwad/xwadmap.h`).  `map_width` and `map_height`
+    were unsigned, so when zoomed out, clicks in the left or top half
+    of the map turned into coordinates around 2^31, and the grid there
+    was drawn wrong.  Found by `-Wextra`'s `-Wsign-compare`.
 
 ## How things were tested
 
