@@ -231,6 +231,13 @@ Some bugs were latent: they never showed on Linux with glibc and
    happened to reach the slave before the request came.  On one
    machine it worked in 1 run out of 5.  The master now keeps the
    address the request came from; 5 runs out of 5 then worked.
+10. **Demo playback opened the wrong file** (`dumb/dumb.c`).
+    `--dumb-play` opened the file named by `--dumb-record`, which is
+    NULL when not recording.  Found while fixing a compiler warning
+    next to it.
+11. **Messages used as format strings** (`dumb/updthing.c`,
+    `ptcomp/parm.c`).  Pickup messages come from the WAD, so a `%` in
+    one would have been read as a conversion.
 
 ## How things were tested
 

@@ -60,6 +60,26 @@ work goes on.
   the netplay join going to the wrong address.
 - `win/make-kit.sh` makes `dumb-VERSION-win64.zip`.
 
+### 6. Compiler warnings
+
+- A clean build of Linux, Windows and DOS now has no warnings at the
+  default flags (`-g -O2`).
+- Format strings: messages from WADs (pickup messages in `updthing.c`)
+  and ptcomp's error messages were passed as the format, so a `%` in
+  them would have been read as a conversion.  They are now passed as
+  `"%s"` arguments, and `size_t` values are printed with `%lu` and a
+  cast.
+- Unchecked `fread`/`fscanf`: `wadtool -c`, `todumb`'s palette and
+  `mkpnames` now report short or bad input instead of using garbage.
+- Bug found next to a warning: `--dumb-play` opened the
+  `--dumb-record` file (a NULL name when not recording).  Demo
+  playback works again.  Tested by recording about 5 seconds and
+  playing them back; the playback quit by itself at the recorded
+  Escape.  Demos store input per frame, not per tick, so a playback
+  is not frame-exact, as in the original.
+- `wadtool -c` was checked by copying `game.wad`: all 57 lumps are
+  identical.
+
 ## Decisions
 
 | Question | Decision |
@@ -154,9 +174,8 @@ bug became reproducible.
   network.  The scripts say so rather than failing silently.
 - `safe_free(NULL)` logs an error.  Use `free()` for memory that
   doesn't come from `safe_malloc`, such as `_fullpath()`'s result.
-- Compiler warnings still left: `-Wformat` warnings in `texture.c`
-  and `netplay.c`, and `-Wformat-security` in `updthing.c`.  Look at
-  those before trusting messages that contain `%`.
+- Xvfb can disappear between test runs; if `xdotool` says "Can't
+  open display", start it again.
 
 ## Open items
 
@@ -168,4 +187,5 @@ bug became reproducible.
 - [ ] Network play between two real machines.
 - [ ] CI for the Linux, MinGW and DJGPP builds.
 - [ ] Linux packaging (a `.desktop` file, an icon, maybe Flatpak).
-- [ ] Fix the remaining format warnings listed under Gotchas.
+- [x] Fix the compiler warnings (0 left at `-g -O2`).
+- [ ] Try `-Wall`, which is not on by default and will show more.
