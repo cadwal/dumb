@@ -129,11 +129,14 @@ work goes on.
 - Bugs in xwad (the map editor):
   - `map_width` and `map_height` were unsigned, so `MAPX()` and
     `MAPY()`, which turn mouse positions into map coordinates, did
-    unsigned arithmetic.  When zoomed out (a right shift), clicks in
-    the left or top half of the map gave numbers around 2^31 instead
-    of small negatives, and the grid there was wrong (`abs()` of an
-    unsigned value).  They are `int` now.  Checked by computing the
-    old and new values; xwad itself was not run.
+    unsigned arithmetic.  They are `int` now.
+    **Correction after running XWad (section 9):** the error is
+    exactly 2^31, and only when zoomed in (`UNSCALE` shifts right
+    when `scale` < 0, not when zoomed out as first written).  The
+    16-bit map coordinates and the grid's modulo discard it, so it
+    was never visible: an XWad built from the old code, zoomed to 1:2,
+    put a middle-clicked vertex at the same coordinates (2510, 601)
+    as the fixed one.  The commit message of f3912cc overstates it.
   - The chooser skipped an item partly scrolled off the top, and did
     not clamp scrolling in lists shorter than the window.
 - Checked afterwards: the game, network play (3 out of 3), demo
@@ -200,6 +203,11 @@ work goes on.
     every X server has.
   - Without a window manager its window stays at the minimum size;
     `xdotool windowsize` enlarges it for testing.
+  - Tested on Freedoom's E1M1 under the sanitizers: zoom in to 1:2,
+    VerMode, middle-click to create a vertex, click to select it.  No
+    reports; the vertex appears where clicked.  The same steps in an
+    XWad from before the `-Wextra` changes (with only the two startup
+    fixes) give the same result; see the correction in section 8.
 
 ## Decisions
 
@@ -317,5 +325,4 @@ bug became reproducible.
 - [x] Fix the compiler warnings (0 left at `-g -O2`).
 - [x] `-Wall` on by default, with 0 warnings.
 - [x] `-Wextra` on by default, with 0 warnings.
-- [ ] Run xwad and check the map editor by hand after the signedness
-      fixes.
+- [x] Run xwad and check the map editor after the signedness fixes.

@@ -247,9 +247,12 @@ Some bugs were latent: they never showed on Linux with glibc and
     `-Wmisleading-indentation` warnings in the macros next to it.
 13. **xwad mapped mouse clicks with unsigned arithmetic**
     (`xwad/xwad.h`, `xwad/xwadmap.h`).  `map_width` and `map_height`
-    were unsigned, so when zoomed out, clicks in the left or top half
-    of the map turned into coordinates around 2^31, and the grid there
-    was drawn wrong.  Found by `-Wextra`'s `-Wsign-compare`.
+    were unsigned, so `MAPX()` and `MAPY()` worked in unsigned
+    arithmetic.  When zoomed in, the result was off by exactly 2^31,
+    which the 16-bit map coordinates (and the grid's modulo) happen to
+    discard, so it never showed: an XWad with the old code places a
+    vertex in the same spot.  Not a visible bug, but the code now says
+    what it means.  Found by `-Wextra`'s `-Wsign-compare`.
 
 These were found by running the game and XWad under AddressSanitizer
 and UndefinedBehaviorSanitizer:

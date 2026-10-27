@@ -74,8 +74,9 @@ else
       [ -z "${NO_HX:-}" ] ||
 	 die "could not download $zip; fetch it yourself and put it in $dest"
       echo "get-cwsdpmi: no CWSDPMI mirror reachable; trying HDPMI32 from $hx_url"
-      fetch "$hx_url" "$tmp/hx.zip" 2>/dev/null && [ -s "$tmp/hx.zip" ] ||
+      if ! fetch "$hx_url" "$tmp/hx.zip" 2>/dev/null || [ ! -s "$tmp/hx.zip" ]; then
 	 die "could not download $zip nor HX; fetch one yourself and put it in $dest"
+      fi
       mkdir "$tmp/hx"
       unpack "$tmp/hx.zip" "$tmp/hx"
       exe=$(find "$tmp/hx" -type f -iname hdpmi32.exe | head -n 1)
