@@ -114,10 +114,10 @@ DECL_ENCODE(Thing)
    /* KLUDGE: we find the first mismatched byte in the thing
       to avoid updating for trivial changes */
    fm = first_mismatch(dyn, backup, sizeof(ThingDyn));
-   if (fm >= THING_MAGIC_JELLYBEAN)
+   if (fm >= (int) THING_MAGIC_JELLYBEAN)
       return 0;
    /* other KLUDGE: phase change shortcut */
-   if (fm >= THING_MAGIC_JELLYBEAN - sizeof(int)) {
+   if (fm >= (int) (THING_MAGIC_JELLYBEAN - sizeof(int))) {
       *c2 = d->phase;
       return sizeof(LE_int32);
    }

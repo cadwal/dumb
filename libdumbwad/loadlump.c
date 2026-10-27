@@ -113,7 +113,7 @@ free_lump(LumpNum ln)
 }
 
 void
-release_lump(LumpNum ln)
+release_lump(LumpNum ln ATTR_UNUSED)
 {
    /* currently a no-op */
 }

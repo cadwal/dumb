@@ -38,7 +38,7 @@
 ** ray closest to the point.
 */
 int
-findsector(const LevData *ld, fixed x, fixed y, fixed z)
+findsector(const LevData *ld, fixed x, fixed y, fixed z ATTR_UNUSED)
 {
    int closest_region = -1;
    fixed closest = FIXED_MAX;

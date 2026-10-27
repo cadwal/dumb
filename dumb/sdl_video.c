@@ -206,7 +206,7 @@ video_updateframe(void *v)
 }
 
 void
-video_winstuff(const char *desc, int xdim, int ydim)
+video_winstuff(const char *desc, int xdim ATTR_UNUSED, int ydim ATTR_UNUSED)
 {
    char title[80];
    snprintf(title, sizeof title, "DUMB: %s", desc);

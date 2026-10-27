@@ -249,7 +249,7 @@ ctl_edit(CSetInstance *csi, int i,
 
 static void
 ctl_edit_back(CSetInstance *csi, int i,
-	      AppInst *inst)
+	      AppInst *inst ATTR_UNUSED)
 {
    //const Control *ctl=csi->cset->ctls+i;
    CtlInstance *ci = csi->inst + i;
@@ -364,7 +364,8 @@ expose_cseti(CSetInstance *csi, XExposeEvent *ev, AppInst *inst)
 }
 
 void
-motev_cseti(CSetInstance *csi, XMotionEvent *ev, AppInst *inst)
+motev_cseti(CSetInstance *csi ATTR_UNUSED, XMotionEvent *ev ATTR_UNUSED,
+	    AppInst *inst ATTR_UNUSED)
 {
 }
 

@@ -118,7 +118,8 @@ get_input(PlayerInput *in)
 	    break;
 	 if (!ev.key.down) {
 	    int i;
-	    for (i = 0; i < n_new_keys && new_keys[i] != ev.key.key; i++)
+	    for (i = 0; i < n_new_keys
+			&& new_keys[i] != (keymap_keycode) ev.key.key; i++)
 	       ;
 	    if (i < n_new_keys && n_late_releases < MAX_DOWN_KEYS) {
 	       late_releases[n_late_releases++] = ev.key.key;
@@ -242,7 +243,7 @@ keymap_keycode_to_keyname(keymap_keycode keycode)
 }
 
 void
-keymap_free_keyname(const char *keyname)
+keymap_free_keyname(const char *keyname ATTR_UNUSED)
 {
    /* no need to free anything */
 }

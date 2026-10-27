@@ -33,12 +33,15 @@
 
 struct _LevData;
 
+/* Not every function needs every parameter, hence ATTR_UNUSED.  */
 #define DYN_INIT_FUNC(name) \
-  void (name)(void *_dyn,const void *_lump,struct _LevData *ld)
+  void (name)(void *_dyn,const void *_lump,struct _LevData *ld ATTR_UNUSED)
 #define DYN_ENCODE_FUNC(name) \
-  int (name)(void *code,const void *dyn,const void *backup,struct _LevData *ld)
+  int (name)(void *code ATTR_UNUSED,const void *dyn ATTR_UNUSED, \
+	     const void *backup ATTR_UNUSED,struct _LevData *ld ATTR_UNUSED)
 #define DYN_DECODE_FUNC(name) \
-  void (name)(void *dyn,const void *code,int len,struct _LevData *ld)
+  void (name)(void *dyn ATTR_UNUSED,const void *code ATTR_UNUSED, \
+	      int len ATTR_UNUSED,struct _LevData *ld ATTR_UNUSED)
 
 #define DYN_CODE_BUF_LEN 255
 

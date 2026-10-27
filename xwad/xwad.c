@@ -70,7 +70,7 @@ static void print_version(void);
 
 #ifdef HAVE_FORK
 void
-sigchld_handler(int i)
+sigchld_handler(int i ATTR_UNUSED)
 {
    int status;
    wait(&status);
@@ -299,7 +299,7 @@ main(int argc, char **argv)
 }
 
 static void
-mapdhf(XEvent *ev, XWadInstance *inst, void *info)
+mapdhf(XEvent *ev, XWadInstance *inst, void *info ATTR_UNUSED)
 {
    switch (ev->type) {
    case (ButtonPress):
@@ -332,7 +332,7 @@ mapdhf(XEvent *ev, XWadInstance *inst, void *info)
 }
 
 static void
-framedhf(XEvent *ev, XWadInstance *inst, void *info)
+framedhf(XEvent *ev, XWadInstance *inst, void *info ATTR_UNUSED)
 {
    switch (ev->type) {
    case (ConfigureNotify):
@@ -555,7 +555,7 @@ update_intgeo(XWadInstance *inst)
       XResizeWindow(dpy, inst->mapframe, frame_width, frame_height);
    }
    /* arrange subwindows */
-   if (frame_height > genc_height + modec_height + YSPACE * 3) {
+   if ((int) frame_height > genc_height + modec_height + YSPACE * 3) {
       int middle = XSPACE * 2 + MAX(genc_width, modec_width);
       XMoveResizeWindow(dpy, inst->genctls.w,
 			XSPACE, YSPACE,

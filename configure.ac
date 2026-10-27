@@ -42,13 +42,13 @@ AC_PROG_CC
 DUMB_MSG_REQUIRE_YES(GCC, [GCC])
 dnl GCC always supports -c -o
 AC_PROG_CXX
-dnl The tree builds without warnings at -Wall; keep it so.  -Wall
-dnl goes first, so -Wno-... options in the user's CFLAGS still win.
+dnl The tree builds without warnings at -Wall -Wextra; keep it so.
+dnl They go first, so -Wno-... options in the user's CFLAGS still win.
 if test "$GCC" = yes; then
-  CFLAGS="-Wall $CFLAGS"
+  CFLAGS="-Wall -Wextra $CFLAGS"
 fi
 if test "$GXX" = yes; then
-  CXXFLAGS="-Wall $CXXFLAGS"
+  CXXFLAGS="-Wall -Wextra $CXXFLAGS"
 fi
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
@@ -63,6 +63,9 @@ AC_C_INLINE
 AC_C_RESTRICT
 AC_C_BIGENDIAN
 DUMB_C_ATTR_REGPARM
+AH_BOTTOM([/* For a parameter that a callback's signature needs but its
+   function doesn't use.  DUMB is built with GCC (or Clang).  */
+#define ATTR_UNUSED __attribute__((unused))])
 AC_TYPE_SIZE_T
 dnl These work when cross-compiling too.
 AC_CHECK_SIZEOF(int)

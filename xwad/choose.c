@@ -71,7 +71,7 @@ draw_item(ChooseInst *ci, AppInst *inst, int i)
 {
    int y = SLOT_START(i);
    const char *s;
-   if (y < -SLOT_HEIGHT || y >= ci->height)
+   if (y < -SLOT_HEIGHT || y >= (int) ci->height)
       return;
    s = ci->text(i, inst);
    if (i == ci->curitem) {
@@ -112,11 +112,13 @@ redraw(ChooseInst *ci, AppInst *inst, int y1, int y2)
 static void
 movescroll(ChooseInst *ci, int i)
 {
+   int max_scroll = ci->nitems * SLOT_HEIGHT - (int) ci->height;
    ci->scroll += i;
+   /* Clamp to the top last, for lists shorter than the window.  */
+   if (ci->scroll > max_scroll)
+      ci->scroll = max_scroll;
    if (ci->scroll < 0)
       ci->scroll = 0;
-   if (ci->scroll >= ci->nitems * SLOT_HEIGHT - ci->height)
-      ci->scroll = ci->nitems * SLOT_HEIGHT - ci->height;
    XClearArea(dpy, ci->wscroll, 0, 0, 0, 0, True);
    XClearArea(dpy, ci->w, 0, 0, 0, 0, True);
 }
@@ -134,7 +136,7 @@ choose_setcur(ChooseInst *ci, int i, AppInst *inst)
    if (y < 0) {
       movescroll(ci, y - BSCR_HEIGHT);
       did_redraw = 1;
-   } else if (y >= ci->height - SLOT_HEIGHT) {
+   } else if (y >= (int) ci->height - SLOT_HEIGHT) {
       movescroll(ci, y + FSCR_HEIGHT - ci->height);
       did_redraw = 1;
    }
@@ -324,7 +326,7 @@ sb_motion(ChooseInst *ci, int y)
 }
 
 static void
-scrolldhf(XEvent *ev, AppInst *inst, void *info)
+scrolldhf(XEvent *ev, AppInst *inst ATTR_UNUSED, void *info)
 {
    ChooseInst *chinst = (ChooseInst *) info;
    switch (ev->type) {

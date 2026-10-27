@@ -58,7 +58,8 @@ typedef void (*VertexDrawFunc) (int x, int y, Window w, int v,
 
 #define CROSSRAD 6
 void
-vd_cross(int x, int y, Window w, int v, XWadInstance *inst)
+vd_cross(int x, int y, Window w, int v ATTR_UNUSED,
+	 XWadInstance *inst ATTR_UNUSED)
 {
    XDrawLine(dpy, w, mapgc,
 	     x - CROSSRAD, y - CROSSRAD, x + CROSSRAD, y + CROSSRAD);
@@ -69,7 +70,8 @@ vd_cross(int x, int y, Window w, int v, XWadInstance *inst)
 #define VERBOX 8
 #define VERBIGBOX 16
 void
-vd_box(int x, int y, Window w, int v, XWadInstance *inst)
+vd_box(int x, int y, Window w, int v ATTR_UNUSED,
+       XWadInstance *inst ATTR_UNUSED)
 {
    XDrawRectangle(dpy, w, mapgc,
 		  x - VERBOX / 2, y - VERBOX / 2, VERBOX, VERBOX);

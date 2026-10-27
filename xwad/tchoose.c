@@ -61,13 +61,13 @@ text(int item, AppInst *inst)
 }
 
 static int
-find(const char *prefix, AppInst *inst)
+find(const char *prefix ATTR_UNUSED, AppInst *inst ATTR_UNUSED)
 {
    return 0;
 }
 
 static void
-chcur(int item, AppInst *inst)
+chcur(int item ATTR_UNUSED, AppInst *inst)
 {
    XClearArea(dpy, inst->tch_preview, 0, 0, 0, 0, True);
 }
@@ -172,7 +172,7 @@ chksize(AppInst *inst)
 }
 
 static void
-framedhf(XEvent *ev, AppInst *inst, void *info)
+framedhf(XEvent *ev, AppInst *inst, void *info ATTR_UNUSED)
 {
    switch (ev->type) {
    case (KeyPress):
@@ -188,7 +188,7 @@ framedhf(XEvent *ev, AppInst *inst, void *info)
 }
 
 static void
-prevdhf(XEvent *ev, AppInst *inst, void *info)
+prevdhf(XEvent *ev, AppInst *inst, void *info ATTR_UNUSED)
 {
    if (ev->type == Expose && inst->tch_do_preview) {
       XEvent ev2;

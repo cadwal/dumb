@@ -169,7 +169,7 @@ video_setpal(unsigned char idx,
 	     unsigned char blue)
 {
    RGB cpal =
-   {red >> SHRPAL, green >> SHRPAL, blue >> SHRPAL};
+   {red >> SHRPAL, green >> SHRPAL, blue >> SHRPAL, 0};
 
    vsync();
    set_color(idx, &cpal);
@@ -204,7 +204,7 @@ video_updateframe(void *v)
 }
 
 void
-video_winstuff(const char *desc, int xdim, int ydim)
+video_winstuff(const char *desc ATTR_UNUSED, int xdim ATTR_UNUSED, int ydim ATTR_UNUSED)
 {
 }
 

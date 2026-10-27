@@ -76,7 +76,7 @@ make_sample(const unsigned char *data, int len,
 
 
 void
-init_sound(int speed)
+init_sound(int speed ATTR_UNUSED)
 {
    digi_voices = detect_digi_driver(DIGI_AUTODETECT);
 
@@ -123,7 +123,7 @@ reset_sound(void)
 }
 
 void
-set_sound_volume(fixed_dumb vol)
+set_sound_volume(fixed_dumb vol ATTR_UNUSED)
 {
    /* Never called ? */
    /* set_volume() ; */
@@ -135,7 +135,7 @@ set_sound_volume(fixed_dumb vol)
  */
 void
 play_sound(const unsigned char *sample, int len,
-	   SoundBalance balance, int myspeed)
+	   SoundBalance balance ATTR_UNUSED, int myspeed)
 {
    SampQueue *lSQ;
 

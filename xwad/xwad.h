@@ -92,7 +92,7 @@ typedef struct AppInstance {
    Window mapframe, map;
    CSetInstance genctls, modectls, mapctls;
    unsigned int min_width, min_height;
-   unsigned int map_width, map_height;
+   int map_width, map_height;	/* signed: MAPX() and MAPY() subtract them */
    int xoffset, yoffset;
    int scale;
    int curselect;

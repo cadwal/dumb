@@ -224,7 +224,7 @@ init_pnames(void)
       strncpy(pnames[i].name, pn + LUMPNAMELEN * i, LUMPNAMELEN);
    free_lump(ln);
    logprintf(LOG_DEBUG, 'T', "npnames=%d", npnames);
-   if (npnames != (get_lump_len(ln) - sizeof(LE_int32)) / LUMPNAMELEN)
+   if ((size_t) npnames != (get_lump_len(ln) - sizeof(LE_int32)) / LUMPNAMELEN)
       logprintf(LOG_ERROR, 'T', _("... but should be %lu"),
 		(unsigned long) ((get_lump_len(ln) - sizeof(LE_int32))
 				 / LUMPNAMELEN));

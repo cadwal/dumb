@@ -110,7 +110,7 @@ main(int argc, char **argv)
    for (y = 0; y < rows; y++)
       for (x = 0; x < cols; x++) {
 	 pixel *p = pix[y] + x;
-	 if (p->r + p->g + p->b < minval) {
+	 if ((int) (p->r + p->g + p->b) < minval) {
 	    p->r = p->g = 0;
 	    p->b = 1;
 	 }

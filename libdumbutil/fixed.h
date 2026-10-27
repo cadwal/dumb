@@ -26,7 +26,9 @@
 #include <limits.h>
 
 /* fixed point conversions */
-#define INT_TO_FIXED(i) ((i) << 16)
+/* Multiply rather than shift: shifting a negative value left is
+   undefined in C.  GCC makes the same code of both.  */
+#define INT_TO_FIXED(i) ((i) * 0x10000)
 #define FIXED_TO_INT(f) ((f) >> 16)
 #define FIXED_TO_INT_UP(f) (((f)+0xffff) >> 16)
 #define FIXED_TO_FLOAT(f) (((double) (f)) * 1.52587890625e-5)

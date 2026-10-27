@@ -47,7 +47,7 @@ static int parse_int(const char *str);
 static void exit_invalid_args(void) __attribute__((noreturn));
 
 static void
-alrm(int dummy)
+alrm(int dummy ATTR_UNUSED)
 {
    loop = 0;
 }

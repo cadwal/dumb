@@ -424,7 +424,7 @@ xproto_sendsig(XPInstance *inst, ThingSignal sig)
 }
 
 static void
-framedhf(XEvent *ev, XPInstance *inst, void *info)
+framedhf(XEvent *ev, XPInstance *inst, void *info ATTR_UNUSED)
 {
    switch (ev->type) {
    case (ConfigureNotify):
@@ -439,7 +439,7 @@ framedhf(XEvent *ev, XPInstance *inst, void *info)
 }
 
 static void
-dispdhf(XEvent *ev, XPInstance *inst, void *info)
+dispdhf(XEvent *ev, XPInstance *inst, void *info ATTR_UNUSED)
 {
    switch (ev->type) {
    case (Expose):
@@ -459,7 +459,7 @@ chotext(int i, XPInstance *inst)
 }
 
 static void
-chocur(int i, XPInstance *inst)
+chocur(int i ATTR_UNUSED, XPInstance *inst)
 {
    int j;
    inst->curphase = 0;
@@ -593,10 +593,11 @@ update_intgeo(XPInstance *inst)
 		&frame_border, &frame_depth);
 
    /* if frame is too small, grow it */
-   if (frame_width < inst->min_width || frame_height < inst->min_height) {
-      if (frame_width < inst->min_width)
+   if ((int) frame_width < inst->min_width
+       || (int) frame_height < inst->min_height) {
+      if ((int) frame_width < inst->min_width)
 	 frame_width = inst->min_width;
-      if (frame_height < inst->min_height)
+      if ((int) frame_height < inst->min_height)
 	 frame_height = inst->min_height;
       XResizeWindow(dpy, inst->frame, frame_width, frame_height);
    }

@@ -151,7 +151,8 @@ xtexture(Display *dpy, Drawable d, Texture *t, int do_mirror)
 	    break;
 	 }
       t->xpix[do_mirror] = XCreatePixmap(dpy, d, t->width, t->height, depth);
-      XPutImage(dpy, t->xpix[do_mirror] ? t->xpix[do_mirror] : d,
+      /* xpix[] is int, which holds an X ID (at most 29 bits).  */
+      XPutImage(dpy, t->xpix[do_mirror] ? (Drawable) t->xpix[do_mirror] : d,
 		DefaultGC(dpy, scrn), image, 0, 0,
 		t->xpix[do_mirror] ? 0 : xo, t->xpix[do_mirror] ? 0 : yo,
 		t->width, t->height);

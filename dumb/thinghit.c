@@ -83,7 +83,7 @@ find_num_model(const LevData *ld, int sect)
 }
 
 static int
-find_donut_sector(const LevData *ld, int core)
+find_donut_sector(const LevData *ld ATTR_UNUSED, int core)
 {
    /* TODO: write this function */
    return core;
@@ -128,7 +128,7 @@ perform_666(LevData *ld, int sect)
    logprintf(LOG_DEBUG, 'M', _("boss tag effect on sector %d"), sect);
    unqueue_event(ld, ML_SECTOR, ME_FLOOR, sect, NULL);
    me = insert_event(ld, ML_SECTOR, ME_FLOOR, sect, NULL);
-   me->delta[0] = -1 << 10;
+   me->delta[0] = -(1 << 10);
    me->term[0] = get_term_type(ld, LowestAdjacentFloor, sect);
 }
 

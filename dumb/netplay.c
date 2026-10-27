@@ -329,7 +329,7 @@ allzero(const void *_s, int l)
 }
 
 void
-send_input(LevData *ld, const PlayerInput *in, int tickspassed)
+send_input(LevData *ld ATTR_UNUSED, const PlayerInput *in, int tickspassed)
 {
    InputPkt pkt;
    /* save network traffic: only send first of a series of "no action" pkts */

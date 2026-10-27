@@ -48,3 +48,7 @@
 #define STDC_HEADERS 1
 #define X_DISPLAY_MISSING 1
 #define restrict __restrict__
+
+/* For a parameter that a callback's signature needs but its
+   function doesn't use.  */
+#define ATTR_UNUSED __attribute__((unused))

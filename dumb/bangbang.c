@@ -494,7 +494,7 @@ thing_shoot_single(LevData *ld, int shooter, int bullet_id,
 void
 thing_shoot(LevData *ld, int th, int bullet_id,
 	    fixed angle, fixed elev, fixed horiz_arc, fixed vert_arc,
-	    int num, int para)
+	    int num, int para ATTR_UNUSED)
 {
    while (num-- > 0) {
       fixed a = 0, e = 0;

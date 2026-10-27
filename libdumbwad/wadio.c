@@ -522,7 +522,7 @@ get_lump_filename(LumpNum ln)
 }
 
 const void *
-get_lump_map(LumpNum ln)
+get_lump_map(LumpNum ln ATTR_UNUSED)
 {
 #if HAVE_MMAP
    WadFile *wad = get_lump_wad(ln);

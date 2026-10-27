@@ -291,7 +291,7 @@ main(int argc, char **argv)
 			    in_fname, wr->fname, lumpname);
 	       wadwr_lump(wr, lumpname);
 	    }
-	    /* nobreak */
+	    /* fall through */
 	 case (WriteRawCurrent):
 	    if (!wr)
 	       logprintf(LOG_FATAL, 'W', _("Output WAD not chosen"));

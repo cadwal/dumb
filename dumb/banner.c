@@ -188,7 +188,7 @@ draw_banner(int banner, void *fb)
 }
 
 static void
-update_banner(int banner, void *fb, int ticks)
+update_banner(int banner, void *fb ATTR_UNUSED, int ticks)
 {
    Banner *b = bnr + banner;
    BanLink *l = b->list;

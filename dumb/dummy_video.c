@@ -62,8 +62,9 @@ reset_video(void)
 }
 
 void
-video_setpal(unsigned char idx,
-	     unsigned char red, unsigned char green, unsigned char blue)
+video_setpal(unsigned char idx ATTR_UNUSED,
+	     unsigned char red ATTR_UNUSED, unsigned char green ATTR_UNUSED,
+	     unsigned char blue ATTR_UNUSED)
 {
 }
 
@@ -74,12 +75,13 @@ video_newframe(void)
 }
 
 void
-video_updateframe(void *v)
+video_updateframe(void *v ATTR_UNUSED)
 {
 }
 
 void
-video_winstuff(const char *desc, int xdim, int ydim)
+video_winstuff(const char *desc ATTR_UNUSED, int xdim ATTR_UNUSED,
+	       int ydim ATTR_UNUSED)
 {
 }
 

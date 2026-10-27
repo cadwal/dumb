@@ -229,7 +229,7 @@ safe_vmalloc(size_t size)
 }
 
 void
-safe_vfree(void *ptr, size_t size)
+safe_vfree(void *ptr, size_t size ATTR_UNUSED)
 {
 #ifdef HAVE_MMAP
    switch (valloc_method) {

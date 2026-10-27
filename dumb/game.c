@@ -52,9 +52,9 @@ ConfItem playconf[] =
 #define jump_tweak (playconf[4].intval)
 
 static void
-process_input_ms(LevData *ld,
+process_input_ms(LevData *ld ATTR_UNUSED,
 		 const PlayerInput *in,
-		 int tickspassed, int pl)
+		 int tickspassed ATTR_UNUSED, int pl ATTR_UNUSED)
 {
    /* things that need to be done both on slave and master */
    if (in->quit)

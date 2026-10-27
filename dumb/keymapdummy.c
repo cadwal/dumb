@@ -24,14 +24,14 @@
 #include "keymap.h"		/* for prototypes of the following */
 
 const char *
-keymap_keycode_to_keyname(keymap_keycode keycode)
+keymap_keycode_to_keyname(keymap_keycode keycode ATTR_UNUSED)
 {
    /* Actually, this should never even get called... */
    return "dummy";
 }
 
 void
-keymap_free_keyname(const char *name)
+keymap_free_keyname(const char *name ATTR_UNUSED)
 {
 }
 

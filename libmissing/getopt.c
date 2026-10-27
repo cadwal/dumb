@@ -391,8 +391,8 @@ static const char *_getopt_initialize (int, char *const *, const char *);
 #endif
 static const char *
 _getopt_initialize (argc, argv, optstring)
-     int argc;
-     char *const *argv;
+     int argc ATTR_UNUSED;
+     char *const *argv ATTR_UNUSED;
      const char *optstring;
 {
   /* Start processing options with ARGV-element 1 (since ARGV-element 0

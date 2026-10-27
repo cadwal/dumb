@@ -130,8 +130,9 @@ init_sound(int s)
 
    /* say what we've done */
    logprintf(LOG_INFO, 'S',
-	     _("init_sound: fd=%d fragsize=%d (%d bytes)"),
-	     fd, fragment_size, fragment_size * sample_size);
+	     _("init_sound: fd=%d fragsize=%lu (%lu bytes)"),
+	     fd, (unsigned long) fragment_size,
+	     (unsigned long) (fragment_size * sample_size));
    logprintf(LOG_INFO, 'S',
 	     _("init_sound: speed=%d window=%d (%f seconds) slush=%d"),
 	     speed, window,
@@ -280,7 +281,11 @@ poll_sound()
       /* prepare a new fragment */
       sndmix_calc_frag(fragbuf, fragment_size);
       /* write it */
-      write(fd, fragbuf, fragment_size * sample_size);
+      if (write(fd, fragbuf, fragment_size * sample_size) < 0) {
+	 logprintf(LOG_ERROR, 'S', _("poll_sound: write: %s"),
+		   strerror(errno));
+	 break;
+      }
    }
    first_poll = 0;
 }

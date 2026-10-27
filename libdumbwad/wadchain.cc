@@ -100,7 +100,7 @@ Wad::Raw_Lump_ptr::lumpname(void) const
 }
 
 
-Wad::Wad(const char *fname, const char *const *path,
+Wad::Wad(const char *fname ATTR_UNUSED, const char *const *path ATTR_UNUSED,
 	 Counted_Wad_ptr next_param):
    next_wad(next_param), depth(next_wad ? next_wad->depth-1 : 0), refcnt(0),
    filename(NULL),

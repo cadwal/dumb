@@ -432,7 +432,7 @@ video_newframe(void)
 }
 
 void
-video_updateframe(void *v)
+video_updateframe(void *v ATTR_UNUSED)
 {
 #ifdef DUMB_CONFIG_XF86DGA
    if (use_dga && page2line) {
@@ -749,7 +749,7 @@ keymap_keycode_to_keyname(keymap_keycode keycode)
 }
 
 void
-keymap_free_keyname(const char *keyname)
+keymap_free_keyname(const char *keyname ATTR_UNUSED)
 {
    /* no need to free anything */
 }
