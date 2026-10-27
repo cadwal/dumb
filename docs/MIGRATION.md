@@ -9,6 +9,8 @@ detail:
   Allegro 4.2 and the build scripts.
 - [docs/PORTING.md](PORTING.md) covers the SDL3 port to Linux
   (Wayland and X11) and Windows.
+- [docs/NOTES.md](NOTES.md) is the running work log: decisions, test
+  recipes, gotchas and open items.
 
 ## Branches
 
