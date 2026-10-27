@@ -181,9 +181,13 @@ udp_recpkt(size_t *len, int *station)
       if (stations[i].addrlen == sizeof(struct sockaddr_in) &&
 	  stations[i].addr) {
 	 struct sockaddr_in *sin = (struct sockaddr_in *) stations[i].addr;
+	 /* Compare the port too: players on one machine share an
+	    address.  Each station sends from the port it listens on,
+	    which is the port in its address here.  */
 	 if (!memcmp(&sin->sin_addr,
 		     &sia.sin.sin_addr,
-		     sizeof(struct in_addr))) {
+		     sizeof(struct in_addr))
+	     && sin->sin_port == sia.sin.sin_port) {
 	    *len = r;
 	    *station = i;
 	    /*printf(_("data from station %d of len %d\n"), *station, *len); */

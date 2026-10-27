@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>		/* int64_t */
 
 #include "libdumbutil/dumb-nls.h"
 
@@ -85,22 +86,27 @@ LD_DYNDECL(Sector)
    dyn->dark = INT_TO_FIXED(255 - lump->light) / 288;
 
    /* calculate "center" (kludgily) */
-   dyn->cent_r = 0;
-   j = 0;
-   for (i = 0; i < ldnsides(ld); i++)
-      if (ldside(ld)[i].sector == (lump - ldsector(ld))) {
-	 LineDyn *l = ldsided(ld)[i].lined;
-	 if (l == NULL)
-	    continue;
-	 j++;
-	 dyn->cent_x += l->cent_x;
-	 dyn->cent_y += l->cent_y;
-	 if (dyn->cent_r < l->length)
-	    dyn->cent_r = l->length;
+   /* The sums are 64-bit: on big maps, the line centres of one
+      sector can add up to more than an int holds.  */
+   {
+      int64_t sum_x = 0, sum_y = 0;
+      dyn->cent_r = 0;
+      j = 0;
+      for (i = 0; i < ldnsides(ld); i++)
+	 if (ldside(ld)[i].sector == (lump - ldsector(ld))) {
+	    LineDyn *l = ldsided(ld)[i].lined;
+	    if (l == NULL)
+	       continue;
+	    j++;
+	    sum_x += l->cent_x;
+	    sum_y += l->cent_y;
+	    if (dyn->cent_r < l->length)
+	       dyn->cent_r = l->length;
+	 }
+      if (j > 0) {
+	 dyn->cent_x = (fixed) (sum_x / j);
+	 dyn->cent_y = (fixed) (sum_y / j);
       }
-   if (j > 0) {
-      dyn->cent_x /= j;
-      dyn->cent_y /= j;
    }
    /* set up initial sector type */
    dyn->type = 0;

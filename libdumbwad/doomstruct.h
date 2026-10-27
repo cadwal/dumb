@@ -120,11 +120,15 @@ typedef struct {
 
 #define MAXPATCHDS 64
 
-typedef struct {
+/* Packed: a TEXTURE1 lump's index can point anywhere, so in Doom
+   WADs (Freedoom's, for one) entries are often only 2-byte aligned.
+   The layout is the same as without packing; only the alignment GCC
+   may assume changes.  */
+typedef struct __attribute__((packed)) {
    char name[LUMPNAMELEN];
    LE_int32 dummy1;
    LE_int16 dx, dy;
-   int dummy2;
+   LE_int32 dummy2;
    LE_int16 npatches;
    PatchDescData patch[MAXPATCHDS];
 } TextureData;

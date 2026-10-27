@@ -71,11 +71,15 @@ _flatx_loop(fixed x, fixed y, fixed dx, fixed dy,
 #else  /* i386 */
 
 static inline void
-_flatx_loop(fixed x, fixed y, fixed dx, fixed dy,
+_flatx_loop(fixed sx, fixed sy, fixed sdx, fixed sdy,
 	    Pixel *out, Pixel *end,
 	    const Pixel *cm, const TPixel *t,
 	    int xmask, int ymask)
 {
+   /* The texture coordinates wrap around, and only their masked bits
+      are used.  Wrapping is undefined for signed ints, so step them
+      as unsigned.  */
+   unsigned int x = sx, y = sy, dx = sdx, dy = sdy;
    if (dy == 0) {
       y &= ymask;
       while (out >= end) {

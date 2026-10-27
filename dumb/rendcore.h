@@ -398,6 +398,12 @@ draw_object(int on,
 	       - FIXED_TO_INT(FIXED_SCALE(pstart, view_height)));
    fb_end = ((view_height >> 1)
 	     - FIXED_TO_INT_UP(FIXED_SCALE(pend, view_height)));
+   /* With an odd view height, the top of the view comes out as row
+      -1 (half a row, rounded up), outside fb_rows[].  */
+   if (fb_end < 0)
+      fb_end = 0;
+   if (fb_start > view_height - 1)
+      fb_start = view_height - 1;
    if (fb_start < fb_end)
       return;
    fb_column = view_width - rw_column - 1;

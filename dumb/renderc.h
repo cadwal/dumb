@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <stdint.h>		/* int64_t */
 
 #include "libdumbutil/dumb-nls.h"
 
@@ -97,7 +98,8 @@ typedef struct {
    short texxofs, texyofs;
 } Wall_start;
 
-#define MAX_WALL_EVENTS 64
+/* Per screen column.  64 was too few for Freedoom's detailed maps.  */
+#define MAX_WALL_EVENTS 256
 typedef struct {
    int n_events;
    Wall_start events[MAX_WALL_EVENTS];
@@ -156,7 +158,7 @@ typedef struct {
    fixed first_slice;
 } Object_start;
 
-#define MAX_OBJECT_EVENTS 64
+#define MAX_OBJECT_EVENTS 256
 typedef struct {
    int n_events;
    Object_start events[MAX_OBJECT_EVENTS];
@@ -578,6 +580,17 @@ add_wall_events(int wall,
    px2 = fixdiv(px2, view_constants.screen_dx + 1);
    fb1 = FIXED_TO_INT(px1) + (view_width >> 1);
    fb2 = FIXED_TO_INT(px2) + (view_width >> 1);
+   /* With an odd view width, the left edge of the view plane comes
+      out as column -1 (-width/2 rounded down), which would index
+      start_events[-1].  The event lists have view_width + 1 entries.  */
+   if (fb1 < 0)
+      fb1 = 0;
+   else if (fb1 > view_width)
+      fb1 = view_width;
+   if (fb2 < 0)
+      fb2 = 0;
+   else if (fb2 > view_width)
+      fb2 = view_width;
 
 #ifdef CHK_FBCOLS
    if (fb1 < 0 || fb1 >= view_width || fb2 < 0 || fb2 >= view_width)
@@ -775,12 +788,10 @@ mmx_vecadd(int dst[2], const int src[2])
 };
 #endif /* HAVE_MMX */
 
-#define MAX_ACTIVE_OBJECTS 128
-
 static void
 render_walls(void)
 {
-   static int last_wall_count = 0;
+   static int last_wall_count = 0, last_obj_count = 0;
    static Active_wall *active;
    static Active_object *active_obj;
    int active_count = 0, active_obj_count = 0;
@@ -797,9 +808,15 @@ render_walls(void)
       active = (Active_wall *)
 	 safe_realloc(active, last_wall_count * sizeof(Active_wall));
    }
-   if (active_obj == NULL)
+   /* Likewise for objects: each can be active at most once.  This
+      used to be a fixed 128, checked only with CHK_ACTIVE_COUNT, so
+      more objects in view than that overran the array.  Things are
+      added during play, so check every frame.  */
+   if (last_obj_count < NUM_OBJECTS || active_obj == NULL) {
+      last_obj_count = NUM_OBJECTS > 0 ? NUM_OBJECTS : 1;
       active_obj = (Active_object *)
-	 safe_malloc(MAX_ACTIVE_OBJECTS * sizeof(Active_object));
+	 safe_realloc(active_obj, last_obj_count * sizeof(Active_object));
+   }
 
    /* Set up for fast calculation of view rays. */
    Vx = view->eye_distance;
@@ -825,7 +842,7 @@ render_walls(void)
 					rw_column);
 
 #ifdef CHK_ACTIVE_COUNT
-      if (active_obj_count > MAX_ACTIVE_OBJECTS)
+      if (active_obj_count > last_obj_count)
 	 logfatal('R', _("Too many active objects (%d)"), active_obj_count);
 #endif
 
@@ -1103,15 +1120,18 @@ wall_obscured(const VertexDyn *common, const VertexDyn *v1, const VertexDyn *v2)
    ** overhead of sign checking, but the profiler shows this function
    ** as taking a surprisingly small percentage of execution time.
    */
+   /* When the products have the same sign, compare them as 64-bit
+      numbers: the difference of the two fixmul() results could
+      overflow, and give the wrong sign, on large maps.  */
    if (FIXED_PRODUCT_SIGN(x1, y2) ^ FIXED_PRODUCT_SIGN(x2, y1))
       sign1 = FIXED_PRODUCT_SIGN(x1, y2);
    else
-      sign1 = FIXED_SIGN(fixmul(x1, y2) - fixmul(x2, y1));
+      sign1 = (int64_t) x1 * y2 < (int64_t) x2 * y1;
    if (FIXED_PRODUCT_SIGN(x1, common->ty) ^
        FIXED_PRODUCT_SIGN(common->tx, y1))
       sign2 = FIXED_PRODUCT_SIGN(x1, common->ty);
    else
-      sign2 = FIXED_SIGN(fixmul(x1, common->ty) - fixmul(common->tx, y1));
+      sign2 = (int64_t) x1 * common->ty < (int64_t) common->tx * y1;
 
    if (sign1 ^ sign2)
       return 0;
