@@ -259,8 +259,8 @@ if test "$dumb_have_sdl" = "no"; then
 fi
 
 dnl --- Checks for header files.
+dnl sys/wait.h is only used by XWad, which needs X anyway (not on Windows).
 AC_HEADER_SYS_WAIT
-DUMB_MSG_REQUIRE_YES(ac_cv_header_sys_wait_h, [sys/wait.h])
 AC_CHECK_HEADERS(fcntl.h limits.h sys/ioctl.h sys/time.h unistd.h)
 DUMB_MSG_REQUIRE_YES(ac_cv_header_fcntl_h, [fcntl.h])
 DUMB_MSG_REQUIRE_YES(ac_cv_header_limits_h, [limits.h])
@@ -274,6 +274,8 @@ dnl the sign of the return value, so memcmp() needn't be 8-bit clean.
 dnl AC_FUNC_MEMCMP
 AC_FUNC_MMAP
 AC_CHECK_FUNCS(strdup strstr fork setitimer)
+dnl test/fixed_bm times itself with setitimer() (not on Windows).
+AM_CONDITIONAL(DUMB_HAVE_SETITIMER, test "$ac_cv_func_setitimer" = yes)
 dnl sparc-sun-solaris2.5.1 keeps towlower() etc. in libw.so.
 dnl DJGPP 2.05 has none of them; libmissing then has simple versions.
 AC_SEARCH_LIBS(towlower, w,

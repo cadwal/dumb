@@ -25,6 +25,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef _WIN32
+# include <direct.h>		/* _mkdir() */
+#endif
 
 #include "libdumbutil/dumb-nls.h"
 
@@ -50,6 +53,20 @@ conf_file_name(const char *basename)
       fclose(f);
       return safe_strdup(basename);
    }
+#ifdef _WIN32
+   /* %APPDATA%\DUMB\, made if it doesn't exist yet.  */
+   home = getenv("APPDATA");
+   if (!home || !home[0])
+      return safe_strdup(basename);
+   buf = (char *) safe_malloc(strlen(home) + strlen("\\DUMB\\")
+			      + strlen(basename) + 1);
+   strcpy(buf, home);
+   strcat(buf, "\\DUMB");
+   _mkdir(buf);
+   strcat(buf, "\\");
+   strcat(buf, basename);
+   return buf;
+#else  /* !_WIN32 */
    home = getenv("HOME");
    /* Someone might get nasty and set "HOME=" (empty string) */
    if (!home || !home[0])
@@ -66,6 +83,7 @@ conf_file_name(const char *basename)
       strcat(buf, "/");
    strcat(buf, basename);
    return buf;
+#endif /* !_WIN32 */
 }
 
 #define LOAD_CONF_BUFLEN 256

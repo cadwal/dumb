@@ -79,7 +79,8 @@ load_lump(LumpNum ln)
       if (len == 0)
 	 lr->data = safe_malloc(1); /* to make sure it isn't NULL */
       else {
-	 safe_lseek(get_lump_filename(ln), get_lump_fd(ln), get_lump_ofs(ln), len);
+	 safe_lseek(get_lump_filename(ln), get_lump_fd(ln), get_lump_ofs(ln),
+		    SEEK_SET);
 	 lr->data = safe_malloc(len);
 	 safe_read(get_lump_filename(ln), get_lump_fd(ln), lr->data, len);
       }

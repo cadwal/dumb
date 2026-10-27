@@ -8,7 +8,13 @@ else
 ldwb_programs = 
 endif
 
-noinst_PROGRAMS = fixed_bm $(ldwb_programs)
+if DUMB_HAVE_SETITIMER
+fixed_bm_programs = fixed_bm
+else
+fixed_bm_programs =
+endif
+
+noinst_PROGRAMS = $(fixed_bm_programs) $(ldwb_programs)
 
 LDADD = ../libdumbutil/libdumbutil.a ../libmissing/libmissing.a	\
 $(INTLLIBS)

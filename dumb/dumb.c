@@ -334,7 +334,7 @@ main(int argc, char **argv)
 
    video_preinit();
 
-#ifdef __MSDOS__
+#if defined(__MSDOS__) || defined(_WIN32)
    conf_file = conf_file_name("dumb.cfg");
 #else
    conf_file = conf_file_name(".dumbrc");

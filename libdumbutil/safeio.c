@@ -126,11 +126,11 @@ fname_has_directory(const char *fname)
 {
    if (strchr(fname, '/'))
       return 1;
-#ifdef __MSDOS__
+#if defined(__MSDOS__) || defined(_WIN32)
    /* Actually, the colon is valid in fname[1] only.  */
    if (strpbrk(fname, "\\:"))
       return 1;
-#endif /* __MSDOS__ */
+#endif /* __MSDOS__ || _WIN32 */
    return 0;
 }
 
