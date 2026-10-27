@@ -148,10 +148,20 @@ runs through XWayland), and removing the old drivers.
     only built where `setitimer()` exists.
   - Config file: `dumb.cfg`, in the current directory or
     `%APPDATA%\DUMB\`.  `\` and drive letters count as paths.
-  - Still to do: the program is a GUI program, so its log only goes
-    to a file with `-l FILE` (fatal errors are invisible otherwise; a
-    message box would help); networking is the dummy driver (Winsock
-    not done); a real Windows 11 check.
+  - Logging: started from cmd.exe or PowerShell, or with stdout
+    redirected, DUMB prints to the console (`AttachConsole`).
+    Otherwise it logs to `%APPDATA%\DUMB\dumb.log` (or `dumb.log` in
+    the current directory, if one is there), and a fatal error is also
+    shown in a message box that names the log.  `-l FILE` works as
+    before.  Tested under Wine with a launcher that starts DUMB without
+    standard handles, as Explorer does.
+  - WADs are also looked for in the directory of `sdldumb.exe`, so it
+    can be started from anywhere.
+  - Networking: `dumb/win_net.c`, UDP over Winsock 2 (`WSAStartup`,
+    `getaddrinfo`, `ioctlsocket`, `select`), chosen by configure for
+    MinGW and linked with `-lws2_32`.  Tested under Wine: two Windows
+    instances, and a Linux master with a Windows slave.
+  - Still to do: a real Windows 11 check.
 - Bugs found in the original code while running it, fixed here and on
   `djgpp-modernize` (DOS takes the same no-mmap paths):
   - WAD reading without mmap: the directory was read from the wrong
@@ -160,8 +170,21 @@ runs through XWayland), and removing the old drivers.
   - Protos were `malloc`'d and their `sprites` pointer never set, so
     sprites crashed at random (reproducible with `MALLOC_PERTURB_`).
   - `reset_misc()` aborted on exit if no misc texture was ever loaded.
-- [ ] Step 7: packaging (Windows zip script; Linux `make install`
-  works as before).
+  - `logvprintf()` used one `va_list` for every log file; on x86-64
+    the second file got garbage.  It now uses `va_copy()`.
+  - Network play: when the master got a slave's join request, it
+    looked the slave up again by the host name the slave sent, with
+    the default port.  With a port given in `--dumb-master`, or two
+    players on one machine, the master then sent to itself forever
+    unless its first packet happened to arrive first.  The master now
+    keeps the address the request came from.
+- [x] Step 7: packaging.  `win/make-kit.sh` builds SDL3 for MinGW-w64
+  (or uses `SDL3_DIR`), the WADs, the DUMB game and `sdldumb.exe`, and
+  makes `dumb-VERSION-win64.zip` with `sdldumb.exe`, `SDL3.dll`,
+  `game.wad`, `doom4dum.wad`, `htic4dum.wad`, a `DUMB.cmd` launcher, a
+  `README.txt` and the licences.  It checks that the program needs no
+  DLLs but SDL3's and Windows' own.  The unpacked kit was tested
+  under Wine.  Linux `make install` works as before.
 - [~] Step 8: testing as above; no CI yet.
 
 The existing programs still build and run on this branch: `xdumb`

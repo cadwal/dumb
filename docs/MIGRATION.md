@@ -32,7 +32,7 @@ that each step can be read on its own.
 |---|---|---|---|
 | Linux, Wayland or X11 | `sdldumb` | GCC with SDL 3.4 | Builds; runs on Xvfb and headless Weston |
 | Linux, X11 only | `xdumb` | GCC with Xlib | Builds |
-| Windows 10/11 x64 | `sdldumb.exe` | MinGW-w64 with SDL 3.4 | Builds; runs under Wine |
+| Windows 10/11 x64 | `sdldumb.exe` | MinGW-w64 with SDL 3.4 | Builds, and runs under Wine; `win/make-kit.sh` makes a zip |
 | DOS | `DOSDUMB.EXE` | DJGPP 2.05 (GCC 12.2) with Allegro 4.2 | Builds and links; not yet run (see "Remaining work") |
 | Any | `dummydumb` | GCC | Builds; headless test driver |
 
@@ -172,9 +172,17 @@ is `sdldumb`; the old X11, SVGAlib and DOS drivers remain.
     buffer rerenderer used `long`; it now uses `uint64_t`, and the
     rerenderer is chosen by `sizeof(void *)`.
   - The config file is `%APPDATA%\DUMB\dumb.cfg`.  Paths may contain
-    `\` and drive letters.
-  - Only `SDL3.dll` needs to be shipped.  The program is a GUI
-    application, so log output needs `-l FILE`.
+    `\` and drive letters, and WADs are also found next to
+    `sdldumb.exe`.
+  - Only `SDL3.dll` needs to be shipped.
+  - The program is a GUI application, so it has no console of its own.
+    Started from cmd.exe or PowerShell, it attaches to that console.
+    Otherwise it logs to `%APPDATA%\DUMB\dumb.log`, and shows fatal
+    errors in a message box.
+  - Network play uses Winsock 2 (`dumb/win_net.c`).  Windows and Linux
+    players can play together.
+  - `win/make-kit.sh` builds `dumb-VERSION-win64.zip`, which runs with
+    nothing else installed.
 
 ## Bugs found in the original code
 
@@ -187,12 +195,11 @@ Some bugs were latent: they never showed on Linux with glibc and
    the directory ("lump 0 is too big for wad").  This showed up on
    Windows.  The fix adds a `safe_lseek` to `diroffset`.
    `safe_munmap` is now also guarded by `HAVE_MMAP`.
-2. **`lseek` given the length instead of the offset**
-   (`libdumbwad/loadlump.c`).  `safe_lseek(fd, len, ...)` should have
-   been `get_lump_ofs(ln)`.  This showed as "lseek failed: Invalid
-   argument" right after fixing bug 1.  Both fixes were also verified
-   on Linux by forcing the code without `mmap`
-   (`ac_cv_func_mmap_fixed_mapped=no`).
+2. **`lseek` given the length as `whence`** (`libdumbwad/loadlump.c`).
+   `load_lump()` passed the lump's length where `SEEK_SET` belonged.
+   This showed as "lseek failed: Invalid argument" right after fixing
+   bug 1.  Both fixes were also verified on Linux by forcing the code
+   without `mmap` (`ac_cv_func_mmap_fixed_mapped=no`).
 3. **Uninitialised `ProtoThing.sprites`** (`libdumb/protoinwad.c`).
    The array was allocated with `malloc`, but `get_sprite_table()`
    expected the field to start out `NULL`.  Random crashes appeared
@@ -209,6 +216,19 @@ Some bugs were latent: they never showed on Linux with glibc and
    with a modern register allocator.
 7. **Allegro's `extern __inline__`**, described under DOS.  The
    meaning of `extern inline` changed with C99.
+8. **One `va_list` used twice** (`libdumbutil/log.c`).
+   `logvprintf()` passed the same `va_list` to `vfprintf()` for every
+   log file.  That happens to work on i386, but on x86-64 the second
+   file (for example `-l FILE` next to the console) got garbage.  It
+   now uses `va_copy()`.
+9. **Network play joined the wrong address** (`dumb/netplay.c`).  When
+   the master got a slave's join request, it looked the slave up again
+   by the host name in the request, with the default port.  With a
+   port given in `--dumb-master`, or with two players on one machine,
+   the master then sent to itself forever, unless its first packet
+   happened to reach the slave before the request came.  On one
+   machine it worked in 1 run out of 5.  The master now keeps the
+   address the request came from; 5 runs out of 5 then worked.
 
 ## How things were tested
 
@@ -216,7 +236,8 @@ Some bugs were latent: they never showed on Linux with glibc and
 |---|---|
 | X11 | `sdldumb` and `xdumb` on Xvfb, with `xdotool` for keys and the mouse, and screenshots compared with ImageMagick `compare`.  About 58–60 fps with vsync |
 | Wayland | Weston with `--backend=headless --renderer=pixman`, with its own socket and `XDG_RUNTIME_DIR`.  Screenshots were taken with `weston-screenshooter`, which needs `--debug`.  About 39 fps; see below |
-| Windows | `sdldumb.exe` under Wine, with SDL's `windows` video driver and the `direct3d` renderer |
+| Windows | `sdldumb.exe` under Wine, with SDL's `windows` video driver and the `direct3d` renderer.  A small launcher started it without standard handles, as Explorer does, to test the log file and the message box |
+| Network play | Master and slave on one machine with different UDP ports: Linux with Linux, Windows with Windows, and a Linux master with a Windows slave |
 | Memory errors | `MALLOC_PERTURB_` to fill new memory with garbage, which exposed bug 3 |
 | Inline asm | A freestanding 32-bit harness compared asm with C reference versions, and was checked with mutation testing |
 | DOS | Built and linked with the cross toolchain.  Not run yet |
@@ -247,13 +268,11 @@ WAYLAND_DISPLAY=wl-dumb SDL_VIDEO_DRIVER=wayland ./dumb/sdldumb
   policy of the build environment, so this hasn't been done.  The
   Windows `dosbox-x-build.ps1` script hasn't been run on Windows
   either.
-- **Windows polish.**
-  - Fatal errors should be shown in a message box, and logging should
-    have a sensible default for a GUI program.
-  - The network driver needs Winsock.
-  - The game still needs a test on real Windows 11 hardware.
-  - A script should build a zip of `sdldumb.exe`, `SDL3.dll` and
-    `game.wad`.
+- **Windows 11 hardware.**  Everything Windows-specific has been
+  tested under Wine only: the game, the console and message box
+  handling, Winsock, and the kit from `win/make-kit.sh`.  A run on
+  real Windows 11 is still needed, including the firewall prompt for
+  network play.
 - **Packaging** for Linux (a `.desktop` file and an icon) and
   Flatpak.
 - **CI** for the Linux, MinGW and DJGPP builds.
