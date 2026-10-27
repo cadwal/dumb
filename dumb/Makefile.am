@@ -69,7 +69,7 @@ draw.c draw.h net.h input.h video.h
 keyname_sources = keyname.c keyname.h
 
 extra_sources = generic_fbrerend.c le32_fbrerend.c le64_fbrerend.c	\
-dummy_net.c unix_net.c
+dummy_net.c unix_net.c win_net.c
 
 dummy_ldadd = 
 ggi_ldadd = -lggi

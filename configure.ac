@@ -402,16 +402,24 @@ AC_SUBST(DUMB_CONFIG_SOUND_LDADD)
 AC_MSG_RESULT($DUMB_CONFIG_SOUND)
 
 dnl --- Networking.
-dnl Because only Unix and dummy networking are supported,
-dnl I left out the force/disable options.
+dnl The drivers are Unix sockets, Winsock and a dummy one; there
+dnl are no force/disable options.
 dumb_network=""
+dumb_network_old_LIBS="$LIBS"
+case "$host_os" in
+  mingw* | cygwin* | windows*)
+    AC_CHECK_HEADER(winsock2.h,
+      [dumb_network="win"
+       LIBS="-lws2_32"])
+    ;;
+esac
+if test -z "$dumb_network"; then
 AC_CHECK_HEADER(sys/socket.h,
   [dnl size_t would be logical, but sparc-sun-solaris2.5.1 really uses int.
   DUMB_CHECK_TYPE([socklen_t], [int], [#include <sys/socket.h>])
   dumb_network="unix"
   # AC_SEARCH_LIBS puts the libraries in $LIBS but we want them in
   # DUMB_NETWORK_LDADD.  This requires some extra work.
-  dumb_network_old_LIBS="$LIBS"
   LIBS=""
   AC_SEARCH_LIBS(socket, socket, [],
     [AC_MSG_WARN([you have socket.h but no socket()])
@@ -419,6 +427,7 @@ AC_CHECK_HEADER(sys/socket.h,
   AC_SEARCH_LIBS(gethostbyname, nsl, [],
     [AC_MSG_WARN([you don't have gethostbyname()])
      dumb_network=""])])
+fi
 DUMB_NETWORK_LDADD="$LIBS"
 LIBS="$dumb_network_old_LIBS"
 AC_MSG_CHECKING(which network driver to use)

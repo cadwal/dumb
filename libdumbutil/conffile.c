@@ -27,6 +27,7 @@
 #include <ctype.h>
 #ifdef _WIN32
 # include <direct.h>		/* _mkdir() */
+# include <windows.h>		/* GetModuleFileNameA() */
 #endif
 
 #include "libdumbutil/dumb-nls.h"
@@ -85,6 +86,25 @@ conf_file_name(const char *basename)
    return buf;
 #endif /* !_WIN32 */
 }
+
+#ifdef _WIN32
+/* The directory the program is in, so data files next to it are
+   found wherever it is started from.  */
+const char *
+exe_directory(void)
+{
+   static char buf[MAX_PATH];
+   DWORD len = GetModuleFileNameA(NULL, buf, sizeof(buf));
+   char *slash;
+   if (len == 0 || len >= sizeof(buf))
+      return ".";
+   slash = strrchr(buf, '\\');
+   if (slash == NULL)
+      return ".";
+   *slash = '\0';
+   return buf;
+}
+#endif /* _WIN32 */
 
 #define LOAD_CONF_BUFLEN 256
 int

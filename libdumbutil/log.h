@@ -53,6 +53,12 @@ void log_close_all(void);	/* called automatically by log_exit() */
 void log_exit(void);
 void log_chkerror(int maxerrs);
 
+#ifdef _WIN32
+/* Find somewhere to print to; return nonzero if there is a console
+   or stdout is redirected.  Call before anything is logged.  */
+int log_win32_console(void);
+#endif
+
 #define log_stdout() log_stream(stdout, LOG_ALL, NULL)
 
 #endif

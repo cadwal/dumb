@@ -25,6 +25,9 @@
 #include "libdumbutil/confdef.h"
 
 char *conf_file_name(const char *basename);
+#ifdef _WIN32
+const char *exe_directory(void);
+#endif
 
 int load_conf(const ConfModule conf[], const char *fn);
 int save_conf(const ConfModule conf[], const char *fn, int dirt);

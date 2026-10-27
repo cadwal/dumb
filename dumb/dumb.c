@@ -288,10 +288,17 @@ main(int argc, char **argv)
    int tickspassed = 1;
    int crowd = 1, showgetts = 1;
    int load_failed = 1;
+#ifdef _WIN32
+   int have_console;
+#endif
    Texture *tex_xhair = NULL;
 
    /* some default places to look for wads
       this will help make rpm installation easier */
+#ifdef _WIN32
+   /* The current directory, then the one sdldumb.exe is in.  */
+   static const char *builtin_wadpath[] = { ".", NULL, NULL };
+#else
    static const char *const builtin_wadpath[] = {
       ".",
 #ifdef DUMB_CONFIG_DUMBDATADIR
@@ -301,6 +308,7 @@ main(int argc, char **argv)
       "/usr/local/share/dumb",
       NULL
    };
+#endif
    const char *const *wadpath;
 
    INIT_RENDERER_FN *init_renderer = NULL;
@@ -329,6 +337,9 @@ main(int argc, char **argv)
    signal(SIGILL, SIG_DFL);
 #endif /* HAVE_MMX */
 
+#ifdef _WIN32
+   have_console = log_win32_console();
+#endif
    /* Always log to stdout until the configuration has been parsed.  */
    log_stdout();
 
@@ -362,6 +373,15 @@ main(int argc, char **argv)
       want_sound = 0;
    if (cnf_log)
       log_file(cnf_log, LOG_ALL, NULL);
+#ifdef _WIN32
+   else if (!have_console && !cnf_quiet) {
+      /* Nobody sees stdout, so log to a file next to dumb.cfg.  */
+      char *log_name = conf_file_name("dumb.log");
+      remove(log_name);
+      log_file(log_name, LOG_INFO, NULL);
+      safe_free(log_name);
+   }
+#endif
    if (cnf_record)
       frec = fopen(cnf_record, "wb");
    if (cnf_play)
@@ -381,6 +401,9 @@ main(int argc, char **argv)
    vheight = height * ymul;
    bpp = cnf_bpp;
 
+#ifdef _WIN32
+   builtin_wadpath[1] = exe_directory();
+#endif
    /* if no wadpath specified, use default */
    if(cnf_wadpath==NULL) wadpath=builtin_wadpath;
    else wadpath=cnf_wadpath;
