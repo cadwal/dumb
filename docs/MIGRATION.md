@@ -251,6 +251,37 @@ Some bugs were latent: they never showed on Linux with glibc and
     of the map turned into coordinates around 2^31, and the grid there
     was drawn wrong.  Found by `-Wextra`'s `-Wsign-compare`.
 
+These were found by running the game and XWad under AddressSanitizer
+and UndefinedBehaviorSanitizer:
+
+14. **Renderer read and wrote outside its buffers at odd view sizes**
+    (`dumb/renderc.h`, `dumb/rendcore.h`).  With an odd width, the
+    left edge of the view became column -1; with an odd height,
+    sprites were clipped to row -1.
+15. **Network play on a map with too few player starts** used thing
+    -1 as a player (`dumb/levdata.c`).  The DUMB game's map has only
+    a player 1 start, so every two-player game with it ran on
+    garbage.  DUMB now stops with a clear message.
+16. **More than one slave on one machine never got going**
+    (`dumb/unix_net.c`, `dumb/win_net.c`).  The master told stations
+    apart by IP address only.  It now compares the port too.
+17. **Signed overflow on big maps** (`dumb/renderc.h`,
+    `dumb/levdyn.c`): wall occlusion could get the wrong sign, and a
+    sector's centre was a sum that overflowed.  Both use 64-bit
+    arithmetic now.  Texture stepping in `dumb/rendflat.h` wrapped by
+    design and is now unsigned.
+18. **Doom textures read misaligned** (`libdumbwad/doomstruct.h`).
+    Harmless on x86 but fatal on strict-alignment CPUs; the struct is
+    now packed.
+19. **Renderer limits** (`dumb/renderc.h`): 64 wall starts per column
+    was too few for Freedoom's E3M3, and the active-sprite list had a
+    fixed 128 entries with no check in normal builds.
+20. **XWad never started.**  It aborted in `setwmstuff()` because the
+    texture browser had no title for "no type chosen yet"
+    (`xwad/tchoose.c`).  It also crashed when the old Adobe X fonts
+    are missing, as they are on most current systems; it now falls
+    back to the `fixed` font (`xwad/controls.c`).
+
 ## How things were tested
 
 | What | How |
@@ -284,11 +315,12 @@ WAYLAND_DISPLAY=wl-dumb SDL_VIDEO_DRIVER=wayland ./dumb/sdldumb
 
 ## Remaining work
 
-- **DOS run test.**  `DOSDUMB.EXE` needs CWSDPMI, and DOSBox-X needs a
-  test run.  The CWSDPMI and DJGPP mirrors were blocked by the network
-  policy of the build environment, so this hasn't been done.  The
-  Windows `dosbox-x-build.ps1` script hasn't been run on Windows
-  either.
+- **DOS.**  `DOSDUMB.EXE` has run in DOSBox (0.74) with HDPMI32 as
+  the DPMI host, because the CWSDPMI mirrors were blocked here.  It
+  found the Sound Blaster, set the VGA mode, and played the DUMB game
+  with keyboard input.  Still to do: a run with CWSDPMI, a run in
+  DOSBox-X, sound by ear, and the Windows `dosbox-x-build.ps1`
+  script, which hasn't been run on Windows.
 - **Windows 11 hardware.**  Everything Windows-specific has been
   tested under Wine only: the game, the console and message box
   handling, Winsock, and the kit from `win/make-kit.sh`.  A run on

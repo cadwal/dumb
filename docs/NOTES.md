@@ -139,6 +139,68 @@ work goes on.
 - Checked afterwards: the game, network play (3 out of 3), demo
   playback, and the rebuilt Windows kit under Wine.
 
+### 9. AddressSanitizer and UndefinedBehaviorSanitizer
+
+- Built with `-fsanitize=address,undefined -fno-sanitize=shift-base`.
+  `shift-base` is off because the fixed-point code shifts negative
+  numbers left everywhere.  GCC documents that as two's complement,
+  so it isn't a real bug with GCC or Clang.
+- Played with `xdotool` input for about 25 seconds per run: walking,
+  turning, shooting, doors, weapons, looking, jumping.  The runs
+  covered:
+  - the DUMB game at 1, 2 and 4 bytes per pixel, at many view sizes
+    (odd, even, 1x1, 1023x77), and with `-X`/`-Y`, `--dumb-xlace`,
+    `--dumb-preview` and other difficulties;
+  - `xdumb`, demo playback, and a leak check (LSan found no leaks);
+  - Freedoom 0.13.0 (downloaded from GitHub) on 10 Phase 1 and 9
+    Phase 2 maps.  That is the first test of the Doom-data path
+    (`doom.wad` + `doom4dum.wad`);
+  - network play with 2, 3 and 4 players.
+- Bugs found and fixed (all in the original code):
+  - Renderer, odd view width: the left edge of the view became
+    column -1, so walls were added to `start_events[-1]`.  Columns
+    are now clamped to the event lists.
+  - Renderer, odd view height: sprites were clipped to row -1,
+    reading `fb_rows[-1]`.  Clamped the same way.
+  - Network play on a map without enough player starts: the DUMB
+    game's map has only a player 1 start, so the master (player 2)
+    was thing -1, and read and wrote outside the thing array.  This
+    is why earlier "netplay works" results with `game.wad` only
+    proved the handshake.  `load_level()` now stops with "E1M1 has
+    no start for player 2, so it can't be played by 2 players".
+  - Network play with more than one slave on one machine: the master
+    matched incoming packets by IP address only, so every slave's
+    packets went to station 0 and the others never "answered".  It
+    now compares the port too (Unix and Winsock drivers).  4 players
+    on one machine now start.
+  - Doom textures: `TextureData` was read at 2-byte-aligned offsets
+    (Freedoom), which strict-alignment CPUs don't allow.  The struct
+    is now packed; its layout is unchanged.
+  - Signed overflow, wrong results: `wall_obscured()` subtracted two
+    products that could overflow on large maps, giving the wrong
+    sign (walls culled wrongly); the sector centre was a 32-bit sum
+    of line centres.  Both use 64-bit arithmetic now.
+  - Signed overflow, harmless but undefined: the flat texture
+    stepping in `rendflat.h` is meant to wrap; it is unsigned now.
+  - Fixed limits: 64 wall or sprite starts per screen column was too
+    few for Freedoom's E3M3 ("Too many wall start_events"; it failed
+    before these changes too).  Raised to 256 (5 MB at 1024 wide).
+    The active-sprite list had a fixed 128 entries, checked only
+    with `CHK_ACTIVE_COUNT`, so more sprites in one column overran
+    it; it is now sized by the number of things.
+- XWad, the map editor, run for the first time on this branch:
+  - It aborted on every start.  `init_tchoose()` sets the texture
+    browser up with type `TT_BAD`, and `setwmstuff()` called
+    `abort()` for any type it had no title for.  This is in the
+    original 0.13.11, so XWad never started in that release.
+  - With that fixed, it crashed on the next line: it uses
+    `XLoadQueryFont()` results for the Adobe Helvetica fonts without
+    checking for NULL, and current X servers (and Xvfb here) don't
+    have them.  The new `load_font()` falls back to `fixed`, which
+    every X server has.
+  - Without a window manager its window stays at the minimum size;
+    `xdotool windowsize` enlarges it for testing.
+
 ## Decisions
 
 | Question | Decision |
@@ -230,7 +292,12 @@ bug became reproducible.
   must come first in `PATH` (see `cross-build.sh`).  The prebuilt
   DJGPP `ar` needs `libfl.so.2`.
 - The CWSDPMI and DJGPP mirrors may be blocked by a restrictive
-  network.  The scripts say so rather than failing silently.
+  network.  The scripts say so rather than failing silently, and
+  `get-cwsdpmi.sh` then falls back to HDPMI32 from GitHub.
+- The DOS input driver polls Allegro's `key[]` once a frame, so an
+  `xdotool key` tap (a few milliseconds) can be missed in DOSBox.
+  Hold keys with `keydown`/`keyup` instead; real key presses are
+  long enough.
 - `safe_free(NULL)` logs an error.  Use `free()` for memory that
   doesn't come from `safe_malloc`, such as `_fullpath()`'s result.
 - Xvfb can disappear between test runs; if `xdotool` says "Can't
@@ -238,7 +305,8 @@ bug became reproducible.
 
 ## Open items
 
-- [ ] Run `DOSDUMB.EXE` in DOSBox-X with CWSDPMI.
+- [x] Run `DOSDUMB.EXE` in DOSBox (with HDPMI32).
+- [ ] Run it with CWSDPMI, and in DOSBox-X.
 - [ ] Try `dos/dosbox-x-build.ps1` on Windows.
 - [ ] Run the kit on real Windows 11: play, quit with Esc, and allow
       network play through the firewall prompt.
