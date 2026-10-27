@@ -7,11 +7,18 @@
 # Puts CWSDPMI.EXE into DESTDIR (default: the current directory).
 # The mirrors are tried in order; set CWSDPMI_URL to try your own first.
 # A csdpmi7b.zip that is already in DESTDIR is used as is.
+#
+# If no mirror can be reached, HDPMI32.EXE from the HX DOS extender
+# (freeware, from its GitHub releases) is installed instead.  It
+# works as well, but must be loaded first with "hdpmi32 -r"; the
+# dosbox.conf that cross-build.sh writes does that.  Set NO_HX=1 to
+# fail instead.
 
 set -eu
 
 dest=${1:-.}
 zip=csdpmi7b.zip
+hx_url=${HX_URL:-https://github.com/Baron-von-Riedesel/HX/releases/download/v2.23/HXRT223.zip}
 mirrors="
 ${CWSDPMI_URL:-}
 https://www.delorie.com/pub/djgpp/current/v2misc/$zip
@@ -63,7 +70,20 @@ else
       fi
       rm -f "$tmp/$zip"
    done
-   [ -n "$ok" ] || die "could not download $zip; fetch it yourself and put it in $dest"
+   if [ -z "$ok" ]; then
+      [ -z "${NO_HX:-}" ] ||
+	 die "could not download $zip; fetch it yourself and put it in $dest"
+      echo "get-cwsdpmi: no CWSDPMI mirror reachable; trying HDPMI32 from $hx_url"
+      fetch "$hx_url" "$tmp/hx.zip" 2>/dev/null && [ -s "$tmp/hx.zip" ] ||
+	 die "could not download $zip nor HX; fetch one yourself and put it in $dest"
+      mkdir "$tmp/hx"
+      unpack "$tmp/hx.zip" "$tmp/hx"
+      exe=$(find "$tmp/hx" -type f -iname hdpmi32.exe | head -n 1)
+      [ -n "$exe" ] || die "$hx_url has no HDPMI32.EXE"
+      cp "$exe" "$dest/HDPMI32.EXE"
+      echo "get-cwsdpmi: installed $dest/HDPMI32.EXE (load it with: hdpmi32 -r)"
+      exit 0
+   fi
 fi
 
 mkdir "$tmp/x"

@@ -35,7 +35,9 @@
 #   4. the DUMB game          -> WORK/game/game.wad
 #   5. dosdumb.exe            -> WORK/dos
 #   6. package                -> WORK/dist: DOSDUMB.EXE, GAME.WAD,
-#                                DOOM4DUM.WAD, HTIC4DUM.WAD, CWSDPMI.EXE,
+#                                DOOM4DUM.WAD, HTIC4DUM.WAD, CWSDPMI.EXE
+#                                (or HDPMI32.EXE if no CWSDPMI mirror
+#                                can be reached),
 #                                [DOOM.WAD], dosbox.conf
 # See docs/dos/MODERNIZE.md for the details.
 
@@ -308,9 +310,15 @@ else
    rm -f "$dist/DOOM.WAD"
    dumbargs="-w game.wad"
 fi
-if [ ! -f "$dist/CWSDPMI.EXE" ]; then
+if [ ! -f "$dist/CWSDPMI.EXE" ] && [ ! -f "$dist/HDPMI32.EXE" ]; then
    sh "$here/get-cwsdpmi.sh" "$dist" ||
       say "warning: no CWSDPMI.EXE; put one in $dist before running"
+fi
+# CWSDPMI is loaded by dosdumb.exe itself; HDPMI32, the fallback, has
+# to be made resident first.
+dpmi_load=
+if [ ! -f "$dist/CWSDPMI.EXE" ] && [ -f "$dist/HDPMI32.EXE" ]; then
+   dpmi_load="hdpmi32 -r"
 fi
 
 cat > "$dist/dosbox.conf" <<EOF
@@ -325,6 +333,7 @@ cycles=max
 [autoexec]
 mount c "$dist"
 c:
+$dpmi_load
 echo DUMB writes its log to DUMB.LOG
 dosdumb.exe $dumbargs > DUMB.LOG
 EOF
@@ -347,7 +356,8 @@ if [ -n "$run" ]; then
    else
       die "--run needs dosbox-x or dosbox"
    fi
-   [ -f "$dist/CWSDPMI.EXE" ] || die "--run needs $dist/CWSDPMI.EXE"
+   [ -f "$dist/CWSDPMI.EXE" ] || [ -f "$dist/HDPMI32.EXE" ] ||
+      die "--run needs $dist/CWSDPMI.EXE (or HDPMI32.EXE)"
    say "starting $dosbox"
    exec "$dosbox" -conf "$dist/dosbox.conf"
 fi

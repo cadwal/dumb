@@ -31,7 +31,11 @@ See the comment at the top of the script for options and requirements.
 
   dos/get-cwsdpmi.sh [DIR]
 
-Only downloads CWSDPMI.EXE (from csdpmi7b.zip) into DIR.
+Only downloads CWSDPMI.EXE (from csdpmi7b.zip) into DIR.  If no
+CWSDPMI mirror can be reached, it installs HDPMI32.EXE from the HX
+DOS extender's GitHub releases instead (freeware).  HDPMI32 has to
+be loaded before dosdumb.exe with "hdpmi32 -r"; the dosbox.conf
+from cross-build.sh does that.
 
 Windows: building inside DOSBox-X
 ---------------------------------
