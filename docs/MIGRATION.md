@@ -284,6 +284,14 @@ and UndefinedBehaviorSanitizer:
     (`xwad/tchoose.c`).  It also crashed when the old Adobe X fonts
     are missing, as they are on most current systems; it now falls
     back to the `fixed` font (`xwad/controls.c`).
+21. **A player's weapon was overwritten while the level loaded**
+    (`dumb/levdyn.c`, `dumb/levdata.c`).  Players were set up in the
+    middle of loading the things, before the spare thing slots
+    existed, so each player's weapon thing took the slot of a map
+    thing that was loaded later and overwrote it.  With 4 players
+    there was no slot at all ("Ran out of thing slots").  Players are
+    now set up after loading.  The DUMB game's E1M1 now has starts
+    for 4 players (in cadwal/dumb-game).
 
 ## How things were tested
 

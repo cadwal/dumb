@@ -209,6 +209,32 @@ work goes on.
     XWad from before the `-Wextra` changes (with only the two startup
     fixes) give the same result; see the correction in section 8.
 
+### 10. Network play in the DUMB game
+
+- cadwal/dumb-game, branch `djgpp-modernize` (its modernised branch;
+  DUMB's scripts clone it): E1M1 gets starts for players 2 to 4 next
+  to player 1, and `pt/creatures.pt` gets `Player2` to `Player4`.  A
+  start counts only if its thing type has a proto with the player
+  flag, so the starts alone weren't enough.
+- `prebuilt/game.wad` got only the new THINGS and PROTOS lumps,
+  copied in with a small script that keeps every lump 4-byte
+  aligned.  A full rebuild would change the textures, because some
+  are made by netpbm's random `ppmforge`.
+- With 4 players, a bug in the original engine showed up: "Ran out of
+  thing slots" while loading.  `Thing_dyninit()` called
+  `init_player()`, which creates the player's weapon thing, while
+  the level was still loading and `ldnthings()` didn't yet include
+  the 64 spare slots.  `find_empty_thing()` then took the slot of a
+  map thing not yet loaded, whose loading overwrote the weapon.  In
+  the DUMB game, player 1's weapon was in slot 1 and became the
+  "News" thing; with 4 players there was no free slot at all.  The
+  players are now set up after loading (weapon in a free slot, 2 in
+  single player).
+- Tested under the sanitizers: single player in both games, and 2
+  and 4 players on one machine in the DUMB game and on Freedoom's
+  MAP01.  No reports.  The players have no sprite, so they can't see
+  each other in the DUMB game.
+
 ## Decisions
 
 | Question | Decision |
