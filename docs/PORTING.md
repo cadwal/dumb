@@ -1,10 +1,11 @@
 # Plan: DUMB on Linux (Wayland and X11) and Windows 11
 
-This work lives on the `sdl-port` branch.  It starts from
-`djgpp-modernize`, whose build-system and modern-GCC fixes it needs,
-and lives side by side with it and with `main` (the original 0.13.11
-sources, unchanged).  The DOS build from `djgpp-modernize` should keep
-working here.
+This work was done on the `sdl-port` branch, which started from
+`djgpp-modernize`, whose build-system and modern-GCC fixes it needs.
+Both are now part of `modernize`, which lives side by side with
+`main` (the original 0.13.11 sources, unchanged); their last state is
+kept as the tags `sdl-port-final` and `djgpp-modernize-final`.  The
+DOS build keeps working on `modernize`.
 
 Goal: a `sdldumb` program that runs natively on Linux under Wayland
 and X11, and on Windows 11 (64-bit), using one portable backend for

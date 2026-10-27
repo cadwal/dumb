@@ -1,8 +1,10 @@
 # Plan: building dosdumb with current DJGPP
 
-This work lives on the `djgpp-modernize` branch, side by side with
-`main`, which keeps the original DUMB 0.13.11 sources unchanged.  The
-DUMB game (cadwal/dumb-game) is set up the same way.
+This work was done on the `djgpp-modernize` branch.  It is now part of
+`modernize`, which lives side by side with `main`, which keeps the
+original DUMB 0.13.11 sources unchanged; the branch's last state is
+the tag `djgpp-modernize-final`.  The DUMB game (cadwal/dumb-game) is
+set up the same way.
 
 Goal: build `dosdumb.exe` with a current DJGPP toolchain (GCC 12+,
 cross-compiled from Linux as `i586-pc-msdosdjgpp`) against Allegro 4.2,

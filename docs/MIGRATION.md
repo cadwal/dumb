@@ -12,22 +12,33 @@ detail:
 - [docs/NOTES.md](NOTES.md) is the running work log: decisions, test
   recipes, gotchas and open items.
 
-## Branches
+## Branches and tags
 
-All of these branches live side by side.  Nothing is merged into
-`main`.
+Each repository has two branches, side by side.  Nothing is merged
+into `main`.
 
 | Branch | Repository | Contents |
 |---|---|---|
 | `main` | cadwal/dumb | The original sources, untouched |
-| `djgpp-modernize` | cadwal/dumb | Autotools, GCC fixes, dosdumb with DJGPP and Allegro, scripts |
-| `sdl-port` | cadwal/dumb | `djgpp-modernize` plus the SDL3 driver, the portable timer and Windows |
-| `modernize` | cadwal/dumb | Everything: `sdl-port` merged with the latest `djgpp-modernize` |
-| `djgpp-modernize` | cadwal/dumb-game | The game data ported to the current ptcomp, plus a prebuilt `game.wad` |
-| `modernize` | cadwal/dumb-game | Everything: `djgpp-modernize` plus starts for 4 players; used by `modernize`'s scripts |
+| `modernize` | cadwal/dumb | Everything in this document |
+| `main` | cadwal/dumb-game | The original game sources, untouched |
+| `modernize` | cadwal/dumb-game | The game data ported to the current ptcomp, a prebuilt `game.wad`, starts for 4 players; used by `modernize`'s scripts |
 
-`modernize` is the branch to use.  The other two branches are kept so
-that each step can be read on its own.
+The work was done in stages on branches that have since been deleted.
+Everything on them is part of `modernize`; their last state is kept
+as tags, so each stage can still be read on its own:
+
+| Tag | Repository | Contents |
+|---|---|---|
+| `original-0.13.11` | cadwal/dumb | Same as `main` |
+| `djgpp-modernize-final` | cadwal/dumb | Autotools, GCC fixes, dosdumb with DJGPP and Allegro, scripts |
+| `sdl-port-final` | cadwal/dumb | The above plus the SDL3 driver, the portable timer and Windows |
+| `original-0.13.1` | cadwal/dumb-game | Same as `main` |
+| `djgpp-modernize-final` | cadwal/dumb-game | The game data ported to the current ptcomp, a prebuilt `game.wad`, starts for 4 players |
+
+The scripts in the `djgpp-modernize-final` tag of cadwal/dumb clone
+dumb-game's `djgpp-modernize` branch, which no longer exists; check
+out dumb-game's tag of the same name and set `DUMB_GAME_DIR` to it.
 
 ## What one branch builds
 

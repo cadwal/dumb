@@ -1,6 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
-EXTRA_DIST = .cvsignore
+EXTRA_DIST = .cvsignore manual/README manual/play.sh manual/netplay.sh	\
+manual/dosbox.sh manual/xwad.sh manual/noconsole.c
 
 if DUMB_CONFIG_LDWB
 ldwb_programs = dwdbtest

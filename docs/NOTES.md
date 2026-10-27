@@ -46,8 +46,9 @@ work goes on.
 ### 4. One branch (`modernize`)
 
 - `modernize` = `sdl-port` + `djgpp-modernize`, which merged without
-  conflicts.  The older branches and `main` stay as they are; the
-  branches are meant to live side by side, with no PRs.
+  conflicts.  `main` stays as it is; the branches are meant to live
+  side by side, with no PRs.  (Later, `djgpp-modernize` and
+  `sdl-port` were deleted and kept as tags; see section 11.)
 - [MIGRATION.md](MIGRATION.md) was written.
 
 ### 5. Windows fixes and the kit
@@ -235,9 +236,27 @@ work goes on.
   MAP01.  No reports.
 - dumb-game now also has a `modernize` branch, named like DUMB's,
   with all of this.  DUMB's `modernize` scripts (`cross-build.sh`,
-  `make-kit.sh`, `dosbox-x-build.ps1`) use it; `djgpp-modernize`
-  stays as it was, for DUMB's `djgpp-modernize` branch.  The players have no sprite, so they can't see
-  each other in the DUMB game.
+  `make-kit.sh`, `dosbox-x-build.ps1`) use it.
+- The players have no sprite, so they can't see each other in the
+  DUMB game.
+
+### 11. Only `main` and `modernize`
+
+- Checked with `git merge-base --is-ancestor` that every other branch
+  in both repositories was fully contained in `modernize`, then
+  tagged their last state and deleted them:
+  - cadwal/dumb: `original-0.13.11` (= `main`),
+    `djgpp-modernize-final`, `sdl-port-final`.  The backup branch
+    `modernize-sanitizer-wip` was deleted without a tag; it was an
+    older state of `modernize`.
+  - cadwal/dumb-game: `original-0.13.1` (= `main`),
+    `djgpp-modernize-final`.
+- The scripts in DUMB's `djgpp-modernize-final` tag clone
+  dumb-game's deleted `djgpp-modernize` branch; use dumb-game's tag
+  of the same name with `DUMB_GAME_DIR` instead.
+- The test scripts used for all of this are now in `test/manual/`
+  (see its README), and dumb-game has `tools/patch-lumps.py` for
+  updating `prebuilt/game.wad` without rebuilding its art.
 
 ## Decisions
 
@@ -245,9 +264,9 @@ work goes on.
 |---|---|
 | Backend for Linux and Windows | SDL3, version 3.4.8 |
 | Default game data | The DUMB game; Freedoom optional |
-| Where the game port lives | A `djgpp-modernize` branch in cadwal/dumb-game, and `modernize` (all of it, named like DUMB's), which DUMB's `modernize` scripts use |
+| Where the game port lives | The `modernize` branch of cadwal/dumb-game, named like DUMB's |
 | Windows users without build tools | Prebuilt `game.wad` in dumb-game |
-| Branches | Side by side with `main`; no PRs.  `modernize` has everything |
+| Branches | Only `main` (the original) and `modernize`, side by side, in both repositories; no PRs.  The earlier stages are tags |
 | Windows network driver | A separate `win_net.c` rather than `#ifdef`s in `unix_net.c` |
 | Windows log without console | `dumb.log` next to `dumb.cfg`, overwritten each run, level INFO |
 

@@ -1,0 +1,46 @@
+Manual test scripts
+===================
+
+These are the scripts used to test the modernize branch by running
+the programs, as described in docs/NOTES.md ("Test recipes").  They
+are not run by "make check": they need an X display (Xvfb will do),
+xdotool and ImageMagick's import, and some need DOSBox, Wine or a
+sanitizer build.  Output goes to ./manual-out/ unless OUT is set.
+
+  play.sh PROGRAM [OPTIONS]...
+      Play a level with scripted keys (walk, turn, shoot, doors,
+      weapons, look, jump); report how it ended, UBSan reports and
+      ASan reports.  GAME_DIR and WADS choose the data.
+
+  netplay.sh PROGRAM NSLAVES [OPTIONS]...
+      A master and NSLAVES slaves on one machine, on UDP ports 7777
+      and up.  PROGRAM may be a wrapper that runs sdldumb.exe under
+      Wine, to test the Winsock driver.
+
+  dosbox.sh DIST [SECONDS] [OPTIONS]...
+      Run DOSDUMB.EXE from dos/cross-build.sh's dist directory in
+      DOSBox or DOSBox-X, walk, quit with Escape, show DUMB.LOG.
+
+  xwad.sh PROGRAM MAP [STEP]...
+      Open a map in XWad, enlarge the window, run mouse clicks, and
+      take screenshots.
+
+  noconsole.c
+      A Windows launcher that starts a program without a console or
+      standard handles, as Explorer does, to test sdldumb.exe's log
+      file and message box under Wine.
+
+A sanitizer build:
+
+  mkdir san && cd san
+  ../configure CFLAGS="-g -O1 -fno-omit-frame-pointer \
+       -fsanitize=address,undefined -fno-sanitize=shift-base" \
+     CXXFLAGS="(the same)" LDFLAGS="-fsanitize=address,undefined"
+  make
+
+shift-base is off because the fixed-point code shifts negative numbers
+left everywhere, which GCC defines as two's complement.
+
+Freedoom (https://freedoom.github.io/) is useful test data: put
+freedoom1.wad as doom.wad, freedoom2.wad as doom2.wad, and DUMB's
+doom/doom4dum.wad in one directory, and run with WADS= (empty).
