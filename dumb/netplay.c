@@ -376,7 +376,17 @@ netplay_wait4slaves(void)
 void
 netplay_join(LevData *ld, int station, const char *name)
 {
-   net_initstation(station, name, RS_SLAVE | RS_LIVE);
+   /* net_recpkt() returns only packets from stations whose address
+      is known, and that address is where the packet came from.
+      Looking up the host name the slave sent instead would lose a
+      port given with --dumb-master; on one machine the master would
+      then send to itself, forever.  */
+   if (station < nstations && stations[station].addr) {
+      logprintf(LOG_DEBUG, 'N', "station %d calls itself %s",
+		station, name);
+      stations[station].flags |= RS_SLAVE | RS_LIVE;
+   } else
+      net_initstation(station, name, RS_SLAVE | RS_LIVE);
    send_one_slaveinit(ld, station);
 }
 
